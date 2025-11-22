@@ -1,0 +1,13 @@
+{
+  "name": "landing-astro",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "start": "astro preview"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.42.0",
+    "astro": "^4.8.0"
+  }
+}
