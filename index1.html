@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glister Amway: Sorriso Impecável, Futuro Brilhante</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset Básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Cores e Estilos Globais */
+        :root {
+            --primary-color: #007bff; /* Azul Amway */
+            --secondary-color: #28a745; /* Verde para sucesso/venda */
+            --accent-color: #ffc107; /* Amarelo para destaque */
+            --text-color: #333;
+            --light-bg: #ffffff;
+            --dark-bg: #212529;
+            --border-color: #dee2e6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        h1 { font-size: 2.8em; }
+        h2 { font-size: 2.2em; }
+        h3 { font-size: 1.8em; }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .button.primary {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: 1px solid var(--primary-color);
+        }
+
+        .button.primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .button.secondary {
+            background-color: var(--secondary-color);
+            color: #fff;
+            border: 1px solid var(--secondary-color);
+        }
+
+        .button.secondary:hover {
+            background-color: #218838;
+            border-color: #218838;
+            transform: translateY(-2px);
+        }
+
+        /* Seções */
+        section {
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        section:nth-child(odd) {
+            background-color: var(--light-bg);
+        }
+
+        section:nth-child(even) {
+            background-color: #f0f3f5;
+        }
+
+        /* Hero Section */
+        #hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://via.placeholder.com/1920x800/007bff/ffffff?text=Fundo+Glister+Amway') no-repeat center center/cover;
+            color: #fff;
+            padding: 100px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        #hero h1 {
+            color: #fff;
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        #hero p {
+            font-size: 1.3em;
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+
+        #hero .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        #hero .product-image {
+            margin-top: 40px;
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Benefícios Section */
+        #beneficios .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        #beneficios .benefit-item {
+            background-color: var(--light-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+
+        #beneficios .benefit-item:hover {
+            transform: translateY(-5px);
+        }
+
+        #beneficios .benefit-item h3 {
+            color: var(--primary-color);
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        #beneficios .benefit-item p {
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        #beneficios .benefit-item img {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 15px;
+        }
+
+        /* Diferenciais Amway */
+        #diferenciais {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        #diferenciais h2 {
+            color: #fff;
+        }
+
+        #diferenciais .differentiators-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        #diferenciais .differentiator-item {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 8px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #diferenciais .differentiator-item h3 {
+            color: var(--accent-color);
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        #diferenciais .differentiator-item p {
+            font-size: 0.9em;
+            color: #eee;
+        }
+
+        /* Como Começar como Vendedor */
+        #como-vender .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        #como-vender .step-item {
+            background-color: var(--light-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        #como-vender .step-item .step-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        #como-vender .step-item h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        /* Depoimentos */
+        #depoimentos {
+            background-color: #f0f3f5;
+        }
+
+        #depoimentos .testimonials-slider {
+            display: flex;
+            overflow-x: auto; /* Para simular um slider simples */
+            scroll-snap-type: x mandatory;
+            gap: 20px;
+            padding-bottom: 20px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        #depoimentos .testimonial-card {
+            flex: 0 0 350px; /* Largura fixa para cada card */
+            background-color: var(--light-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            text-align: left;
+            scroll-snap-align: start;
+        }
+
+        #depoimentos .testimonial-card p {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        #depoimentos .testimonial-card .author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Tabela de Preços */
+        #precos .table-wrapper {
+            overflow-x: auto;
+            margin-top: 40px;
+        }
+
+        /* CRITICAL: HTML Table with MANDATORY CSS classes */
+        .border-ds-border-tertiary { border-color: #e0e0e0; } /* Exemplo de cor para a borda */
+        .min-w-full { min-width: 100%; }
+        .border-collapse { border-collapse: collapse; }
+        .overflow-hidden { overflow: hidden; }
+        .rounded-lg { border-radius: 8px; }
+        .border { border-width: 1px; border-style: solid; }
+
+        .bg-ds-bg-table-header { background-color: var(--primary-color); } /* Exemplo de cor para o cabeçalho */
+        .border-b-2 { border-bottom-width: 2px; }
+
+        .text-ds-text-chat-secondary { color: #fff; } /* Cor do texto do cabeçalho */
+        .border-r { border-right-width: 1px; border-right-style: solid; }
+        .px-4 { padding-left: 16px; padding-right: 16px; }
+        .py-3 { padding-top: 12px; padding-bottom: 12px; }
+        .text-left { text-align: left; }
+        .text-sm { font-size: 0.875rem; }
+        .font-semibold { font-weight: 600; }
+        .last\:border-r-0 th:last-child, .last\:border-r-0 td:last-child { border-right-width: 0; }
+
+        .hover\:bg-ds-bg-table-row-hover:hover { background-color: #f8f8f8; } /* Exemplo de hover */
+        .border-b { border-bottom-width: 1px; border-bottom-style: solid; }
+
+        #precos table th, #precos table td {
+            padding: 15px;
+            text-align: left;
+            border-color: var(--border-color);
+        }
+
+        #precos table th {
+            background-color: var(--primary-color);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        #precos table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        #precos table .button {
+            padding: 8px 15px;
+            font-size: 0.9em;
+        }
+
+        /* FAQ Section */
+        #faq .faq-item {
+            background-color: var(--light-bg);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: left;
+        }
+
+        #faq .faq-question {
+            padding: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary-color);
+        }
+
+        #faq .faq-question::after {
+            content: '+';
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+
+        #faq .faq-question.active::after {
+            content: '-';
+            transform: rotate(180deg);
+        }
+
+        #faq .faq-answer {
+            padding: 0 20px 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            color: #555;
+        }
+
+        #faq .faq-answer.active {
+            max-height: 200px; /* Ajuste conforme o conteúdo */
+            padding: 0 20px 20px;
+        }
+
+        /* Seção de Recrutamento Final */
+        #recrutamento-final {
+            background-color: var(--dark-bg);
+            color: #fff;
+            padding: 80px 20px;
+        }
+
+        #recrutamento-final h2 {
+            color: #fff;
+            font-size: 2.5em;
+        }
+
+        #recrutamento-final p {
+            font-size: 1.1em;
+            max-width: 800px;
+            margin: 20px auto 40px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 40px 20px;
+            font-size: 0.9em;
+        }
+
+        footer .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-align: left;
+            gap: 30px;
+        }
+
+        footer .footer-section {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        footer .footer-section h4 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        footer .footer-section ul {
+            list-style: none;
+        }
+
+        footer .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        footer .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer .footer-section ul li a:hover {
+            color: #fff;
+        }
+
+        footer .social-icons a {
+            color: #fff;
+            font-size: 1.5em;
+            margin-right: 15px;
+            text-decoration: none;
+        }
+
+        footer .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #555;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            h2 { font-size: 1.8em; }
+            #hero { padding: 80px 20px; }
+            #hero h1 { font-size: 2.8em; }
+            #hero p { font-size: 1.1em; }
+            .cta-buttons { flex-direction: column; gap: 15px; }
+            .button { width: 100%; }
+            #beneficios .benefits-grid,
+            #como-vender .steps-grid {
+                grid-template-columns: 1fr;
+            }
+            #depoimentos .testimonials-slider {
+                justify-content: flex-start;
+            }
+            #depoimentos .testimonial-card {
+                flex: 0 0 90%;
+            }
+            footer .footer-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            footer .footer-section {
+                min-width: unset;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 2em; }
+            #hero h1 { font-size: 2.2em; }
+            #hero p { font-size: 1em; }
+            section { padding: 40px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <img src="https://via.placeholder.com/200x200/007bff/ffffff?text=Glister+Product" alt="Glister Creme Dental Amway" class="product-image">
+            <h1>Sorriso Impecável, Futuro Brilhante: Descubra o Poder do Glister Amway!</h1>
+            <p>Experimente o cuidado bucal avançado que protege sua saúde e abre portas para novas oportunidades de negócio.</p>
+            <div class="cta-buttons">
+                <a href="#precos" class="button primary">Compre Glister Agora</a>
+                <a href="#como-vender" class="button secondary">Seja um Empreendedor Amway</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefícios Section -->
+    <section id="beneficios">
+        <div class="container">
+            <h2>Por Que Glister é a Escolha Certa Para Você?</h2>
+            <p>Descubra os múltiplos benefícios que o creme dental Glister Amway oferece para sua saúde bucal e bem-estar.</p>
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <img src="https://via.placeholder.com/60x60/007bff/ffffff?text=🦷" alt="Ícone de Dente">
+                    <h3>Proteção Completa</h3>
+                    <p>Combate eficazmente as cáries e fortalece o esmalte dos dentes, garantindo uma defesa robusta.</p>
+                </div>
+                <div class="benefit-item">
+                    <img src="https://via.placeholder.com/60x60/007bff/ffffff?text=✨" alt="Ícone de Brilho">
+                    <h3>Dentes Mais Brancos</h3>
+                    <p>Remove manchas superficiais e realça o brilho natural dos seus dentes, para um sorriso mais luminoso.</p>
+                </div>
+                <div class="benefit-item">
+                    <img src="https://via.placeholder.com/60x60/007bff/ffffff?text=🌬️" alt="Ícone de Hálito">
+                    <h3>Hálito Fresco Duradouro</h3>
+                    <p>Proporciona uma sensação de limpeza e frescor que dura por horas, aumentando sua confiança.</p>
+                </div>
+                <div class="benefit-item">
+                    <img src="https://via.placeholder.com/60x60/007bff/ffffff?text=🛡️" alt="Ícone de Escudo">
+                    <h3>Remoção Eficaz da Placa</h3>
+                    <p>Ajuda a prevenir o acúmulo de placa bacteriana, protegendo suas gengivas e evitando problemas bucais.</p>
+                </div>
+                <div class="benefit-item">
+                    <img src="https://via.placeholder.com/60x60/007bff/ffffff?text=💧" alt="Ícone de Gota">
+                    <h3>Fórmula Concentrada</h3>
+                    <p>Um pequeno pingo é suficiente! Rende mais que cremes dentais comuns, oferecendo economia e sustentabilidade.</p>
+                </div>
+                <div class="benefit-item">
+                    <img src="https://via.placeholder.com/60x60/007bff/ffffff?text=🍃" alt="Ícone de Folha">
+                    <h3>Sabor Refrescante de Menta</h3>
+                    <p>Uma experiência de escovação agradável e revigorante, com um sabor que você vai adorar.</p>
+                </div>
+                <div class="benefit-item">
+                    <img src="https://via.placeholder.com/60x60/007bff/ffffff?text=🔬" alt="Ícone de Ciência">
+                    <h3>Tecnologia Avançada</h3>
+                    <p>Desenvolvido com a ciência e inovação da Amway para oferecer o melhor em cuidado bucal para você e sua família.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diferenciais Amway Section -->
+    <section id="diferenciais">
+        <div class="container">
+            <h2>Por Que Escolher Amway?</h2>
+            <p>Mais do que produtos, a Amway oferece um legado de qualidade, inovação e oportunidades.</p>
+            <div class="differentiators-list">
+                <div class="differentiator-item">
+                    <h3>Qualidade Comprovada</h3>
+                    <p>Mais de 60 anos de inovação e excelência em produtos que você pode confiar.</p>
+                </div>
+                <div class="differentiator-item">
+                    <h3>Sustentabilidade</h3>
+                    <p>Compromisso com o meio ambiente em cada etapa, do desenvolvimento à embalagem.</p>
+                </div>
+                <div class="differentiator-item">
+                    <h3>Oportunidade de Negócio</h3>
+                    <p>Construa seu futuro com um modelo de sucesso comprovado e suporte contínuo.</p>
+                </div>
+                <div class="differentiator-item">
+                    <h3>Comunidade Global</h3>
+                    <p>Faça parte de uma rede de apoio, aprendizado e crescimento em todo o mundo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Começar como Vendedor Section -->
+    <section id="como-vender">
+        <div class="container">
+            <h2>Transforme Sua Paixão em Lucro: Seja um Empreendedor Amway!</h2>
+            <p>Comece sua jornada para a independência financeira e realize seus sonhos com a Amway.</p>
+            <div class="steps-grid">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h3>Cadastre-se</h3>
+                    <p>Rápido e fácil para iniciar sua jornada como Empreendedor Amway.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h3>Aprenda e Cresça</h3>
+                    <p>Acesso a treinamentos exclusivos e ferramentas para o seu desenvolvimento.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h3>Venda e Recrute</h3>
+                    <p>Compartilhe produtos incríveis como Glister e construa sua própria equipe de sucesso.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <h3>Ganhe Recompensas</h3>
+                    <p>Receba comissões e bônus generosos pelo seu esforço e dedicação.</p>
+                </div>
+            </div>
+            <div style="margin-top: 40px;">
+                <a href="#cadastro-vendedor" class="button primary">Quero Ser um Empreendedor Amway</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Depoimentos Section -->
+    <section id="depoimentos">
+        <div class="container">
+            <h2>O Que Nossos Clientes e Empreendedores Dizem</h2>
+            <div class="testimonials-slider">
+                <div class="testimonial-card">
+                    <p>"Glister mudou meu sorriso! Meus dentes estão mais brancos e sinto uma limpeza que nenhum outro creme dental proporcionou. É incrível!"</p>
+                    <div class="author">- Ana S., Cliente Satisfeita</div>
+                </div>
+                <div class="testimonial-card">
+                    <p>"Como empreendedor Amway, encontrei a liberdade financeira e uma comunidade incrível. Vender Glister é fácil, todos amam e a demanda é constante!"</p>
+                    <div class="author">- Carlos M., Empreendedor Amway</div>
+                </div>
+                <div class="testimonial-card">
+                    <p>"A fórmula concentrada do Glister é fantástica. Rende muito e a qualidade é incomparável. Recomendo a todos que buscam o melhor para sua saúde bucal!"</p>
+                    <div class="author">- Lúcia P., Cliente Fiel</div>
+                </div>
+                <div class="testimonial-card">
+                    <p>"Comecei meu negócio Amway com Glister e não me arrependo. O suporte é excelente e os ganhos são reais. Uma oportunidade de ouro!"</p>
+                    <div class="author">- Roberto G., Novo Empreendedor</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabela de Preços Section -->
+    <section id="precos">
+        <div class="container">
+            <h2>Escolha a Melhor Opção Para Você</h2>
+            <p>Adquira seu Glister ou comece seu negócio Amway hoje mesmo!</p>
+            <div class="table-wrapper">
+                <table class="border-ds-border-tertiary min-w-full border-collapse overflow-hidden rounded-lg border">
+                    <thead class="border-ds-border-tertiary bg-ds-bg-table-header border-b-2">
+                        <tr>
+                            <th class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-left text-sm font-semibold last:border-r-0">Opção</th>
+                            <th class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-left text-sm font-semibold last:border-r-0">Descrição</th>
+                            <th class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-left text-sm font-semibold last:border-r-0">Preço/Benefício</th>
+                            <th class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-left text-sm font-semibold last:border-r-0">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-ds-border-tertiary hover:bg-ds-bg-table-row-hover border-b">
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Compra Única</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Adquira seu Glister agora e experimente a diferença.</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Preço de Varejo</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0"><a href="#" class="button primary">Comprar Agora</a></td>
+                        </tr>
+                        <tr class="border-ds-border-tertiary hover:bg-ds-bg-table-row-hover border-b">
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Cliente Preferencial</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Cadastre-se gratuitamente e compre com desconto exclusivo.</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Desconto Especial</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0"><a href="#cadastro-vendedor" class="button secondary">Cadastrar e Comprar</a></td>
+                        </tr>
+                        <tr class="border-ds-border-tertiary hover:bg-ds-bg-table-row-hover border-b">
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Empreendedor Amway</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Compre com o maior desconto e comece seu próprio negócio.</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0">Lucro e Oportunidade</td>
+                            <td class="border-ds-border-tertiary text-ds-text-chat-secondary border-r px-4 py-3 text-sm last:border-r-0"><a href="#como-vender" class="button primary">Seja um Empreendedor</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq">
+        <div class="container">
+            <h2>Perguntas Frequentes</h2>
+            <div class="faq-list" style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item">
+                    <div class="faq-question">O que torna o Glister diferente de outros cremes dentais?</div>
+                    <div class="faq-answer">
+                        <p>Sua fórmula concentrada e exclusiva com REMINACT™ que ajuda a repor minerais essenciais no esmalte, além de oferecer proteção completa contra cáries, clareamento e hálito fresco duradouro.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Como posso comprar o Glister Creme Dental?</div>
+                    <div class="faq-answer">
+                        <p>Você pode comprar diretamente nesta página, através de um Empreendedor Amway ou cadastrando-se como Cliente Preferencial para obter descontos.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Quais são os benefícios de me tornar um Empreendedor Amway?</div>
+                    <div class="faq-answer">
+                        <p>Descontos exclusivos em todos os produtos Amway, oportunidade de construir seu próprio negócio, treinamentos, suporte e uma comunidade global de sucesso.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">O Glister é seguro para crianças?</div>
+                    <div class="faq-answer">
+                        <p>Sim, o Glister é seguro para toda a família, incluindo crianças a partir de 2 anos (com supervisão de um adulto e quantidade adequada).</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Quanto tempo dura um tubo de Glister concentrado?</div>
+                    <div class="faq-answer">
+                        <p>Um tubo de 200g pode render até 104 usos, dependendo da quantidade utilizada, o que o torna muito econômico e duradouro.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Recrutamento Final -->
+    <section id="recrutamento-final">
+        <div class="container">
+            <h2 id="cadastro-vendedor">Construa Seu Legado com a Amway!</h2>
+            <p>Mais do que um produto, Glister é a porta de entrada para um mundo de possibilidades. Torne-se um Empreendedor Amway e descubra como transformar sua vida e a de outras pessoas, oferecendo produtos de qualidade e uma oportunidade de negócio sustentável.</p>
+            <a href="#como-vender" class="button secondary">Quero Construir Meu Negócio Amway</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h4>Sobre a Amway</h4>
+                <ul>
+                    <li><a href="#">Nossa História</a></li>
+                    <li><a href="#">Nossos Valores</a></li>
+                    <li><a href="#">Sustentabilidade</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Ajuda e Suporte</h4>
+                <ul>
+                    <li><a href="#">Fale Conosco</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Política de Devolução</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Conecte-se</h4>
+                <div class="social-icons">
+                    <a href="https://facebook.com/amway" target="_blank">Facebook</a> |
+                    <a href="https://instagram.com/amway" target="_blank">Instagram</a> |
+                    <a href="https://youtube.com/amway" target="_blank">YouTube</a>
+                </div>
+                <p style="margin-top: 15px;">Email: contato@amwayglister.com.br</p>
+                <p>Telefone: (XX) XXXX-XXXX</p>
+            </div>
+        </div>
+        <div class="copyright">
+        </div>
+    </footer>
+
+    <script>
+        // Script para funcionalidade do FAQ
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqQuestions = document.querySelectorAll('.faq-question');
+
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    question.classList.toggle('active');
+                    answer.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
