@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- INJEÇÃO DAS VARIÁVEIS DA VERCEL (FUNCIONA NO DEPLOY) -->
     <script>
-    window.env = {
-        SUPABASE_URL: "${SUPABASE_URL}",
-        SUPABASE_ANON_KEY: "${SUPABASE_ANON_KEY}",
-        TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN}",
-        TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID}",
-        WHATSAPP_NUMBER: "${WHATSAPP_NUMBER}"
-    };
-</script>
+        window.env = {
+            SUPABASE_URL: "${SUPABASE_URL}",
+            SUPABASE_ANON_KEY: "${SUPABASE_ANON_KEY}",
+            TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN}",
+            TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID}",
+            WHATSAPP_NUMBER: "${WHATSAPP_NUMBER}"
+        };
+    </script>
+
     <title>Landing Page</title>
 
+    <!-- (Opcional) CSS interno — pode remover depois -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,6 +68,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- CONTEÚDO ORIGINAL DA SUA LANDING PAGE -->
@@ -122,27 +127,30 @@
 
             if (error) {
                 status.textContent = "Erro ao salvar no Supabase.";
+                console.error(error);
                 return;
             }
 
             // Enviar mensagem para Telegram
-            const telegramMessage = `Novo Lead:%0A%0A`
-                + `Nome: ${name}%0A`
-                + `Email: ${email}%0A`
-                + `Telefone: ${phone}%0A`
-                + `Mensagem: ${message}`;
+            const telegramMessage =
+                `Novo Lead:%0A%0A` +
+                `Nome: ${name}%0A` +
+                `Email: ${email}%0A` +
+                `Telefone: ${phone}%0A` +
+                `Mensagem: ${message}`;
 
             fetch(
                 `https://api.telegram.org/bot${window.env.TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${window.env.TELEGRAM_CHAT_ID}&text=${telegramMessage}`
             );
 
-            // Enviar WhatsApp para você
-            const whatsappNumber = window.env.WHATSAPP_NUMBER; // formato: 5511999999999
-            const whatsappText = `Novo Lead:%0A%0A`
-                + `Nome: ${name}%0A`
-                + `Email: ${email}%0A`
-                + `Telefone: ${phone}%0A`
-                + `Mensagem: ${message}`;
+            // Enviar para WhatsApp
+            const whatsappNumber = window.env.WHATSAPP_NUMBER;
+            const whatsappText =
+                `Novo Lead:%0A%0A` +
+                `Nome: ${name}%0A` +
+                `Email: ${email}%0A` +
+                `Telefone: ${phone}%0A` +
+                `Mensagem: ${message}`;
 
             window.open(`https://wa.me/${whatsappNumber}?text=${whatsappText}`, "_blank");
 
