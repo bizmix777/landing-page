@@ -1,4 +1,5 @@
 [build]
+<<<<<<< HEAD
 command = "npm run build"
 publish = "dist"
 
@@ -40,3 +41,13 @@ publish = "dist"
   to = "/lp/contratos"
   status = 301
   force = true
+=======
+  command = "npm run build"
+  publish = "dist"
+  [build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+>>>>>>> 51ff173 (feat: redirects diretos para LPs e .nvmrc)
