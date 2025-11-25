@@ -1,3 +1,42 @@
 [build]
 command = "npm run build"
 publish = "dist"
+
+# ================================
+# Redirects: rotas curtas → /lp/*
+# ================================
+[[redirects]]
+  from = "/nutricao"
+  to = "/lp/nutricao"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/beleza"
+  to = "/lp/beleza"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cuidados_pessoais"
+  to = "/lp/cuidados_pessoais"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/casa"
+  to = "/lp/casa"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/empresarial"
+  to = "/lp/empresarial"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contratos"
+  to = "/lp/contratos"
+  status = 301
+  force = true
