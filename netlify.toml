@@ -1,54 +1,24 @@
+# =========================
+# Build & Publish (Astro)
+# =========================
 [build]
-<<<<<<< HEAD
-command = "npm run build"
-publish = "dist"
-
-# ================================
-# Redirects: rotas curtas → /lp/*
-# ================================
-[[redirects]]
-  from = "/nutricao"
-  to = "/lp/nutricao"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/beleza"
-  to = "/lp/beleza"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/cuidados_pessoais"
-  to = "/lp/cuidados_pessoais"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/casa"
-  to = "/lp/casa"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/empresarial"
-  to = "/lp/empresarial"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "/contratos"
-  to = "/lp/contratos"
-  status = 301
-  force = true
-=======
-  command = "npm run build"
-  publish = "dist"
-  [build]
   command = "npm run build"
   publish = "dist"
 
-  # ============================================
+# Opcional: Node no build (ou defina em Site settings → Environment)
+[build.environment]
+  NODE_VERSION = "20"
+
+# ===========================================
+# Canonical: forçar www no domínio principal
+# ===========================================
+[[redirects]]
+  from = "https://bizmix.com.br/*"
+  to = "https://www.bizmix.com.br/:splat"
+  status = 301
+  force = true
+
+# ============================================
 # Aliases curtos → LPs (com UTMs padronizadas)
 # ============================================
 
@@ -94,20 +64,27 @@ publish = "dist"
   status = 301
   force = true
 
-# Alias curto específico para a página Glister
+# ============================================
+# Alias curto específico: Glister
+# ============================================
 [[redirects]]
   from = "/cuidados_pessoais/glister"
   to = "/lp/cuidados_pessoais/glister?utm_source=alias-cuidados_pessoais&utm_medium=redirect&utm_campaign=topo_funil&utm_content=glister"
   status = 301
   force = true
 
-# Variante com hífen
 [[redirects]]
   from = "/cuidados-pessoais/glister"
   to = "/lp/cuidados_pessoais/glister?utm_source=alias-cuidados-pessoais&utm_medium=redirect&utm_campaign=topo_funil&utm_content=glister"
   status = 301
   force = true
 
-[build.environment]
-  NODE_VERSION = "20"
->>>>>>> 51ff173 (feat: redirects diretos para LPs e .nvmrc)
+# =======================================================
+# [Opcional] Wildcard para terceiros — DEIXAR POR ÚLTIMO
+# - Só use se realmente precisar. Não utilize "force = true",
+#   para não atropelar páginas locais como /lp/.../glister
+# =======================================================
+# [[redirects]]
+#   from = "/lp/cuidados_pessoais/*"
+#   to = "https://www.amway.com.br/cuidados-pessoais/:splat?utm_source=lp-cuidados-pessoais&utm_medium=redirect&utm_campaign=produtos&utm_content=:splat"
+#   status = 302
