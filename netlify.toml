@@ -48,6 +48,66 @@ publish = "dist"
   command = "npm run build"
   publish = "dist"
 
+  # ============================================
+# Aliases curtos → LPs (com UTMs padronizadas)
+# ============================================
+
+[[redirects]]
+  from = "/nutricao"
+  to = "/lp/nutricao?utm_source=alias-nutricao&utm_medium=redirect&utm_campaign=topo_funil&utm_content=entry"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/beleza"
+  to = "/lp/beleza?utm_source=alias-beleza&utm_medium=redirect&utm_campaign=topo_funil&utm_content=entry"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cuidados_pessoais"
+  to = "/lp/cuidados_pessoais?utm_source=alias-cuidados_pessoais&utm_medium=redirect&utm_campaign=topo_funil&utm_content=entry"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cuidados-pessoais"
+  to = "/lp/cuidados_pessoais?utm_source=alias-cuidados-pessoais&utm_medium=redirect&utm_campaign=topo_funil&utm_content=entry"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/casa"
+  to = "/lp/casa?utm_source=alias-casa&utm_medium=redirect&utm_campaign=topo_funil&utm_content=entry"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/empresarial"
+  to = "/lp/empresarial?utm_source=alias-empresarial&utm_medium=redirect&utm_campaign=topo_funil&utm_content=entry"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contratos"
+  to = "/lp/contratos?utm_source=alias-contratos&utm_medium=redirect&utm_campaign=topo_funil&utm_content=entry"
+  status = 301
+  force = true
+
+# Alias curto específico para a página Glister
+[[redirects]]
+  from = "/cuidados_pessoais/glister"
+  to = "/lp/cuidados_pessoais/glister?utm_source=alias-cuidados_pessoais&utm_medium=redirect&utm_campaign=topo_funil&utm_content=glister"
+  status = 301
+  force = true
+
+# Variante com hífen
+[[redirects]]
+  from = "/cuidados-pessoais/glister"
+  to = "/lp/cuidados_pessoais/glister?utm_source=alias-cuidados-pessoais&utm_medium=redirect&utm_campaign=topo_funil&utm_content=glister"
+  status = 301
+  force = true
+
 [build.environment]
   NODE_VERSION = "20"
 >>>>>>> 51ff173 (feat: redirects diretos para LPs e .nvmrc)
