@@ -1,11 +1,10 @@
-
 {
   "name": "landing-astro",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "start": "astro preview"
+    "preview": "astro preview"
   },
   "dependencies": {
     "astro": "^4.8.0",
