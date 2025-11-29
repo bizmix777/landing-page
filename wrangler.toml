@@ -1,20 +1,5 @@
 name = "bizmix"
-type = "javascript"
-account_id = ""
-workers_dev = true
-route = ""
-zone_id = ""
+compatibility_date = "2025-11-29"
 
-[env.production]
-name = "bizmix-production"
-route = "bizmix.com.br/*"
-zone_id = ""
-
-[build]
-command = "npm run build"
-cwd = "./"
-main = "./.astro"
-
-[env.production.build]
-command = "npm run build"
-cwd = "./"
+[assets]
+directory = "./dist"
