@@ -9,8 +9,10 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
+        
+        /* Imagem de Fundo */
         .hero-bg {
-            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
         }
@@ -18,44 +20,53 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md fixed w-full z-50">
+    <!-- Navbar (Agora Transparente e sobre a imagem) -->
+    <nav class="absolute w-full z-50 top-0">
         <div class="max-w-6xl mx-auto px-4">
-            <div class="flex justify-between items-center py-4">
-                <div class="text-2xl font-bold text-slate-900">Biz<span class="text-blue-700">Mix</span></div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#servicos" class="text-slate-600 hover:text-blue-700 transition">Serviços</a>
-                    <a href="#sobre" class="text-slate-600 hover:text-blue-700 transition">Sobre</a>
-                    <a href="#contato" class="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition">Fale Comigo</a>
+            <div class="flex justify-between items-center py-6">
+                
+                <!-- SEU LOGO AQUI -->
+                <!-- Se a imagem não carregar, ele mostra o texto BizMix -->
+                <div class="flex items-center">
+                    <img src="logo.png" alt="BizMix Logo" class="h-12 md:h-16 object-contain">
+                </div>
+
+                <!-- Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#servicos" class="text-slate-200 hover:text-white font-medium transition text-lg">Serviços</a>
+                    <a href="#sobre" class="text-slate-200 hover:text-white font-medium transition text-lg">Sobre</a>
+                    <a href="#contato" class="px-6 py-2 border border-white text-white rounded-full hover:bg-white hover:text-blue-900 transition font-semibold">
+                        Fale Comigo
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- Hero Section (Capa) -->
     <header class="hero-bg h-screen flex items-center justify-center text-center px-4">
-        <div class="max-w-4xl">
-            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">
+        <div class="max-w-4xl mt-16"> <!-- mt-16 para dar espaço ao menu -->
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
                 Justiça, Negócios e <span class="text-blue-400">Sabedoria</span>
             </h1>
-            <p class="text-xl text-slate-200 mb-8 font-light">
+            <p class="text-xl text-slate-200 mb-10 font-light leading-relaxed">
                 Conectando pessoas e empresas através da advocacia estratégica e intermediação de negócios. Experiência de quem inova desde 1990.
             </p>
-            <a href="#servicos" class="inline-block bg-white text-blue-900 font-semibold px-8 py-3 rounded-lg hover:bg-slate-100 transition shadow-lg">
+            <a href="#servicos" class="inline-block bg-blue-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-blue-700 transition shadow-lg text-lg">
                 Conheça Minhas Soluções
             </a>
         </div>
     </header>
 
     <!-- Serviços -->
-    <section id="servicos" class="py-20 bg-white">
+    <section id="servicos" class="py-24 bg-white">
         <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">Áreas de Atuação</h2>
+            <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">Como Posso Ajudar</h2>
             
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Card 1 -->
-                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white">
-                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 mb-6">
+                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
+                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
                         <i class="fas fa-balance-scale text-2xl"></i>
                     </div>
                     <h3 class="text-xl font-bold mb-3">Advocacia</h3>
@@ -65,22 +76,22 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white">
-                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 mb-6">
+                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
+                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
                         <i class="fas fa-handshake text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Intermediação de Negócios</h3>
+                    <h3 class="text-xl font-bold mb-3">Negócios</h3>
                     <p class="text-slate-600">
-                        Compra e venda de empresas e ativos. Conecto oportunidades a investidores com a visão de quem empreende há décadas.
+                        Intermediação de compra e venda de empresas. Conecto oportunidades a investidores com a visão de quem empreende há décadas.
                     </p>
                 </div>
 
                 <!-- Card 3 -->
-                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white">
-                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 mb-6">
+                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
+                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
                         <i class="fas fa-building text-2xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3">Corretagem de Imóveis</h3>
+                    <h3 class="text-xl font-bold mb-3">Imóveis</h3>
                     <p class="text-slate-600">
                         Assessoria completa na compra e venda de imóveis. Análise técnica e comercial para garantir o melhor investimento.
                     </p>
@@ -90,34 +101,36 @@
     </section>
 
     <!-- Sobre Mim -->
-    <section id="sobre" class="py-20 bg-slate-50">
+    <section id="sobre" class="py-24 bg-slate-50">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold text-slate-900 mb-8">Sobre Henrique</h2>
-            <p class="text-lg text-slate-700 leading-relaxed mb-6">
-                Minha trajetória é marcada pela inovação. Fui pioneiro ao fundar a primeira empresa de impressoras a laser da minha cidade em 1990 e o primeiro provedor de internet em 1996.
-            </p>
-            <p class="text-lg text-slate-700 leading-relaxed mb-6">
-                Hoje, uno essa bagagem tecnológica à prática do Direito e dos Negócios. Meu objetivo é fazer com que pessoas e empresas caminhem mais rápido em direção à sabedoria e ao sucesso.
-            </p>
-            <div class="mt-8 flex justify-center space-x-4">
-                <span class="px-4 py-2 bg-slate-200 rounded-full text-sm font-semibold text-slate-700">Inovação</span>
-                <span class="px-4 py-2 bg-slate-200 rounded-full text-sm font-semibold text-slate-700">Direito</span>
-                <span class="px-4 py-2 bg-slate-200 rounded-full text-sm font-semibold text-slate-700">Negócios</span>
+            <h2 class="text-3xl font-bold text-slate-900 mb-8">A Experiência Henrique</h2>
+            <div class="bg-white p-8 rounded-2xl shadow-sm">
+                <p class="text-lg text-slate-700 leading-relaxed mb-6">
+                    Minha trajetória é marcada pela inovação. Fui pioneiro ao fundar a primeira empresa de impressoras a laser da minha cidade em 1990 e o primeiro provedor de internet em 1996.
+                </p>
+                <p class="text-lg text-slate-700 leading-relaxed mb-6">
+                    Hoje, uno essa bagagem tecnológica à prática do Direito e dos Negócios. Meu objetivo é fazer com que pessoas e empresas caminhem mais rápido em direção à sabedoria e ao sucesso.
+                </p>
+                <div class="mt-8 flex flex-wrap justify-center gap-4">
+                    <span class="px-4 py-2 bg-slate-100 rounded-full text-sm font-semibold text-slate-600 border border-slate-200">Inovação desde 1990</span>
+                    <span class="px-4 py-2 bg-slate-100 rounded-full text-sm font-semibold text-slate-600 border border-slate-200">OAB/Advogado</span>
+                    <span class="px-4 py-2 bg-slate-100 rounded-full text-sm font-semibold text-slate-600 border border-slate-200">Corretor de Negócios</span>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer / Contato -->
-    <footer id="contato" class="bg-slate-900 text-white py-12">
+    <footer id="contato" class="bg-slate-900 text-white py-16">
         <div class="max-w-6xl mx-auto px-4 text-center">
-            <h2 class="text-2xl font-bold mb-6">Vamos conversar sobre o seu futuro?</h2>
-            <p class="text-slate-400 mb-8">Estou à disposição para entender seu cenário e propor soluções.</p>
+            <h2 class="text-3xl font-bold mb-6">Vamos conversar sobre o seu futuro?</h2>
+            <p class="text-slate-400 mb-10 text-lg">Estou à disposição para entender seu cenário e propor soluções.</p>
             
-            <a href="https://wa.me/5562992475080" class="inline-flex items-center bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-bold">
-                <i class="fab fa-whatsapp mr-2"></i> Chamar no WhatsApp
+            <a href="https://wa.me/5511999999999" target="_blank" class="inline-flex items-center bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition font-bold text-lg shadow-lg hover:shadow-green-900/50">
+                <i class="fab fa-whatsapp mr-3 text-2xl"></i> Chamar no WhatsApp
             </a>
             
-            <div class="mt-12 pt-8 border-t border-slate-800 text-sm text-slate-500">
+            <div class="mt-16 pt-8 border-t border-slate-800 text-sm text-slate-500">
                 &copy; 2025 BizMix. Todos os direitos reservados.
             </div>
         </div>
