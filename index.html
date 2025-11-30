@@ -20,13 +20,12 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <!-- Navbar (Agora Transparente e sobre a imagem) -->
+    <!-- Navbar (Transparente) -->
     <nav class="absolute w-full z-50 top-0">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex justify-between items-center py-6">
                 
-                <!-- SEU LOGO AQUI -->
-                <!-- Se a imagem não carregar, ele mostra o texto BizMix -->
+                <!-- LOGO (Com filtro para ficar branco) -->
                 <div class="flex items-center">
                     <img src="logo.png" alt="BizMix Logo" class="h-12 md:h-16 object-contain brightness-0 invert">
                 </div>
@@ -45,7 +44,7 @@
 
     <!-- Hero Section (Capa) -->
     <header class="hero-bg h-screen flex items-center justify-center text-center px-4">
-        <div class="max-w-4xl mt-16"> <!-- mt-16 para dar espaço ao menu -->
+        <div class="max-w-4xl mt-16">
             <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
                 Justiça, Negócios e <span class="text-blue-400">Sabedoria</span>
             </h1>
@@ -58,12 +57,13 @@
         </div>
     </header>
 
-    <!-- Serviços -->
+    <!-- Serviços e Parceiros -->
     <section id="servicos" class="py-24 bg-white">
         <div class="max-w-6xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">Como Posso Ajudar</h2>
             
-            <div class="grid md:grid-cols-3 gap-8">
+            <!-- Grid de Serviços -->
+            <div class="grid md:grid-cols-3 gap-8 mb-24">
                 <!-- Card 1 -->
                 <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
                     <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
@@ -97,6 +97,32 @@
                     </p>
                 </div>
             </div>
+
+            <!-- NOVA SEÇÃO: Empresas Parceiras -->
+            <div class="border-t border-slate-100 pt-16">
+                <h3 class="text-2xl font-bold text-center text-slate-800 mb-10">Empresas Parceiras</h3>
+                
+                <!-- Grid de Parceiros (4 colunas) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <!-- Parceiro 1 -->
+                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
+                        Parceiro 1
+                    </div>
+                    <!-- Parceiro 2 -->
+                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
+                        Parceiro 2
+                    </div>
+                    <!-- Parceiro 3 -->
+                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
+                        Parceiro 3
+                    </div>
+                    <!-- Parceiro 4 -->
+                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
+                        Parceiro 4
+                    </div>
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -126,6 +152,7 @@
             <h2 class="text-3xl font-bold mb-6">Vamos conversar sobre o seu futuro?</h2>
             <p class="text-slate-400 mb-10 text-lg">Estou à disposição para entender seu cenário e propor soluções.</p>
             
+            <!-- SEU WHATSAPP AQUI EMBAIXO -->
             <a href="https://wa.me/5562992475080" target="_blank" class="inline-flex items-center bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition font-bold text-lg shadow-lg hover:shadow-green-900/50">
                 <i class="fab fa-whatsapp mr-3 text-2xl"></i> Chamar no WhatsApp
             </a>
