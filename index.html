@@ -25,7 +25,7 @@
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex justify-between items-center py-6">
                 
-                <!-- LOGO (Com filtro para ficar branco) -->
+                <!-- LOGO (Branco) -->
                 <div class="flex items-center">
                     <img src="logo.png" alt="BizMix Logo" class="h-12 md:h-16 object-contain brightness-0 invert">
                 </div>
@@ -57,15 +57,50 @@
         </div>
     </header>
 
-    <!-- Serviços e Parceiros -->
-    <section id="servicos" class="py-24 bg-white">
+    <!-- SEÇÃO DE PARCEIROS (NOVA POSIÇÃO - DESTAQUE) -->
+    <section class="bg-white border-b border-slate-200 py-10">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="text-center text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">Parceiros Estratégicos</p>
+            
+            <!-- Grid de Logos/Nomes -->
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition duration-500">
+                
+                <!-- Parceiro 1 (Exemplo) -->
+                <div class="flex items-center space-x-2 text-xl font-bold text-slate-600">
+                    <i class="fas fa-shield-alt text-blue-600"></i>
+                    <span>Jurídico Premium</span>
+                </div>
+
+                <!-- Parceiro 2 (Exemplo) -->
+                <div class="flex items-center space-x-2 text-xl font-bold text-slate-600">
+                    <i class="fas fa-laptop-code text-blue-600"></i>
+                    <span>Tech Solutions</span>
+                </div>
+
+                <!-- Parceiro 3 (Exemplo) -->
+                <div class="flex items-center space-x-2 text-xl font-bold text-slate-600">
+                    <i class="fas fa-city text-blue-600"></i>
+                    <span>Real Estate Group</span>
+                </div>
+
+                <!-- Parceiro 4 (Exemplo) -->
+                <div class="flex items-center space-x-2 text-xl font-bold text-slate-600">
+                    <i class="fas fa-chart-line text-blue-600"></i>
+                    <span>Invest Corp</span>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Serviços -->
+    <section id="servicos" class="py-24 bg-slate-50">
         <div class="max-w-6xl mx-auto px-4">
             <h2 class="text-3xl font-bold text-center text-slate-900 mb-16">Como Posso Ajudar</h2>
             
-            <!-- Grid de Serviços -->
-            <div class="grid md:grid-cols-3 gap-8 mb-24">
+            <div class="grid md:grid-cols-3 gap-8">
                 <!-- Card 1 -->
-                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
+                <div class="p-8 border border-slate-200 rounded-2xl shadow-sm hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
                     <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
                         <i class="fas fa-balance-scale text-2xl"></i>
                     </div>
@@ -76,7 +111,7 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
+                <div class="p-8 border border-slate-200 rounded-2xl shadow-sm hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
                     <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
                         <i class="fas fa-handshake text-2xl"></i>
                     </div>
@@ -87,7 +122,7 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="p-8 border border-slate-100 rounded-2xl shadow-lg hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
+                <div class="p-8 border border-slate-200 rounded-2xl shadow-sm hover:shadow-xl transition bg-white group hover:-translate-y-1 duration-300">
                     <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center text-blue-700 mb-6 group-hover:bg-blue-600 group-hover:text-white transition">
                         <i class="fas fa-building text-2xl"></i>
                     </div>
@@ -97,40 +132,14 @@
                     </p>
                 </div>
             </div>
-
-            <!-- NOVA SEÇÃO: Empresas Parceiras -->
-            <div class="border-t border-slate-100 pt-16">
-                <h3 class="text-2xl font-bold text-center text-slate-800 mb-10">Empresas Parceiras</h3>
-                
-                <!-- Grid de Parceiros (4 colunas) -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <!-- Parceiro 1 -->
-                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
-                        Parceiro 1
-                    </div>
-                    <!-- Parceiro 2 -->
-                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
-                        Parceiro 2
-                    </div>
-                    <!-- Parceiro 3 -->
-                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
-                        Parceiro 3
-                    </div>
-                    <!-- Parceiro 4 -->
-                    <div class="h-24 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-lg hover:bg-white hover:shadow-md transition cursor-default">
-                        Parceiro 4
-                    </div>
-                </div>
-            </div>
-
         </div>
     </section>
 
     <!-- Sobre Mim -->
-    <section id="sobre" class="py-24 bg-slate-50">
+    <section id="sobre" class="py-24 bg-white">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="text-3xl font-bold text-slate-900 mb-8">A Experiência Henrique</h2>
-            <div class="bg-white p-8 rounded-2xl shadow-sm">
+            <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100">
                 <p class="text-lg text-slate-700 leading-relaxed mb-6">
                     Minha trajetória é marcada pela inovação. Fui pioneiro ao fundar a primeira empresa de impressoras a laser da minha cidade em 1990 e o primeiro provedor de internet em 1996.
                 </p>
@@ -138,9 +147,9 @@
                     Hoje, uno essa bagagem tecnológica à prática do Direito e dos Negócios. Meu objetivo é fazer com que pessoas e empresas caminhem mais rápido em direção à sabedoria e ao sucesso.
                 </p>
                 <div class="mt-8 flex flex-wrap justify-center gap-4">
-                    <span class="px-4 py-2 bg-slate-100 rounded-full text-sm font-semibold text-slate-600 border border-slate-200">Inovação desde 1990</span>
-                    <span class="px-4 py-2 bg-slate-100 rounded-full text-sm font-semibold text-slate-600 border border-slate-200">OAB/Advogado</span>
-                    <span class="px-4 py-2 bg-slate-100 rounded-full text-sm font-semibold text-slate-600 border border-slate-200">Corretor de Negócios</span>
+                    <span class="px-4 py-2 bg-white rounded-full text-sm font-semibold text-slate-600 border border-slate-200 shadow-sm">Inovação desde 1990</span>
+                    <span class="px-4 py-2 bg-white rounded-full text-sm font-semibold text-slate-600 border border-slate-200 shadow-sm">OAB/Advogado</span>
+                    <span class="px-4 py-2 bg-white rounded-full text-sm font-semibold text-slate-600 border border-slate-200 shadow-sm">Corretor de Negócios</span>
                 </div>
             </div>
         </div>
@@ -152,7 +161,7 @@
             <h2 class="text-3xl font-bold mb-6">Vamos conversar sobre o seu futuro?</h2>
             <p class="text-slate-400 mb-10 text-lg">Estou à disposição para entender seu cenário e propor soluções.</p>
             
-            <!-- SEU WHATSAPP AQUI EMBAIXO -->
+            <!-- WHATSAPP ATUALIZADO -->
             <a href="https://wa.me/5562992475080" target="_blank" class="inline-flex items-center bg-green-600 text-white px-8 py-4 rounded-lg hover:bg-green-700 transition font-bold text-lg shadow-lg hover:shadow-green-900/50">
                 <i class="fab fa-whatsapp mr-3 text-2xl"></i> Chamar no WhatsApp
             </a>
