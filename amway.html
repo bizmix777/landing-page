@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMWAY - Produtos Essenciais | Henrique</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .hero-amway {
+            background: linear-gradient(135deg, #1A7AC8 0%, #E5324B 100%);
+        }
+        
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(26, 122, 200, 0.3);
+        }
+        
+        .price-tag {
+            background: linear-gradient(135deg, #1A7AC8 0%, #E5324B 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center py-4">
+            <a href="index.html" class="flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-bold">
+                <i class="fas fa-arrow-left"></i>
+                <span>Voltar</span>
+            </a>
+            <div class="text-center flex-1">
+                <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-red-600">AMWAY</h1>
+            </div>
+            <div class="w-12"></div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-amway text-white py-16 px-4">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6">
+                Sou Consumidor e Parceiro de 3 Modelos de Negócio
+            </h1>
+            <p class="text-xl md:text-2xl font-light mb-8 leading-relaxed">
+                Conheça os produtos que transformaram minha vida e descobrir como você pode fazer o mesmo. Não é sobre vender — é sobre compartilhar qualidade e criar oportunidades.
+            </p>
+            <div class="inline-block bg-white text-blue-600 px-6 py-3 rounded-full font-bold text-lg">
+                ⭐ Produtos Premium Amway
+            </div>
+        </div>
+    </section>
+
+    <!-- Introdução -->
+    <section class="py-12 bg-white">
+        <div class="max-w-6xl mx-auto px-4">
+            <div class="bg-gradient-to-r from-blue-50 to-red-50 p-8 rounded-2xl border-l-4 border-blue-600">
+                <h2 class="text-2xl font-bold mb-4">Por Que Esses Produtos?</h2>
+                <p class="text-lg text-slate-700 leading-relaxed mb-4">
+                    Há décadas, a Amway se dedica a criar produtos de <strong>qualidade premium</strong> que realmente funcionam. Cada produto foi escolhido porque <strong>mudou a minha vida e a de milhares de pessoas</strong>.
+                </p>
+                <p class="text-lg text-slate-700 leading-relaxed">
+                    Quando você usa produtos que você acredita, naturalmente você começa a compartilhar. Isso não é venda forçada — é <strong>paixão transformada em oportunidade</strong>.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIA 1: CUIDADOS PESSOAIS -->
+    <section class="py-16 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-center mb-4">
+                    <i class="fas fa-shower text-blue-600 mr-3"></i>Cuidados Pessoais
+                </h2>
+                <p class="text-center text-slate-600 text-lg">Higiene e bem-estar que transformam seu dia</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-6">
+                
+                <!-- Produto 1: Shampoo SA8 -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-blue-100 to-blue-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-bottle text-6xl text-blue-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=SA8+Shampoo" alt="SA8 Shampoo" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">COD: 118814</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">SA8 Shampoo Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Fórmula concentrada com proteínas, remove até 99% das impurezas sem danificar.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Cabelos brilhantes, macios e saudáveis desde o primeiro dia. Sinta a qualidade premium.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 89,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 2: Sabonete Artistry -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-pink-100 to-pink-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-soap text-6xl text-pink-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Artistry+Soap" alt="Artistry Soap" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-pink-600 bg-pink-50 px-3 py-1 rounded-full">COD: 101001</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Sabonete Artistry</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Fórmula balanceada com óleos naturais, pH neutro, dermatologicamente testado.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Pele macia, hidratada e perfumada. Luxo que você merece todos os dias.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 45,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 3: Desodorante Spin -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-purple-100 to-purple-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-spray-can text-6xl text-purple-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Spin+Deodorant" alt="Spin Deodorant" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">COD: 116914</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Desodorante Spin Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Proteção até 48h com alumínio eficaz e fragrância duradoura.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Confiança o dia todo. Você cuida de si, o desodorante cuida de você.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 55,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 4: Enxaguante Bucal -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-teal-100 to-teal-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-droplet text-6xl text-teal-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Mouthwash" alt="Mouthwash" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">COD: 117614</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Enxaguante Bucal Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Elimina 99,9% das bactérias, flúor avançado, proteção 24h.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Sorriso branco, hálito fresco, confiança em cada conversa.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 52,00
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIA 2: PRODUTOS PARA CASA -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-center mb-4">
+                    <i class="fas fa-home text-red-600 mr-3"></i>Produtos para Casa
+                </h2>
+                <p class="text-center text-slate-600 text-lg">Limpeza e ambiente que refletem seu cuidado</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-6">
+                
+                <!-- Produto 5: Detergente Concentrado -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-wind text-6xl text-yellow-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Detergent" alt="Detergent" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">COD: 105601</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Detergente Concentrado LOC</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> 1 litro rende 64 litros, biodegradável, remove gordura em segundos.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Economia + eficiência. Pratos brilhantes, bolso feliz, planeta grato.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 42,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 6: Limpador Multiuso -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-green-100 to-green-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-spray-can text-6xl text-green-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Multiuso" alt="Multiuso" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">COD: 107214</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Limpador Multiuso Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Fórmula concentrada, remove sujeira 10x mais rápido, aroma natural.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Casa impecável em minutos. Limpeza que inspira bem-estar.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 58,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 7: Amaciante de Roupa -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-blue-100 to-blue-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-shirt text-6xl text-blue-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Softener" alt="Softener" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">COD: 108814</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Amaciante Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Fórmula com condicionadores naturais, perfume duradouro 7 dias.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Roupas macias como nuvem. Aroma que perdura e encanta.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 48,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 8: Papel Toalha -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-orange-100 to-orange-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-rectangle text-6xl text-orange-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Paper+Towel" alt="Paper Towel" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">COD: 110114</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Papel Toalha Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> 2x mais resistente, absorve 100% da umidade, resistência úmida.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Qualidade que você sente. Um rolo rende mais, economia garantida.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 35,00
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIA 3: BELEZA -->
+    <section class="py-16 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-center mb-4">
+                    <i class="fas fa-spa text-pink-600 mr-3"></i>Beleza & Skincare
+                </h2>
+                <p class="text-center text-slate-600 text-lg">Cuidado dermatológico que transforma a pele</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-6">
+                
+                <!-- Produto 9: Creme Facial Artistry -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-rose-100 to-rose-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-gem text-6xl text-rose-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Face+Cream" alt="Face Cream" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-full">COD: 101611</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Creme Facial Artistry</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Ácido hialurônico, retinol natural, colágeno marinho, FPS 30.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Pele radiante em 14 dias. Rejuvenescimento que você vê no espelho.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 145,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 10: Sérum Vitamina C -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-droplet text-6xl text-yellow-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Vitamin+C" alt="Vitamin C" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">COD: 102814</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Sérum Vitamina C Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> 15% vitamina C pura, antioxidantes, clareamento de manchas.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Brilho natural restaurado. Pele uniforme e luminosa todos os dias.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 128,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 11: Máscara Facial -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-indigo-100 to-indigo-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-face-smile text-6xl text-indigo-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Mask" alt="Mask" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">COD: 103614</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Máscara Facial Intensiva</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Colágeno + aloe vera, ação profunda 15min, hidratação 48h.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Spa em casa. Pele revitalizada, macia e renovada.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 95,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 12: Protetor Solar -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-amber-100 to-amber-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-sun text-6xl text-amber-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Sunscreen" alt="Sunscreen" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">COD: 104714</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Protetor Solar FPS 50+</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> Bloqueio UVA/UVB 99%, resistente à água 80min, não comedogênico.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Pele protegida, livre de queimaduras. Beleza que dura.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 112,00
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIA 4: NUTRIÇÃO -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-center mb-4">
+                    <i class="fas fa-apple-alt text-green-600 mr-3"></i>Nutrição & Saúde
+                </h2>
+                <p class="text-center text-slate-600 text-lg">Energia que vem de dentro, resultado que se vê</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-6">
+                
+                <!-- Produto 13: XS Energy Drink -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-red-100 to-red-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-bolt text-6xl text-red-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=XS+Energy" alt="XS Energy" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full">COD: 205614</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">XS Energy Drink</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> 80mg cafeína natural, zero açúcar, B-vitaminas, taurina premium.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Energia limpa, sem crashes. Foco total, disposição real.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 72,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 14: Nutrilite Daily -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-green-100 to-green-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-leaf text-6xl text-green-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Nutrilite" alt="Nutrilite" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">COD: 203914</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Nutrilite Daily Vitaminas</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> 13 vitaminas + minerais, origem orgânica certificada, absorção 95%.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Imunidade forte, energia duradoura. Saúde em comprimido.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 135,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 15: Proteína Nutrilite -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-orange-100 to-orange-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-dumbbell text-6xl text-orange-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Protein" alt="Protein" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">COD: 204814</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Proteína Nutrilite Premium</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> 25g proteína por dose, BCAA completo, zero lactose, whey isolado.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Músculos definidos, recuperação acelerada, resultado visível.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 168,00
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 16: Chá Verde Nutrilite -->
+                <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <div class="bg-gradient-to-br from-teal-100 to-teal-50 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-mug-hot text-6xl text-teal-300 opacity-50"></i>
+                        </div>
+                        <img src="https://via.placeholder.com/200x150?text=Green+Tea" alt="Green Tea" class="h-40 object-contain relative z-10">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">COD: 206914</span>
+                        <h3 class="text-xl font-bold mt-4 mb-2">Chá Verde Nutrilite Plus</h3>
+                        <p class="text-sm text-slate-600 mb-4 leading-relaxed">
+                            <strong>Técnico:</strong> EGCG antioxidante, cafeína natural leve, metabolismo acelerado 24h.
+                        </p>
+                        <p class="text-sm text-slate-700 mb-4 leading-relaxed">
+                            <strong>Emocional:</strong> Queima ativa, corpo mais leve. Bem-estar que se sente.
+                        </p>
+                        <div class="price-tag text-white text-center py-3 rounded-lg font-bold text-lg">
+                            R$ 98,00
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CHAMADA FINAL IRRESISTÍVEL -->
+    <section class="py-20 bg-gradient-to-r from-blue-600 to-red-600 text-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                Você Está Pronto Para Transformar Sua Vida?
+            </h2>
+            <p class="text-xl md:text-2xl font-light mb-8 leading-relaxed">
+                Esses produtos não são só para você usar. <strong>São para você compartilhar.</strong> Quando você conhece qualidade, naturalmente as pessoas ao seu redor querem saber como você ficou tão bem.
+            </p>
+            <p class="text-lg md:text-xl font-light mb-12 opacity-90">
+                Não é sobre vender. É sobre compartilhar sucesso e ganhar enquanto ajuda.
+            </p>
+            <div class="inline-block bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-xl hover:bg-gray-100 transition">
+                ⬇️ Veja como você pode começar agora
+            </div>
+        </div>
+    </section>
+
+    <!-- 3 OPÇÕES - SEÇÃO FINAL -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-16">3 Caminhos, 1 Objetivo: Sua Transformação</h2>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                
+                <!-- OPÇÃO 1: COMPRADOR -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-blue-600 hover:shadow-2xl transition">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-6 mx-auto">
+                        <i class="fas fa-shopping-bag text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-6">💙 Apenas Compre</h3>
+                    <p class="text-slate-700 mb-6 leading-relaxed text-center">
+                        <strong>Para quem quer os produtos sem compromissos.</strong>
+                    </p>
+                    <ul class="space-y-3 mb-8 text-slate-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Sem cadastro necessário</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Preço integral</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Compre quando quiser</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Entrega rápida</span>
+                        </li>
+                    </ul>
+                    <a href="http://amway.com.br/pt/lojavirtual/HENRIQUE-LUCIANA" target="_blank" class="block bg-blue-600 text-white text-center py-4 rounded-lg font-bold hover:bg-blue-700 transition text-lg">
+                        Acessar Minha Loja 🛒
+                    </a>
+                </div>
+
+                <!-- OPÇÃO 2: CLIENTE/CONSUMIDOR -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-purple-600 hover:shadow-2xl transition transform md:scale-105">
+                    <div class="inline-block bg-yellow-400 text-yellow-700 px-4 py-2 rounded-full font-bold text-sm mb-4 w-full text-center">
+                        ⭐ MAIS POPULAR
+                    </div>
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 mb-6 mx-auto">
+                        <i class="fas fa-star text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-6">💜 Cliente VIP</h3>
+                    <p class="text-slate-700 mb-6 leading-relaxed text-center">
+                        <strong>Para quem quer economia + qualidade premium.</strong>
+                    </p>
+                    <ul class="space-y-3 mb-8 text-slate-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span><strong>25% de desconto permanente</strong></span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Cadastro único: R$ 33</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Acesso a promoções exclusivas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Comunidade de apoio</span>
+                        </li>
+                    </ul>
+                    <a href="https://www.amway.com.br/pt/register/newcustomer?registerCode=3109505702" target="_blank" class="block bg-purple-600 text-white text-center py-4 rounded-lg font-bold hover:bg-purple-700 transition text-lg">
+                        Virar Cliente VIP 💜
+                    </a>
+                    <p class="text-xs text-slate-500 text-center mt-4">
+                        Economia desde o 1º compre
+                    </p>
+                </div>
+
+                <!-- OPÇÃO 3: EMPRESÁRIO/CORRETOR -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg border-t-4 border-red-600 hover:shadow-2xl transition">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-red-600 mb-6 mx-auto">
+                        <i class="fas fa-rocket text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-center mb-6">❤️ Empresário/Corretor</h3>
+                    <p class="text-slate-700 mb-6 leading-relaxed text-center">
+                        <strong>Para quem quer transformar em renda e impacto.</strong>
+                    </p>
+                    <ul class="space-y-3 mb-8 text-slate-600">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span><strong>50% de desconto</strong></span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>4 produtos lançados (sem escolher)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Ganhe comissões reais</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Suporte e treinamento exclusivo</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-600 mr-3 mt-1"></i>
+                            <span>Comunidade de alta performance</span>
+                        </li>
+                    </ul>
+                    <a href="https://www.amway.com.br/pt/register/abosteptwo?registerCode=3109505702" target="_blank" class="block bg-red-600 text-white text-center py-4 rounded-lg font-bold hover:bg-red-700 transition text-lg">
+                        Começar Meu Negócio 🚀
+                    </a>
+                    <p class="text-xs text-slate-500 text-center mt-4">
+                        Transforme paixão em renda
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- MENSAGEM FINAL -->
+            <div class="mt-16 bg-gradient-to-r from-blue-50 to-red-50 p-8 rounded-2xl border border-blue-200 text-center">
+                <h3 class="text-2xl font-bold mb-4">Qual é o Seu Próximo Passo?</h3>
+                <p class="text-slate-700 text-lg leading-relaxed mb-6">
+                    Não importa qual você escolher. O que importa é que você <strong>acreditará no produto</strong> desde o primeiro dia. Porque qualidade fala sozinha.
+                </p>
+                <p class="text-slate-600 font-semibold">
+                    👉 Clique em uma das 3 opções acima e comece AGORA.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-8">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-slate-400 mb-4">Henrique - Consumidor & Parceiro Amway</p>
+            <p class="text-xs text-slate-500">© 2025 BizMix. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
