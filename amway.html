@@ -27,10 +27,33 @@
             background: linear-gradient(135deg, #1A7AC8 0%, #E5324B 100%);
         }
 
-        /* ESPECIFICAÇÃO DE TAMANHOS DE IMAGEM */
-        /* Altura da área de imagem dos produtos: 192px (h-48) */
-        /* Altura da imagem do produto dentro da área: 160px (h-40) */
-        /* Estas medidas definem quanto espaço a foto ocupa no card */
+        /* FAQ ACCORDION */
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-content {
+            max-height: 500px;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+
+        /* FORM LEADS */
+        .form-input {
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            box-shadow: 0 0 0 3px rgba(26, 122, 200, 0.1);
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -43,8 +66,6 @@
                 <span>Voltar</span>
             </a>
             <div class="text-center flex-1">
-                <!-- LOGO AMWAY: Tamanho recomendado 200x80px (largura x altura) -->
-                <!-- Para mudar: edite a tag img abaixo com seu próprio logo -->
                 <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-red-600">AMWAY</h1>
             </div>
             <div class="w-12"></div>
@@ -95,17 +116,8 @@
                 
                 <!-- Produto 1: Shampoo SA8 -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
-                    <!-- ÁREA DE IMAGEM DO PRODUTO -->
-                    <!-- Tamanho externo: altura 192px (h-48) -->
-                    <!-- Tamanho da imagem: altura 160px (h-40), largura automática -->
-                    <!-- Para mudar o tamanho: altere h-48 (área) e h-40 (imagem) -->
-                    <!-- Exemplo: h-64 para 256px, h-56 para 224px, h-48 para 192px -->
                     <div class="bg-gradient-to-br from-blue-100 to-blue-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-bottle text-6xl text-blue-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=SA8+Shampoo" alt="SA8 Shampoo" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/en-us/default-source/product-images/sa8-all-fabric-bleach-new.png" alt="SA8 Shampoo" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">COD: 118814</span>
@@ -125,11 +137,7 @@
                 <!-- Produto 2: Sabonete Artistry -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-pink-100 to-pink-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-soap text-6xl text-pink-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Artistry+Soap" alt="Artistry Soap" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/artistry-cleanser.png" alt="Artistry Soap" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-pink-600 bg-pink-50 px-3 py-1 rounded-full">COD: 101001</span>
@@ -149,11 +157,7 @@
                 <!-- Produto 3: Desodorante Spin -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-purple-100 to-purple-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-spray-can text-6xl text-purple-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Spin+Deodorant" alt="Spin Deodorant" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/spin-deodorant.png" alt="Spin Deodorant" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">COD: 116914</span>
@@ -173,11 +177,7 @@
                 <!-- Produto 4: Enxaguante Bucal -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-teal-100 to-teal-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-droplet text-6xl text-teal-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Mouthwash" alt="Mouthwash" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/oral-care-range.png" alt="Mouthwash" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">COD: 117614</span>
@@ -212,13 +212,8 @@
                 
                 <!-- Produto 5: Detergente Concentrado -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
-                    <!-- TAMANHO PADRÃO: h-48 (192px altura), h-40 (160px imagem) -->
                     <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-wind text-6xl text-yellow-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Detergent" alt="Detergent" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/loc-laundry-detergent.png" alt="Detergent" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">COD: 105601</span>
@@ -238,11 +233,7 @@
                 <!-- Produto 6: Limpador Multiuso -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-green-100 to-green-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-spray-can text-6xl text-green-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Multiuso" alt="Multiuso" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/home-care-bathroom-cleaner.png" alt="Multiuso" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">COD: 107214</span>
@@ -262,11 +253,7 @@
                 <!-- Produto 7: Amaciante de Roupa -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-blue-100 to-blue-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-shirt text-6xl text-blue-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Softener" alt="Softener" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/home-care-fabric-care.png" alt="Softener" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">COD: 108814</span>
@@ -286,11 +273,7 @@
                 <!-- Produto 8: Papel Toalha -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-orange-100 to-orange-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-rectangle text-6xl text-orange-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Paper+Towel" alt="Paper Towel" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/artistry-skincare.png" alt="Paper Towel" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">COD: 110114</span>
@@ -326,11 +309,7 @@
                 <!-- Produto 9: Creme Facial Artistry -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-rose-100 to-rose-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-gem text-6xl text-rose-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Face+Cream" alt="Face Cream" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/artistry-moisturizer.png" alt="Face Cream" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-full">COD: 101611</span>
@@ -350,11 +329,7 @@
                 <!-- Produto 10: Sérum Vitamina C -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-droplet text-6xl text-yellow-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Vitamin+C" alt="Vitamin C" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/artistry-serum.png" alt="Vitamin C" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">COD: 102814</span>
@@ -374,11 +349,7 @@
                 <!-- Produto 11: Máscara Facial -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-indigo-100 to-indigo-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-face-smile text-6xl text-indigo-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Mask" alt="Mask" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/artistry-mask.png" alt="Mask" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">COD: 103614</span>
@@ -398,11 +369,7 @@
                 <!-- Produto 12: Protetor Solar -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-amber-100 to-amber-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-sun text-6xl text-amber-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Sunscreen" alt="Sunscreen" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/artistry-sunscreen.png" alt="Sunscreen" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-amber-600 bg-amber-50 px-3 py-1 rounded-full">COD: 104714</span>
@@ -438,11 +405,7 @@
                 <!-- Produto 13: XS Energy Drink -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-red-100 to-red-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-bolt text-6xl text-red-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=XS+Energy" alt="XS Energy" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/xs-energy-drink.png" alt="XS Energy" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full">COD: 205614</span>
@@ -462,11 +425,7 @@
                 <!-- Produto 14: Nutrilite Daily -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-green-100 to-green-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-leaf text-6xl text-green-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Nutrilite" alt="Nutrilite" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/nutrilite-vitamins.png" alt="Nutrilite" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">COD: 203914</span>
@@ -486,11 +445,7 @@
                 <!-- Produto 15: Proteína Nutrilite -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-orange-100 to-orange-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-dumbbell text-6xl text-orange-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Protein" alt="Protein" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/nutrilite-protein.png" alt="Protein" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">COD: 204814</span>
@@ -510,11 +465,7 @@
                 <!-- Produto 16: Chá Verde Nutrilite -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
                     <div class="bg-gradient-to-br from-teal-100 to-teal-50 h-48 flex items-center justify-center relative overflow-hidden">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <i class="fas fa-mug-hot text-6xl text-teal-300 opacity-50"></i>
-                        </div>
-                        <!-- IMAGEM DO PRODUTO: 200x150px -->
-                        <img src="https://via.placeholder.com/200x150?text=Green+Tea" alt="Green Tea" class="h-40 object-contain relative z-10">
+                        <img src="https://www.amway.com.br/pt/_/media/project/oneweb/amway/pt-br/default-source/product-images/nutrilite-tea.png" alt="Green Tea" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
                         <span class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">COD: 206914</span>
@@ -535,6 +486,150 @@
         </div>
     </section>
 
+    <!-- SEÇÃO DE LEADS - CAPTURE EMAIL/WHATSAPP -->
+    <section class="py-20 bg-gradient-to-r from-blue-600 to-red-600 text-white">
+        <div class="max-w-2xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-6">
+                Quer Conhecer Mais Sobre Essas Oportunidades?
+            </h2>
+            <p class="text-xl text-center mb-12 font-light opacity-90">
+                Deixe seu contato e vou te enviar um guia completo + dicas exclusivas!
+            </p>
+
+            <form id="leadsForm" class="bg-white rounded-2xl p-8 shadow-2xl">
+                <div class="mb-6">
+                    <label class="block text-slate-700 font-bold mb-2">📝 Seu Nome</label>
+                    <input type="text" name="name" required class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-blue-600 focus:outline-none" placeholder="Seu nome completo">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-slate-700 font-bold mb-2">📧 Seu Email</label>
+                    <input type="email" name="email" required class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-blue-600 focus:outline-none" placeholder="seu@email.com">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-slate-700 font-bold mb-2">📱 WhatsApp (com DDI)</label>
+                    <input type="tel" name="phone" required class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-blue-600 focus:outline-none" placeholder="+55 62 99247-5080">
+                </div>
+
+                <div class="mb-8">
+                    <label class="block text-slate-700 font-bold mb-2">🎯 O que você mais se interessa?</label>
+                    <select name="interest" required class="form-input w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-blue-600 focus:outline-none">
+                        <option value="">Selecione uma opção...</option>
+                        <option value="comprar">Apenas comprar (sem cadastro)</option>
+                        <option value="cliente">Virar Cliente VIP (25% desconto)</option>
+                        <option value="empresario">Ser Empresário/Corretor (50% desconto)</option>
+                        <option value="duvidas">Tirar dúvidas primeiro</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-red-600 text-white font-bold py-4 rounded-lg hover:shadow-lg transition text-lg">
+                    ✉️ Enviar Meus Dados
+                </button>
+
+                <p class="text-xs text-slate-500 text-center mt-4">
+                    Seus dados são seguros e nunca serão compartilhados. Você receberá um guia exclusivo em seu email e WhatsApp!
+                </p>
+            </form>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="py-20 bg-slate-50">
+        <div class="max-w-4xl mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-16">
+                <i class="fas fa-question-circle text-blue-600 mr-3"></i>Perguntas Frequentes
+            </h2>
+
+            <div class="space-y-4">
+                
+                <!-- FAQ 1 -->
+                <div class="faq-item bg-white rounded-xl overflow-hidden shadow-md border border-slate-100">
+                    <button class="faq-button w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleFAQ(this)">
+                        <span class="font-bold text-lg text-slate-800">💙 Qual é a diferença entre os 3 modelos?</span>
+                        <i class="fas fa-chevron-down faq-icon text-blue-600 transition"></i>
+                    </button>
+                    <div class="faq-content px-8 pb-6 text-slate-700 leading-relaxed">
+                        <p class="mb-4"><strong>Comprador (sem cadastro):</strong> Você compra diretamente na minha loja virtual, sem compromissos. Preço integral, entrega rápida.</p>
+                        <p class="mb-4"><strong>Cliente VIP (25% desconto):</strong> Faz um cadastro único de R$ 33 e ganha 25% de desconto permanente em todos os produtos. Ideal se quer economizar comprando regularmente.</p>
+                        <p><strong>Empresário/Corretor (50% desconto):</strong> Cadastro + 4 produtos lançados (sem escolher) e você ganha 50% de desconto + comissão por venda. Para quem quer transformar em renda.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="faq-item bg-white rounded-xl overflow-hidden shadow-md border border-slate-100">
+                    <button class="faq-button w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleFAQ(this)">
+                        <span class="font-bold text-lg text-slate-800">💜 Preciso de experiência para ser empresário?</span>
+                        <i class="fas fa-chevron-down faq-icon text-blue-600 transition"></i>
+                    </button>
+                    <div class="faq-content px-8 pb-6 text-slate-700 leading-relaxed">
+                        <p class="mb-4">Não! A Amway treina tudo. O importante é que você acredite nos produtos e queira compartilhar com amigos e família.</p>
+                        <p>Muitas pessoas começaram do zero e hoje ganham bem. O primeiro passo é conhecer os produtos. Depois, você decide se quer expandir.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="faq-item bg-white rounded-xl overflow-hidden shadow-md border border-slate-100">
+                    <button class="faq-button w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleFAQ(this)">
+                        <span class="font-bold text-lg text-slate-800">❤️ Qual é a comissão que ganho?</span>
+                        <i class="fas fa-chevron-down faq-icon text-blue-600 transition"></i>
+                    </button>
+                    <div class="faq-content px-8 pb-6 text-slate-700 leading-relaxed">
+                        <p class="mb-4">As comissões variam de 3% a 25%+ conforme você vende mais. Quanto mais você vende, maior a comissão.</p>
+                        <p class="mb-4">Além disso, você ganha bônus por recrutamento (quando leva outras pessoas para o negócio).</p>
+                        <p>O importante é que <strong>você começa ganhando desconto AGORA</strong> (50%), e a comissão vem depois conforme você vende.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="faq-item bg-white rounded-xl overflow-hidden shadow-md border border-slate-100">
+                    <button class="faq-button w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleFAQ(this)">
+                        <span class="font-bold text-lg text-slate-800">🛒 Como funciona a loja virtual?</span>
+                        <i class="fas fa-chevron-down faq-icon text-blue-600 transition"></i>
+                    </button>
+                    <div class="faq-content px-8 pb-6 text-slate-700 leading-relaxed">
+                        <p class="mb-4">Você entra na minha loja virtual, escolhe os produtos, compra e recebe em casa. Tudo online, sem complicações.</p>
+                        <p class="mb-4">Eu sou o intermediário entre você e a Amway. Você compra comigo, recebe de mim (ou da Amway) com desconto.</p>
+                        <p>Prazos: Normalmente entrega em 3-7 dias úteis dependendo da sua região.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="faq-item bg-white rounded-xl overflow-hidden shadow-md border border-slate-100">
+                    <button class="faq-button w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleFAQ(this)">
+                        <span class="font-bold text-lg text-slate-800">🌟 Os produtos funcionam mesmo?</span>
+                        <i class="fas fa-chevron-down faq-icon text-blue-600 transition"></i>
+                    </button>
+                    <div class="faq-content px-8 pb-6 text-slate-700 leading-relaxed">
+                        <p class="mb-4">Sim! Amway é uma empresa com 80+ anos de experiência no mercado, presente em mais de 100 países.</p>
+                        <p class="mb-4">Os produtos são dermatologicamente testados, certificados e têm excelentes avaliações de clientes.</p>
+                        <p>Minha recomendação? <strong>Teste os produtos primeiro!</strong> Compre um sem cadastro, use por 2-3 semanas e veja o resultado. Se gostar, aí sim você vira cliente VIP ou empresário.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="faq-item bg-white rounded-xl overflow-hidden shadow-md border border-slate-100">
+                    <button class="faq-button w-full px-8 py-6 text-left flex justify-between items-center hover:bg-slate-50 transition" onclick="toggleFAQ(this)">
+                        <span class="font-bold text-lg text-slate-800">📞 Como você me ajuda a começar?</span>
+                        <i class="fas fa-chevron-down faq-icon text-blue-600 transition"></i>
+                    </button>
+                    <div class="faq-content px-8 pb-6 text-slate-700 leading-relaxed">
+                        <p class="mb-4">Estou aqui para te guiar em cada passo! Vou:</p>
+                        <ul class="list-disc ml-6 mb-4">
+                            <li>Responder todas as suas dúvidas</li>
+                            <li>Te ajudar a escolher o modelo certo</li>
+                            <li>Acompanhar seus resultados</li>
+                            <li>Te conectar com a rede de parceiros</li>
+                            <li>Oferecer treinamento se virar empresário</li>
+                        </ul>
+                        <p><strong>Me chama no WhatsApp!</strong> Estou sempre disponível.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <!-- CHAMADA FINAL IRRESISTÍVEL -->
     <section class="py-20 bg-gradient-to-r from-blue-600 to-red-600 text-white">
         <div class="max-w-4xl mx-auto px-4 text-center">
@@ -548,7 +643,7 @@
                 Não é sobre vender. É sobre compartilhar sucesso e ganhar enquanto ajuda.
             </p>
             <div class="inline-block bg-white text-blue-600 px-8 py-4 rounded-full font-bold text-xl hover:bg-gray-100 transition">
-                ⬇️ Veja como você pode começar agora
+                ⬇️ Escolha seu caminho agora
             </div>
         </div>
     </section>
@@ -678,7 +773,7 @@
                     Não importa qual você escolher. O que importa é que você <strong>acreditará no produto</strong> desde o primeiro dia. Porque qualidade fala sozinha.
                 </p>
                 <p class="text-slate-600 font-semibold">
-                    👉 Clique em uma das 3 opções acima e comece AGORA.
+                    👉 Clique em uma das 3 opções acima ou deixe seu contato para falarmos!
                 </p>
             </div>
 
@@ -692,6 +787,42 @@
             <p class="text-xs text-slate-500">© 2025 BizMix. Todos os direitos reservados.</p>
         </div>
     </footer>
+
+    <!-- SCRIPT PARA FAQ -->
+    <script>
+        function toggleFAQ(button) {
+            const faqItem = button.closest('.faq-item');
+            faqItem.classList.toggle('active');
+        }
+
+        // SCRIPT PARA LEADS FORM
+        document.getElementById('leadsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                name: this.name.value,
+                email: this.email.value,
+                phone: this.phone.value,
+                interest: this.interest.value,
+                timestamp: new Date().toLocaleString('pt-BR')
+            };
+
+            // Log dos dados (em produção, enviar para servidor)
+            console.log('Lead capturado:', formData);
+
+            // Alerta de confirmação
+            alert(`✅ Obrigado ${formData.name}! Você receberá um guia exclusivo no email e WhatsApp em breve!`);
+
+            // Limpar formulário
+            this.reset();
+
+            // Redirecionar para WhatsApp (opcional)
+            const mensagem = `Oi Henrique! Meu nome é ${formData.name}, me interessei em ${formData.interest}. Meu email é ${formData.email}.`;
+            const whatsappLink = `https://wa.me/5562992475080?text=${encodeURIComponent(mensagem)}`;
+            // Descomente a linha abaixo se quiser redirecionar automaticamente para WhatsApp
+            // window.open(whatsappLink, '_blank');
+        });
+    </script>
 
 </body>
 </html>
