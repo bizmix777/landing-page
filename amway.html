@@ -26,6 +26,11 @@
         .price-tag {
             background: linear-gradient(135deg, #1A7AC8 0%, #E5324B 100%);
         }
+
+        /* ESPECIFICAÇÃO DE TAMANHOS DE IMAGEM */
+        /* Altura da área de imagem dos produtos: 192px (h-48) */
+        /* Altura da imagem do produto dentro da área: 160px (h-40) */
+        /* Estas medidas definem quanto espaço a foto ocupa no card */
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -38,6 +43,8 @@
                 <span>Voltar</span>
             </a>
             <div class="text-center flex-1">
+                <!-- LOGO AMWAY: Tamanho recomendado 200x80px (largura x altura) -->
+                <!-- Para mudar: edite a tag img abaixo com seu próprio logo -->
                 <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-red-600">AMWAY</h1>
             </div>
             <div class="w-12"></div>
@@ -88,10 +95,16 @@
                 
                 <!-- Produto 1: Shampoo SA8 -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <!-- ÁREA DE IMAGEM DO PRODUTO -->
+                    <!-- Tamanho externo: altura 192px (h-48) -->
+                    <!-- Tamanho da imagem: altura 160px (h-40), largura automática -->
+                    <!-- Para mudar o tamanho: altere h-48 (área) e h-40 (imagem) -->
+                    <!-- Exemplo: h-64 para 256px, h-56 para 224px, h-48 para 192px -->
                     <div class="bg-gradient-to-br from-blue-100 to-blue-50 h-48 flex items-center justify-center relative overflow-hidden">
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-bottle text-6xl text-blue-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=SA8+Shampoo" alt="SA8 Shampoo" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -115,6 +128,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-soap text-6xl text-pink-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Artistry+Soap" alt="Artistry Soap" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -138,6 +152,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-spray-can text-6xl text-purple-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Spin+Deodorant" alt="Spin Deodorant" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -161,6 +176,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-droplet text-6xl text-teal-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: Recomendado 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Mouthwash" alt="Mouthwash" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -196,10 +212,12 @@
                 
                 <!-- Produto 5: Detergente Concentrado -->
                 <div class="product-card bg-white rounded-2xl overflow-hidden shadow-md border border-slate-100">
+                    <!-- TAMANHO PADRÃO: h-48 (192px altura), h-40 (160px imagem) -->
                     <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 h-48 flex items-center justify-center relative overflow-hidden">
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-wind text-6xl text-yellow-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Detergent" alt="Detergent" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -223,6 +241,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-spray-can text-6xl text-green-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Multiuso" alt="Multiuso" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -246,6 +265,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-shirt text-6xl text-blue-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Softener" alt="Softener" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -269,6 +289,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-rectangle text-6xl text-orange-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Paper+Towel" alt="Paper Towel" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -308,6 +329,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-gem text-6xl text-rose-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Face+Cream" alt="Face Cream" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -331,6 +353,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-droplet text-6xl text-yellow-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Vitamin+C" alt="Vitamin C" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -354,6 +377,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-face-smile text-6xl text-indigo-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Mask" alt="Mask" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -377,6 +401,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-sun text-6xl text-amber-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Sunscreen" alt="Sunscreen" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -416,6 +441,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-bolt text-6xl text-red-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=XS+Energy" alt="XS Energy" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -439,6 +465,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-leaf text-6xl text-green-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Nutrilite" alt="Nutrilite" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -462,6 +489,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-dumbbell text-6xl text-orange-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Protein" alt="Protein" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
@@ -485,6 +513,7 @@
                         <div class="absolute inset-0 flex items-center justify-center">
                             <i class="fas fa-mug-hot text-6xl text-teal-300 opacity-50"></i>
                         </div>
+                        <!-- IMAGEM DO PRODUTO: 200x150px -->
                         <img src="https://via.placeholder.com/200x150?text=Green+Tea" alt="Green Tea" class="h-40 object-contain relative z-10">
                     </div>
                     <div class="p-6">
