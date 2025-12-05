@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizMix - Justiça e Negócios</title>
+    <title>BizMix - Inteligência de Negócios</title> <!-- MUDANÇA AQUI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         
-        /* Imagem de Fundo */
         .hero-bg {
-            background: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            /* Mantive sua imagem pois é boa, mas escureci um pouco mais para o texto branco saltar aos olhos (leitura fácil) */
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
         }
@@ -20,22 +20,24 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <!-- Navbar (Transparente) -->
+    <!-- Navbar -->
     <nav class="absolute w-full z-50 top-0">
         <div class="max-w-6xl mx-auto px-4">
             <div class="flex justify-between items-center py-6">
                 
-                <!-- LOGO (Branco) -->
+                <!-- LOGO -->
                 <div class="flex items-center">
+                    <!-- Certifique-se que o arquivo logo.png está na pasta -->
                     <img src="logo.png" alt="BizMix Logo" class="h-12 md:h-16 object-contain brightness-0 invert">
                 </div>
 
                 <!-- Menu -->
                 <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#servicos" class="text-slate-200 hover:text-white font-medium transition text-lg">Serviços</a>
-                    <a href="#sobre" class="text-slate-200 hover:text-white font-medium transition text-lg">Sobre</a>
-                    <a href="#contato" class="px-6 py-2 border border-white text-white rounded-full hover:bg-white hover:text-blue-900 transition font-semibold">
-                        Fale Comigo
+                    <a href="#solucoes" class="text-slate-200 hover:text-white font-medium transition text-lg">Soluções</a>
+                    <a href="#bizmix" class="text-slate-200 hover:text-white font-medium transition text-lg">A BizMix</a>
+                    <!-- Botão Typeform -->
+                    <a href="SEU_LINK_DO_TYPEFORM_AQUI" target="_blank" class="px-6 py-2 border border-white text-white rounded-full hover:bg-white hover:text-blue-900 transition font-semibold">
+                        Iniciar Projeto
                     </a>
                 </div>
             </div>
@@ -44,16 +46,28 @@
 
     <!-- Hero Section (Capa) -->
     <header class="hero-bg h-screen flex items-center justify-center text-center px-4">
-        <div class="max-w-4xl mt-16">
+        <div class="max-w-5xl mt-16">
+            <!-- Título Curto e Impactante -->
             <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-                Justiça, Negócios e <span class="text-blue-400">Sabedoria</span>
+                Conectamos Oportunidades.<br>
+                <span class="text-blue-400">Garantimos Resultados.</span>
             </h1>
-            <p class="text-xl text-slate-200 mb-10 font-light leading-relaxed">
-                Conectando pessoas e empresas através da advocacia estratégica e intermediação de negócios. Experiência de quem inova desde 1990.
+            
+            <!-- Texto Explicativo (Simples para qualquer um entender) -->
+            <p class="text-xl text-slate-200 mb-10 font-light leading-relaxed max-w-3xl mx-auto">
+                A BizMix une a segurança jurídica da advocacia com a agressividade comercial das vendas. 
+                Seja para imóveis, empresas ou tecnologia: nós estruturamos o negócio para você lucrar com segurança.
             </p>
-            <a href="#servicos" class="inline-block bg-blue-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-blue-700 transition shadow-lg text-lg">
-                Conheça Minhas Soluções
-            </a>
+            
+            <!-- Call to Action (Chamada para Ação) -->
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#solucoes" class="inline-block bg-blue-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-blue-700 transition shadow-lg text-lg">
+                    O Que Fazemos?
+                </a>
+                <a href="SEU_LINK_DO_TYPEFORM_AQUI" target="_blank" class="inline-block bg-transparent border-2 border-white text-white font-bold px-8 py-4 rounded-lg hover:bg-white hover:text-slate-900 transition text-lg">
+                    Falar com Especialista
+                </a>
+            </div>
         </div>
     </header>
 
@@ -135,21 +149,33 @@
         </div>
     </section>
 
-    <!-- Sobre Mim -->
-    <section id="sobre" class="py-24 bg-white">
+    <!-- Sobre a BizMix -->
+    <section id="bizmix" class="py-24 bg-white">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold text-slate-900 mb-8">A Experiência Henrique</h2>
-            <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100">
+            <h2 class="text-3xl font-bold text-slate-900 mb-8">Por que a BizMix?</h2>
+            <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm">
                 <p class="text-lg text-slate-700 leading-relaxed mb-6">
-                    Minha trajetória é marcada pela inovação. Fui pioneiro ao fundar a primeira empresa de impressoras a laser da minha cidade em 1990 e o primeiro provedor de internet em 1996.
+                    Não somos apenas uma consultoria. Somos uma <strong>aceleradora de resultados</strong> com base sólida.
                 </p>
                 <p class="text-lg text-slate-700 leading-relaxed mb-6">
-                    Hoje, uno essa bagagem tecnológica à prática do Direito e dos Negócios. Meu objetivo é fazer com que pessoas e empresas caminhem mais rápido em direção à sabedoria e ao sucesso.
+                    Nossa fundação combina o pioneirismo tecnológico de 1990 (primeira empresa de laser e internet da região) com a robustez jurídica atual. 
+                    <strong>O resultado?</strong> Negócios que fecham mais rápido, contratos que protegem de verdade e uma visão comercial que enxerga o que outros não veem.
                 </p>
-                <div class="mt-8 flex flex-wrap justify-center gap-4">
-                    <span class="px-4 py-2 bg-white rounded-full text-sm font-semibold text-slate-600 border border-slate-200 shadow-sm">Inovação desde 1990</span>
-                    <span class="px-4 py-2 bg-white rounded-full text-sm font-semibold text-slate-600 border border-slate-200 shadow-sm">OAB/Advogado</span>
-                    <span class="px-4 py-2 bg-white rounded-full text-sm font-semibold text-slate-600 border border-slate-200 shadow-sm">Corretor de Negócios</span>
+                
+                <!-- Dados de Autoridade (Institucional) -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-4 bg-white rounded-lg shadow-sm">
+                        <div class="text-blue-600 font-bold text-xl mb-1">Desde 1990</div>
+                        <div class="text-sm text-slate-500">Inovando no Mercado</div>
+                    </div>
+                    <div class="p-4 bg-white rounded-lg shadow-sm">
+                        <div class="text-blue-600 font-bold text-xl mb-1">Segurança</div>
+                        <div class="text-sm text-slate-500">Base Jurídica Sólida (OAB)</div>
+                    </div>
+                    <div class="p-4 bg-white rounded-lg shadow-sm">
+                        <div class="text-blue-600 font-bold text-xl mb-1">Expertise</div>
+                        <div class="text-sm text-slate-500">Vendas & Intermediação</div>
+                    </div>
                 </div>
             </div>
         </div>
