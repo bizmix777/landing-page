@@ -22,14 +22,7 @@
         .hover-up:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
     </style>
 
-    <!-- 
-    ================================================================
-    INTEGRAÇÃO GOOGLE ANALYTICS (GA4)
-    1. Acesse analytics.google.com e crie uma propriedade.
-    2. Copie o "ID da Métrica" (ex: G-12345678).
-    3. Substitua onde diz 'SEU_ID_AQUI' abaixo.
-    ================================================================
-    -->
+    <!-- GOOGLE ANALYTICS -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=SEU_ID_AQUI"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -37,26 +30,16 @@
       gtag('js', new Date());
       gtag('config', 'SEU_ID_AQUI');
     </script>
-
 </head>
 <body class="bg-gray-50 text-gray-800">
 
     <!-- HEADER -->
     <header class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <!-- LOGO AREA -->
             <div class="flex items-center gap-4">
-                <!-- 
-                   LOGO AMWAY 
-                   Tamanho Ideal: 120px a 150px de largura.
-                   Formato: SVG ou PNG transparente.
-                -->
-                <!-- Logo Amway -->
+                <!-- LOGO AMWAY (Tamanho ajustado) -->
                 <img src="https://www.amway.com.br/_ui/responsive/theme-blue/images/logo-amway.svg" alt="Amway" class="h-8 md:h-10 w-auto">
-                
                 <div class="h-6 w-px bg-gray-300"></div>
-                
-                <!-- Logo BizMix (Texto Simples ou Imagem) -->
                 <span class="text-amway-blue font-bold text-lg tracking-tight">BizMix</span>
             </div>
 
@@ -66,4 +49,96 @@
                 <a href="#modelos" class="hover:text-amway-cyan">Modelos de Negócio</a>
             </nav>
 
-            <a href="https://www.amway.com.br/register" class="bg-amway-blue text-white px
+            <a href="https://www.amway.com.br/register" class="bg-amway-blue text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-900 transition">
+                Cadastre-se
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative bg-amway-blue text-white py-20 md:py-28">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <span class="bg-amway-cyan text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Desde 1990 Inovando</span>
+                <h1 class="text-4xl md:text-5xl font-bold mt-4 leading-tight">
+                    Empreenda com a Segurança de quem entende de <span class="text-amway-cyan">Negócios.</span>
+                </h1>
+                <p class="mt-6 text-lg text-gray-200 leading-relaxed">
+                    Unimos a solidez jurídica e a visão tecnológica da BizMix com a maior empresa de venda direta do mundo. Não é apenas sobre produtos, é sobre construir um ativo seguro para o seu futuro.
+                </p>
+                <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                    <a href="#modelos" class="bg-amway-cyan text-white px-8 py-4 rounded-lg font-bold text-center hover:bg-blue-400 transition shadow-lg">
+                        Escolha seu Modelo
+                    </a>
+                    <a href="#produtos" class="border border-white text-white px-8 py-4 rounded-lg font-bold text-center hover:bg-white hover:text-amway-blue transition">
+                        Ver Produtos
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 md:pl-12">
+                <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Negócios" class="rounded-xl shadow-2xl transform rotate-2 hover:rotate-0 transition duration-500">
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUTOS (GRID 3x2) -->
+    <section id="produtos" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-amway-blue">Produtos Selecionados</h2>
+                <p class="text-gray-600 mt-2">Qualidade testada e aprovada pela nossa curadoria.</p>
+            </div>
+
+            <!-- GRID 3 COLUNAS x 2 LINHAS = 6 PRODUTOS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Produto 1 -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-pump-soap text-4xl text-gray-400"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-amway-cyan font-bold mb-2">CUIDADOS PESSOAIS</div>
+                        <h3 class="font-bold text-lg mb-1">SA8 Shampoo Premium</h3>
+                        <p class="text-sm text-gray-500 mb-4">Código: 110478</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-amway-blue">R$ 79,90</span>
+                            <button class="text-amway-cyan font-semibold hover:underline">Detalhes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 2 -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-spa text-4xl text-gray-400"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-amway-cyan font-bold mb-2">BELEZA</div>
+                        <h3 class="font-bold text-lg mb-1">Artistry Sabonete em Barra</h3>
+                        <p class="text-sm text-gray-500 mb-4">Código: 118117</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-amway-blue">R$ 45,90</span>
+                            <button class="text-amway-cyan font-semibold hover:underline">Detalhes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 3 -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
+                    <div class="h-48 bg-gray-200 flex items-center justify-center">
+                        <i class="fas fa-home text-4xl text-gray-400"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="text-xs text-amway-cyan font-bold mb-2">CASA</div>
+                        <h3 class="font-bold text-lg mb-1">LOC Limpador Multiuso</h3>
+                        <p class="text-sm text-gray-500 mb-4">Código: 0001</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xl font-bold text-amway-blue">R$ 59,90</span>
+                            <button class="text-amway-cyan font-semibold hover:underline">Detalhes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produto 4 -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-
