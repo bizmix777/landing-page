@@ -20,10 +20,6 @@
         .bg-amway-cyan { background-color: #00AEEF; }
         .hover-up { transition: transform 0.3s ease, box-shadow 0.3s ease; }
         .hover-up:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .category-nutricao { color: #22c55e; } /* green-500 */
-        .category-beleza { color: #ec4899; } /* pink-500 */
-        .category-casa { color: #f97316; } /* orange-500 */
-        .category-pessoal { color: #0ea5e9; } /* sky-500 */
     </style>
 
     <!-- GOOGLE ANALYTICS -->
@@ -42,20 +38,39 @@
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-4">
                 <!-- LOGO AMWAY -->
-                <img src="logo-amway.png" alt="Amway" class="h-8 md:h-10 w-auto">
+                <img src="https://www.amway.com.br/_ui/responsive/theme-blue/images/logo-amway.svg" alt="Amway" class="h-8 md:h-10 w-auto">
                 <div class="h-6 w-px bg-gray-300"></div>
                 <span class="text-amway-blue font-bold text-lg tracking-tight">BizMix</span>
             </div>
 
+            <!-- DESKTOP NAV -->
             <nav class="hidden md:flex space-x-6 font-medium text-sm text-gray-600">
                 <a href="#sobre" class="hover:text-amway-cyan">A BizMix</a>
                 <a href="#produtos" class="hover:text-amway-cyan">Produtos</a>
                 <a href="#modelos" class="hover:text-amway-cyan">Modelos de Negócio</a>
             </nav>
 
-            <a href="https://www.amway.com.br/register" class="bg-amway-blue text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-900 transition">
+            <!-- DESKTOP CTA -->
+            <a href="https://www.amway.com.br/register" class="hidden md:inline-block bg-amway-blue text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-900 transition">
                 Cadastre-se
             </a>
+
+            <!-- MOBILE HAMBURGER BUTTON -->
+            <button id="mobile-menu-button" class="md:hidden text-amway-blue text-2xl focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- MOBILE MENU (initially hidden) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white shadow-lg py-4">
+            <nav class="flex flex-col items-center space-y-4 text-gray-700 font-medium">
+                <a href="#sobre" class="hover:text-amway-cyan w-full text-center py-2">A BizMix</a>
+                <a href="#produtos" class="hover:text-amway-cyan w-full text-center py-2">Produtos</a>
+                <a href="#modelos" class="hover:text-amway-cyan w-full text-center py-2">Modelos de Negócio</a>
+                <a href="https://www.amway.com.br/register" class="bg-amway-blue text-white px-6 py-2 rounded-full font-bold text-sm hover:bg-blue-900 transition mt-4">
+                    Cadastre-se
+                </a>
+            </nav>
         </div>
     </header>
 
@@ -99,7 +114,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-blue-50 flex items-center justify-center"><i class="fas fa-pump-soap text-4xl text-blue-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-pessoal font-bold mb-1">CUIDADOS PESSOAIS</div>
+                        <div class="text-xs text-amway-cyan font-bold mb-1">CUIDADOS PESSOAIS</div>
                         <h3 class="font-bold text-lg mb-1">SA8 Shampoo Premium</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 118814</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Fórmula concentrada com proteínas.</p>
@@ -114,7 +129,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-blue-50 flex items-center justify-center"><i class="fas fa-tshirt text-4xl text-blue-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-pessoal font-bold mb-1">CUIDADOS PESSOAIS</div>
+                        <div class="text-xs text-amway-cyan font-bold mb-1">CUIDADOS PESSOAIS</div>
                         <h3 class="font-bold text-lg mb-1">Amaciante Premium</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 108814</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Perfume duradouro por 7 dias.</p>
@@ -129,7 +144,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-orange-50 flex items-center justify-center"><i class="fas fa-scroll text-4xl text-orange-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-casa font-bold mb-1">CASA</div>
+                        <div class="text-xs text-orange-500 font-bold mb-1">CASA</div>
                         <h3 class="font-bold text-lg mb-1">Papel Toalha</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 110114</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">2x mais resistente, absorve 100%.</p>
@@ -144,7 +159,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-yellow-50 flex items-center justify-center"><i class="fas fa-hand-sparkles text-4xl text-yellow-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-casa font-bold mb-1">CASA</div>
+                        <div class="text-xs text-yellow-600 font-bold mb-1">CASA</div>
                         <h3 class="font-bold text-lg mb-1">Detergente LOC</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 105601</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">1 litro rende 64 litros, biodegradável.</p>
@@ -159,7 +174,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-green-50 flex items-center justify-center"><i class="fas fa-spray-can text-4xl text-green-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-casa font-bold mb-1">CASA</div>
+                        <div class="text-xs text-green-600 font-bold mb-1">CASA</div>
                         <h3 class="font-bold text-lg mb-1">Limpador Multiuso</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 107214</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Remove sujeira 10x mais rápido.</p>
@@ -174,7 +189,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-teal-50 flex items-center justify-center"><i class="fas fa-tooth text-4xl text-teal-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-pessoal font-bold mb-1">CUIDADOS PESSOAIS</div>
+                        <div class="text-xs text-teal-600 font-bold mb-1">CUIDADOS PESSOAIS</div>
                         <h3 class="font-bold text-lg mb-1">Enxaguante Bucal</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 117614</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Elimina 99,9% das bactérias.</p>
@@ -189,7 +204,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-red-50 flex items-center justify-center"><i class="fas fa-bolt text-4xl text-red-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-nutricao font-bold mb-1">NUTRIÇÃO</div>
+                        <div class="text-xs text-red-600 font-bold mb-1">NUTRIÇÃO</div>
                         <h3 class="font-bold text-lg mb-1">XS Energy Drink</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 205614</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Zero açúcar, B-vitaminas, taurina.</p>
@@ -204,7 +219,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-green-50 flex items-center justify-center"><i class="fas fa-capsules text-4xl text-green-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-nutricao font-bold mb-1">NUTRIÇÃO</div>
+                        <div class="text-xs text-green-600 font-bold mb-1">NUTRIÇÃO</div>
                         <h3 class="font-bold text-lg mb-1">Nutrilite Daily</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 203914</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">13 vitaminas + minerais orgânicos.</p>
@@ -217,9 +232,9 @@
 
                 <!-- 9. Proteína Nutrilite -->
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
-                    <div class="h-40 bg-orange-50 flex items-center justify-center"><i class="fas fa-blender text-4xl text-orange-300"></i></div>
+                    <div class="h-40 bg-orange-50 flex items-center justify-center"><i class="fas fa-dumbbell text-4xl text-orange-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-nutricao font-bold mb-1">NUTRIÇÃO</div>
+                        <div class="text-xs text-orange-600 font-bold mb-1">NUTRIÇÃO</div>
                         <h3 class="font-bold text-lg mb-1">Proteína Nutrilite</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 204814</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">25g proteína, BCAA, zero lactose.</p>
@@ -234,7 +249,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-green-50 flex items-center justify-center"><i class="fas fa-leaf text-4xl text-green-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-nutricao font-bold mb-1">NUTRIÇÃO</div>
+                        <div class="text-xs text-green-600 font-bold mb-1">NUTRIÇÃO</div>
                         <h3 class="font-bold text-lg mb-1">Chá Verde Plus</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 206914</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Metabolismo acelerado, antioxidante.</p>
@@ -247,9 +262,9 @@
 
                 <!-- 11. Protetor Solar 50+ -->
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
-                    <div class="h-40 bg-pink-50 flex items-center justify-center"><i class="fas fa-sun text-4xl text-pink-300"></i></div>
+                    <div class="h-40 bg-yellow-50 flex items-center justify-center"><i class="fas fa-sun text-4xl text-yellow-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-beleza font-bold mb-1">BELEZA</div>
+                        <div class="text-xs text-yellow-600 font-bold mb-1">BELEZA</div>
                         <h3 class="font-bold text-lg mb-1">Protetor Solar 50+</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 104714</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Bloqueio UVA/UVB 99%, resistente.</p>
@@ -262,9 +277,9 @@
 
                 <!-- 12. Sabonete Artistry -->
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
-                    <div class="h-40 bg-purple-50 flex items-center justify-center"><i class="fas fa-soap text-4xl text-purple-300"></i></div>
+                    <div class="h-40 bg-pink-50 flex items-center justify-center"><i class="fas fa-soap text-4xl text-pink-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-beleza font-bold mb-1">BELEZA</div>
+                        <div class="text-xs text-pink-600 font-bold mb-1">BELEZA</div>
                         <h3 class="font-bold text-lg mb-1">Sabonete Artistry</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 101001</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Fórmula balanceada com óleos naturais.</p>
@@ -279,7 +294,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-blue-50 flex items-center justify-center"><i class="fas fa-spray-can text-4xl text-blue-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-pessoal font-bold mb-1">CUIDADOS PESSOAIS</div>
+                        <div class="text-xs text-amway-cyan font-bold mb-1">CUIDADOS PESSOAIS</div>
                         <h3 class="font-bold text-lg mb-1">Desodorante Spin</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 116914</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Proteção até 48h com alumínio eficaz.</p>
@@ -292,9 +307,9 @@
 
                 <!-- 14. Sérum Vitamina C -->
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
-                    <div class="h-40 bg-yellow-50 flex items-center justify-center"><i class="fas fa-flask text-4xl text-yellow-300"></i></div>
+                    <div class="h-40 bg-orange-50 flex items-center justify-center"><i class="fas fa-flask text-4xl text-orange-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-beleza font-bold mb-1">BELEZA</div>
+                        <div class="text-xs text-orange-600 font-bold mb-1">BELEZA</div>
                         <h3 class="font-bold text-lg mb-1">Sérum Vitamina C</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 102814</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">15% vitamina C pura, antioxidante.</p>
@@ -309,7 +324,7 @@
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
                     <div class="h-40 bg-pink-50 flex items-center justify-center"><i class="fas fa-mask text-4xl text-pink-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-beleza font-bold mb-1">BELEZA</div>
+                        <div class="text-xs text-pink-600 font-bold mb-1">BELEZA</div>
                         <h3 class="font-bold text-lg mb-1">Máscara Facial</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 103614</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Colágeno + aloe vera, ação profunda.</p>
@@ -322,9 +337,9 @@
 
                 <!-- 16. Glister Kids Gel Dental -->
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden hover-up border border-gray-100">
-                    <div class="h-40 bg-purple-50 flex items-center justify-center"><i class="fas fa-tooth text-4xl text-purple-300"></i></div>
+                    <div class="h-40 bg-blue-50 flex items-center justify-center"><i class="fas fa-tooth text-4xl text-blue-300"></i></div>
                     <div class="p-5">
-                        <div class="text-xs category-pessoal font-bold mb-1">CUIDADOS PESSOAIS</div>
+                        <div class="text-xs text-amway-cyan font-bold mb-1">CUIDADOS PESSOAIS</div>
                         <h3 class="font-bold text-lg mb-1">Glister Kids Gel Dental</h3>
                         <p class="text-xs text-gray-500 mb-3">Cód: 120519</p>
                         <p class="text-sm text-gray-600 mb-4 h-10 overflow-hidden">Proteção para os dentes das crianças.</p>
@@ -342,60 +357,60 @@
     <!-- MODELOS DE NEGÓCIO -->
     <section id="modelos" class="py-16 bg-amway-blue text-white">
         <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-4">Escolha Seu Caminho com a BizMix e Amway</h2>
-            <p class="text-gray-200 mb-12 max-w-3xl mx-auto">
-                Com a experiência da BizMix desde 1990 em tecnologia e negócios, oferecemos a você a oportunidade de construir um futuro sólido e rentável.
+            <h2 class="text-3xl font-bold mb-4">Escolha seu Modelo de Negócio</h2>
+            <p class="text-gray-200 mb-10 max-w-2xl mx-auto">
+                A BizMix, com sua expertise desde 1990 em tecnologia e direito, te guia para a melhor forma de se conectar com a Amway.
             </p>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Modelo 1: Comprador -->
                 <div class="bg-white text-gray-800 p-8 rounded-xl shadow-lg hover-up">
-                    <i class="fas fa-shopping-cart text-4xl amway-cyan mb-4"></i>
-                    <h3 class="font-bold text-2xl mb-3">Comprador Inteligente</h3>
+                    <i class="fas fa-shopping-cart text-4xl text-amway-cyan mb-4"></i>
+                    <h3 class="font-bold text-2xl mb-3">Comprador</h3>
                     <p class="text-gray-600 mb-4">
-                        Acesse produtos de alta qualidade diretamente da Amway, com a curadoria e suporte da BizMix. Sem compromisso, apenas benefícios.
+                        Acesso direto aos produtos Amway com a garantia de qualidade BizMix.
                     </p>
-                    <ul class="text-left text-gray-700 space-y-2 mb-6">
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Acesso a todo o catálogo Amway.</li>
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Produtos de alta performance.</li>
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Suporte BizMix para dúvidas.</li>
+                    <ul class="text-left text-sm space-y-2 mb-6">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Sem compromisso mensal</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Produtos de alta performance</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Suporte BizMix para dúvidas</li>
                     </ul>
                     <a href="https://www.amway.com.br/register" class="bg-amway-cyan text-white px-6 py-3 rounded-full font-bold hover:bg-blue-400 transition">
-                        Quero Comprar
+                        Comprar Agora
                     </a>
                 </div>
 
                 <!-- Modelo 2: Cliente VIP -->
-                <div class="bg-white text-gray-800 p-8 rounded-xl shadow-lg hover-up">
-                    <i class="fas fa-star text-4xl amway-cyan mb-4"></i>
-                    <h3 class="font-bold text-2xl mb-3">Cliente VIP BizMix</h3>
+                <div class="bg-white text-gray-800 p-8 rounded-xl shadow-lg hover-up border-2 border-amway-cyan">
+                    <i class="fas fa-star text-4xl text-amway-cyan mb-4"></i>
+                    <h3 class="font-bold text-2xl mb-3">Cliente VIP</h3>
                     <p class="text-gray-600 mb-4">
-                        Desfrute de vantagens exclusivas e descontos significativos. Uma parceria que valoriza sua escolha por qualidade e economia.
+                        Descontos exclusivos e benefícios para quem busca economia e qualidade.
                     </p>
-                    <ul class="text-left text-gray-700 space-y-2 mb-6">
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Taxa única de R$ 33,00.</li>
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> 25% de desconto em todos os produtos.</li>
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Acesso a promoções exclusivas.</li>
+                    <ul class="text-left text-sm space-y-2 mb-6">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Taxa única de R$33,00</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> 25% de desconto em todos os produtos</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Acesso a promoções exclusivas</li>
                     </ul>
-                    <a href="https://www.amway.com.br/register" class="bg-amway-cyan text-white px-6 py-3 rounded-full font-bold hover:bg-blue-400 transition">
+                    <a href="https://www.amway.com.br/register" class="bg-amway-blue text-white px-6 py-3 rounded-full font-bold hover:bg-blue-900 transition">
                         Seja VIP
                     </a>
                 </div>
 
-                <!-- Modelo 3: Empresário BizMix -->
+                <!-- Modelo 3: Empresário Amway (com BizMix) -->
                 <div class="bg-white text-gray-800 p-8 rounded-xl shadow-lg hover-up">
-                    <i class="fas fa-handshake text-4xl amway-cyan mb-4"></i>
-                    <h3 class="font-bold text-2xl mb-3">Empresário BizMix & Amway</h3>
+                    <i class="fas fa-briefcase text-4xl text-amway-cyan mb-4"></i>
+                    <h3 class="font-bold text-2xl mb-3">Empresário Amway</h3>
                     <p class="text-gray-600 mb-4">
-                        Construa seu próprio negócio com o suporte de quem tem décadas de experiência em empreendedorismo e tecnologia.
+                        Construa seu negócio com o suporte da BizMix e a força da Amway.
                     </p>
-                    <ul class="text-left text-gray-700 space-y-2 mb-6">
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Até 50% de desconto nos produtos.</li>
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Comissões de 3% a 25% sobre vendas.</li>
-                        <li><i class="fas fa-check-circle text-green-500 mr-2"></i> Treinamento e mentoria BizMix.</li>
+                    <ul class="text-left text-sm space-y-2 mb-6">
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Até 50% de desconto nos produtos</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Comissões de 3% a 25%</li>
+                        <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-2"></i> Mentoria BizMix em gestão e estratégia</li>
                     </ul>
                     <a href="https://www.amway.com.br/register" class="bg-amway-cyan text-white px-6 py-3 rounded-full font-bold hover:bg-blue-400 transition">
-                        Quero Empreender
+                        Empreenda Agora
                     </a>
                 </div>
             </div>
@@ -407,10 +422,10 @@
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-amway-blue mb-4">Pronto para Transformar Sua Vida?</h2>
             <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
-                A BizMix e a Amway oferecem a você a plataforma e o suporte para alcançar seus objetivos. Não perca tempo, comece hoje!
+                A BizMix está aqui para te guiar em cada passo. Fale conosco e descubra seu potencial.
             </p>
-            <a href="https://tally.so/r/mD8XyA" class="bg-amway-blue text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-900 transition shadow-lg">
-                Fale Conosco Agora!
+            <a href="https://tally.so/r/mD838L" class="bg-amway-blue text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-blue-900 transition shadow-lg">
+                Fale com a BizMix
             </a>
         </div>
     </section>
@@ -419,7 +434,7 @@
     <footer class="bg-gray-800 text-gray-300 py-10">
         <div class="container mx-auto px-4 text-center text-sm">
             <p>&copy; 2025 Amway do Brasil + BizMix. Todos os direitos reservados.</p>
-            <div class="flex justify-center space-x-4 mt-4">
+            <div class="flex justify-center space-x-6 mt-4">
                 <a href="#" class="hover:text-white"><i class="fab fa-facebook-f"></i></a>
                 <a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a>
                 <a href="#" class="hover:text-white"><i class="fab fa-linkedin-in"></i></a>
@@ -427,5 +442,26 @@
         </div>
     </footer>
 
+    <!-- JavaScript for Mobile Menu Toggle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                // Optional: Close menu when a link is clicked
+                const mobileLinks = mobileMenu.querySelectorAll('a');
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
