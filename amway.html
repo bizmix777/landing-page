@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizMix & Amway - Empreendedorismo Seguro</title>
+    <title>BizMix & Amway - Oportunidade de Negócio</title>
     
-    <!-- Tailwind CSS (Estilização Moderna) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome (Ícones) -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
@@ -20,101 +18,52 @@
         .bg-amway-blue { background-color: #003366; }
         .amway-cyan { color: #00AEEF; }
         .bg-amway-cyan { background-color: #00AEEF; }
-        .hover-scale { transition: transform 0.3s ease; }
-        .hover-scale:hover { transform: scale(1.03); }
+        .hover-up { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-up:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
     </style>
 
     <!-- 
     ================================================================
     INTEGRAÇÃO GOOGLE ANALYTICS (GA4)
-    Cole o código do seu Pixel aqui dentro da tag <head>
+    1. Acesse analytics.google.com e crie uma propriedade.
+    2. Copie o "ID da Métrica" (ex: G-12345678).
+    3. Substitua onde diz 'SEU_ID_AQUI' abaixo.
     ================================================================
     -->
-    <!-- Exemplo de como ficará (substitua G-XXXXXXXXXX pelo seu ID): -->
-    <!--
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=SEU_ID_AQUI"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-XXXXXXXXXX');
+      gtag('config', 'SEU_ID_AQUI');
     </script>
-    -->
 
 </head>
 <body class="bg-gray-50 text-gray-800">
 
     <!-- HEADER -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <!-- LOGO AREA -->
-            <div class="flex items-center">
+            <div class="flex items-center gap-4">
                 <!-- 
-                    LOCAL DO LOGO AMWAY 
-                    Tamanho Ideal: 180px largura x 50px altura (aprox)
-                    Formato: PNG Transparente ou SVG
+                   LOGO AMWAY 
+                   Tamanho Ideal: 120px a 150px de largura.
+                   Formato: SVG ou PNG transparente.
                 -->
-                <img src="https://www.amway.com.br/_ui/responsive/theme-blue/images/logo-amway.svg" alt="Logo Amway" class="h-10 w-auto md:h-12">
-                <!-- Se quiser adicionar o logo BizMix ao lado, descomente a linha abaixo: -->
-                <!-- <span class="mx-3 text-gray-300">|</span> <span class="font-bold text-amway-blue text-xl">BizMix</span> -->
+                <!-- Logo Amway -->
+                <img src="https://www.amway.com.br/_ui/responsive/theme-blue/images/logo-amway.svg" alt="Amway" class="h-8 md:h-10 w-auto">
+                
+                <div class="h-6 w-px bg-gray-300"></div>
+                
+                <!-- Logo BizMix (Texto Simples ou Imagem) -->
+                <span class="text-amway-blue font-bold text-lg tracking-tight">BizMix</span>
             </div>
 
-            <!-- MENU DESKTOP -->
-            <nav class="hidden md:flex space-x-8 font-medium text-gray-600">
-                <a href="#sobre" class="hover:text-amway-cyan transition">Sobre a BizMix</a>
-                <a href="#produtos" class="hover:text-amway-cyan transition">Produtos</a>
-                <a href="#modelos" class="hover:text-amway-cyan transition">Modelos de Negócio</a>
-                <a href="#faq" class="hover:text-amway-cyan transition">Dúvidas</a>
+            <nav class="hidden md:flex space-x-6 font-medium text-sm text-gray-600">
+                <a href="#sobre" class="hover:text-amway-cyan">A BizMix</a>
+                <a href="#produtos" class="hover:text-amway-cyan">Produtos</a>
+                <a href="#modelos" class="hover:text-amway-cyan">Modelos de Negócio</a>
             </nav>
 
-            <!-- CTA HEADER -->
-            <a href="https://www.amway.com.br/register" class="hidden md:inline-block bg-amway-blue text-white px-6 py-2 rounded-full font-bold hover:bg-blue-900 transition">
-                Cadastre-se
-            </a>
-        </div>
-    </header>
-
-    <!-- HERO SECTION (COPY REFINADO: AUTORIDADE) -->
-    <section class="relative bg-amway-blue text-white py-20 md:py-32">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
-            <div class="md:w-1/2 mb-10 md:mb-0">
-                <span class="bg-amway-cyan text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Desde 1990 Inovando</span>
-                <h1 class="text-4xl md:text-5xl font-bold mt-4 leading-tight">
-                    Empreenda com a Segurança de quem entende de <span class="text-amway-cyan">Negócios e Tecnologia.</span>
-                </h1>
-                <p class="mt-6 text-lg text-gray-200 leading-relaxed">
-                    Unimos a solidez jurídica e a visão tecnológica da BizMix com a maior empresa de venda direta do mundo. Não é apenas sobre produtos, é sobre construir um ativo seguro para o seu futuro.
-                </p>
-                <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                    <a href="#modelos" class="bg-amway-cyan text-white px-8 py-4 rounded-lg font-bold text-center hover:bg-blue-400 transition shadow-lg">
-                        Escolha seu Modelo
-                    </a>
-                    <a href="#produtos" class="border border-white text-white px-8 py-4 rounded-lg font-bold text-center hover:bg-white hover:text-amway-blue transition">
-                        Ver Produtos
-                    </a>
-                </div>
-            </div>
-            <div class="md:w-1/2 md:pl-12">
-                <!-- Imagem Ilustrativa de Negócios/Tecnologia -->
-                <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Negócios e Tecnologia" class="rounded-xl shadow-2xl transform rotate-2 hover:rotate-0 transition duration-500">
-            </div>
-        </div>
-    </section>
-
-    <!-- CATEGORIAS -->
-    <section class="py-12 bg-gray-100">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-white p-6 rounded-lg shadow text-center hover-scale cursor-pointer">
-                    <i class="fas fa-leaf text-3xl text-green-500 mb-3"></i>
-                    <h3 class="font-bold text-amway-blue">Nutrição</h3>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow text-center hover-scale cursor-pointer">
-                    <i class="fas fa-spa text-3xl text-pink-500 mb-3"></i>
-                    <h3 class="font-bold text-amway-blue">Beleza</h3>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow text-center hover-scale cursor-pointer">
-                    <i class="fas fa-pump-soap text-3xl text-blue-400 mb-3"></i>
-                    <h3 class="font-bold text-amway-blue">Cuidados Pessoais</h3>
-                </div>
-                
+            <a href="https://www.amway.com.br/register" class="bg-amway-blue text-white px
