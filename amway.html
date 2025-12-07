@@ -3,354 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amway BizMix - Sua Oportunidade de Negócio e Bem-Estar</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --amway-blue-dark: #003366;
-            --amway-blue-light: #00AEEF;
-            --amway-gray-light: #f5f5f5;
-            --amway-white: #ffffff;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            color: #333;
-        }
-        .bg-amway-dark-blue { background-color: var(--amway-blue-dark); }
-        .text-amway-light-blue { color: var(--amway-blue-light); }
-        .bg-amway-light-blue { background-color: var(--amway-blue-light); }
-        .bg-amway-gray-light { background-color: var(--amway-gray-light); }
-        .border-amway-light-blue { border-color: var(--amway-blue-light); }
-        .btn-primary {
-            background-color: var(--amway-blue-light);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
-        .btn-primary:hover {
-            background-color: #0088cc; /* Slightly darker light blue on hover */
-        }
-        .accordion-item {
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .accordion-header {
-            cursor: pointer;
-            padding: 1rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-        }
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        .accordion-content.active {
-            max-height: 200px; /* Adjust as needed */
-            padding-bottom: 1rem;
-        }
-        .rotate-icon {
-            transform: rotate(0deg);
-            transition: transform 0.3s ease;
-        }
-        .rotate-icon.active {
-            transform: rotate(180deg);
-        }
-    </style>
-</head>
-<body class="bg-white">
+    <title>BizMix & Amway - Empreendedorismo Seguro</title>
+    
+    <!-- Tailwind CSS (Estilização Moderna) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome (Ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Header -->
-    <header class="bg-amway-dark-blue text-white shadow-md">
-        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center mb-4 md:mb-0">
-                <img src="https://www.amway.com.br/_ui/responsive/theme-amway/images/amway-logo.svg" alt="Amway Logo" class="h-8 mr-4">
-                <span class="text-xl font-bold">Amway Brasil</span>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .amway-blue { color: #003366; }
+        .bg-amway-blue { background-color: #003366; }
+        .amway-cyan { color: #00AEEF; }
+        .bg-amway-cyan { background-color: #00AEEF; }
+        .hover-scale { transition: transform 0.3s ease; }
+        .hover-scale:hover { transform: scale(1.03); }
+    </style>
+
+    <!-- 
+    ================================================================
+    INTEGRAÇÃO GOOGLE ANALYTICS (GA4)
+    Cole o código do seu Pixel aqui dentro da tag <head>
+    ================================================================
+    -->
+    <!-- Exemplo de como ficará (substitua G-XXXXXXXXXX pelo seu ID): -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    -->
+
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- HEADER -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <!-- LOGO AREA -->
+            <div class="flex items-center">
+                <!-- 
+                    LOCAL DO LOGO AMWAY 
+                    Tamanho Ideal: 180px largura x 50px altura (aprox)
+                    Formato: PNG Transparente ou SVG
+                -->
+                <img src="https://www.amway.com.br/_ui/responsive/theme-blue/images/logo-amway.svg" alt="Logo Amway" class="h-10 w-auto md:h-12">
+                <!-- Se quiser adicionar o logo BizMix ao lado, descomente a linha abaixo: -->
+                <!-- <span class="mx-3 text-gray-300">|</span> <span class="font-bold text-amway-blue text-xl">BizMix</span> -->
             </div>
-            <nav class="w-full md:w-auto">
-                <ul class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 text-sm font-semibold">
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Sobre a Amway</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Quem Somos</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Venda Direta</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Oportunidade de Negócio</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Produtos</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Contato</a></li>
-                </ul>
+
+            <!-- MENU DESKTOP -->
+            <nav class="hidden md:flex space-x-8 font-medium text-gray-600">
+                <a href="#sobre" class="hover:text-amway-cyan transition">Sobre a BizMix</a>
+                <a href="#produtos" class="hover:text-amway-cyan transition">Produtos</a>
+                <a href="#modelos" class="hover:text-amway-cyan transition">Modelos de Negócio</a>
+                <a href="#faq" class="hover:text-amway-cyan transition">Dúvidas</a>
             </nav>
+
+            <!-- CTA HEADER -->
+            <a href="https://www.amway.com.br/register" class="hidden md:inline-block bg-amway-blue text-white px-6 py-2 rounded-full font-bold hover:bg-blue-900 transition">
+                Cadastre-se
+            </a>
         </div>
     </header>
 
-    <!-- Hero Section - Carousel Placeholder -->
-    <section class="relative w-full h-96 bg-gray-300 flex items-center justify-center text-white text-center overflow-hidden">
-        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://via.placeholder.com/1920x600/003366/FFFFFF?text=Amway+Oportunidade+de+Negócio');"></div>
-        <div class="relative z-10 p-8 bg-black bg-opacity-50 rounded-lg">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Descubra um Mundo de Possibilidades com Amway</h1>
-            <p class="text-lg md:text-xl mb-6">Qualidade, Bem-Estar e Liberdade Financeira ao seu Alcance.</p>
-            <a href="#oportunidade" class="btn-primary">Saiba Mais</a>
+    <!-- HERO SECTION (COPY REFINADO: AUTORIDADE) -->
+    <section class="relative bg-amway-blue text-white py-20 md:py-32">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <span class="bg-amway-cyan text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">Desde 1990 Inovando</span>
+                <h1 class="text-4xl md:text-5xl font-bold mt-4 leading-tight">
+                    Empreenda com a Segurança de quem entende de <span class="text-amway-cyan">Negócios e Tecnologia.</span>
+                </h1>
+                <p class="mt-6 text-lg text-gray-200 leading-relaxed">
+                    Unimos a solidez jurídica e a visão tecnológica da BizMix com a maior empresa de venda direta do mundo. Não é apenas sobre produtos, é sobre construir um ativo seguro para o seu futuro.
+                </p>
+                <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                    <a href="#modelos" class="bg-amway-cyan text-white px-8 py-4 rounded-lg font-bold text-center hover:bg-blue-400 transition shadow-lg">
+                        Escolha seu Modelo
+                    </a>
+                    <a href="#produtos" class="border border-white text-white px-8 py-4 rounded-lg font-bold text-center hover:bg-white hover:text-amway-blue transition">
+                        Ver Produtos
+                    </a>
+                </div>
+            </div>
+            <div class="md:w-1/2 md:pl-12">
+                <!-- Imagem Ilustrativa de Negócios/Tecnologia -->
+                <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Negócios e Tecnologia" class="rounded-xl shadow-2xl transform rotate-2 hover:rotate-0 transition duration-500">
+            </div>
         </div>
     </section>
 
-    <!-- Product Categories Section -->
-    <section class="py-16 bg-amway-gray-light">
+    <!-- CATEGORIAS -->
+    <section class="py-12 bg-gray-100">
         <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-amway-dark-blue">Nossas Categorias de Produtos</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Category Card 1 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                    <img src="https://via.placeholder.com/400x250/00AEEF/FFFFFF?text=Nutrição" alt="Nutrição" class="w-full h-48 object-cover">
-                    <div class="p-6 text-center">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">Nutrição</h3>
-                        <p class="text-gray-600 text-sm">Suplementos para uma vida mais saudável e equilibrada.</p>
-                        <a href="#" class="mt-4 inline-block text-amway-light-blue hover:underline font-medium">Ver Produtos</a>
-                    </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-6 rounded-lg shadow text-center hover-scale cursor-pointer">
+                    <i class="fas fa-leaf text-3xl text-green-500 mb-3"></i>
+                    <h3 class="font-bold text-amway-blue">Nutrição</h3>
                 </div>
-                <!-- Category Card 2 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                    <img src="https://via.placeholder.com/400x250/00AEEF/FFFFFF?text=Beleza" alt="Beleza" class="w-full h-48 object-cover">
-                    <div class="p-6 text-center">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">Beleza</h3>
-                        <p class="text-gray-600 text-sm">Cuidados com a pele e maquiagem para realçar sua beleza natural.</p>
-                        <a href="#" class="mt-4 inline-block text-amway-light-blue hover:underline font-medium">Ver Produtos</a>
-                    </div>
+                <div class="bg-white p-6 rounded-lg shadow text-center hover-scale cursor-pointer">
+                    <i class="fas fa-spa text-3xl text-pink-500 mb-3"></i>
+                    <h3 class="font-bold text-amway-blue">Beleza</h3>
                 </div>
-                <!-- Category Card 3 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                    <img src="https://via.placeholder.com/400x250/00AEEF/FFFFFF?text=Cuidados+Pessoais" alt="Cuidados Pessoais" class="w-full h-48 object-cover">
-                    <div class="p-6 text-center">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">Cuidados Pessoais</h3>
-                        <p class="text-gray-600 text-sm">Higiene e bem-estar para toda a família.</p>
-                        <a href="#" class="mt-4 inline-block text-amway-light-blue hover:underline font-medium">Ver Produtos</a>
-                    </div>
+                <div class="bg-white p-6 rounded-lg shadow text-center hover-scale cursor-pointer">
+                    <i class="fas fa-pump-soap text-3xl text-blue-400 mb-3"></i>
+                    <h3 class="font-bold text-amway-blue">Cuidados Pessoais</h3>
                 </div>
-                <!-- Category Card 4 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                    <img src="https://via.placeholder.com/400x250/00AEEF/FFFFFF?text=Casa" alt="Casa" class="w-full h-48 object-cover">
-                    <div class="p-6 text-center">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">Casa</h3>
-                        <p class="text-gray-600 text-sm">Soluções eficientes e ecológicas para o seu lar.</p>
-                        <a href="#" class="mt-4 inline-block text-amway-light-blue hover:underline font-medium">Ver Produtos</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Recommended Products Section -->
-    <section class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-amway-dark-blue">Produtos em Destaque</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Product Card 1 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/600x400/003366/FFFFFF?text=SA8+Shampoo" alt="SA8 Shampoo Premium para Roupas" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">SA8 Shampoo Premium para Roupas</h3>
-                        <p class="text-gray-700 text-sm mb-2">Código: 110478</p>
-                        <p class="text-gray-600 mb-4">Detergente concentrado para roupas, remove manchas difíceis, biodegradável.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-amway-light-blue">R$ 79,90</span>
-                            <a href="#" class="btn-primary text-sm">Comprar</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product Card 2 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/600x400/003366/FFFFFF?text=Artistry+Creme" alt="Artistry Youth Xtend Creme Protetor FPS 15" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">Artistry Youth Xtend Creme Protetor FPS 15</h3>
-                        <p class="text-gray-700 text-sm mb-2">Código: 113806</p>
-                        <p class="text-gray-600 mb-4">Creme facial anti-idade, hidrata e protege contra raios UV.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-amway-light-blue">R$ 249,90</span>
-                            <a href="#" class="btn-primary text-sm">Comprar</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product Card 3 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/600x400/003366/FFFFFF?text=LOC+Limpador" alt="LOC Limpador Concentrado Multiuso" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">LOC Limpador Concentrado Multiuso</h3>
-                        <p class="text-gray-700 text-sm mb-2">Código: 0001</p>
-                        <p class="text-gray-600 mb-4">Limpador versátil para todas as superfícies, fórmula biodegradável.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-amway-light-blue">R$ 59,90</span>
-                            <a href="#" class="btn-primary text-sm">Comprar</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product Card 4 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/600x400/003366/FFFFFF?text=Nutrilite+Daily" alt="Nutrilite Daily Plus" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">Nutrilite Daily Plus</h3>
-                        <p class="text-gray-700 text-sm mb-2">Código: 100030</p>
-                        <p class="text-gray-600 mb-4">Suplemento vitamínico e mineral diário, com 12 vitaminas e 10 minerais.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-amway-light-blue">R$ 129,90</span>
-                            <a href="#" class="btn-primary text-sm">Comprar</a>
-                        </div>
-                    </div>
-                </div>
-                <!-- Product Card 5 -->
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                    <img src="https://via.placeholder.com/600x400/003366/FFFFFF?text=Glister+Creme" alt="Glister Creme Dental" class="w-full h-56 object-cover">
-                    <div class="p-6">
-                        <h3 class="text-xl font-semibold text-amway-dark-blue mb-2">Glister Creme Dental</h3>
-                        <p class="text-gray-700 text-sm mb-2">Código: 6833</p>
-                        <p class="text-gray-600 mb-4">Creme dental com flúor, combate cáries e refresca o hálito.</p>
-                        <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-amway-light-blue">R$ 29,90</span>
-                            <a href="#" class="btn-primary text-sm">Comprar</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Business Models Section -->
-    <section id="oportunidade" class="py-16 bg-amway-dark-blue text-white">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-12">Escolha a Sua Forma de Conectar-se com a Amway</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Model 1: Comprador -->
-                <div class="bg-white text-gray-800 p-8 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
-                    <h3 class="text-2xl font-bold text-amway-dark-blue mb-4">Comprador</h3>
-                    <p class="mb-6">Aproveite produtos de alta qualidade para o seu dia a dia, com a garantia Amway.</p>
-                    <a href="#" class="btn-primary">Ver Produtos</a>
-                </div>
-                <!-- Model 2: Cliente VIP -->
-                <div class="bg-white text-gray-800 p-8 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
-                    <h3 class="text-2xl font-bold text-amway-dark-blue mb-4">Cliente VIP</h3>
-                    <p class="mb-6">Cadastre-se por apenas R$33,00 e tenha 25% de desconto em todas as suas compras!</p>
-                    <a href="https://www.amway.com.br/register" class="btn-primary">Seja VIP Agora</a>
-                </div>
-                <!-- Model 3: Empresário Amway -->
-                <div class="bg-white text-gray-800 p-8 rounded-lg shadow-lg transform hover:scale-105 transition duration-300">
-                    <h3 class="text-2xl font-bold text-amway-dark-blue mb-4">Empresário Amway</h3>
-                    <p class="mb-6">Tenha 50% de desconto, comissões de 3% a 25% e construa seu próprio negócio.</p>
-                    <a href="https://www.amway.com.br/register" class="btn-primary">Comece Seu Negócio</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="py-16 bg-amway-gray-light">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center mb-12 text-amway-dark-blue">Perguntas Frequentes</h2>
-            <div class="max-w-3xl mx-auto">
-                <!-- FAQ Item 1 -->
-                <div class="accordion-item bg-white p-4 rounded-lg shadow-sm mb-4">
-                    <div class="accordion-header flex justify-between items-center" onclick="toggleAccordion(this)">
-                        <span class="text-lg font-semibold text-amway-dark-blue">O que é a Amway?</span>
-                        <svg class="rotate-icon w-6 h-6 text-amway-light-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                    <div class="accordion-content text-gray-700">
-                        <p>A Amway é uma empresa global de venda direta, líder em nutrição, beleza e cuidados com o lar. Fundada em 1959, oferece produtos de alta qualidade e uma oportunidade de negócio flexível para milhões de pessoas em todo o mundo.</p>
-                    </div>
-                </div>
-                <!-- FAQ Item 2 -->
-                <div class="accordion-item bg-white p-4 rounded-lg shadow-sm mb-4">
-                    <div class="accordion-header flex justify-between items-center" onclick="toggleAccordion(this)">
-                        <span class="text-lg font-semibold text-amway-dark-blue">Como posso comprar produtos Amway?</span>
-                        <svg class="rotate-icon w-6 h-6 text-amway-light-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                    <div class="accordion-content text-gray-700">
-                        <p>Você pode comprar produtos Amway diretamente de um Empresário Amway, que pode te orientar sobre as melhores opções para suas necessidades. Além disso, como Cliente VIP, você tem acesso a descontos exclusivos e pode comprar online.</p>
-                    </div>
-                </div>
-                <!-- FAQ Item 3 -->
-                <div class="accordion-item bg-white p-4 rounded-lg shadow-sm mb-4">
-                    <div class="accordion-header flex justify-between items-center" onclick="toggleAccordion(this)">
-                        <span class="text-lg font-semibold text-amway-dark-blue">Como me torno um Empresário Amway?</span>
-                        <svg class="rotate-icon w-6 h-6 text-amway-light-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                    <div class="accordion-content text-gray-700">
-                        <p>Para se tornar um Empresário Amway, você precisa se registrar através de um patrocinador. Isso lhe dará acesso a treinamentos, suporte e a oportunidade de construir seu próprio negócio, vendendo produtos e formando sua própria equipe.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Call to Action Section -->
-    <section class="py-16 bg-amway-light-blue text-white text-center">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold mb-6">Pronto para Transformar Sua Vida?</h2>
-            <p class="text-lg mb-8">Preencha nosso formulário e um especialista entrará em contato para apresentar todas as vantagens da Amway.</p>
-            <a href="https://tally.so/r/YOUR_TALLY_FORM_LINK" target="_blank" class="bg-white text-amway-dark-blue px-8 py-4 rounded-full text-xl font-bold hover:bg-gray-200 transition duration-300 shadow-lg">Fale Conosco</a>
-        </div>
-    </section>
-
-    <!-- BizMix Partnerships Section -->
-    <section class="py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl font-bold mb-6 text-amway-dark-blue">Parcerias BizMix</h2>
-            <p class="text-lg text-gray-700 mb-8">Esta página é uma iniciativa da BizMix, conectando você às melhores oportunidades de negócio e produtos de qualidade. Conte com a expertise da BizMix para alavancar seus resultados e expandir seus horizontes.</p>
-            <a href="#" class="btn-primary">Conheça a BizMix</a>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-amway-dark-blue text-white py-12">
-        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-                <h3 class="text-xl font-bold mb-4">Amway Brasil</h3>
-                <p class="text-sm">Qualidade, Integridade e Oportunidade desde 1959.</p>
-                <div class="flex space-x-4 mt-4">
-                    <a href="#" class="text-white hover:text-amway-light-blue"><img src="https://via.placeholder.com/24/FFFFFF/003366?text=F" alt="Facebook" class="h-6"></a>
-                    <a href="#" class="text-white hover:text-amway-light-blue"><img src="https://via.placeholder.com/24/FFFFFF/003366?text=I" alt="Instagram" class="h-6"></a>
-                    <a href="#" class="text-white hover:text-amway-light-blue"><img src="https://via.placeholder.com/24/FFFFFF/003366?text=Y" alt="YouTube" class="h-6"></a>
-                </div>
-            </div>
-            <div>
-                <h3 class="text-xl font-bold mb-4">Links Úteis</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Responsabilidade Social</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Política de Privacidade</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Termos de Uso</a></li>
-                    <li><a href="#" class="hover:text-amway-light-blue transition duration-300">Fale Conosco</a></li>
-                </ul>
-            </div>
-            <div>
-                <h3 class="text-xl font-bold mb-4">Contato</h3>
-                <p class="text-sm">Central de Atendimento: 0800 777 7777</p>
-                <p class="text-sm">Horário: Seg-Sex, 9h-18h</p>
-                <p class="text-sm mt-2">Endereço: Rua Exemplo, 123 - São Paulo, SP</p>
-            </div>
-        </div>
-        <div class="text-center text-sm mt-8 pt-8 border-t border-gray-700">
-            &copy; 2023 Amway do Brasil. Todos os direitos reservados.
-        </div>
-    </footer>
-
-    <script>
-        function toggleAccordion(element) {
-            const content = element.nextElementSibling;
-            const icon = element.querySelector('.rotate-icon');
-
-            if (content.classList.contains('active')) {
-                content.classList.remove('active');
-                content.style.maxHeight = '0';
-                icon.classList.remove('active');
-            } else {
-                // Close all other open accordions
-                document.querySelectorAll('.accordion-content.active').forEach(item => {
-                    item.classList.remove('active');
-                    item.style.maxHeight = '0';
-                    item.previousElementSibling.querySelector('.rotate-icon').classList.remove('active');
-                });
-
-                content.classList.add('active');
-                content.style.maxHeight = content.scrollHeight + 'px'; // Set max-height to scrollHeight
-                icon.classList.add('active');
-            }
-        }
-    </script>
-</body>
-</html>
+                
