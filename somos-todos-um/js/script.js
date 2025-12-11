@@ -252,3 +252,83 @@ videoButtons.forEach(button => {
 console.log('%c🎉 Bem-vindo à Landing Page "Somos Todos Um"!', 'color: #D4AF37; font-size: 20px; font-weight: bold;');
 console.log('%cDesenvolvido com ❤️ por Henrique - BizMix', 'color: #2C5F7C; font-size: 14px;');
 console.log('%c📧 Contato: contato@bizmix.com.br', 'color: #666; font-size: 12px;');
+
+// ===================================
+// COPIAR CHAVE PIX
+// ===================================
+
+function copyPixKey() {
+    const pixKeyInput = document.getElementById('pixKey');
+    pixKeyInput.select();
+    pixKeyInput.setSelectionRange(0, 99999);
+    
+    navigator.clipboard.writeText(pixKeyInput.value).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        const originalText = btn.textContent;
+        btn.textContent = '✅ Copiado!';
+        btn.style.background = '#28A745';
+        
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+        }, 2000);
+    }).catch(err => {
+        alert('Chave PIX: ' + pixKeyInput.value);
+    });
+}
+
+// ===================================
+// CONTADOR DE VENDAS ANIMADO
+// ===================================
+
+function animateCounter() {
+    const counter = document.getElementById('salesCounter');
+    if (!counter) return;
+    
+    const target = parseInt(counter.textContent);
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    let current = 0;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            counter.textContent = target;
+            clearInterval(timer);
+        } else {
+            counter.textContent = Math.floor(current);
+        }
+    }, 16);
+}
+
+// Executar quando a seção aparecer na tela
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounter();
+            observer.unobserve(entry.target);
+        }
+    });
+});
+
+const socialProofSection = document.getElementById('social-proof');
+if (socialProofSection) {
+    observer.observe(socialProofSection);
+}
+
+// ===================================
+// SCROLL SUAVE PARA INSTRUÇÕES
+// ===================================
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
