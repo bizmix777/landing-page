@@ -37,6 +37,15 @@
 }
 
 /* ===================================
+   FIX: OVERFLOW HORIZONTAL (CELULAR)
+   =================================== */
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+/* ===================================
    ESTILOS GLOBAIS
    =================================== */
 
@@ -56,12 +65,15 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
+    width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     line-height: 1.2;
     margin-bottom: var(--spacing-sm);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 img {
@@ -76,6 +88,11 @@ a {
     transition: var(--transition);
 }
 
+p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
 /* ===================================
    SEÇÃO HERO
    =================================== */
@@ -88,6 +105,7 @@ a {
     display: flex;
     align-items: center;
     position: relative;
+    overflow: hidden;
 }
 
 .hero-content {
@@ -95,6 +113,7 @@ a {
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-lg);
     align-items: center;
+    width: 100%;
 }
 
 .badge {
@@ -114,6 +133,7 @@ a {
     margin-bottom: var(--spacing-sm);
     text-transform: uppercase;
     letter-spacing: 2px;
+    word-break: break-word;
 }
 
 .hero-subtitle {
@@ -145,6 +165,7 @@ a {
 
 .feature .icon {
     font-size: 1.25rem;
+    flex-shrink: 0;
 }
 
 .cta-box {
@@ -153,6 +174,7 @@ a {
     padding: var(--spacing-md);
     border-radius: 15px;
     border: 2px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
 }
 
 .price-box {
@@ -195,6 +217,7 @@ a {
     border: none;
     cursor: pointer;
     margin-bottom: var(--spacing-sm);
+    white-space: normal;
 }
 
 .btn-primary:hover {
@@ -230,6 +253,8 @@ a {
 
 .book-cover {
     max-width: 400px;
+    width: 100%;
+    height: auto;
     filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
     animation: float 3s ease-in-out infinite;
 }
@@ -411,6 +436,7 @@ a {
     color: var(--secondary-color);
     font-size: 1.5rem;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 /* ===================================
@@ -549,6 +575,7 @@ a {
 
 .credential .icon {
     font-size: 1.25rem;
+    flex-shrink: 0;
 }
 
 /* ===================================
@@ -730,6 +757,7 @@ a {
 .offer-box {
     max-width: 800px;
     margin: 0 auto;
+    width: 100%;
 }
 
 .price-comparison {
@@ -806,6 +834,7 @@ a {
     text-align: center;
     text-transform: uppercase;
     transition: var(--transition);
+    white-space: normal;
 }
 
 .btn-buy:hover {
@@ -825,6 +854,7 @@ a {
 
 .guarantee-icon {
     font-size: 3rem;
+    flex-shrink: 0;
 }
 
 .guarantee-text strong {
@@ -849,6 +879,7 @@ a {
     justify-content: center;
     gap: var(--spacing-md);
     margin-top: var(--spacing-sm);
+    flex-wrap: wrap;
 }
 
 .security-badges {
@@ -857,6 +888,7 @@ a {
     gap: var(--spacing-md);
     font-size: 0.875rem;
     opacity: 0.8;
+    flex-wrap: wrap;
 }
 
 /* ===================================
@@ -891,6 +923,7 @@ a {
 
 .faq-icon {
     font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
 .faq-question h3 {
@@ -904,6 +937,7 @@ a {
     font-weight: 700;
     color: var(--primary-color);
     transition: var(--transition);
+    flex-shrink: 0;
 }
 
 .faq-answer {
@@ -958,6 +992,7 @@ a {
 .benefit-icon {
     color: var(--secondary-color);
     font-size: 1.5rem;
+    flex-shrink: 0;
 }
 
 .btn-final {
@@ -970,6 +1005,7 @@ a {
     font-weight: 700;
     text-transform: uppercase;
     transition: var(--transition);
+    white-space: normal;
 }
 
 .btn-final:hover {
@@ -1052,42 +1088,153 @@ a {
 }
 
 @media (max-width: 768px) {
+    /* RESET GERAL MOBILE */
+    .container {
+        padding: 0 1rem;
+    }
+    
+    /* HERO */
+    .hero {
+        padding: 4rem 0 2rem;
+        min-height: auto;
+    }
+    
+    .hero-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
     }
     
     .hero-features {
         grid-template-columns: 1fr;
+        gap: 0.75rem;
     }
     
+    .book-cover {
+        max-width: 70%;
+        margin: 0 auto;
+    }
+    
+    .cta-box {
+        padding: 1.5rem 1rem;
+    }
+    
+    .price-current {
+        font-size: 2rem;
+    }
+    
+    .btn-primary {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    /* SEÇÕES */
+    .section-light,
+    .section-dark {
+        padding: 3rem 0;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+    }
+    
+    /* GRIDS */
     .questions-grid,
     .chapters-grid,
     .target-grid,
     .bonus-grid,
     .testimonials-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
     
+    /* TIMELINE */
     .timeline {
         flex-direction: column;
+        gap: 2rem;
     }
     
     .timeline-line {
         display: none;
     }
     
+    .timeline-item {
+        margin-bottom: 0;
+    }
+    
+    /* FEATURES */
     .features-list {
         grid-template-columns: 1fr;
     }
     
+    /* AUTOR */
+    .author-box {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .author-credentials {
+        grid-template-columns: 1fr;
+    }
+    
+    /* PREÇOS */
     .price-comparison {
         grid-template-columns: 1fr;
     }
     
+    .comparison-item.highlight {
+        transform: scale(1);
+    }
+    
+    .price-main {
+        font-size: 2.5rem;
+    }
+    
+    .btn-buy {
+        max-width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .guarantee-box {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .methods {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .security-badges {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    /* URGÊNCIA */
     .urgency-benefits {
         grid-template-columns: 1fr;
     }
     
+    .btn-final {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        width: 100%;
+    }
+    
+    /* FOOTER */
     .footer-content {
         grid-template-columns: 1fr;
         text-align: center;
@@ -1095,16 +1242,37 @@ a {
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 0.75rem;
+    }
+    
     .hero-title {
         font-size: 1.5rem;
+        letter-spacing: 1px;
     }
     
     .section-title {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
     }
     
     .price-current,
     .price-main {
         font-size: 2rem;
+    }
+    
+    .chapter-card,
+    .question-card,
+    .target-card,
+    .bonus-card,
+    .testimonial-card {
+        padding: 1rem;
+    }
+    
+    .faq-question {
+        padding: 1rem;
+    }
+    
+    .faq-question h3 {
+        font-size: 1rem;
     }
 }
