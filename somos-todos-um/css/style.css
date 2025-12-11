@@ -1,96 +1,468 @@
 /* ===================================
-   ESTILOS ESPECÍFICOS PARA PIX
+   SEÇÃO PIX - INSTRUÇÕES
    =================================== */
 
-.pix-info {
+.section-pix {
+    background: linear-gradient(135deg, #2C5F7C 0%, #1A1A2E 100%);
+    color: var(--white);
+    padding: var(--spacing-xl) 0;
+}
+
+.section-title-white {
+    font-size: 2.5rem;
     text-align: center;
-    font-size: 0.875rem;
-    opacity: 0.9;
-    margin-top: 0.5rem;
+    margin-bottom: var(--spacing-sm);
     color: var(--white);
 }
 
-.pix-benefits {
+.section-subtitle-white {
+    text-align: center;
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-lg);
+    opacity: 0.9;
+}
+
+/* PASSOS DO PIX */
+.pix-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    flex-wrap: wrap;
+}
+
+.step-card {
     background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     padding: var(--spacing-md);
+    border-radius: 15px;
+    text-align: center;
+    flex: 1;
+    min-width: 150px;
+    max-width: 200px;
+    position: relative;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: var(--transition);
+}
+
+.step-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--secondary-color);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+}
+
+.step-number {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--secondary-color);
+    color: var(--dark-bg);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+.step-icon {
+    font-size: 3rem;
+    margin: var(--spacing-sm) 0;
+}
+
+.step-card h3 {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-xs);
+    color: var(--secondary-color);
+}
+
+.step-card p {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+.step-arrow {
+    font-size: 2rem;
+    color: var(--secondary-color);
+    font-weight: 700;
+}
+
+/* CHAVE PIX */
+.pix-key-box {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: var(--spacing-md);
+    border-radius: 15px;
+    margin: var(--spacing-lg) 0;
+    text-align: center;
+    border: 2px solid var(--secondary-color);
+}
+
+.pix-key-box h3 {
+    margin-bottom: var(--spacing-md);
+    color: var(--secondary-color);
+}
+
+.pix-key-display {
+    display: flex;
+    gap: var(--spacing-sm);
+    max-width: 500px;
+    margin: 0 auto var(--spacing-sm);
+}
+
+.pix-key-input {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--secondary-color);
     border-radius: 10px;
-    margin: var(--spacing-md) 0;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--dark-bg);
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+.btn-copy {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--secondary-color);
+    color: var(--dark-bg);
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+}
+
+.btn-copy:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+}
+
+.pix-key-info {
+    font-size: 0.875rem;
+    margin: var(--spacing-sm) 0;
+    opacity: 0.9;
+}
+
+.pix-warning {
+    background: rgba(255, 193, 7, 0.2);
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+    border-left: 4px solid #FFC107;
+    margin-top: var(--spacing-sm);
+    font-size: 0.875rem;
+}
+
+/* VANTAGENS DO PIX */
+.pix-benefits {
+    margin: var(--spacing-lg) 0;
 }
 
 .pix-benefits h3 {
     text-align: center;
-    margin-bottom: var(--spacing-sm);
-    color: var(--white);
+    margin-bottom: var(--spacing-md);
+    color: var(--secondary-color);
 }
 
 .benefits-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-sm);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
 }
 
 .benefit-item {
     display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    color: var(--white);
-}
-
-.benefit-icon {
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
-
-.payment-steps {
-    background: rgba(255, 255, 255, 0.1);
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.05);
     padding: var(--spacing-md);
     border-radius: 10px;
-    margin: var(--spacing-md) 0;
-}
-
-.payment-steps h3 {
-    text-align: center;
-    margin-bottom: var(--spacing-md);
-    color: var(--white);
-}
-
-.steps-list {
-    list-style: none;
-    padding: 0;
-    counter-reset: step-counter;
-}
-
-.steps-list li {
-    background: rgba(255, 255, 255, 0.05);
-    padding: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
-    border-radius: 8px;
     border-left: 4px solid var(--secondary-color);
 }
 
-.steps-list li strong {
+.benefit-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.benefit-item strong {
     display: block;
     color: var(--secondary-color);
     margin-bottom: 0.25rem;
 }
 
-.steps-list li p {
+.benefit-item p {
+    font-size: 0.875rem;
+    opacity: 0.9;
     margin: 0;
+}
+
+/* BOTÃO PIX GRANDE */
+.pix-cta {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+}
+
+.btn-pix-large {
+    display: inline-block;
+    background: var(--secondary-color);
+    color: var(--dark-bg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: 50px;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: var(--transition);
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+}
+
+.btn-pix-large:hover {
+    background: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.6);
+}
+
+/* BOTÃO SECUNDÁRIO */
+.btn-secondary {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: var(--white);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--white);
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    margin-top: var(--spacing-sm);
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+}
+
+/* ===================================
+   PROVA SOCIAL
+   =================================== */
+
+.social-proof-box {
+    text-align: center;
+    background: var(--white);
+    padding: var(--spacing-lg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.social-proof-box h2 {
+    font-size: 2rem;
+    color: var(--dark-bg);
+    margin-bottom: var(--spacing-sm);
+}
+
+.counter {
+    color: var(--secondary-color);
+    font-size: 3rem;
+    font-weight: 700;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.social-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+/* ÚLTIMAS COMPRAS */
+.recent-sales {
+    background: var(--light-bg);
+    padding: var(--spacing-md);
+    border-radius: 10px;
+    margin: var(--spacing-md) 0;
+}
+
+.recent-sales h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.sales-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sales-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sales-list li:last-child {
+    border-bottom: none;
+}
+
+.buyer-name {
+    font-weight: 600;
+    color: var(--dark-bg);
+}
+
+.buyer-time {
+    font-size: 0.875rem;
+    color: var(--text-light);
+}
+
+/* ESTATÍSTICAS */
+.stats-embed {
+    margin-top: var(--spacing-lg);
+}
+
+.stats-embed h3 {
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-md);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    padding: var(--spacing-md);
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
     font-size: 0.875rem;
     opacity: 0.9;
 }
 
-/* RESPONSIVO PARA PIX */
+/* ===================================
+   DASHBOARD INTEGRADO
+   =================================== */
+
+.dashboard-embed {
+    background: var(--white);
+    padding: var(--spacing-md);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    margin: var(--spacing-lg) 0;
+}
+
+.dashboard-embed iframe {
+    width: 100%;
+    min-height: 500px;
+    border: none;
+    border-radius: 10px;
+}
+
+.dashboard-note {
+    text-align: center;
+    font-size: 0.875rem;
+    opacity: 0.8;
+    margin-top: var(--spacing-md);
+}
+
+/* ===================================
+   RESPONSIVIDADE
+   =================================== */
+
 @media (max-width: 768px) {
+    .pix-steps {
+        flex-direction: column;
+    }
+    
+    .step-arrow {
+        transform: rotate(90deg);
+        margin: var(--spacing-sm) 0;
+    }
+    
+    .step-card {
+        max-width: 100%;
+    }
+    
+    .pix-key-display {
+        flex-direction: column;
+    }
+    
+    .btn-copy {
+        width: 100%;
+    }
+    
     .benefits-grid {
         grid-template-columns: 1fr;
     }
     
-    .payment-steps {
-        padding: 1rem;
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
     
-    .steps-list li {
-        padding: 0.75rem;
+    .counter {
+        font-size: 2rem;
+    }
+    
+    .social-proof-box h2 {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-embed iframe {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title-white {
+        font-size: 1.8rem;
+    }
+    
+    .step-icon {
+        font-size: 2rem;
+    }
+    
+    .step-card h3 {
+        font-size: 1rem;
+    }
+    
+    .btn-pix-large {
+        font-size: 1rem;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 }
