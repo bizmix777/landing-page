@@ -1217,46 +1217,35 @@ a {
     
     h1, h2, h3,
 
-/* CORREÇÃO DOS BOTÕES NO MOBILE */
+/* CORREÇÃO AGRESSIVA DOS BOTÕES MOBILE */
 @media (max-width: 768px) {
+    .final-cta-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px; /* Espaço entre os botões */
+        width: 100%;
+    }
+
     .btn-buy, 
     .btn-whatsapp,
     .btn-final,
     .btn-final-alt {
-        padding: 15px 20px !important; /* Força altura padrão */
-        font-size: 1rem !important;    /* Tamanho de letra igual */
-        line-height: 1.2 !important;   /* Altura da linha igual */
-        min-height: 54px;              /* Altura mínima igual para todos */
-        display: flex !important;      /* Garante alinhamento */
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 10px;           /* Espaço entre eles */
+        width: 100% !important;
+        height: 60px !important;       /* Altura FIXA igual para todos */
+        padding: 0 10px !important;    /* Remove padding vertical excessivo */
+        font-size: 0.95rem !important; /* Fonte um pouco menor para caber */
+        line-height: 60px !important;  /* Centraliza o texto verticalmente */
+        display: block !important;
+        text-align: center !important;
+        white-space: nowrap !important; /* Impede quebra de linha */
+        overflow: hidden !important;    /* Esconde texto que vazar */
+        text-overflow: ellipsis !important; /* Adiciona ... se vazar */
+        margin: 0 !important;
+    }
+    
+    /* Ajuste específico para ícones não quebrarem */
+    .btn-buy::before,
+    .btn-whatsapp::before {
+        margin-right: 5px;
     }
 }
-<div class="footer-section payment-info">
-    <h4>Dados para Pagamento</h4>
-    
-    <div class="payment-row">
-        <span class="icon">💳</span>
-        <div class="info">
-            <span class="label">Chave PIX (Celular):</span>
-            <span class="value highlight">62992475080</span>
-        </div>
-    </div>
-    
-    <div class="payment-row">
-        <span class="icon">🏦</span>
-        <div class="info">
-            <span class="label">Banco:</span>
-            <span class="value">C6 Bank</span>
-        </div>
-    </div>
-    
-    <div class="payment-row">
-        <span class="icon">👤</span>
-        <div class="info">
-            <span class="label">Favorecido:</span>
-            <span class="value">Henrique</span>
-        </div>
-    </div>
-</div>
