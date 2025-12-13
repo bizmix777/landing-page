@@ -1216,3 +1216,20 @@ a {
     }
     
     h1, h2, h3,
+
+/* CORREÇÃO DOS BOTÕES NO MOBILE */
+@media (max-width: 768px) {
+    .btn-buy, 
+    .btn-whatsapp,
+    .btn-final,
+    .btn-final-alt {
+        padding: 15px 20px !important; /* Força altura padrão */
+        font-size: 1rem !important;    /* Tamanho de letra igual */
+        line-height: 1.2 !important;   /* Altura da linha igual */
+        min-height: 54px;              /* Altura mínima igual para todos */
+        display: flex !important;      /* Garante alinhamento */
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;           /* Espaço entre eles */
+    }
+}
