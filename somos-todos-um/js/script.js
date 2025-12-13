@@ -332,3 +332,26 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+function copyPixKey() {
+    // Copia o texto diretamente
+    const chavePix = "62992475080";
+    
+    navigator.clipboard.writeText(chavePix).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        const originalText = btn.textContent;
+        
+        btn.textContent = '✅ CHAVE COPIADA!';
+        btn.style.background = '#28A745';
+        btn.style.color = '#FFFFFF';
+        
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.background = '';
+            btn.style.color = '';
+        }, 2000);
+    }).catch(err => {
+        // Fallback caso o navegador bloqueie
+        alert('Copie a chave manualmente: 62992475080');
+    });
+}
