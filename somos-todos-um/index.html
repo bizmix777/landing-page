@@ -825,8 +825,8 @@
         </div>
     </section>
 
-    <!-- RODAPÉ -->
-    <footer class="footer" role="contentinfo">
+        <!-- RODAPÉ -->
+    <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
@@ -842,18 +842,10 @@
                 </div>
                 
                 <div class="footer-section">
-                    <h4>Formas de Pagamento</h4>
-                    <p>💳 Mercado Pago (Automático)</p>
-                    <p>💬 WhatsApp + PIX</p>
-                    <p>🔑 Chave PIX: 62992475080</p>
-                </div>
-                
-                <div class="footer-section">
-                    <h4>Links Úteis</h4>
-                    <a href="https://mpago.la/1gAWaRV" class="footer-link" target="_blank">Comprar via Mercado Pago</a>
-                    <a href="https://wa.me/5562992475080?text=Quero%20comprar%20o%20livro" class="footer-link" target="_blank">Comprar via WhatsApp</a>
-                    <a href="https://wa.me/5562992475080?text=Quero%20ser%20afiliado" class="footer-link" target="_blank">Seja Afiliado</a>
-                    <a href="https://www.bizmix.com.br" class="footer-link">Voltar ao Site Principal</a>
+                    <h4>Pagamento</h4>
+                    <p>💳 PIX: 62992475080</p>
+                    <p>🏦 Banco C6</p>
+                    <p>👤 Henrique</p>
                 </div>
             </div>
             
@@ -864,85 +856,56 @@
     </footer>
 
     <!-- JAVASCRIPT -->
+    <!-- Se você já tem o script.js, mantenha esta linha, mas REMOVA a função copyPixKey de lá -->
     <script src="js/script.js"></script>
     
-    <!-- SCRIPT ADICIONAL PARA FAQ -->
+    <!-- SCRIPT ESPECÍFICO PARA O PIX (Mantenha aqui no HTML para garantir) -->
     <script>
-        // FAQ Toggle
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', () => {
-                const faqItem = question.parentElement;
-                const isActive = faqItem.classList.contains('active');
-                
-                // Fecha todos os outros
-                document.querySelectorAll('.faq-item').forEach(item => {
-                    item.classList.remove('active');
-                });
-                
-                // Abre o clicado (se não estava aberto)
-                if (!isActive) {
-                    faqItem.classList.add('active');
-                }
-            });
-        });
-        
-        // Contador animado
-        function animateCounter() {
-            const counter = document.getElementById('salesCounter');
-            if (!counter) return;
+        function copyPixKey() {
+            // 1. Cria um elemento de texto temporário
+            const textArea = document.createElement("textarea");
+            textArea.value = "62992475080";
             
-            const target = parseInt(counter.textContent);
-            const duration = 2000;
-            const increment = target / (duration / 16);
-            let current = 0;
+            // 2. Adiciona ao site mas deixa invisível
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
             
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    counter.textContent = target;
-                    clearInterval(timer);
+            // 3. Seleciona e copia (Funciona em Android/iPhone antigos e novos)
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                const btn = document.querySelector('.btn-copy');
+                
+                if(successful) {
+                    // Feedback Visual
+                    const originalText = btn.innerText;
+                    btn.innerText = '✅ CHAVE COPIADA!';
+                    btn.style.background = '#28A745';
+                    btn.style.color = '#FFFFFF';
+                    
+                    // Alerta vibratório (se suportado)
+                    if (navigator.vibrate) navigator.vibrate(50);
+
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.style.background = '';
+                        btn.style.color = '';
+                    }, 3000);
                 } else {
-                    counter.textContent = Math.floor(current);
+                    throw new Error("Falha ao copiar");
                 }
-            }, 16);
-        }
-        
-        // Executar quando a seção aparecer
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounter();
-                    observer.unobserve(entry.target);
-                }
-            });
-        });
-        
-        const socialProofSection = document.getElementById('social-proof');
-        if (socialProofSection) {
-            observer.observe(socialProofSection);
+            } catch (err) {
+                // Se tudo falhar, mostra na tela para a pessoa copiar manual
+                prompt("Copie a chave abaixo:", "62992475080");
+            }
+            
+            // 4. Limpa a bagunça
+            document.body.removeChild(textArea);
         }
     </script>
-    function copyPixKey() {
-    // Copia o texto diretamente
-    const chavePix = "62992475080";
-    
-    navigator.clipboard.writeText(chavePix).then(() => {
-        const btn = document.querySelector('.btn-copy');
-        const originalText = btn.textContent;
-        
-        btn.textContent = '✅ CHAVE COPIADA!';
-        btn.style.background = '#28A745';
-        btn.style.color = '#FFFFFF';
-        
-        setTimeout(() => {
-            btn.textContent = originalText;
-            btn.style.background = '';
-            btn.style.color = '';
-        }, 2000);
-    }).catch(err => {
-        // Fallback caso o navegador bloqueie
-        alert('Copie a chave manualmente: 62992475080');
-    });
-}
 </body>
 </html>
