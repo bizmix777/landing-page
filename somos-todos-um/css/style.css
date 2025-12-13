@@ -1233,3 +1233,30 @@ a {
         margin-bottom: 10px;           /* Espaço entre eles */
     }
 }
+<div class="footer-section payment-info">
+    <h4>Dados para Pagamento</h4>
+    
+    <div class="payment-row">
+        <span class="icon">💳</span>
+        <div class="info">
+            <span class="label">Chave PIX (Celular):</span>
+            <span class="value highlight">62992475080</span>
+        </div>
+    </div>
+    
+    <div class="payment-row">
+        <span class="icon">🏦</span>
+        <div class="info">
+            <span class="label">Banco:</span>
+            <span class="value">C6 Bank</span>
+        </div>
+    </div>
+    
+    <div class="payment-row">
+        <span class="icon">👤</span>
+        <div class="info">
+            <span class="label">Favorecido:</span>
+            <span class="value">Henrique</span>
+        </div>
+    </div>
+</div>
