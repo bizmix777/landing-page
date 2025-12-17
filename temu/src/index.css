@@ -1,3 +1,17 @@
+// ... imports ...
+
+const Index = () => {
+  return (
+    <div className="min-h-screen flex flex-col">
+      {/* ... Header ... */}
+      
+      {/* MUDANÇA AQUI PARA TESTAR SE O SITE ATUALIZA */}
+      <div className="bg-yellow-400 text-black text-center p-2 font-bold">
+        VERSÃO DE TESTE: 1.0 (SE VOCÊ VÊ ISSO, O SITE ATUALIZOU!)
+      </div>
+
+      <main className="flex-grow">
+        {/* ... resto do código ... */}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
