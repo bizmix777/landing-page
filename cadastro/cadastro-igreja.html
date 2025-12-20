@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Igreja Parceira - Somos Todos Um</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .destaque {
+            background: #f0f7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .destaque strong {
+            color: #667eea;
+            font-size: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        label .obrigatorio {
+            color: #e74c3c;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .mensagem {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .mensagem.sucesso {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .mensagem.erro {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .codigo-resultado {
+            display: none;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .codigo-resultado h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .codigo-valor {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            letter-spacing: 2px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🙏 Cadastro de Igreja Parceira</h1>
+            <p>Faça parte do projeto "Somos Todos Um"</p>
+        </div>
+
+        <div class="destaque">
+            <strong>🎁 Receba 40% de comissão</strong> em todas as vendas do livro indicadas pela sua igreja!
+        </div>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <form id="formCadastro">
+            <div class="form-group">
+                <label>Nome da Igreja <span class="obrigatorio">*</span></label>
+                <input type="text" id="nome" name="nome" required placeholder="Ex: Igreja Batista Central">
+            </div>
+
+            <div class="form-group">
+                <label>Responsável <span class="obrigatorio">*</span></label>
+                <input type="text" id="responsavel" name="responsavel" required placeholder="Ex: Pastor João Silva">
+            </div>
+
+            <div class="form-group">
+                <label>Email <span class="obrigatorio">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="Ex: contato@igreja.com.br">
+            </div>
+
+            <div class="form-group">
+                <label>Telefone <span class="obrigatorio">*</span></label>
+                <input type="tel" id="telefone" name="telefone" required placeholder="Ex: (11) 98765-4321">
+            </div>
+
+            <div class="form-group">
+                <label>Endereço Completo</label>
+                <input type="text" id="endereco" name="endereco" placeholder="Ex: Rua das Flores, 123">
+            </div>
+
+            <div class="form-group">
+                <label>Cidade <span class="obrigatorio">*</span></label>
+                <input type="text" id="cidade" name="cidade" required placeholder="Ex: São Paulo">
+            </div>
+
+            <div class="form-group">
+                <label>Estado <span class="obrigatorio">*</span></label>
+                <select id="estado" name="estado" required>
+                    <option value="">Selecione o estado...</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Observações</label>
+                <textarea id="observacoes" name="observacoes" placeholder="Informações adicionais (opcional)"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                Cadastrar Igreja Parceira
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Processando cadastro...</p>
+        </div>
+
+        <div class="codigo-resultado" id="codigoResultado">
+            <h3>✅ Igreja Cadastrada com Sucesso!</h3>
+            <p>Seu código de indicação é:</p>
+            <div class="codigo-valor" id="codigoValor"></div>
+            <p>Compartilhe este código com seus membros para que eles indiquem nas compras do livro!</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO DO SUPABASE
+        // ============================================
+        // SUBSTITUA AQUI COM SUAS CREDENCIAIS DO SUPABASE
+        const SUPABASE_URL = 'https://SEU_PROJETO.supabase.co';
+        const SUPABASE_ANON_KEY = 'SUA_CHAVE_PUBLICA_AQUI';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ============================================
+        // ELEMENTOS DO DOM
+        // ============================================
+        const form = document.getElementById('formCadastro');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const loading = document.getElementById('loading');
+        const mensagem = document.getElementById('mensagem');
+        const codigoResultado = document.getElementById('codigoResultado');
+        const codigoValor = document.getElementById('codigoValor');
+
+        // ============================================
+        // FUNÇÃO: GERAR CÓDIGO DE INDICAÇÃO ÚNICO
+        // ============================================
+        function gerarCodigoIndicacao() {
+            const prefixo = 'IGR';
+            const aleatorio = Math.random().toString(36).substr(2, 6).toUpperCase();
+            return prefixo + aleatorio;
+        }
+
+        // ============================================
+        // FUNÇÃO: MOSTRAR MENSAGEM
+        // ============================================
+        function mostrarMensagem(texto, tipo) {
+            mensagem.textContent = texto;
+            mensagem.className = `mensagem ${tipo}`;
+            mensagem.style.display = 'block';
+            
+            setTimeout(() => {
+                mensagem.style.display = 'none';
+            }, 5000);
+        }
+
+        // ============================================
+        // FUNÇÃO: VALIDAR TELEFONE
+        // ============================================
+        function validarTelefone(telefone) {
+            const apenasNumeros = telefone.replace(/\D/g, '');
+            return apenasNumeros.length >= 10 && apenasNumeros.length <= 11;
+        }
+
+        // ============================================
+        // EVENTO: SUBMIT DO FORMULÁRIO
+        // ============================================
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validar telefone
+            const telefone = document.getElementById('telefone').value;
+            if (!validarTelefone(telefone)) {
+                mostrarMensagem('Telefone inválido. Use o formato: (11) 98765-4321', 'erro');
+                return;
+            }
+
+            // Desabilitar botão e mostrar loading
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Cadastrando...';
+            loading.style.display = 'block';
+            form.style.display = 'none';
+
+            // Coletar dados do formulário
+            const formData = new FormData(form);
+            const dados = Object.fromEntries(formData);
+
+            // Gerar código de indicação único
+            const codigoIndicacao = gerarCodigoIndicacao();
+
+            try {
+                // Inserir no Supabase
+                const { data, error } = await supabase
+                    .from('somos')
+                    .insert([{
+                        nome: dados.nome,
+                        tipo: 'igreja',
+                        responsavel: dados.responsavel,
+                        email: dados.email,
+                        telefone: dados.telefone,
+                        endereco: dados.endereco || null,
+                        cidade: dados.cidade,
+                        estado: dados.estado,
+                        codigo_indicacao: codigoIndicacao,
+                        percentual_comissao: 40.00,
+                        ativo: true,
+                        observacoes: dados.observacoes || null
+                    }])
+                    .select();
+
+                if (error) throw error;
+
+                // Sucesso!
+                loading.style.display = 'none';
+                codigoValor.textContent = codigoIndicacao;
+                codigoResultado.style.display = 'block';
+
+                // Opcional: Enviar email de confirmação
+                console.log('Igreja cadastrada:', data);
+
+            } catch (error) {
+                console.error('Erro ao cadastrar:', error);
+                
+                loading.style.display = 'none';
+                form.style.display = 'block';
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = 'Cadastrar Igreja Parceira';
+
+                if (error.code === '23505') {
+                    mostrarMensagem('Esta igreja já está cadastrada!', 'erro');
+                } else {
+                    mostrarMensagem('Erro ao cadastrar. Tente novamente.', 'erro');
+                }
+            }
+        });
+
+        // ============================================
+        // MÁSCARA DE TELEFONE
+        // ============================================
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/\D/g, '');
+            
+            if (valor.length <= 11) {
+                if (valor.length <= 2) {
+                    e.target.value = valor;
+                } else if (valor.length <= 6) {
+                    e.target.value = `(${valor.slice(0,2)}) ${valor.slice(2)}`;
+                } else if (valor.length <= 10) {
+                    e.target.value = `(${valor.slice(0,2)}) ${valor.slice(2,6)}-${valor.slice(6)}`;
+                } else {
+                    e.target.value = `(${valor.slice(0,2)}) ${valor.slice(2,7)}-${valor.slice(7,11)}`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
