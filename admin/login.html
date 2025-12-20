@@ -122,25 +122,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // CONFIGURAÇÃO DO SUPABASE
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ELEMENTOS
         const form = document.getElementById('formLogin');
         const btnLogin = document.getElementById('btnLogin');
         const mensagem = document.getElementById('mensagem');
 
-        // FUNÇÃO: MOSTRAR MENSAGEM
         function mostrarMensagem(texto) {
             mensagem.textContent = texto;
             mensagem.className = 'mensagem erro';
             mensagem.style.display = 'block';
         }
 
-        // EVENTO: SUBMIT DO FORMULÁRIO
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -158,7 +154,6 @@
 
                 if (error) throw error;
 
-                // Sucesso! Redirecionar para dashboard
                 window.location.href = '/admin/index.html';
 
             } catch (error) {
