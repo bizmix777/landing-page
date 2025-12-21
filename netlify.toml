@@ -1,2 +1,18 @@
 [build]
-  publish = "/"
+  publish = "somos-todos-um"
+  command = ""
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/cadastro"
+  to = "/cadastro/cadastro.html"
+  status = 200
