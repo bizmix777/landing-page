@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprar Livro - SOMOS TODOS UM</title>
+    <link rel="stylesheet" href="css/comprar.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header class="header">
+            <h1>📚 SOMOS TODOS UM</h1>
+            <p class="subtitle">Transforme sua vida com este livro inspirador</p>
+        </header>
+
+        <!-- SEÇÃO PRINCIPAL -->
+        <section class="main-section">
+            <div class="book-showcase">
+                <div class="book-image">
+                    <img src="images/livro-capa.jpg" alt="Livro Somos Todos Um" onerror="this.src='https://via.placeholder.com/300x400?text=SOMOS+TODOS+UM'">
+                </div>
+                <div class="book-info">
+                    <h2>Livro "SOMOS TODOS UM"</h2>
+                    <div class="rating">
+                        ⭐⭐⭐⭐⭐ <span>4.9/5 (127 avaliações)</span>
+                    </div>
+                    <div class="price">
+                        <span class="price-label">Apenas</span>
+                        <span class="price-value">R$ 29,90</span>
+                    </div>
+                    <div class="benefits">
+                        <h3>✨ O que você vai receber:</h3>
+                        <ul>
+                            <li>✅ Livro físico de alta qualidade</li>
+                            <li>✅ Entrega em todo Brasil</li>
+                            <li>✅ Conteúdo transformador</li>
+                            <li>✅ Mensagens inspiradoras</li>
+                            <li>✅ Apoio a uma causa nobre</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORMULÁRIO DE COMPRA -->
+        <section class="purchase-section">
+            <h2>🛒 Complete seu pedido</h2>
+            <form id="formCompra" class="purchase-form">
+                <div class="form-group">
+                    <label for="nome">Nome Completo *</label>
+                    <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="whatsapp">WhatsApp *</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" required placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="codigo">Código de Indicação (opcional)</label>
+                    <input type="text" id="codigo" name="codigo" placeholder="Digite o código se tiver">
+                    <small id="codigoStatus" class="codigo-status"></small>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantidade">Quantidade</label>
+                    <select id="quantidade" name="quantidade">
+                        <option value="1">1 livro - R$ 29,90</option>
+                        <option value="2">2 livros - R$ 59,80</option>
+                        <option value="3">3 livros - R$ 89,70</option>
+                        <option value="5">5 livros - R$ 149,50</option>
+                        <option value="10">10 livros - R$ 299,00</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="endereco">Endereço Completo *</label>
+                    <textarea id="endereco" name="endereco" required placeholder="Rua, número, complemento, bairro, cidade, estado, CEP" rows="3"></textarea>
+                </div>
+
+                <!-- RESUMO DO PEDIDO -->
+                <div class="order-summary">
+                    <h3>📋 Resumo do Pedido</h3>
+                    <div class="summary-line">
+                        <span>Quantidade:</span>
+                        <span id="resumoQuantidade">1 livro</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Valor unitário:</span>
+                        <span>R$ 29,90</span>
+                    </div>
+                    <div class="summary-line total">
+                        <span>Total:</span>
+                        <span id="resumoTotal">R$ 29,90</span>
+                    </div>
+                    <div class="summary-line comissao" id="resumoComissao" style="display: none;">
+                        <span>Comissão gerada (40%):</span>
+                        <span id="resumoComissaoValor">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    💳 FINALIZAR COMPRA
+                </button>
+            </form>
+        </section>
+
+        <!-- GARANTIA -->
+        <section class="guarantee">
+            <h3>🔒 Compra 100% Segura</h3>
+            <p>Seus dados estão protegidos. Pagamento via PIX.</p>
+        </section>
+    </div>
+
+    <!-- MODAL DE CONFIRMAÇÃO -->
+    <div id="modalPix" class="modal">
+        <div class="modal-content">
+            <h2>✅ Pedido Confirmado!</h2>
+            <p><strong>Número do Pedido:</strong> <span id="numeroPedido"></span></p>
+            <p><strong>Valor Total:</strong> <span id="valorPix"></span></p>
+            
+            <div class="pix-instructions">
+                <h3>📱 Instruções para Pagamento via PIX</h3>
+                <ol>
+                    <li>Abra o aplicativo do seu banco</li>
+                    <li>Escolha a opção PIX</li>
+                    <li>Faça o pagamento para a chave PIX:</li>
+                </ol>
+                <div class="pix-key">
+                    <strong>Chave PIX:</strong> bizmix777@gmail.com
+                </div>
+                <p class="pix-note">⚠️ Após realizar o pagamento, envie o comprovante para nosso WhatsApp: <strong>(00) 00000-0000</strong></p>
+            </div>
+
+            <button onclick="fecharModal()" class="btn-close">Entendi</button>
+        </div>
+    </div>
+
+    <script src="js/comprar.js"></script>
+</body>
+</html>
