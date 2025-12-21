@@ -2,16 +2,7 @@
   publish = "somos-todos-um"
   command = ""
 
-[[redirects]]
-  from = "/admin"
-  to = "/admin/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/admin/*"
-  to = "/admin/:splat"
-  status = 200
-
+# Não redirecionar /admin/ - deixar o Netlify servir os arquivos normalmente
 [[redirects]]
   from = "/cadastro"
   to = "/cadastro/cadastro.html"
