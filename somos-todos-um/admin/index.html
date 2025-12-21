@@ -245,46 +245,32 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ============================================
-        // CONFIGURAÇÃO DO SUPABASE
-        // ============================================
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ============================================
-        // VERIFICAR AUTENTICAÇÃO
-        // ============================================
         async function verificarAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await clienteSupabase.auth.getSession();
             
             if (!session) {
-                window.location.href = '/somos-todos-um/admin/login.html';
+                window.location.href = '/admin/login.html';
             }
         }
 
-        // ============================================
-        // LOGOUT
-        // ============================================
         async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = '/somos-todos-um/admin/login.html';
+            await clienteSupabase.auth.signOut();
+            window.location.href = '/admin/login.html';
         }
 
-        // ============================================
-        // CARREGAR DADOS
-        // ============================================
         async function carregarDados() {
             try {
-                // Carregar organizações
-                const { data: organizacoes } = await supabase
+                const { data: organizacoes } = await clienteSupabase
                     .from('somos')
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                // Carregar vendas
-                const { data: vendas } = await supabase
+                const { data: vendas } = await clienteSupabase
                     .from('vendas')
                     .select(`
                         *,
@@ -293,28 +279,23 @@
                     .order('created_at', { ascending: false })
                     .limit(50);
 
-                // Atualizar cards
-                document.getElementById('totalOrganizacoes').textContent = organizacoes.length;
-                document.getElementById('totalVendas').textContent = vendas.length;
+                document.getElementById('totalOrganizacoes').textContent = organizacoes ? organizacoes.length : 0;
+                document.getElementById('totalVendas').textContent = vendas ? vendas.length : 0;
                 
-                const valorTotal = vendas.reduce((acc, v) => acc + parseFloat(v.valor_venda), 0);
+                const valorTotal = vendas ? vendas.reduce((acc, v) => acc + parseFloat(v.valor_venda || 0), 0) : 0;
                 document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
                 
-                const comissoesPendentes = vendas.reduce((acc, v) => acc + parseFloat(v.comissao_valor), 0);
+                const comissoesPendentes = vendas ? vendas.reduce((acc, v) => acc + parseFloat(v.comissao_valor || 0), 0) : 0;
                 document.getElementById('comissoesPendentes').textContent = `R$ ${comissoesPendentes.toFixed(2)}`;
 
-                // Renderizar tabelas
-                renderizarOrganizacoes(organizacoes);
-                renderizarVendas(vendas);
+                renderizarOrganizacoes(organizacoes || []);
+                renderizarVendas(vendas || []);
 
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
             }
         }
 
-        // ============================================
-        // RENDERIZAR ORGANIZAÇÕES
-        // ============================================
         function renderizarOrganizacoes(organizacoes) {
             const tbody = document.getElementById('tbodyOrganizacoes');
             tbody.innerHTML = '';
@@ -340,9 +321,6 @@
             document.getElementById('tabelaOrganizacoes').style.display = 'table';
         }
 
-        // ============================================
-        // RENDERIZAR VENDAS
-        // ============================================
         function renderizarVendas(vendas) {
             const tbody = document.getElementById('tbodyVendas');
             tbody.innerHTML = '';
@@ -353,9 +331,9 @@
                 tr.innerHTML = `
                     <td>${data}</td>
                     <td>${venda.nome_comprador}</td>
-                    <td>${venda.somos.nome}</td>
-                    <td>R$ ${parseFloat(venda.valor_venda).toFixed(2)}</td>
-                    <td>R$ ${parseFloat(venda.comissao_valor).toFixed(2)}</td>
+                    <td>${venda.somos ? venda.somos.nome : 'N/A'}</td>
+                    <td>R$ ${parseFloat(venda.valor_venda || 0).toFixed(2)}</td>
+                    <td>R$ ${parseFloat(venda.comissao_valor || 0).toFixed(2)}</td>
                     <td>
                         <span class="badge badge-${venda.status}">
                             ${venda.status}
@@ -369,16 +347,10 @@
             document.getElementById('tabelaVendas').style.display = 'table';
         }
 
-        // ============================================
-        // EDITAR ORGANIZAÇÃO
-        // ============================================
         function editarOrganizacao(id) {
-            window.location.href = `/somos-todos-um/admin/editar-organizacao.html?id=${id}`;
+            alert('Função de edição em desenvolvimento. ID: ' + id);
         }
 
-        // ============================================
-        // INICIALIZAR
-        // ============================================
         verificarAuth();
         carregarDados();
     </script>
