@@ -25,7 +25,7 @@ function atualizarResumo() {
     document.getElementById('resumoTotal').textContent = `R$ ${valorTotal}`;
     
     if (organizacaoSelecionada) {
-        const ao = (parseFloat(valorTotal) * PERCENTUAL_AO).toFixed(2);
+        const comissao = (parseFloat(valorTotal) * PERCENTUAL_COMISSAO).toFixed(2);
         document.getElementById('resumoComissaoValor').textContent = `R$ ${comissao}`;
         document.getElementById('resumoComissao').style.display = 'flex';
     }
@@ -110,6 +110,7 @@ async function finalizarCompra(e) {
         
         if (error) {
             alert('Erro ao registrar venda: ' + error.message);
+            console.error('Erro detalhado:', error);
             return;
         }
         
