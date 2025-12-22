@@ -223,7 +223,6 @@
     <div class="container">
         <h1>💰 Dashboard de Comissões - Somos Todos Um</h1>
         
-        <!-- FILTROS -->
         <div class="filtros">
             <h3>🔍 Filtros</h3>
             <div class="filtro-grupo">
@@ -231,19 +230,12 @@
                 <select id="filtroPeriodo">
                     <option value="atual">Período Atual</option>
                     <option value="todos">Todos os Períodos</option>
-                    <option value="personalizado">Período Personalizado</option>
                 </select>
-                
-                <div id="dataPersonalizada" style="display: none;">
-                    <input type="date" id="dataInicio">
-                    <input type="date" id="dataFim">
-                </div>
                 
                 <button onclick="carregarDados()">🔄 Atualizar</button>
             </div>
         </div>
         
-        <!-- RESUMO -->
         <div class="resumo">
             <div class="card-resumo">
                 <div class="label">Total de Vendas</div>
@@ -259,13 +251,11 @@
             </div>
         </div>
         
-        <!-- AÇÕES -->
         <div class="acoes">
             <button class="btn btn-imprimir" onclick="imprimir()">🖨️ Imprimir</button>
             <button class="btn btn-excel" onclick="exportarExcel()">📑 Exportar para Excel</button>
         </div>
         
-        <!-- COMISSÕES POR IGREJA -->
         <div class="secao">
             <h2>🏛️ Comissões por Igreja</h2>
             <div id="tabelaIgrejas">
@@ -273,7 +263,6 @@
             </div>
         </div>
         
-        <!-- VENDAS PAGAS -->
         <div class="secao">
             <h2>📋 Vendas Pagas no Período</h2>
             <div id="tabelaVendas">
@@ -288,87 +277,18 @@
         
         const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        let dadosVendas = [];
         let dadosIgrejas = [];
+        let dadosVendas = [];
         
-        // Calcular período atual (29 do mês anterior até 28 do mês atual)
-        function calcularPeriodoAtual() {
-            const hoje = new Date();
-            const diaHoje = hoje.getDate();
-            const mesAtual = hoje.getMonth();
-            const anoAtual = hoje.getFullYear();
-            
-            let dataInicio, dataFim;
-            
-            if (diaHoje >= 29) {
-                // Período começa no dia 29 deste mês
-                dataInicio = new Date(anoAtual, mesAtual, 29);
-                // Período termina no dia 28 do próximo mês
-                dataFim = new Date(anoAtual, mesAtual + 1, 28);
-            } else {
-                // Período começa no dia 29 do mês anterior
-                dataInicio = new Date(anoAtual, mesAtual - 1, 29);
-                // Se o mês anterior não tem dia 29 (fevereiro), ajustar
-                if (dataInicio.getMonth() !== mesAtual - 1) {
-                    dataInicio = new Date(anoAtual, mesAtual, 1);
-                }
-                // Período termina no dia 28 deste mês
-                dataFim = new Date(anoAtual, mesAtual, 28);
-            }
-            
-            return {
-                inicio: dataInicio.toISOString().split('T')[0],
-                fim: dataFim.toISOString().split('T')[0]
-            };
-        }
-        
-        // Carregar dados do Supabase
         async function carregarDados() {
             try {
                 const tipoPeriodo = document.getElementById('filtroPeriodo').value;
-                let dataInicio, dataFim;
                 
                 if (tipoPeriodo === 'atual') {
-                    const periodo = calcularPeriodoAtual();
-                    dataInicio = periodo.inicio;
-                    dataFim = periodo.fim;
-                } else if (tipoPeriodo === 'personalizado') {
-                    dataInicio = document.getElementById('dataInicio').value;
-                    dataFim = document.getElementById('dataFim').value;
-                    
-                    if (!dataInicio || !dataFim) {
-                        alert('Por favor, selecione as datas de início e fim!');
-                        return;
-                    }
+                    await carregarPeriodoAtual();
+                } else {
+                    await carregarTodosPeriodos();
                 }
-                
-                // Buscar vendas pagas
-                let query = clienteSupabase
-                    .from('vendas')
-                    .select('*')
-                    .eq('status', 'pago');
-                
-                if (tipoPeriodo !== 'todos') {
-                    query = query
-                        .gte('data_venda', dataInicio)
-                        .lte('data_venda', dataFim);
-                }
-                
-                const { data: vendas, error } = await query.order('data_venda', { ascending: false });
-                
-                if (error) {
-                    throw error;
-                }
-                
-                dadosVendas = vendas;
-                
-                // Processar dados por igreja
-                processarDadosIgrejas();
-                
-                // Renderizar tabelas
-                renderizarTabelaIgrejas();
-                renderizarTabelaVendas();
-                atualizarResumo();
                 
             } catch (erro) {
                 console.error('Erro ao carregar dados:', erro);
@@ -377,35 +297,70 @@
             }
         }
         
-        // Processar dados por igreja
+        async function carregarPeriodoAtual() {
+            const { data: igrejas, error: erroIgrejas } = await clienteSupabase.rpc('calcular_comissoes_por_igreja', {
+                data_referencia: new Date().toISOString().split('T')[0]
+            });
+            
+            if (erroIgrejas) throw erroIgrejas;
+            
+            const { data: vendas, error: erroVendas } = await clienteSupabase.rpc('buscar_vendas_periodo', {
+                data_referencia: new Date().toISOString().split('T')[0]
+            });
+            
+            if (erroVendas) throw erroVendas;
+            
+            dadosIgrejas = igrejas || [];
+            dadosVendas = vendas || [];
+            
+            renderizarTabelaIgrejas();
+            renderizarTabelaVendas();
+            atualizarResumo();
+        }
+        
+        async function carregarTodosPeriodos() {
+            const { data: vendas, error } = await clienteSupabase
+                .from('vendas')
+                .select('*')
+                .eq('status', 'pago')
+                .order('data_venda', { ascending: false });
+            
+            if (error) throw error;
+            
+            dadosVendas = vendas || [];
+            processarDadosIgrejas();
+            renderizarTabelaIgrejas();
+            renderizarTabelaVendas();
+            atualizarResumo();
+        }
+        
         function processarDadosIgrejas() {
             const igrejas = {};
             
             dadosVendas.forEach(venda => {
                 const igrejaId = venda.igreja_id || 'sem_igreja';
-                const igrejaNome = venda.igreja_nome || 'Sem Igreja';
                 
                 if (!igrejas[igrejaId]) {
                     igrejas[igrejaId] = {
-                        id: igrejaId,
-                        nome: igrejaNome,
-                        totalVendas: 0,
-                        valorTotal: 0,
-                        totalComissoes: 0
+                        igreja_id: igrejaId,
+                        igreja_nome: 'Sem Igreja',
+                        igreja_responsavel: '-',
+                        total_vendas: 0,
+                        valor_total: 0,
+                        total_comissoes: 0
                     };
                 }
                 
-                igrejas[igrejaId].totalVendas++;
-                igrejas[igrejaId].valorTotal += parseFloat(venda.valor || 0);
-                igrejas[igrejaId].totalComissoes += parseFloat(venda.comissao || 0);
+                igrejas[igrejaId].total_vendas++;
+                igrejas[igrejaId].valor_total += parseFloat(venda.valor_venda || 0);
+                igrejas[igrejaId].total_comissoes += parseFloat(venda.comissao_valor || 0);
             });
             
             dadosIgrejas = Object.values(igrejas);
         }
         
-        // Renderizar tabela de igrejas
         function renderizarTabelaIgrejas() {
-            let html = '<table><thead><tr><th>Igreja</th><th>Total de Vendas</th><th>Valor Total Vendido</th><th>Total de Comissões</th></tr></thead><tbody>';
+            let html = '<table><thead><tr><th>Igreja</th><th>Responsável</th><th>Total de Vendas</th><th>Valor Total Vendido</th><th>Total de Comissões</th></tr></thead><tbody>';
             
             let totalGeralVendas = 0;
             let totalGeralValor = 0;
@@ -413,19 +368,20 @@
             
             dadosIgrejas.forEach(igreja => {
                 html += '<tr>';
-                html += '<td>' + igreja.nome + '</td>';
-                html += '<td>' + igreja.totalVendas + '</td>';
-                html += '<td>R$ ' + igreja.valorTotal.toFixed(2).replace('.', ',') + '</td>';
-                html += '<td>R$ ' + igreja.totalComissoes.toFixed(2).replace('.', ',') + '</td>';
+                html += '<td>' + (igreja.igreja_nome || 'Sem Igreja') + '</td>';
+                html += '<td>' + (igreja.igreja_responsavel || '-') + '</td>';
+                html += '<td>' + igreja.total_vendas + '</td>';
+                html += '<td>R$ ' + parseFloat(igreja.valor_total).toFixed(2).replace('.', ',') + '</td>';
+                html += '<td>R$ ' + parseFloat(igreja.total_comissoes).toFixed(2).replace('.', ',') + '</td>';
                 html += '</tr>';
                 
-                totalGeralVendas += igreja.totalVendas;
-                totalGeralValor += igreja.valorTotal;
-                totalGeralComissoes += igreja.totalComissoes;
+                totalGeralVendas += parseInt(igreja.total_vendas);
+                totalGeralValor += parseFloat(igreja.valor_total);
+                totalGeralComissoes += parseFloat(igreja.total_comissoes);
             });
             
             html += '</tbody><tfoot><tr>';
-            html += '<td><strong>TOTAL GERAL</strong></td>';
+            html += '<td colspan="2"><strong>TOTAL GERAL</strong></td>';
             html += '<td><strong>' + totalGeralVendas + '</strong></td>';
             html += '<td><strong>R$ ' + totalGeralValor.toFixed(2).replace('.', ',') + '</strong></td>';
             html += '<td><strong>R$ ' + totalGeralComissoes.toFixed(2).replace('.', ',') + '</strong></td>';
@@ -434,19 +390,17 @@
             document.getElementById('tabelaIgrejas').innerHTML = html;
         }
         
-        // Renderizar tabela de vendas
         function renderizarTabelaVendas() {
-            let html = '<table><thead><tr><th>ID</th><th>Data</th><th>Comprador</th><th>Produto</th><th>Valor</th><th>Comissão</th><th>Igreja</th></tr></thead><tbody>';
+            let html = '<table><thead><tr><th>Data</th><th>Comprador</th><th>Valor</th><th>Comissão</th><th>Status</th><th>Forma Pagamento</th></tr></thead><tbody>';
             
             dadosVendas.forEach(venda => {
                 html += '<tr>';
-                html += '<td>' + venda.id + '</td>';
                 html += '<td>' + new Date(venda.data_venda).toLocaleDateString('pt-BR') + '</td>';
-                html += '<td>' + (venda.comprador_nome || '-') + '</td>';
-                html += '<td>' + (venda.produto_nome || '-') + '</td>';
-                html += '<td>R$ ' + parseFloat(venda.valor || 0).toFixed(2).replace('.', ',') + '</td>';
-                html += '<td>R$ ' + parseFloat(venda.comissao || 0).toFixed(2).replace('.', ',') + '</td>';
-                html += '<td>' + (venda.igreja_nome || 'Sem Igreja') + '</td>';
+                html += '<td>' + (venda.nome_comprador || '-') + '</td>';
+                html += '<td>R$ ' + parseFloat(venda.valor_venda || 0).toFixed(2).replace('.', ',') + '</td>';
+                html += '<td>R$ ' + parseFloat(venda.comissao_valor || 0).toFixed(2).replace('.', ',') + '</td>';
+                html += '<td>' + (venda.status || '-') + '</td>';
+                html += '<td>' + (venda.forma_pagamento || '-') + '</td>';
                 html += '</tr>';
             });
             
@@ -455,61 +409,45 @@
             document.getElementById('tabelaVendas').innerHTML = html;
         }
         
-        // Atualizar resumo
         function atualizarResumo() {
             const totalVendas = dadosVendas.length;
-            const valorTotal = dadosVendas.reduce((sum, v) => sum + parseFloat(v.valor || 0), 0);
-            const totalComissoes = dadosVendas.reduce((sum, v) => sum + parseFloat(v.comissao || 0), 0);
+            const valorTotal = dadosVendas.reduce((sum, v) => sum + parseFloat(v.valor_venda || 0), 0);
+            const totalComissoes = dadosVendas.reduce((sum, v) => sum + parseFloat(v.comissao_valor || 0), 0);
             
             document.getElementById('totalVendas').textContent = totalVendas;
             document.getElementById('valorTotal').textContent = 'R$ ' + valorTotal.toFixed(2).replace('.', ',');
             document.getElementById('totalComissoes').textContent = 'R$ ' + totalComissoes.toFixed(2).replace('.', ',');
         }
         
-        // Imprimir
         function imprimir() {
             window.print();
         }
         
-        // Exportar para Excel
         function exportarExcel() {
             const wb = XLSX.utils.book_new();
             
-            // ABA 1: Comissões por Igreja
             const wsIgrejas = XLSX.utils.json_to_sheet(dadosIgrejas.map(i => ({
-                'Igreja': i.nome,
-                'Total de Vendas': i.totalVendas,
-                'Valor Total Vendido': i.valorTotal,
-                'Total de Comissões': i.totalComissoes
+                'Igreja': i.igreja_nome || 'Sem Igreja',
+                'Responsável': i.igreja_responsavel || '-',
+                'Total de Vendas': i.total_vendas,
+                'Valor Total Vendido': parseFloat(i.valor_total).toFixed(2),
+                'Total de Comissões': parseFloat(i.total_comissoes).toFixed(2)
             })));
             XLSX.utils.book_append_sheet(wb, wsIgrejas, 'Comissões por Igreja');
             
-            // ABA 2: Vendas Pagas
             const wsVendas = XLSX.utils.json_to_sheet(dadosVendas.map(v => ({
-                'ID': v.id,
                 'Data': new Date(v.data_venda).toLocaleDateString('pt-BR'),
-                'Comprador': v.comprador_nome || '-',
-                'Produto': v.produto_nome || '-',
-                'Valor': v.valor,
-                'Comissão': v.comissao,
-                'Igreja': v.igreja_nome || 'Sem Igreja'
+                'Comprador': v.nome_comprador || '-',
+                'Valor': parseFloat(v.valor_venda || 0).toFixed(2),
+                'Comissão': parseFloat(v.comissao_valor || 0).toFixed(2),
+                'Status': v.status || '-',
+                'Forma Pagamento': v.forma_pagamento || '-'
             })));
             XLSX.utils.book_append_sheet(wb, wsVendas, 'Vendas Pagas');
             
             XLSX.writeFile(wb, 'comissoes_somos_todos_um.xlsx');
         }
         
-        // Mostrar/ocultar datas personalizadas
-        document.getElementById('filtroPeriodo').addEventListener('change', function() {
-            const dataPersonalizada = document.getElementById('dataPersonalizada');
-            if (this.value === 'personalizado') {
-                dataPersonalizada.style.display = 'block';
-            } else {
-                dataPersonalizada.style.display = 'none';
-            }
-        });
-        
-        // Carregar dados ao iniciar
         carregarDados();
     </script>
 </body>
