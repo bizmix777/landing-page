@@ -348,4 +348,102 @@
         
         function calcularResumo() {
             const valorUnitario = parseFloat(document.getElementById('valorVenda').value) || 0;
-            const*
+            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+            const igrejaSelect = document.getElementById('igrejaId');
+            const igrejaOption = igrejaSelect.options[igrejaSelect.selectedIndex];
+            
+            if (valorUnitario > 0 && igrejaSelect.value) {
+                const valorTotal = valorUnitario * quantidade;
+                const percentual = parseFloat(igrejaOption.dataset.percentual) || 0;
+                const comissao = (valorTotal * percentual) / 100;
+                const igrejaNome = igrejaOption.dataset.nome || '';
+                
+                document.getElementById('resumoQuantidade').textContent = quantidade;
+                document.getElementById('resumoValorUnitario').textContent = 'R$ ' + valorUnitario.toFixed(2).replace('.', ',');
+                document.getElementById('resumoValorTotal').textContent = 'R$ ' + valorTotal.toFixed(2).replace('.', ',');
+                document.getElementById('resumoPercentual').textContent = percentual.toFixed(2);
+                document.getElementById('resumoComissao').textContent = 'R$ ' + comissao.toFixed(2).replace('.', ',');
+                document.getElementById('resumoIgreja').textContent = igrejaNome;
+                
+                document.getElementById('resumoVenda').style.display = 'block';
+            } else {
+                document.getElementById('resumoVenda').style.display = 'none';
+            }
+        }
+        
+        async function salvarVenda(event) {
+            event.preventDefault();
+            
+            const btnEnviar = document.getElementById('btnEnviar');
+            btnEnviar.disabled = true;
+            btnEnviar.textContent = '⏳ Enviando...';
+            
+            document.getElementById('mensagemSucesso').style.display = 'none';
+            document.getElementById('mensagemErro').style.display = 'none';
+            
+            try {
+                const valorUnitario = parseFloat(document.getElementById('valorVenda').value);
+                const quantidade = parseInt(document.getElementById('quantidade').value);
+                const valorTotal = valorUnitario * quantidade;
+                
+                const igrejaSelect = document.getElementById('igrejaId');
+                const igrejaOption = igrejaSelect.options[igrejaSelect.selectedIndex];
+                const percentual = parseFloat(igrejaOption.dataset.percentual);
+                const comissao = (valorTotal * percentual) / 100;
+                
+                const dados = {
+                    nome_comprador: document.getElementById('nomeComprador').value,
+                    email_comprador: document.getElementById('emailComprador').value,
+                    telefone_comprador: document.getElementById('telefoneComprador').value,
+                    whatsapp_comprador: document.getElementById('whatsappComprador').value || null,
+                    endereco_entrega: document.getElementById('enderecoEntrega').value || null,
+                    quantidade: quantidade,
+                    valor_venda: valorTotal,
+                    comissao_valor: comissao,
+                    percentual_formatado: percentual.toFixed(2) + '%',
+                    forma_pagamento: document.getElementById('formaPagamento').value,
+                    igreja_id: document.getElementById('igrejaId').value,
+                    status: 'pendente',
+                    data_venda: new Date().toISOString(),
+                    organizacao_id: '00000000-0000-0000-0000-000000000000'
+                };
+                
+                const { data, error } = await clienteSupabase
+                    .from('vendas')
+                    .insert([dados])
+                    .select();
+                
+                if (error) throw error;
+                
+                const vendaId = data[0].id;
+                
+                document.getElementById('mensagemSucesso').innerHTML = 
+                    '<h3>✅ Venda Registrada com Sucesso!</h3>' +
+                    '<p><strong>Código da Venda:</strong> ' + vendaId + '</p>' +
+                    '<p><strong>Valor Total:</strong> R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</p>' +
+                    '<p><strong>Comissão:</strong> R$ ' + comissao.toFixed(2).replace('.', ',') + '</p>' +
+                    '<p>Um email de confirmação foi enviado para: ' + dados.email_comprador + '</p>' +
+                    '<p><strong>Importante:</strong> Guarde o código da venda para enviar o comprovante de pagamento!</p>';
+                document.getElementById('mensagemSucesso').style.display = 'block';
+                
+                document.getElementById('formVenda').reset();
+                document.getElementById('resumoVenda').style.display = 'none';
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (erro) {
+                console.error('Erro ao salvar venda:', erro);
+                document.getElementById('mensagemErro').innerHTML = 
+                    '<h3>❌ Erro ao Registrar Venda</h3>' +
+                    '<p>' + erro.message + '</p>';
+                document.getElementById('mensagemErro').style.display = 'block';
+            } finally {
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = '✅ Registrar Venda';
+            }
+        }
+        
+        carregarIgrejas();
+    </script>
+</body>
+</html>
