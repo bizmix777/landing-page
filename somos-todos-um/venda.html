@@ -155,14 +155,92 @@
             transform: none;
         }
         
+        .btn-copiar {
+            background: #2196F3;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .btn-copiar:hover {
+            background: #0b7dda;
+        }
+        
         .sucesso {
             background: #d4edda;
             color: #155724;
-            padding: 20px;
-            border-radius: 8px;
+            padding: 30px;
+            border-radius: 10px;
             border-left: 5px solid #28a745;
             margin-bottom: 20px;
             display: none;
+        }
+        
+        .sucesso h2 {
+            color: #155724;
+            margin-bottom: 20px;
+        }
+        
+        .dados-pagamento {
+            background: white;
+            color: #333;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px solid #28a745;
+        }
+        
+        .dados-pagamento h3 {
+            color: #28a745;
+            margin-bottom: 15px;
+        }
+        
+        .chave-pix-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border: 2px dashed #667eea;
+            margin: 15px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        .info-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .info-item strong {
+            color: #667eea;
+        }
+        
+        .instrucoes {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #ffc107;
+            margin-top: 20px;
+        }
+        
+        .instrucoes h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .instrucoes ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .instrucoes ol li {
+            margin: 8px 0;
         }
         
         .erro {
@@ -173,13 +251,6 @@
             border-left: 5px solid #f44336;
             margin-bottom: 20px;
             display: none;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-            font-style: italic;
         }
         
         @media (max-width: 768px) {
@@ -199,7 +270,7 @@
         
         <div class="info-box">
             <h3>📋 Instruções</h3>
-            <p>Preencha todos os campos obrigatórios (*) para registrar sua venda. Após o envio, você receberá um código de venda por email.</p>
+            <p>Preencha todos os campos obrigatórios (*) para registrar sua venda. Após o envio, você receberá os dados para pagamento via PIX.</p>
         </div>
         
         <div id="mensagemSucesso" class="sucesso"></div>
@@ -314,6 +385,10 @@
         
         const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
+        const CHAVE_PIX = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
+        const NOME_FAVORECIDO = 'Henrique Gomes da Silva';
+        const BANCO = 'C6 Bank (336)';
+        
         let igrejasData = [];
         
         async function carregarIgrejas() {
@@ -371,6 +446,14 @@
             }
         }
         
+        function copiarChavePix() {
+            navigator.clipboard.writeText(CHAVE_PIX).then(() => {
+                alert('✅ Chave PIX copiada com sucesso!');
+            }).catch(() => {
+                alert('❌ Erro ao copiar. Copie manualmente.');
+            });
+        }
+        
         async function salvarVenda(event) {
             event.preventDefault();
             
@@ -390,6 +473,7 @@
                 const igrejaOption = igrejaSelect.options[igrejaSelect.selectedIndex];
                 const percentual = parseFloat(igrejaOption.dataset.percentual);
                 const comissao = (valorTotal * percentual) / 100;
+                const igrejaNome = igrejaOption.dataset.nome;
                 
                 const dados = {
                     nome_comprador: document.getElementById('nomeComprador').value,
@@ -418,12 +502,47 @@
                 const vendaId = data[0].id;
                 
                 document.getElementById('mensagemSucesso').innerHTML = 
-                    '<h3>✅ Venda Registrada com Sucesso!</h3>' +
-                    '<p><strong>Código da Venda:</strong> ' + vendaId + '</p>' +
-                    '<p><strong>Valor Total:</strong> R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</p>' +
-                    '<p><strong>Comissão:</strong> R$ ' + comissao.toFixed(2).replace('.', ',') + '</p>' +
-                    '<p>Um email de confirmação foi enviado para: ' + dados.email_comprador + '</p>' +
-                    '<p><strong>Importante:</strong> Guarde o código da venda para enviar o comprovante de pagamento!</p>';
+                    '<h2>✅ Venda Registrada com Sucesso!</h2>' +
+                    '<div class="info-item"><strong>📋 Código da Venda:</strong><br>' + vendaId + '</div>' +
+                    '<div class="info-item"><strong>🏛️ Igreja Parceira:</strong> ' + igrejaNome + '</div>' +
+                    '<div class="info-item"><strong>💵 Valor Total:</strong> R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</div>' +
+                    '<div class="info-item"><strong>💰 Comissão da Igreja:</strong> R$ ' + comissao.toFixed(2).replace('.', ',') + ' (' + percentual.toFixed(2) + '%)</div>' +
+                    
+                    '<div class="dados-pagamento">' +
+                    '<h3>💳 DADOS PARA PAGAMENTO VIA PIX</h3>' +
+                    '<div class="info-item"><strong>🔑 Tipo de Chave:</strong> Chave Aleatória</div>' +
+                    '<div class="info-item"><strong>🔑 Chave PIX:</strong></div>' +
+                    '<div class="chave-pix-box">' + CHAVE_PIX + '</div>' +
+                    '<button class="btn-copiar" onclick="copiarChavePix()">📋 Copiar Chave PIX</button>' +
+                    '<div class="info-item"><strong>👤 Favorecido:</strong> ' + NOME_FAVORECIDO + '</div>' +
+                    '<div class="info-item"><strong>🏦 Banco:</strong> ' + BANCO + '</div>' +
+                    '<div class="info-item"><strong>💵 Valor a Pagar:</strong> <span style="font-size: 1.3em; color: #28a745;">R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</span></div>' +
+                    '</div>' +
+                    
+                    '<div class="instrucoes">' +
+                    '<h4>📱 COMO PAGAR:</h4>' +
+                    '<ol>' +
+                    '<li>Abra o app do seu banco</li>' +
+                    '<li>Acesse a área <strong>PIX</strong></li>' +
+                    '<li>Escolha <strong>"Pix Copia e Cola"</strong> ou <strong>"Chave PIX"</strong></li>' +
+                    '<li>Cole a chave acima (use o botão "Copiar")</li>' +
+                    '<li>Confirme o nome: <strong>' + NOME_FAVORECIDO + '</strong></li>' +
+                    '<li>Confirme o valor: <strong>R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</strong></li>' +
+                    '<li>Finalize o pagamento</li>' +
+                    '</ol>' +
+                    '</div>' +
+                    
+                    '<div class="instrucoes" style="background: #d1ecf1; border-left-color: #0c5460;">' +
+                    '<h4 style="color: #0c5460;">⚠️ APÓS REALIZAR O PAGAMENTO:</h4>' +
+                    '<ol style="color: #0c5460;">' +
+                    '<li>Tire print/foto do comprovante de pagamento</li>' +
+                    '<li>Acesse: <strong>somos.bizmix.com.br/comprovante.html</strong></li>' +
+                    '<li>Digite o código da venda: <strong>' + vendaId + '</strong></li>' +
+                    '<li>Envie o comprovante</li>' +
+                    '<li>Aguarde a confirmação por email</li>' +
+                    '</ol>' +
+                    '</div>';
+                
                 document.getElementById('mensagemSucesso').style.display = 'block';
                 
                 document.getElementById('formVenda').reset();
