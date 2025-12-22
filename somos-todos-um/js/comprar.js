@@ -101,7 +101,7 @@ async function finalizarCompra(e) {
                     quantidade: quantidade,
                     valor_venda: parseFloat(valorTotal),
                     comissao_valor: parseFloat(comissaoValor),
-                    organizacao_ic: somos_id,
+                    organizacao_id: somos_id,
                     status: 'pendente',
                     forma_pagamento: 'pix'
                 }
