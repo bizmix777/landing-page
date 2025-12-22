@@ -25,7 +25,7 @@ function atualizarResumo() {
     document.getElementById('resumoTotal').textContent = `R$ ${valorTotal}`;
     
     if (organizacaoSelecionada) {
-        const comissao = (parseFloat(valorTotal) * PERCENTUAL_COMISSAO).toFixed(2);
+        const ao = (parseFloat(valorTotal) * PERCENTUAL_AO).toFixed(2);
         document.getElementById('resumoComissaoValor').textContent = `R$ ${comissao}`;
         document.getElementById('resumoComissao').style.display = 'flex';
     }
