@@ -125,49 +125,39 @@
     </div>
     
     <script>
-        // CONFIGURAÇÕES DO SUPABASE
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
-        // CRIAR CLIENTE SUPABASE (APENAS UMA VEZ!)
         const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // FUNÇÃO PARA VERIFICAR PAGAMENTOS
         async function verificarPagamentos() {
             try {
-                const { data, error } = await clienteSupabase.rpc('verificar_pagamentos_pendentes');
+                const resultado = await clienteSupabase.rpc('verificar_pagamentos_pendentes');
+                const data = resultado.data;
+                const error = resultado.error;
                 
-                // Atualizar timestamp
                 const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
                 document.getElementById('timestamp').textContent = agora;
                 
                 if (error) {
-                    document.getElementById('resultado').innerHTML = 
-                        `<p class="error">❌ Erro ao executar verificação</p>
-                        <pre>${JSON.stringify(error, null, 2)}</pre>`;
+                    document.getElementById('resultado').innerHTML = '<p class="error">Erro ao executar verificacao</p><pre>' + JSON.stringify(error, null, 2) + '</pre>';
                     return;
                 }
                 
                 const executado = data.executado;
                 
                 if (executado) {
-                    // Verificação executada com sucesso
-                    document.getElementById('resultado').innerHTML = 
-                        `<p class="success">✅ Verificação executada com sucesso!</p>
-                        <div class="stats">
-                            <div class="stat-card">
-                                <div class="stat-label">Vendas Pendentes</div>
-                                <div class="stat-value">${data.vendas_pendentes}</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-label">Horário (Brasília)</div>
-                                <div class="stat-value">${data.hora_brasilia}h</div>
-                            </div>
-                        </div>
-                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    document.getElementById('resultado').innerHTML = '<p class="success">Verificacao executada com sucesso!</p><div class="stats"><div class="stat-card"><div class="stat-label">Vendas Pendentes</div><div class="stat-value">' + data.vendas_pendentes + '</div></div><div class="stat-card"><div class="stat-label">Horario (Brasilia)</div><div class="stat-value">' + data.hora_brasilia + 'h</div></div></div><pre>' + JSON.stringify(data, null, 2) + '</pre>';
                 } else {
-                    // Verificação não executada (fora do horário, fim de semana, etc)
-                    document.getElementById('resultado').innerHTML = 
-                        `<p class="warning">⚠️ Verificação não executada</p>
-                        <p><strong>Motivo:</strong> ${data.motivo}</p>
-                        <pre>${JSON.stringify(data,
+                    document.getElementById('resultado').innerHTML = '<p class="warning">Verificacao nao executada</p><p><strong>Motivo:</strong> ' + data.motivo + '</p><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                }
+                
+            } catch (err) {
+                document.getElementById('resultado').innerHTML = '<p class="error">Erro ao executar: ' + err.message + '</p>';
+            }
+        }
+        
+        verificarPagamentos();
+    </script>
+</body>
+</html>
