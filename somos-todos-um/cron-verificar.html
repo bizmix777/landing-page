@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron - Verificar Pagamentos</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 4px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        .info {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #667eea;
+        }
+        #resultado {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border-left: 5px solid #4CAF50;
+            min-height: 100px;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .success {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .warning {
+            color: #ff9800;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .error {
+            color: #f44336;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        pre {
+            background: #263238;
+            color: #aed581;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Verificação Automática de Pagamentos</h1>
+        
+        <div class="info">
+            <p><strong>📋 Sistema de Verificação Automática</strong></p>
+            <p>Esta página é chamada automaticamente pelo cron job para verificar pagamentos pendentes.</p>
+            <p><strong>⏰ Horário de execução:</strong> Segunda a Sexta, das 8h às 17h (horário de Brasília)</p>
+            <p><strong>🚫 Não executa:</strong> Finais de semana e feriados</p>
+        </div>
+        
+        <div id="resultado" class="loading">
+            ⏳ Executando verificação de pagamentos...
+        </div>
+        
+        <div class="footer">
+            <p>🔒 Sistema Somos Todos Um | Última execução: <span id="timestamp"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        async function verificarPagamentos() {
+            try {
+                const { data, error } = await supabase.rpc('verificar_pagamentos_pendentes');
+                
+                // Atualizar timestamp
+                const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+                document.getElementById('timestamp').textContent = agora;
+                
+                if (error) {
+                    document.getElementById('resultado').innerHTML = 
+                        `<p class="error">❌ Erro ao executar verificação</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>`;
+                    return;
+                }
+                
+                const executado = data.executado;
+                
+                if (executado) {
+                    // Verificação executada com sucesso
+                    document.getElementById('resultado').innerHTML = 
+                        `<p class="success">✅ Verificação executada com sucesso!</p>
+                        <div class="stats">
+                            <div class="stat-card">
+                                <div class="stat-label">Vendas Pendentes</div>
+                                <div class="stat-value">${data.vendas_pendentes}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Horário (Brasília)</div>
+                                <div class="stat-value">${data.hora_brasilia}h</div>
+                            </div>
+                        </div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    // Verificação não executada (fora do horário, fim de semana, etc)
+                    document.getElementById('resultado').innerHTML = 
+                        `<p class="warning">⚠️ Verificação não executada</p>
+                        <p><strong>Motivo:</strong> ${data.motivo}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+                
+            } catch (err) {
+                document.getElementById('resultado').innerHTML = 
+                    `<p class="error">❌ Erro ao executar: ${err.message}</p>`;
+            }
+        }
+        
+        // Executar automaticamente ao carregar a página
+        verificarPagamentos();
+    </script>
+</body>
+</html>
