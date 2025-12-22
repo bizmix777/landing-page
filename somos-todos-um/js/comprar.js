@@ -93,16 +93,17 @@ async function finalizarCompra(e) {
             .from('vendas')
             .insert([
                 {
-                    nome_comprador: nome,
-                    email_comprador: email,
-                    whatsapp_comprador: whatsapp,
-                    endereco_entrega: endereco,
+                    nome_compra: nome,
+                    email_compra: email,
+                    telefone_comp: whatsapp,
+                    whatsapp_com: whatsapp,
+                    endereco_entr: endereco,
                     quantidade: quantidade,
                     valor_venda: parseFloat(valorTotal),
-                    comissao_valor: parseFloat(comissaoValor),
+                    comissao_valo: parseFloat(comissaoValor),
                     organizacao_ic: somos_id,
                     status: 'pendente',
-                    forma_pagamento: 'pix'
+                    forma_pagame: 'pix'
                 }
             ])
             .select();
