@@ -125,14 +125,17 @@
     </div>
     
     <script>
+        // CONFIGURAÇÕES DO SUPABASE
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // CRIAR CLIENTE SUPABASE (APENAS UMA VEZ!)
+        const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
+        // FUNÇÃO PARA VERIFICAR PAGAMENTOS
         async function verificarPagamentos() {
             try {
-                const { data, error } = await supabase.rpc('verificar_pagamentos_pendentes');
+                const { data, error } = await clienteSupabase.rpc('verificar_pagamentos_pendentes');
                 
                 // Atualizar timestamp
                 const agora = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
@@ -167,17 +170,4 @@
                     document.getElementById('resultado').innerHTML = 
                         `<p class="warning">⚠️ Verificação não executada</p>
                         <p><strong>Motivo:</strong> ${data.motivo}</p>
-                        <pre>${JSON.stringify(data, null, 2)}</pre>`;
-                }
-                
-            } catch (err) {
-                document.getElementById('resultado').innerHTML = 
-                    `<p class="error">❌ Erro ao executar: ${err.message}</p>`;
-            }
-        }
-        
-        // Executar automaticamente ao carregar a página
-        verificarPagamentos();
-    </script>
-</body>
-</html>
+                        <pre>${JSON.stringify(data,
