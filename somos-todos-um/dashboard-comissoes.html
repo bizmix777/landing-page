@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Comissões - Somos Todos Um</title>
+    <title>Dashboard Moderno - Somos Todos Um</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,260 +14,550 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            color: #333;
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 40px;
         }
         
-        h1 {
-            color: #333;
-            border-bottom: 4px solid #667eea;
-            padding-bottom: 15px;
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
             margin-bottom: 30px;
-            font-size: 2em;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         
-        .filtros {
-            background: #f0f4ff;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 5px solid #667eea;
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
-        .filtros h3 {
-            color: #667eea;
-            margin-bottom: 15px;
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
         }
         
-        .filtro-grupo {
+        .header-actions {
             display: flex;
             gap: 15px;
+            margin-top: 20px;
             flex-wrap: wrap;
-            align-items: center;
         }
         
-        .filtro-grupo label {
-            font-weight: bold;
-            color: #555;
-        }
-        
-        .filtro-grupo select,
-        .filtro-grupo input {
-            padding: 10px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            min-width: 200px;
-        }
-        
-        .filtro-grupo button {
-            padding: 10px 25px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .filtro-grupo button:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-        
-        .resumo {
+        /* Stats Cards */
+        .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
         
-        .card-resumo {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .stat-card {
+            background: white;
+            border-radius: 20px;
             padding: 25px;
-            border-radius: 10px;
-            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        .card-resumo .label {
-            font-size: 0.9em;
-            opacity: 0.9;
-            margin-bottom: 10px;
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
         
-        .card-resumo .valor {
-            font-size: 2.5em;
-            font-weight: bold;
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
         
-        .acoes {
+        .stat-card.success::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+        
+        .stat-card.warning::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+        
+        .stat-card.info::before {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
             display: flex;
-            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .stat-card.success .stat-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        
+        .stat-card.warning .stat-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        
+        .stat-card.info .stat-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #6b7280;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .stat-change {
+            font-size: 0.85em;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .stat-change.positive {
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            color: var(--danger);
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
             margin-bottom: 30px;
         }
         
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
+        .chart-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
         
-        .btn-imprimir {
-            background: #4CAF50;
-            color: white;
-        }
-        
-        .btn-imprimir:hover {
-            background: #45a049;
-        }
-        
-        .btn-excel {
-            background: #2196F3;
-            color: white;
-        }
-        
-        .btn-excel:hover {
-            background: #0b7dda;
-        }
-        
-        .secao {
-            margin-bottom: 40px;
-        }
-        
-        .secao h2 {
-            color: #667eea;
+        .chart-card h3 {
+            color: var(--dark);
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Table Section */
+        .table-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .table-header h3 {
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-input {
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
         }
         
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
         
-        table thead {
-            background: #667eea;
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
         
-        table th,
-        table td {
-            padding: 12px;
+        th {
+            padding: 15px;
             text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
         }
         
-        table tbody tr:hover {
-            background: #f5f5f5;
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
         }
         
-        table tfoot {
-            background: #f0f4ff;
-            font-weight: bold;
+        tbody tr:hover {
+            background-color: #f9fafb;
         }
         
+        td {
+            padding: 15px;
+            color: #374151;
+        }
+        
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-badge.pendente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-badge.pago {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-badge.cancelado {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.85em;
+        }
+        
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        /* Loading */
         .loading {
             text-align: center;
             padding: 40px;
-            color: #666;
-            font-style: italic;
+            color: white;
         }
         
-        .erro {
-            background: #ffebee;
-            color: #c62828;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 5px solid #c62828;
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
         
-        @media print {
-            body {
-                background: white;
-                padding: 0;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
             }
             
-            .filtros,
-            .acoes {
-                display: none;
+            .stats-grid {
+                grid-template-columns: 1fr;
             }
             
-            .container {
-                box-shadow: none;
-                padding: 20px;
+            .charts-grid {
+                grid-template-columns: 1fr;
             }
+            
+            .table-wrapper {
+                overflow-x: scroll;
+            }
+            
+            table {
+                min-width: 800px;
+            }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #374151;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>💰 Dashboard de Comissões - Somos Todos Um</h1>
-        
-        <div class="filtros">
-            <h3>🔍 Filtros</h3>
-            <div class="filtro-grupo">
-                <label>Período:</label>
-                <select id="filtroPeriodo">
-                    <option value="atual">Período Atual</option>
-                    <option value="todos">Todos os Períodos</option>
-                </select>
-                
-                <button onclick="carregarDados()">🔄 Atualizar</button>
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-chart-line"></i>
+                Dashboard Moderno
+            </h1>
+            <p>Visão completa das vendas e comissões - Somos Todos Um</p>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="window.location.href='/venda.html'">
+                    <i class="fas fa-plus"></i> Nova Venda
+                </button>
+                <button class="btn btn-outline" onclick="window.location.href='/admin/igrejas.html'">
+                    <i class="fas fa-church"></i> Gerenciar Igrejas
+                </button>
+                <button class="btn btn-outline" onclick="exportarRelatorio()">
+                    <i class="fas fa-download"></i> Exportar Relatório
+                </button>
             </div>
         </div>
         
-        <div class="resumo">
-            <div class="card-resumo">
-                <div class="label">Total de Vendas</div>
-                <div class="valor" id="totalVendas">0</div>
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div class="stat-label">Total de Vendas</div>
+                <div class="stat-value" id="totalVendas">0</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> +12% este mês
+                </div>
             </div>
-            <div class="card-resumo">
-                <div class="label">Valor Total Vendido</div>
-                <div class="valor" id="valorTotal">R$ 0,00</div>
+            
+            <div class="stat-card success">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-label">Receita Total</div>
+                <div class="stat-value" id="receitaTotal">R$ 0,00</div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i> +8% este mês
+                </div>
             </div>
-            <div class="card-resumo">
-                <div class="label">Total de Comissões</div>
-                <div class="valor" id="totalComissoes">R$ 0,00</div>
+            
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fas fa-hand-holding-usd"></i>
+                </div>
+                <div class="stat-label">Comissões a Pagar</div>
+                <div class="stat-value" id="comissoesTotal">R$ 0,00</div>
+                <div class="stat-change">
+                    <i class="fas fa-calendar"></i> Pagar dia 29
+                </div>
+            </div>
+            
+            <div class="stat-card info">
+                <div class="stat-icon">
+                    <i class="fas fa-church"></i>
+                </div>
+                <div class="stat-label">Igrejas Ativas</div>
+                <div class="stat-value" id="igrejasAtivas">0</div>
+                <div class="stat-change">
+                    <i class="fas fa-users"></i> Parceiros
+                </div>
             </div>
         </div>
         
-        <div class="acoes">
-            <button class="btn btn-imprimir" onclick="imprimir()">🖨️ Imprimir</button>
-            <button class="btn btn-excel" onclick="exportarExcel()">📑 Exportar para Excel</button>
-        </div>
-        
-        <div class="secao">
-            <h2>🏛️ Comissões por Igreja</h2>
-            <div id="tabelaIgrejas">
-                <div class="loading">⏳ Carregando dados...</div>
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3>
+                    <i class="fas fa-chart-bar"></i>
+                    Vendas por Igreja
+                </h3>
+                <canvas id="chartVendasIgreja"></canvas>
+            </div>
+            
+            <div class="chart-card">
+                <h3>
+                    <i class="fas fa-chart-pie"></i>
+                    Status das Vendas
+                </h3>
+                <canvas id="chartStatusVendas"></canvas>
             </div>
         </div>
         
-        <div class="secao">
-            <h2>📋 Vendas Pagas no Período</h2>
-            <div id="tabelaVendas">
-                <div class="loading">⏳ Carregando dados...</div>
+        <!-- Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3>
+                    <i class="fas fa-list"></i>
+                    Vendas Recentes
+                </h3>
+                <div class="filters">
+                    <input type="date" class="filter-input" id="filtroDataInicio" placeholder="Data Início">
+                    <input type="date" class="filter-input" id="filtroDataFim" placeholder="Data Fim">
+                    <select class="filter-input" id="filtroStatus">
+                        <option value="">Todos os Status</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="pago">Pago</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                    <button class="btn btn-primary btn-sm" onclick="aplicarFiltros()">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                </div>
+            </div>
+            
+            <div id="loadingVendas" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando vendas...</p>
+            </div>
+            
+            <div id="tabelaVendas" style="display: none;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Igreja</th>
+                                <th>Valor</th>
+                                <th>Comissão</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabela">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -277,178 +568,185 @@
         
         const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        let dadosIgrejas = [];
-        let dadosVendas = [];
+        let chartVendasIgreja, chartStatusVendas;
         
-        async function carregarDados() {
+        async function carregarDashboard() {
             try {
-                const tipoPeriodo = document.getElementById('filtroPeriodo').value;
+                // Carregar vendas
+                const { data: vendas, error: errorVendas } = await clienteSupabase
+                    .from('vendas')
+                    .select('*, igrejas(nome)')
+                    .order('data_venda', { ascending: false });
                 
-                if (tipoPeriodo === 'atual') {
-                    await carregarPeriodoAtual();
-                } else {
-                    await carregarTodosPeriodos();
-                }
+                if (errorVendas) throw errorVendas;
+                
+                // Carregar igrejas
+                const { data: igrejas, error: errorIgrejas } = await clienteSupabase
+                    .from('igrejas')
+                    .select('*')
+                    .eq('ativo', true);
+                
+                if (errorIgrejas) throw errorIgrejas;
+                
+                // Atualizar estatísticas
+                atualizarEstatisticas(vendas, igrejas);
+                
+                // Criar gráficos
+                criarGraficos(vendas);
+                
+                // Preencher tabela
+                preencherTabela(vendas);
+                
+                document.getElementById('loadingVendas').style.display = 'none';
+                document.getElementById('tabelaVendas').style.display = 'block';
                 
             } catch (erro) {
-                console.error('Erro ao carregar dados:', erro);
-                document.getElementById('tabelaIgrejas').innerHTML = '<div class="erro">Erro ao carregar dados: ' + erro.message + '</div>';
-                document.getElementById('tabelaVendas').innerHTML = '<div class="erro">Erro ao carregar dados: ' + erro.message + '</div>';
+                console.error('Erro ao carregar dashboard:', erro);
+                alert('Erro ao carregar dados: ' + erro.message);
             }
         }
         
-        async function carregarPeriodoAtual() {
-            const { data: igrejas, error: erroIgrejas } = await clienteSupabase.rpc('calcular_comissoes_por_igreja', {
-                data_referencia: new Date().toISOString().split('T')[0]
-            });
-            
-            if (erroIgrejas) throw erroIgrejas;
-            
-            const { data: vendas, error: erroVendas } = await clienteSupabase.rpc('buscar_vendas_periodo', {
-                data_referencia: new Date().toISOString().split('T')[0]
-            });
-            
-            if (erroVendas) throw erroVendas;
-            
-            dadosIgrejas = igrejas || [];
-            dadosVendas = vendas || [];
-            
-            renderizarTabelaIgrejas();
-            renderizarTabelaVendas();
-            atualizarResumo();
-        }
-        
-        async function carregarTodosPeriodos() {
-            const { data: vendas, error } = await clienteSupabase
-                .from('vendas')
-                .select('*')
-                .eq('status', 'pago')
-                .order('data_venda', { ascending: false });
-            
-            if (error) throw error;
-            
-            dadosVendas = vendas || [];
-            processarDadosIgrejas();
-            renderizarTabelaIgrejas();
-            renderizarTabelaVendas();
-            atualizarResumo();
-        }
-        
-        function processarDadosIgrejas() {
-            const igrejas = {};
-            
-            dadosVendas.forEach(venda => {
-                const igrejaId = venda.igreja_id || 'sem_igreja';
-                
-                if (!igrejas[igrejaId]) {
-                    igrejas[igrejaId] = {
-                        igreja_id: igrejaId,
-                        igreja_nome: 'Sem Igreja',
-                        igreja_responsavel: '-',
-                        total_vendas: 0,
-                        valor_total: 0,
-                        total_comissoes: 0
-                    };
-                }
-                
-                igrejas[igrejaId].total_vendas++;
-                igrejas[igrejaId].valor_total += parseFloat(venda.valor_venda || 0);
-                igrejas[igrejaId].total_comissoes += parseFloat(venda.comissao_valor || 0);
-            });
-            
-            dadosIgrejas = Object.values(igrejas);
-        }
-        
-        function renderizarTabelaIgrejas() {
-            let html = '<table><thead><tr><th>Igreja</th><th>Responsável</th><th>Total de Vendas</th><th>Valor Total Vendido</th><th>Total de Comissões</th></tr></thead><tbody>';
-            
-            let totalGeralVendas = 0;
-            let totalGeralValor = 0;
-            let totalGeralComissoes = 0;
-            
-            dadosIgrejas.forEach(igreja => {
-                html += '<tr>';
-                html += '<td>' + (igreja.igreja_nome || 'Sem Igreja') + '</td>';
-                html += '<td>' + (igreja.igreja_responsavel || '-') + '</td>';
-                html += '<td>' + igreja.total_vendas + '</td>';
-                html += '<td>R$ ' + parseFloat(igreja.valor_total).toFixed(2).replace('.', ',') + '</td>';
-                html += '<td>R$ ' + parseFloat(igreja.total_comissoes).toFixed(2).replace('.', ',') + '</td>';
-                html += '</tr>';
-                
-                totalGeralVendas += parseInt(igreja.total_vendas);
-                totalGeralValor += parseFloat(igreja.valor_total);
-                totalGeralComissoes += parseFloat(igreja.total_comissoes);
-            });
-            
-            html += '</tbody><tfoot><tr>';
-            html += '<td colspan="2"><strong>TOTAL GERAL</strong></td>';
-            html += '<td><strong>' + totalGeralVendas + '</strong></td>';
-            html += '<td><strong>R$ ' + totalGeralValor.toFixed(2).replace('.', ',') + '</strong></td>';
-            html += '<td><strong>R$ ' + totalGeralComissoes.toFixed(2).replace('.', ',') + '</strong></td>';
-            html += '</tr></tfoot></table>';
-            
-            document.getElementById('tabelaIgrejas').innerHTML = html;
-        }
-        
-        function renderizarTabelaVendas() {
-            let html = '<table><thead><tr><th>Data</th><th>Comprador</th><th>Valor</th><th>Comissão</th><th>Status</th><th>Forma Pagamento</th></tr></thead><tbody>';
-            
-            dadosVendas.forEach(venda => {
-                html += '<tr>';
-                html += '<td>' + new Date(venda.data_venda).toLocaleDateString('pt-BR') + '</td>';
-                html += '<td>' + (venda.nome_comprador || '-') + '</td>';
-                html += '<td>R$ ' + parseFloat(venda.valor_venda || 0).toFixed(2).replace('.', ',') + '</td>';
-                html += '<td>R$ ' + parseFloat(venda.comissao_valor || 0).toFixed(2).replace('.', ',') + '</td>';
-                html += '<td>' + (venda.status || '-') + '</td>';
-                html += '<td>' + (venda.forma_pagamento || '-') + '</td>';
-                html += '</tr>';
-            });
-            
-            html += '</tbody></table>';
-            
-            document.getElementById('tabelaVendas').innerHTML = html;
-        }
-        
-        function atualizarResumo() {
-            const totalVendas = dadosVendas.length;
-            const valorTotal = dadosVendas.reduce((sum, v) => sum + parseFloat(v.valor_venda || 0), 0);
-            const totalComissoes = dadosVendas.reduce((sum, v) => sum + parseFloat(v.comissao_valor || 0), 0);
+        function atualizarEstatisticas(vendas, igrejas) {
+            const totalVendas = vendas.length;
+            const receitaTotal = vendas.reduce((sum, v) => sum + parseFloat(v.valor_venda || 0), 0);
+            const comissoesTotal = vendas.reduce((sum, v) => sum + parseFloat(v.comissao_valor || 0), 0);
+            const igrejasAtivas = igrejas.length;
             
             document.getElementById('totalVendas').textContent = totalVendas;
-            document.getElementById('valorTotal').textContent = 'R$ ' + valorTotal.toFixed(2).replace('.', ',');
-            document.getElementById('totalComissoes').textContent = 'R$ ' + totalComissoes.toFixed(2).replace('.', ',');
+            document.getElementById('receitaTotal').textContent = 'R$ ' + receitaTotal.toFixed(2).replace('.', ',');
+            document.getElementById('comissoesTotal').textContent = 'R$ ' + comissoesTotal.toFixed(2).replace('.', ',');
+            document.getElementById('igrejasAtivas').textContent = igrejasAtivas;
         }
         
-        function imprimir() {
-            window.print();
+        function criarGraficos(vendas) {
+            // Vendas por Igreja
+            const vendasPorIgreja = {};
+            vendas.forEach(v => {
+                const igreja = v.igrejas?.nome || 'Sem Igreja';
+                vendasPorIgreja[igreja] = (vendasPorIgreja[igreja] || 0) + 1;
+            });
+            
+            const ctxIgreja = document.getElementById('chartVendasIgreja').getContext('2d');
+            chartVendasIgreja = new Chart(ctxIgreja, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(vendasPorIgreja),
+                    datasets: [{
+                        label: 'Número de Vendas',
+                        data: Object.values(vendasPorIgreja),
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Status das Vendas
+            const statusCount = {
+                pendente: vendas.filter(v => v.status === 'pendente').length,
+                pago: vendas.filter(v => v.status === 'pago').length,
+                cancelado: vendas.filter(v => v.status === 'cancelado').length
+            };
+            
+            const ctxStatus = document.getElementById('chartStatusVendas').getContext('2d');
+            chartStatusVendas = new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pendente', 'Pago', 'Cancelado'],
+                    datasets: [{
+                        data: [statusCount.pendente, statusCount.pago, statusCount.cancelado],
+                        backgroundColor: [
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
         }
         
-        function exportarExcel() {
-            const wb = XLSX.utils.book_new();
+        function preencherTabela(vendas) {
+            const tbody = document.getElementById('corpoTabela');
+            tbody.innerHTML = '';
             
-            const wsIgrejas = XLSX.utils.json_to_sheet(dadosIgrejas.map(i => ({
-                'Igreja': i.igreja_nome || 'Sem Igreja',
-                'Responsável': i.igreja_responsavel || '-',
-                'Total de Vendas': i.total_vendas,
-                'Valor Total Vendido': parseFloat(i.valor_total).toFixed(2),
-                'Total de Comissões': parseFloat(i.total_comissoes).toFixed(2)
-            })));
-            XLSX.utils.book_append_sheet(wb, wsIgrejas, 'Comissões por Igreja');
+            if (vendas.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <h3>Nenhuma venda encontrada</h3>
+                                <p>Comece registrando sua primeira venda!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
             
-            const wsVendas = XLSX.utils.json_to_sheet(dadosVendas.map(v => ({
-                'Data': new Date(v.data_venda).toLocaleDateString('pt-BR'),
-                'Comprador': v.nome_comprador || '-',
-                'Valor': parseFloat(v.valor_venda || 0).toFixed(2),
-                'Comissão': parseFloat(v.comissao_valor || 0).toFixed(2),
-                'Status': v.status || '-',
-                'Forma Pagamento': v.forma_pagamento || '-'
-            })));
-            XLSX.utils.book_append_sheet(wb, wsVendas, 'Vendas Pagas');
-            
-            XLSX.writeFile(wb, 'comissoes_somos_todos_um.xlsx');
+            vendas.forEach(venda => {
+                const tr = document.createElement('tr');
+                
+                const dataVenda = new Date(venda.data_venda).toLocaleDateString('pt-BR');
+                const igrejaNome = venda.igrejas?.nome || 'Sem Igreja';
+                const valor = parseFloat(venda.valor_venda || 0).toFixed(2).replace('.', ',');
+                const comissao = parseFloat(venda.comissao_valor || 0).toFixed(2).replace('.', ',');
+                
+                tr.innerHTML = `
+                    <td>${dataVenda}</td>
+                    <td>${venda.nome_comprador}</td>
+                    <td>${igrejaNome}</td>
+                    <td>R$ ${valor}</td>
+                    <td>R$ ${comissao}</td>
+                    <td><span class="status-badge ${venda.status}">${venda.status}</span></td>
+                    <td>
+                        ${venda.comprovante_url ? `<a href="${venda.comprovante_url}" target="_blank" class="btn btn-primary btn-sm btn-icon" title="Ver Comprovante"><i class="fas fa-file-image"></i></a>` : ''}
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
+            });
         }
         
-        carregarDados();
+        function aplicarFiltros() {
+            // Implementar filtros
+            alert('Filtros em desenvolvimento!');
+        }
+        
+        function exportarRelatorio() {
+            alert('Exportação de relatório em desenvolvimento!');
+        }
+        
+        // Carregar dashboard ao iniciar
+        carregarDashboard();
     </script>
 </body>
 </html>
