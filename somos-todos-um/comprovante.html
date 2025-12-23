@@ -231,7 +231,7 @@
         <div id="formBusca">
             <div class="form-group">
                 <label>Código da Venda: <span class="required">*</span></label>
-                <input type="text" id="codigoVenda" placeholder="Ex: 019b4854-edd0-7755-b265-6f265f19dc87">
+                <input type="text" id="codigoVenda" placeholder="Ex: 6670487a-9bde-4f6d-87cb-37c79f5d3308">
             </div>
             
             <button class="btn btn-primary" onclick="buscarVenda()">
@@ -467,4 +467,31 @@
                 if (updateError) throw updateError;
                 
                 document.getElementById('mensagemSucesso').innerHTML = 
-                    '<h2>✅ Comprovante Enviado*_
+                    '<h2>✅ Comprovante Enviado com Sucesso!</h2>' +
+                    '<p><strong>Status da Venda:</strong> Pagamento Confirmado</p>' +
+                    '<p><strong>Data do Pagamento:</strong> ' + new Date().toLocaleDateString('pt-BR') + '</p>' +
+                    '<p>Você receberá um email de confirmação em breve.</p>' +
+                    '<p style="margin-top: 20px;">Obrigado por sua compra! 🎉</p>';
+                
+                document.getElementById('mensagemSucesso').style.display = 'block';
+                
+                document.getElementById('formBusca').style.display = 'none';
+                document.getElementById('vendaInfo').style.display = 'none';
+                document.getElementById('formComprovante').style.display = 'none';
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (erro) {
+                console.error('Erro ao enviar comprovante:', erro);
+                document.getElementById('mensagemErro').innerHTML = 
+                    '<h3>❌ Erro ao Enviar Comprovante</h3>' +
+                    '<p>' + erro.message + '</p>';
+                document.getElementById('mensagemErro').style.display = 'block';
+                
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = '✅ Enviar Comprovante';
+            }
+        }
+    </script>
+</body>
+</html>
