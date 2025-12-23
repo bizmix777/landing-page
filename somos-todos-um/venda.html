@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nova Venda - Somos Todos Um</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,105 +13,139 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 30px;
         }
         
         h1 {
-            color: #333;
-            border-bottom: 4px solid #667eea;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-            font-size: 2em;
-            text-align: center;
+            color: var(--dark);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .info-box {
-            background: #f0f4ff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 5px solid #667eea;
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
         }
         
         .info-box h3 {
-            color: #667eea;
-            margin-bottom: 10px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-box p {
+            color: #4b5563;
+            font-size: 0.9em;
+            line-height: 1.5;
         }
         
         .form-section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         
         .form-section h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e0e0e0;
-            font-size: 1.3em;
+            color: var(--primary);
+            margin-bottom: 18px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
         
         .form-group label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #555;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #374151;
+            font-size: 0.9em;
         }
         
         .form-group label .required {
-            color: #f44336;
+            color: var(--danger);
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            font-family: inherit;
         }
         
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 15px;
         }
         
         .resumo-venda {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
         
         .resumo-venda h3 {
             margin-bottom: 15px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .resumo-item {
@@ -118,137 +153,164 @@
             justify-content: space-between;
             margin-bottom: 10px;
             padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.95em;
         }
         
         .resumo-item:last-child {
             border-bottom: none;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: bold;
             margin-top: 10px;
         }
         
         .btn {
-            padding: 15px 40px;
+            padding: 12px 30px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .btn-primary {
-            background: #4CAF50;
+            background: linear-gradient(135deg, var(--success), #059669);
             color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
         
         .btn-primary:hover {
-            background: #45a049;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
         }
         
         .btn-primary:disabled {
-            background: #ccc;
+            background: #9ca3af;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
         
         .btn-copiar {
-            background: #2196F3;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
+            font-size: 13px;
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
         }
         
         .btn-copiar:hover {
-            background: #0b7dda;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
         
         .sucesso {
-            background: #d4edda;
-            color: #155724;
-            padding: 30px;
-            border-radius: 10px;
-            border-left: 5px solid #28a745;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
             margin-bottom: 20px;
             display: none;
         }
         
         .sucesso h2 {
-            color: #155724;
-            margin-bottom: 20px;
+            color: #065f46;
+            margin-bottom: 18px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .dados-pagamento {
             background: white;
             color: #333;
-            padding: 25px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border: 2px solid #28a745;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 18px 0;
+            border: 2px solid var(--success);
         }
         
         .dados-pagamento h3 {
-            color: #28a745;
+            color: var(--success);
             margin-bottom: 15px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .chave-pix-box {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            border: 2px dashed #667eea;
-            margin: 15px 0;
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px dashed var(--primary);
+            margin: 12px 0;
             word-break: break-all;
-            font-family: monospace;
-            font-size: 14px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: var(--dark);
         }
         
         .info-item {
             margin: 10px 0;
             padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
+            background: #f9fafb;
+            border-radius: 8px;
+            font-size: 0.9em;
         }
         
         .info-item strong {
-            color: #667eea;
+            color: var(--primary);
         }
         
         .instrucoes {
-            background: #fff3cd;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 5px solid #ffc107;
-            margin-top: 20px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--warning);
+            margin-top: 18px;
         }
         
         .instrucoes h4 {
-            color: #856404;
+            color: #92400e;
             margin-bottom: 10px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .instrucoes ol {
             margin-left: 20px;
-            color: #856404;
+            color: #92400e;
+            font-size: 0.9em;
         }
         
         .instrucoes ol li {
-            margin: 8px 0;
+            margin: 6px 0;
         }
         
         .erro {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 5px solid #f44336;
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--danger);
             margin-bottom: 20px;
             display: none;
         }
@@ -261,15 +323,22 @@
             .container {
                 padding: 20px;
             }
+            
+            h1 {
+                font-size: 1.5em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🛒 Nova Venda - Somos Todos Um</h1>
+        <h1>
+            <i class="fas fa-shopping-cart"></i>
+            Nova Venda
+        </h1>
         
         <div class="info-box">
-            <h3>📋 Instruções</h3>
+            <h3><i class="fas fa-info-circle"></i> Instruções</h3>
             <p>Preencha todos os campos obrigatórios (*) para registrar sua venda. Após o envio, você receberá os dados para pagamento via PIX.</p>
         </div>
         
@@ -278,7 +347,7 @@
         
         <form id="formVenda" onsubmit="salvarVenda(event)">
             <div class="form-section">
-                <h2>👤 Dados do Comprador</h2>
+                <h2><i class="fas fa-user"></i> Dados do Comprador</h2>
                 
                 <div class="form-group">
                     <label>Nome Completo: <span class="required">*</span></label>
@@ -316,7 +385,7 @@
             </div>
             
             <div class="form-section">
-                <h2>🏛️ Igreja Parceira</h2>
+                <h2><i class="fas fa-church"></i> Igreja Parceira</h2>
                 
                 <div class="form-group">
                     <label>Selecione a Igreja: <span class="required">*</span></label>
@@ -327,7 +396,7 @@
             </div>
             
             <div class="form-section">
-                <h2>💰 Dados da Venda</h2>
+                <h2><i class="fas fa-dollar-sign"></i> Dados da Venda</h2>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -350,7 +419,7 @@
             </div>
             
             <div id="resumoVenda" class="resumo-venda" style="display: none;">
-                <h3>📊 Resumo da Venda</h3>
+                <h3><i class="fas fa-receipt"></i> Resumo da Venda</h3>
                 <div class="resumo-item">
                     <span>Quantidade:</span>
                     <span id="resumoQuantidade">-</span>
@@ -374,7 +443,7 @@
             </div>
             
             <button type="submit" class="btn btn-primary" id="btnEnviar">
-                ✅ Registrar Venda
+                <i class="fas fa-check-circle"></i> Registrar Venda
             </button>
         </form>
     </div>
@@ -459,7 +528,7 @@
             
             const btnEnviar = document.getElementById('btnEnviar');
             btnEnviar.disabled = true;
-            btnEnviar.textContent = '⏳ Enviando...';
+            btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             
             document.getElementById('mensagemSucesso').style.display = 'none';
             document.getElementById('mensagemErro').style.display = 'none';
@@ -488,8 +557,7 @@
                     forma_pagamento: document.getElementById('formaPagamento').value,
                     igreja_id: document.getElementById('igrejaId').value,
                     status: 'pendente',
-                    data_venda: new Date().toISOString(),
-                    organizacao_id: '00000000-0000-0000-0000-000000000000'
+                    data_venda: new Date().toISOString()
                 };
                 
                 const { data, error } = await clienteSupabase
@@ -502,25 +570,25 @@
                 const vendaId = data[0].id;
                 
                 document.getElementById('mensagemSucesso').innerHTML = 
-                    '<h2>✅ Venda Registrada com Sucesso!</h2>' +
+                    '<h2><i class="fas fa-check-circle"></i> Venda Registrada com Sucesso!</h2>' +
                     '<div class="info-item"><strong>📋 Código da Venda:</strong><br>' + vendaId + '</div>' +
                     '<div class="info-item"><strong>🏛️ Igreja Parceira:</strong> ' + igrejaNome + '</div>' +
                     '<div class="info-item"><strong>💵 Valor Total:</strong> R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</div>' +
                     '<div class="info-item"><strong>💰 Comissão da Igreja:</strong> R$ ' + comissao.toFixed(2).replace('.', ',') + ' (' + percentual.toFixed(2) + '%)</div>' +
                     
                     '<div class="dados-pagamento">' +
-                    '<h3>💳 DADOS PARA PAGAMENTO VIA PIX</h3>' +
+                    '<h3><i class="fas fa-credit-card"></i> DADOS PARA PAGAMENTO VIA PIX</h3>' +
                     '<div class="info-item"><strong>🔑 Tipo de Chave:</strong> Chave Aleatória</div>' +
                     '<div class="info-item"><strong>🔑 Chave PIX:</strong></div>' +
                     '<div class="chave-pix-box">' + CHAVE_PIX + '</div>' +
-                    '<button class="btn-copiar" onclick="copiarChavePix()">📋 Copiar Chave PIX</button>' +
+                    '<button class="btn-copiar" onclick="copiarChavePix()"><i class="fas fa-copy"></i> Copiar Chave PIX</button>' +
                     '<div class="info-item"><strong>👤 Favorecido:</strong> ' + NOME_FAVORECIDO + '</div>' +
                     '<div class="info-item"><strong>🏦 Banco:</strong> ' + BANCO + '</div>' +
-                    '<div class="info-item"><strong>💵 Valor a Pagar:</strong> <span style="font-size: 1.3em; color: #28a745;">R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</span></div>' +
+                    '<div class="info-item"><strong>💵 Valor a Pagar:</strong> <span style="font-size: 1.2em; color: #10b981; font-weight: bold;">R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</span></div>' +
                     '</div>' +
                     
                     '<div class="instrucoes">' +
-                    '<h4>📱 COMO PAGAR:</h4>' +
+                    '<h4><i class="fas fa-mobile-alt"></i> COMO PAGAR:</h4>' +
                     '<ol>' +
                     '<li>Abra o app do seu banco</li>' +
                     '<li>Acesse a área <strong>PIX</strong></li>' +
@@ -532,9 +600,9 @@
                     '</ol>' +
                     '</div>' +
                     
-                    '<div class="instrucoes" style="background: #d1ecf1; border-left-color: #0c5460;">' +
-                    '<h4 style="color: #0c5460;">⚠️ APÓS REALIZAR O PAGAMENTO:</h4>' +
-                    '<ol style="color: #0c5460;">' +
+                    '<div class="instrucoes" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left-color: #3b82f6;">' +
+                    '<h4 style="color: #1e40af;"><i class="fas fa-exclamation-triangle"></i> APÓS REALIZAR O PAGAMENTO:</h4>' +
+                    '<ol style="color: #1e40af;">' +
                     '<li>Tire print/foto do comprovante de pagamento</li>' +
                     '<li>Acesse: <strong>somos.bizmix.com.br/comprovante.html</strong></li>' +
                     '<li>Digite o código da venda: <strong>' + vendaId + '</strong></li>' +
@@ -553,12 +621,12 @@
             } catch (erro) {
                 console.error('Erro ao salvar venda:', erro);
                 document.getElementById('mensagemErro').innerHTML = 
-                    '<h3>❌ Erro ao Registrar Venda</h3>' +
+                    '<h3><i class="fas fa-times-circle"></i> Erro ao Registrar Venda</h3>' +
                     '<p>' + erro.message + '</p>';
                 document.getElementById('mensagemErro').style.display = 'block';
             } finally {
                 btnEnviar.disabled = false;
-                btnEnviar.textContent = '✅ Registrar Venda';
+                btnEnviar.innerHTML = '<i class="fas fa-check-circle"></i> Registrar Venda';
             }
         }
         
