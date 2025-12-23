@@ -2,21 +2,21 @@
   publish = "."
 
 [[redirects]]
-  from = "/somos-todos-um/livro/*"
-  to = "/somos-todos-um/livro/:splat"
+  from = "/somos-todos-um/igrejas"
+  to = "/somos-todos-um/igrejas/index.html"
   status = 200
 
 [[redirects]]
-  from = "/somos-todos-um/livro"
-  to = "/somos-todos-um/livro/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/somos-todos-um/*"
-  to = "/somos-todos-um/:splat"
+  from = "/somos-todos-um/igrejas/*"
+  to = "/somos-todos-um/igrejas/:splat"
   status = 200
 
 [[redirects]]
   from = "/somos-todos-um"
   to = "/somos-todos-um/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/somos-todos-um/*"
+  to = "/somos-todos-um/:splat"
   status = 200
