@@ -1,9 +1,21 @@
 [build]
-  publish = "somos-todos-um"
+  publish = "."
   command = ""
 
-# Não redirecionar /admin/ - deixar o Netlify servir os arquivos normalmente
 [[redirects]]
-  from = "/cadastro"
-  to = "/cadastro/cadastro.html"
+  from = "/somos-todos-um"
+  to = "/somos-todos-um/index.html"
   status = 200
+  force = true
+
+[[redirects]]
+  from = "/somos-todos-um/livro"
+  to = "/somos-todos-um/livro/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/somos-todos-um/*"
+  to = "/somos-todos-um/:splat"
+  status = 200
+  force = true
