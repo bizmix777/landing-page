@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Igrejas - Admin</title>
+    <title>Gestão de Igrejas - Somos Todos Um</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,359 +13,633 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1f2937;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
         }
         
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 40px;
         }
         
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        }
-        
-        h1 {
-            color: #333;
-            border-bottom: 4px solid #667eea;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-        }
-        
+        /* Header */
         .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95em;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        /* Card Principal */
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
         
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 8px;
+        .card-header h2 {
+            color: var(--dark);
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            padding: 10px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
             font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
+            min-width: 250px;
             transition: all 0.3s;
         }
         
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
         .btn-primary {
-            background: #667eea;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
         
         .btn-primary:hover {
-            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
         
         .btn-success {
-            background: #4CAF50;
+            background: linear-gradient(135deg, var(--success), #059669);
             color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
         
         .btn-success:hover {
-            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85em;
+        }
+        
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
         }
         
         .btn-danger {
-            background: #f44336;
+            background: linear-gradient(135deg, var(--danger), #dc2626);
             color: white;
         }
         
-        .btn-danger:hover {
-            background: #da190b;
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
         }
         
-        .btn-secondary {
-            background: #757575;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
         
-        .btn-secondary:hover {
-            background: #616161;
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.5px;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background-color 0.2s;
+        }
+        
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        td {
+            padding: 12px;
+            color: #374151;
+            font-size: 0.9em;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-badge.ativo {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-badge.inativo {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 3% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 25px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .close:hover {
+            transform: rotate(90deg);
+        }
+        
+        .modal-body {
+            padding: 25px;
         }
         
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
         
         .form-group label {
             display: block;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #555;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #374151;
+            font-size: 0.9em;
+        }
+        
+        .form-group label .required {
+            color: var(--danger);
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 14px;
+            transition: all 0.3s;
+            font-family: inherit;
         }
         
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
         
-        table thead {
-            background: #667eea;
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 30px;
             color: white;
         }
         
-        table th,
-        table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
         
-        table tbody tr:hover {
-            background: #f5f5f5;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #6b7280;
         }
         
-        .modal-content {
-            background: white;
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 30px;
-            border-radius: 15px;
-            max-height: 90vh;
-            overflow-y: auto;
+        .empty-state i {
+            font-size: 3.5em;
+            margin-bottom: 15px;
+            opacity: 0.3;
         }
         
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        .empty-state h3 {
+            font-size: 1.3em;
+            margin-bottom: 8px;
+            color: #374151;
         }
         
-        .close {
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .close:hover {
-            color: #333;
-        }
-        
-        .busca {
-            margin-bottom: 20px;
-        }
-        
-        .busca input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .status-ativo {
-            color: #4CAF50;
-            font-weight: bold;
-        }
-        
-        .status-inativo {
-            color: #f44336;
-            font-weight: bold;
-        }
-        
-        .acoes {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .hidden {
-            display: none;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-input {
+                min-width: 100%;
+            }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .table-wrapper {
+                overflow-x: scroll;
+            }
+            
+            table {
+                min-width: 900px;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loginContainer" class="login-container">
-        <h1>🔐 Login Admin</h1>
-        <div class="form-group">
-            <label>Email:</label>
-            <input type="email" id="loginEmail" placeholder="seu@email.com">
-        </div>
-        <div class="form-group">
-            <label>Senha:</label>
-            <input type="password" id="loginSenha" placeholder="Sua senha">
-        </div>
-        <button class="btn btn-primary" onclick="fazerLogin()" style="width: 100%;">Entrar</button>
-        <div id="loginErro" style="color: red; margin-top: 15px; display: none;"></div>
-    </div>
-    
-    <div id="adminContainer" class="container hidden">
+    <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1>🏛️ Gestão de Igrejas</h1>
-            <div>
-                <button class="btn btn-primary" onclick="abrirModalNova()">➕ Nova Igreja</button>
-                <button class="btn btn-secondary" onclick="fazerLogout()">🚪 Sair</button>
+            <h1>
+                <i class="fas fa-church"></i>
+                Gestão de Igrejas
+            </h1>
+            <p>Gerencie as igrejas parceiras do projeto Somos Todos Um</p>
+            <div class="header-actions">
+                <button class="btn btn-success" onclick="abrirModal()">
+                    <i class="fas fa-plus"></i> Nova Igreja
+                </button>
+                <button class="btn btn-outline" onclick="window.location.href='/dashboard-comissoes.html'">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </button>
+                <button class="btn btn-outline" onclick="window.location.href='/venda.html'">
+                    <i class="fas fa-shopping-cart"></i> Nova Venda
+                </button>
             </div>
         </div>
         
-        <div class="busca">
-            <input type="text" id="buscaIgreja" placeholder="🔍 Buscar igreja por nome..." onkeyup="buscarIgrejas()">
+        <!-- Card Principal -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2>
+                    <i class="fas fa-list"></i>
+                    Lista de Igrejas
+                </h2>
+                <div class="search-box">
+                    <input type="text" class="search-input" id="buscarIgreja" placeholder="🔍 Buscar por nome..." onkeyup="filtrarIgrejas()">
+                </div>
+            </div>
+            
+            <div id="loadingIgrejas" class="loading">
+                <div class="spinner"></div>
+                <p>Carregando igrejas...</p>
+            </div>
+            
+            <div id="tabelaIgrejas" style="display: none;">
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Responsável</th>
+                                <th>Contato</th>
+                                <th>Cidade/Estado</th>
+                                <th>Comissão</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabela">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Responsável</th>
-                    <th>Email</th>
-                    <th>Telefone</th>
-                    <th>Cidade/Estado</th>
-                    <th>Comissão</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaIgrejas">
-                <tr><td colspan="8" style="text-align: center;">Carregando...</td></tr>
-            </tbody>
-        </table>
     </div>
     
+    <!-- Modal -->
     <div id="modalIgreja" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitulo">Nova Igreja</h2>
+                <h2 id="tituloModal">
+                    <i class="fas fa-church"></i>
+                    Nova Igreja
+                </h2>
                 <span class="close" onclick="fecharModal()">&times;</span>
             </div>
             
             <form id="formIgreja" onsubmit="salvarIgreja(event)">
-                <input type="hidden" id="igrejaId">
-                
-                <div class="form-group">
-                    <label>Nome da Igreja: *</label>
-                    <input type="text" id="igrejaNome" required>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nome da Igreja: <span class="required">*</span></label>
+                        <input type="text" id="nome" required placeholder="Ex: Igreja Batista Central">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Responsável:</label>
+                            <input type="text" id="responsavel" placeholder="Ex: Pastor João Silva">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" id="email" placeholder="contato@igreja.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Telefone:</label>
+                            <input type="tel" id="telefone" placeholder="(11) 98765-4321">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>WhatsApp:</label>
+                            <input type="tel" id="whatsapp" placeholder="(11) 98765-4321">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Endereço:</label>
+                        <input type="text" id="endereco" placeholder="Rua, número, bairro">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cidade:</label>
+                            <input type="text" id="cidade" placeholder="São Paulo">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Estado:</label>
+                            <select id="estado">
+                                <option value="">Selecione...</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CEP:</label>
+                            <input type="text" id="cep" placeholder="12345-678">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Percentual de Comissão (%):</label>
+                            <input type="number" id="percentual_comissao" step="0.01" min="0" max="100" value="15.00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Chave PIX (para receber comissão):</label>
+                        <input type="text" id="chave_pix" placeholder="CPF, Email, Telefone ou Chave Aleatória">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de Chave PIX:</label>
+                            <select id="tipo_chave_pix">
+                                <option value="">Selecione...</option>
+                                <option value="CPF">CPF</option>
+                                <option value="CNPJ">CNPJ</option>
+                                <option value="Email">Email</option>
+                                <option value="Telefone">Telefone</option>
+                                <option value="Chave Aleatória">Chave Aleatória</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <select id="ativo">
+                                <option value="true">Ativo</option>
+                                <option value="false">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="igrejaId">
                 </div>
                 
-                <div class="form-group">
-                    <label>Responsável:</label>
-                    <input type="text" id="igrejaResponsavel">
-                </div>
-                
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" id="igrejaEmail">
-                </div>
-                
-                <div class="form-group">
-                    <label>Telefone:</label>
-                    <input type="text" id="igrejaTelefone" placeholder="(11) 98765-4321">
-                </div>
-                
-                <div class="form-group">
-                    <label>WhatsApp:</label>
-                    <input type="text" id="igrejaWhatsapp" placeholder="(11) 98765-4321">
-                </div>
-                
-                <div class="form-group">
-                    <label>Endereço:</label>
-                    <textarea id="igrejaEndereco" rows="2"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>Cidade:</label>
-                    <input type="text" id="igrejaCidade">
-                </div>
-                
-                <div class="form-group">
-                    <label>Estado:</label>
-                    <select id="igrejaEstado">
-                        <option value="">Selecione...</option>
-                        <option value="AC">Acre</option>
-                        <option value="AL">Alagoas</option>
-                        <option value="AP">Amapá</option>
-                        <option value="AM">Amazonas</option>
-                        <option value="BA">Bahia</option>
-                        <option value="CE">Ceará</option>
-                        <option value="DF">Distrito Federal</option>
-                        <option value="ES">Espírito Santo</option>
-                        <option value="GO">Goiás</option>
-                        <option value="MA">Maranhão</option>
-                        <option value="MT">Mato Grosso</option>
-                        <option value="MS">Mato Grosso do Sul</option>
-                        <option value="MG">Minas Gerais</option>
-                        <option value="PA">Pará</option>
-                        <option value="PB">Paraíba</option>
-                        <option value="PR">Paraná</option>
-                        <option value="PE">Pernambuco</option>
-                        <option value="PI">Piauí</option>
-                        <option value="RJ">Rio de Janeiro</option>
-                        <option value="RN">Rio Grande do Norte</option>
-                        <option value="RS">Rio Grande do Sul</option>
-                        <option value="RO">Rondônia</option>
-                        <option value="RR">Roraima</option>
-                        <option value="SC">Santa Catarina</option>
-                        <option value="SP">São Paulo</option>
-                        <option value="SE">Sergipe</option>
-                        <option value="TO">Tocantins</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>CEP:</label>
-                    <input type="text" id="igrejaCep" placeholder="12345-678">
-                </div>
-                
-                <div class="form-group">
-                    <label>Percentual de Comissão (%):</label>
-                    <input type="number" id="igrejaPercentual" step="0.01" value="15.00">
-                </div>
-                
-                <div class="form-group">
-                    <label>Status:</label>
-                    <select id="igrejaAtivo">
-                        <option value="true">Ativo</option>
-                        <option value="false">Inativo</option>
-                    </select>
-                </div>
-                
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button type="submit" class="btn btn-success" style="flex: 1;">💾 Salvar</button>
-                    <button type="button" class="btn btn-secondary" onclick="fecharModal()" style="flex: 1;">❌ Cancelar</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="fecharModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success" id="btnSalvar">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
                 </div>
             </form>
         </div>
@@ -378,37 +653,6 @@
         
         let igrejasData = [];
         
-        async function fazerLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const senha = document.getElementById('loginSenha').value;
-            
-            try {
-                const { data, error } = await clienteSupabase.auth.signInWithPassword({
-                    email: email,
-                    password: senha
-                });
-                
-                if (error) throw error;
-                
-                document.getElementById('loginContainer').classList.add('hidden');
-                document.getElementById('adminContainer').classList.remove('hidden');
-                
-                carregarIgrejas();
-                
-            } catch (erro) {
-                document.getElementById('loginErro').style.display = 'block';
-                document.getElementById('loginErro').textContent = 'Erro ao fazer login: ' + erro.message;
-            }
-        }
-        
-        async function fazerLogout() {
-            await clienteSupabase.auth.signOut();
-            document.getElementById('loginContainer').classList.remove('hidden');
-            document.getElementById('adminContainer').classList.add('hidden');
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginSenha').value = '';
-        }
-        
         async function carregarIgrejas() {
             try {
                 const { data, error } = await clienteSupabase
@@ -419,74 +663,81 @@
                 if (error) throw error;
                 
                 igrejasData = data;
-                renderizarTabela(data);
+                preencherTabela(data);
+                
+                document.getElementById('loadingIgrejas').style.display = 'none';
+                document.getElementById('tabelaIgrejas').style.display = 'block';
                 
             } catch (erro) {
+                console.error('Erro ao carregar igrejas:', erro);
                 alert('Erro ao carregar igrejas: ' + erro.message);
             }
         }
         
-        function renderizarTabela(igrejas) {
-            const tbody = document.getElementById('tabelaIgrejas');
+        function preencherTabela(igrejas) {
+            const tbody = document.getElementById('corpoTabela');
+            tbody.innerHTML = '';
             
             if (igrejas.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Nenhuma igreja encontrada</td></tr>';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <i class="fas fa-church"></i>
+                                <h3>Nenhuma igreja cadastrada</h3>
+                                <p>Comece adicionando sua primeira igreja parceira!</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
             
-            let html = '';
-            
             igrejas.forEach(igreja => {
-                html += '<tr>';
-                html += '<td>' + igreja.nome + '</td>';
-                html += '<td>' + (igreja.responsavel || '-') + '</td>';
-                html += '<td>' + (igreja.email || '-') + '</td>';
-                html += '<td>' + (igreja.telefone || '-') + '</td>';
-                html += '<td>' + (igreja.cidade || '-') + '/' + (igreja.estado || '-') + '</td>';
-                html += '<td>' + igreja.percentual_comissao + '%</td>';
-                html += '<td class="' + (igreja.ativo ? 'status-ativo' : 'status-inativo') + '">' + (igreja.ativo ? 'Ativo' : 'Inativo') + '</td>';
-                html += '<td class="acoes">';
-                html += '<button class="btn btn-primary" onclick="editarIgreja(\'' + igreja.id + '\')">✏️ Editar</button>';
-                html += '<button class="btn btn-danger" onclick="toggleStatus(\'' + igreja.id + '\', ' + igreja.ativo + ')">' + (igreja.ativo ? '🚫 Desativar' : '✅ Ativar') + '</button>';
-                html += '</td>';
-                html += '</tr>';
+                const tr = document.createElement('tr');
+                
+                const statusClass = igreja.ativo ? 'ativo' : 'inativo';
+                const statusText = igreja.ativo ? 'Ativo' : 'Inativo';
+                
+                tr.innerHTML = `
+                    <td><strong>${igreja.nome}</strong></td>
+                    <td>${igreja.responsavel || '-'}</td>
+                    <td>
+                        ${igreja.telefone ? '<i class="fas fa-phone"></i> ' + igreja.telefone : ''}
+                        ${igreja.email ? '<br><i class="fas fa-envelope"></i> ' + igreja.email : ''}
+                    </td>
+                    <td>${igreja.cidade || '-'}/${igreja.estado || '-'}</td>
+                    <td><strong>${parseFloat(igreja.percentual_comissao || 0).toFixed(2)}%</strong></td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm btn-icon" onclick="editarIgreja('${igreja.id}')" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btn-icon" onclick="excluirIgreja('${igreja.id}', '${igreja.nome}')" title="Excluir">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(tr);
             });
-            
-            tbody.innerHTML = html;
         }
         
-        function buscarIgrejas() {
-            const termo = document.getElementById('buscaIgreja').value.toLowerCase();
-            const filtradas = igrejasData.filter(i => i.nome.toLowerCase().includes(termo));
-            renderizarTabela(filtradas);
+        function filtrarIgrejas() {
+            const busca = document.getElementById('buscarIgreja').value.toLowerCase();
+            const igrejasFiltradas = igrejasData.filter(igreja => 
+                igreja.nome.toLowerCase().includes(busca) ||
+                (igreja.responsavel && igreja.responsavel.toLowerCase().includes(busca)) ||
+                (igreja.cidade && igreja.cidade.toLowerCase().includes(busca))
+            );
+            preencherTabela(igrejasFiltradas);
         }
         
-        function abrirModalNova() {
-            document.getElementById('modalTitulo').textContent = 'Nova Igreja';
+        function abrirModal() {
+            document.getElementById('tituloModal').innerHTML = '<i class="fas fa-church"></i> Nova Igreja';
             document.getElementById('formIgreja').reset();
             document.getElementById('igrejaId').value = '';
-            document.getElementById('igrejaPercentual').value = '15.00';
-            document.getElementById('igrejaAtivo').value = 'true';
-            document.getElementById('modalIgreja').style.display = 'block';
-        }
-        
-        function editarIgreja(id) {
-            const igreja = igrejasData.find(i => i.id === id);
-            
-            document.getElementById('modalTitulo').textContent = 'Editar Igreja';
-            document.getElementById('igrejaId').value = igreja.id;
-            document.getElementById('igrejaNome').value = igreja.nome;
-            document.getElementById('igrejaResponsavel').value = igreja.responsavel || '';
-            document.getElementById('igrejaEmail').value = igreja.email || '';
-            document.getElementById('igrejaTelefone').value = igreja.telefone || '';
-            document.getElementById('igrejaWhatsapp').value = igreja.whatsapp || '';
-            document.getElementById('igrejaEndereco').value = igreja.endereco || '';
-            document.getElementById('igrejaCidade').value = igreja.cidade || '';
-            document.getElementById('igrejaEstado').value = igreja.estado || '';
-            document.getElementById('igrejaCep').value = igreja.cep || '';
-            document.getElementById('igrejaPercentual').value = igreja.percentual_comissao;
-            document.getElementById('igrejaAtivo').value = igreja.ativo.toString();
-            
+            document.getElementById('percentual_comissao').value = '15.00';
             document.getElementById('modalIgreja').style.display = 'block';
         }
         
@@ -494,92 +745,130 @@
             document.getElementById('modalIgreja').style.display = 'none';
         }
         
+        async function editarIgreja(id) {
+            try {
+                const { data, error } = await clienteSupabase
+                    .from('igrejas')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                
+                if (error) throw error;
+                
+                document.getElementById('tituloModal').innerHTML = '<i class="fas fa-edit"></i> Editar Igreja';
+                document.getElementById('igrejaId').value = data.id;
+                document.getElementById('nome').value = data.nome || '';
+                document.getElementById('responsavel').value = data.responsavel || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('telefone').value = data.telefone || '';
+                document.getElementById('whatsapp').value = data.whatsapp || '';
+                document.getElementById('endereco').value = data.endereco || '';
+                document.getElementById('cidade').value = data.cidade || '';
+                document.getElementById('estado').value = data.estado || '';
+                document.getElementById('cep').value = data.cep || '';
+                document.getElementById('percentual_comissao').value = data.percentual_comissao || '15.00';
+                document.getElementById('chave_pix').value = data.chave_pix || '';
+                document.getElementById('tipo_chave_pix').value = data.tipo_chave_pix || '';
+                document.getElementById('ativo').value = data.ativo ? 'true' : 'false';
+                
+                document.getElementById('modalIgreja').style.display = 'block';
+                
+            } catch (erro) {
+                console.error('Erro ao carregar igreja:', erro);
+                alert('Erro ao carregar dados da igreja: ' + erro.message);
+            }
+        }
+        
         async function salvarIgreja(event) {
             event.preventDefault();
             
-            const id = document.getElementById('igrejaId').value;
-            const dados = {
-                nome: document.getElementById('igrejaNome').value,
-                responsavel: document.getElementById('igrejaResponsavel').value,
-                email: document.getElementById('igrejaEmail').value,
-                telefone: document.getElementById('igrejaTelefone').value,
-                whatsapp: document.getElementById('igrejaWhatsapp').value,
-                endereco: document.getElementById('igrejaEndereco').value,
-                cidade: document.getElementById('igrejaCidade').value,
-                estado: document.getElementById('igrejaEstado').value,
-                cep: document.getElementById('igrejaCep').value,
-                percentual_comissao: parseFloat(document.getElementById('igrejaPercentual').value),
-                ativo: document.getElementById('igrejaAtivo').value === 'true',
-                updated_at: new Date().toISOString()
-            };
+            const btnSalvar = document.getElementById('btnSalvar');
+            btnSalvar.disabled = true;
+            btnSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
             
             try {
-                if (id) {
+                const dados = {
+                    nome: document.getElementById('nome').value,
+                    responsavel: document.getElementById('responsavel').value || null,
+                    email: document.getElementById('email').value || null,
+                    telefone: document.getElementById('telefone').value || null,
+                    whatsapp: document.getElementById('whatsapp').value || null,
+                    endereco: document.getElementById('endereco').value || null,
+                    cidade: document.getElementById('cidade').value || null,
+                    estado: document.getElementById('estado').value || null,
+                    cep: document.getElementById('cep').value || null,
+                    percentual_comissao: parseFloat(document.getElementById('percentual_comissao').value) || 15.00,
+                    chave_pix: document.getElementById('chave_pix').value || null,
+                    tipo_chave_pix: document.getElementById('tipo_chave_pix').value || null,
+                    ativo: document.getElementById('ativo').value === 'true',
+                    updated_at: new Date().toISOString()
+                };
+                
+                const igrejaId = document.getElementById('igrejaId').value;
+                
+                if (igrejaId) {
                     const { error } = await clienteSupabase
                         .from('igrejas')
                         .update(dados)
-                        .eq('id', id);
+                        .eq('id', igrejaId);
                     
                     if (error) throw error;
-                    alert('Igreja atualizada com sucesso!');
+                    
+                    alert('✅ Igreja atualizada com sucesso!');
                 } else {
+                    dados.created_at = new Date().toISOString();
+                    
                     const { error } = await clienteSupabase
                         .from('igrejas')
                         .insert([dados]);
                     
                     if (error) throw error;
-                    alert('Igreja cadastrada com sucesso!');
+                    
+                    alert('✅ Igreja cadastrada com sucesso!');
                 }
                 
                 fecharModal();
                 carregarIgrejas();
                 
             } catch (erro) {
-                alert('Erro ao salvar igreja: ' + erro.message);
+                console.error('Erro ao salvar igreja:', erro);
+                alert('❌ Erro ao salvar igreja: ' + erro.message);
+            } finally {
+                btnSalvar.disabled = false;
+                btnSalvar.innerHTML = '<i class="fas fa-save"></i> Salvar';
             }
         }
         
-        async function toggleStatus(id, statusAtual) {
-            const novoStatus = !statusAtual;
-            const mensagem = novoStatus ? 'ativar' : 'desativar';
-            
-            if (!confirm('Deseja realmente ' + mensagem + ' esta igreja?')) {
+        async function excluirIgreja(id, nome) {
+            if (!confirm(`Tem certeza que deseja excluir a igreja "${nome}"?`)) {
                 return;
             }
             
             try {
                 const { error } = await clienteSupabase
                     .from('igrejas')
-                    .update({ ativo: novoStatus, updated_at: new Date().toISOString() })
+                    .delete()
                     .eq('id', id);
                 
                 if (error) throw error;
                 
-                alert('Status atualizado com sucesso!');
+                alert('✅ Igreja excluída com sucesso!');
                 carregarIgrejas();
                 
             } catch (erro) {
-                alert('Erro ao atualizar status: ' + erro.message);
+                console.error('Erro ao excluir igreja:', erro);
+                alert('❌ Erro ao excluir igreja: ' + erro.message);
             }
         }
         
         window.onclick = function(event) {
-            if (event.target == document.getElementById('modalIgreja')) {
+            const modal = document.getElementById('modalIgreja');
+            if (event.target == modal) {
                 fecharModal();
             }
         }
         
-        async function verificarSessao() {
-            const { data } = await clienteSupabase.auth.getSession();
-            
-            if (data.session) {
-                document.getElementById('loginContainer').classList.add('hidden');
-                document.getElementById('adminContainer').classList.remove('hidden');
-                carregarIgrejas();
-            }
-        }
-        
-        verificarSessao();
+        carregarIgrejas();
     </script>
 </body>
 </html>
