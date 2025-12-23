@@ -1,21 +1,22 @@
 [build]
   publish = "."
-  command = ""
 
 [[redirects]]
-  from = "/somos-todos-um"
-  to = "/somos-todos-um/index.html"
+  from = "/somos-todos-um/livro/*"
+  to = "/somos-todos-um/livro/:splat"
   status = 200
-  force = true
 
 [[redirects]]
   from = "/somos-todos-um/livro"
   to = "/somos-todos-um/livro/index.html"
   status = 200
-  force = true
 
 [[redirects]]
   from = "/somos-todos-um/*"
   to = "/somos-todos-um/:splat"
   status = 200
-  force = true
+
+[[redirects]]
+  from = "/somos-todos-um"
+  to = "/somos-todos-um/index.html"
+  status = 200
