@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Igrejas Parceiras - Somos Todos Um</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --dark: #1f2937;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: var(--primary);
+            border: 2px solid white;
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Cards Grid */
+        .igrejas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .igreja-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .igreja-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .igreja-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .igreja-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+        
+        .igreja-card h3 {
+            color: var(--dark);
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        
+        .info-item i {
+            color: var(--primary);
+            width: 20px;
+        }
+        
+        .comissao-badge {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: 15px;
+            padding: 60px 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .empty-state i {
+            font-size: 4em;
+            color: #d1d5db;
+            margin-bottom: 20px;
+        }
+        
+        .empty-state h3 {
+            color: var(--dark);
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            color: #6b7280;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .igrejas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-church"></i>
+                Igrejas Parceiras
+            </h1>
+            <p>Conheça as igrejas que fazem parte do projeto Somos Todos Um</p>
+            <div class="header-actions">
+                <a href="/venda.html" class="btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i> Fazer uma Compra
+                </a>
+                <a href="/" class="btn btn-outline">
+                    <i class="fas fa-home"></i> Página Inicial
+                </a>
+            </div>
+        </div>
+        
+        <!-- Loading -->
+        <div id="loadingIgrejas" class="loading">
+            <div class="spinner"></div>
+            <p>Carregando igrejas parceiras...</p>
+        </div>
+        
+        <!-- Grid de Igrejas -->
+        <div id="igrejasGrid" class="igrejas-grid" style="display: none;"></div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fas fa-church"></i>
+            <h3>Nenhuma igreja cadastrada ainda</h3>
+            <p>Em breve teremos igrejas parceiras aqui!</p>
+        </div>
+    </div>
+    
+    <script>
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        async function carregarIgrejas() {
+            try {
+                const { data, error } = await clienteSupabase
+                    .from('igrejas')
+                    .select('*')
+                    .eq('ativo', true)
+                    .order('nome', { ascending: true });
+                
+                if (error) throw error;
+                
+                document.getElementById('loadingIgrejas').style.display = 'none';
+                
+                if (data.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                    return;
+                }
+                
+                const grid = document.getElementById('igrejasGrid');
+                grid.innerHTML = '';
+                
+                data.forEach(igreja => {
+                    const card = document.createElement('div');
+                    card.className = 'igreja-card';
+                    
+                    card.innerHTML = `
+                        <div class="igreja-icon">
+                            <i class="fas fa-church"></i>
+                        </div>
+                        <h3>${igreja.nome}</h3>
+                        ${igreja.responsavel ? `<div class="info-item"><i class="fas fa-user"></i> ${igreja.responsavel}</div>` : ''}
+                        ${igreja.telefone ? `<div class="info-item"><i class="fas fa-phone"></i> ${igreja.telefone}</div>` : ''}
+                        ${igreja.email ? `<div class="info-item"><i class="fas fa-envelope"></i> ${igreja.email}</div>` : ''}
+                        ${igreja.cidade && igreja.estado ? `<div class="info-item"><i class="fas fa-map-marker-alt"></i> ${igreja.cidade} - ${igreja.estado}</div>` : ''}
+                        <div class="comissao-badge">
+                            <i class="fas fa-hand-holding-usd"></i> ${parseFloat(igreja.percentual_comissao || 0).toFixed(2)}% de comissão
+                        </div>
+                    `;
+                    
+                    grid.appendChild(card);
+                });
+                
+                grid.style.display = 'grid';
+                
+            } catch (erro) {
+                console.error('Erro ao carregar igrejas:', erro);
+                document.getElementById('loadingIgrejas').innerHTML = 
+                    '<p style="color: white;">❌ Erro ao carregar igrejas. Tente novamente mais tarde.</p>';
+            }
+        }
+        
+        carregarIgrejas();
+    </script>
+</body>
+</html>
