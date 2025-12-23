@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Moderno - Somos Todos Um</title>
+    <title>Dashboard - Somos Todos Um</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,7 +31,7 @@
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             color: #333;
         }
         
@@ -40,59 +40,59 @@
             margin: 0 auto;
         }
         
-        /* Header */
+        /* Header - REDUZIDO */
         .header {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         
         .header h1 {
             color: white;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 1.8em;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         
         .header p {
             color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1em;
+            font-size: 0.95em;
         }
         
         .header-actions {
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
         
-        /* Stats Cards */
+        /* Stats Cards - REDUZIDOS */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         .stat-card {
             background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
         
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
         }
         
         .stat-card::before {
@@ -101,7 +101,7 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
         
@@ -118,14 +118,14 @@
         }
         
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8em;
-            margin-bottom: 15px;
+            font-size: 1.3em;
+            margin-bottom: 12px;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
         }
@@ -143,25 +143,25 @@
         }
         
         .stat-label {
-            font-size: 0.9em;
+            font-size: 0.75em;
             color: #6b7280;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         
         .stat-value {
-            font-size: 2em;
+            font-size: 1.5em;
             font-weight: bold;
             color: var(--dark);
         }
         
         .stat-change {
-            font-size: 0.85em;
-            margin-top: 10px;
+            font-size: 0.75em;
+            margin-top: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
         
         .stat-change.positive {
@@ -172,65 +172,72 @@
             color: var(--danger);
         }
         
-        /* Charts Section */
+        /* Charts Section - REDUZIDOS PARA 50% */
         .charts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
         .chart-card {
             background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            height: 250px;
         }
         
         .chart-card h3 {
             color: var(--dark);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-size: 1em;
+        }
+        
+        .chart-card canvas {
+            max-height: 180px !important;
         }
         
         /* Table Section */
         .table-card {
             background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
         }
         
         .table-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 12px;
         }
         
         .table-header h3 {
             color: var(--dark);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-size: 1.1em;
         }
         
         .filters {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         
         .filter-input {
-            padding: 10px 15px;
+            padding: 8px 12px;
             border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 13px;
             transition: border-color 0.3s;
         }
         
@@ -254,11 +261,11 @@
         }
         
         th {
-            padding: 15px;
+            padding: 12px;
             text-align: left;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.85em;
+            font-size: 0.8em;
             letter-spacing: 0.5px;
         }
         
@@ -272,14 +279,15 @@
         }
         
         td {
-            padding: 15px;
+            padding: 12px;
             color: #374151;
+            font-size: 0.9em;
         }
         
         .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
             font-weight: 600;
             display: inline-block;
         }
@@ -301,16 +309,16 @@
         
         /* Buttons */
         .btn {
-            padding: 12px 24px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-decoration: none;
         }
         
@@ -321,7 +329,7 @@
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 15px rgba(102, 126, 234, 0.3);
         }
         
         .btn-success {
@@ -331,7 +339,7 @@
         
         .btn-success:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.3);
         }
         
         .btn-outline {
@@ -346,35 +354,35 @@
         }
         
         .btn-sm {
-            padding: 8px 16px;
-            font-size: 0.85em;
+            padding: 6px 12px;
+            font-size: 0.8em;
         }
         
         .btn-icon {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             padding: 0;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 6px;
         }
         
         /* Loading */
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             color: white;
         }
         
         .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
         }
         
         @keyframes spin {
@@ -385,7 +393,7 @@
         /* Responsive */
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 1.8em;
+                font-size: 1.5em;
             }
             
             .stats-grid {
@@ -408,19 +416,19 @@
         /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #6b7280;
         }
         
         .empty-state i {
-            font-size: 4em;
-            margin-bottom: 20px;
+            font-size: 3em;
+            margin-bottom: 15px;
             opacity: 0.3;
         }
         
         .empty-state h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
+            font-size: 1.3em;
+            margin-bottom: 8px;
             color: #374151;
         }
     </style>
@@ -431,7 +439,7 @@
         <div class="header">
             <h1>
                 <i class="fas fa-chart-line"></i>
-                Dashboard Moderno
+                Dashboard
             </h1>
             <p>Visão completa das vendas e comissões - Somos Todos Um</p>
             <div class="header-actions">
@@ -572,7 +580,6 @@
         
         async function carregarDashboard() {
             try {
-                // Carregar vendas
                 const { data: vendas, error: errorVendas } = await clienteSupabase
                     .from('vendas')
                     .select('*, igrejas(nome)')
@@ -580,7 +587,6 @@
                 
                 if (errorVendas) throw errorVendas;
                 
-                // Carregar igrejas
                 const { data: igrejas, error: errorIgrejas } = await clienteSupabase
                     .from('igrejas')
                     .select('*')
@@ -588,13 +594,8 @@
                 
                 if (errorIgrejas) throw errorIgrejas;
                 
-                // Atualizar estatísticas
                 atualizarEstatisticas(vendas, igrejas);
-                
-                // Criar gráficos
                 criarGraficos(vendas);
-                
-                // Preencher tabela
                 preencherTabela(vendas);
                 
                 document.getElementById('loadingVendas').style.display = 'none';
@@ -619,7 +620,6 @@
         }
         
         function criarGraficos(vendas) {
-            // Vendas por Igreja
             const vendasPorIgreja = {};
             vendas.forEach(v => {
                 const igreja = v.igrejas?.nome || 'Sem Igreja';
@@ -642,7 +642,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: false
@@ -659,7 +659,6 @@
                 }
             });
             
-            // Status das Vendas
             const statusCount = {
                 pendente: vendas.filter(v => v.status === 'pendente').length,
                 pago: vendas.filter(v => v.status === 'pago').length,
@@ -683,7 +682,7 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             position: 'bottom'
@@ -737,7 +736,6 @@
         }
         
         function aplicarFiltros() {
-            // Implementar filtros
             alert('Filtros em desenvolvimento!');
         }
         
@@ -745,7 +743,6 @@
             alert('Exportação de relatório em desenvolvimento!');
         }
         
-        // Carregar dashboard ao iniciar
         carregarDashboard();
     </script>
 </body>
