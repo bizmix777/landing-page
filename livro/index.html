@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO BÁSICO -->
+    <title>Somos Todos Um - Livro Digital Cristão | A Verdade Bíblica Sobre a Unidade da Humanidade</title>
+    <meta name="description" content="Descubra o plano de Deus para a unidade da humanidade desde a Criação até a Eternidade. Livro digital com 6 capítulos teológicos profundos + 50 perguntas de estudo. Apenas R$ 29,90.">
+    <meta name="keywords" content="livro cristão, teologia, unidade bíblica, imagem de deus, ebook cristão, estudo bíblico, livro evangélico">
+    <meta name="author" content="Henrique">
+    
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2C5F7C;
+            --secondary: #D4AF37;
+            --dark: #1A1A2E;
+            --light: #F5F5F5;
+            --accent: #8B4513;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Merriweather', serif;
+        }
+        
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 60px 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--dark);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .hero-title {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .hero-description {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .hero-features {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .feature .icon {
+            font-size: 1.5em;
+        }
+        
+        .book-cover {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* SECTIONS */
+        .section-light {
+            background: white;
+            padding: 80px 20px;
+        }
+        
+        .section-dark {
+            background: var(--dark);
+            color: white;
+            padding: 80px 20px;
+        }
+        
+        .section-title {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 50px;
+        }
+        
+        .section-dark .section-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* QUESTIONS GRID */
+        .questions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .question-card {
+            background: var(--light);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .question-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        /* CHAPTERS */
+        .chapters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .chapter-card {
+            background: var(--light);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid var(--secondary);
+        }
+        
+        .chapter-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .chapter-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .chapter-card ul {
+            margin-top: 15px;
+            padding-left: 20px;
+        }
+        
+        .chapter-card li {
+            margin: 8px 0;
+        }
+        
+        /* BONUS */
+        .bonus-highlight {
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .bonus-highlight h3 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        /* AUTHOR */
+        .author-box {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .author-image img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .author-bio p {
+            margin: 15px 0;
+            font-size: 1.1em;
+        }
+        
+        .author-credentials {
+            display: grid;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .credential {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .credential .icon {
+            font-size: 1.8em;
+        }
+        
+        /* CTA */
+        .section-cta {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .section-title-white {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        
+        .offer-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .final-price {
+            margin: 30px 0;
+        }
+        
+        .price-label {
+            display: block;
+            font-size: 1.2em;
+            text-decoration: line-through;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+        
+        .price-main {
+            display: block;
+            font-size: 4em;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .price-installment {
+            display: block;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        /* BUTTONS */
+        .botoes-finais-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .btn-blindado {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-blindado:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .btn-mp {
+            background: linear-gradient(135deg, #00B1EA, #0099CC);
+            color: white;
+        }
+        
+        .btn-wa {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+        
+        .btn-blindado .icon {
+            font-size: 1.5em;
+        }
+        
+        /* FAQ */
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background: white;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .faq-question {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .faq-question:hover {
+            background: var(--light);
+        }
+        
+        .faq-icon {
+            font-size: 1.5em;
+            color: var(--primary);
+        }
+        
+        .faq-question h3 {
+            flex: 1;
+            font-size: 1.1em;
+            color: var(--dark);
+        }
+        
+        .faq-toggle {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+            padding: 0 20px 20px;
+        }
+        
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 20px 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .footer-section p {
+            margin: 8px 0;
+            opacity: 0.8;
+        }
+        
+        .payment-info .payment-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+        
+        .payment-info .icon {
+            font-size: 1.5em;
+        }
+        
+        .payment-info .value.highlight {
+            color: var(--secondary);
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-title {
+                font-size: 2.5em;
+            }
+            
+            .book-cover {
+                margin: 0 auto;
+            }
+            
+            .author-box {
+                grid-template-columns: 1fr;
+            }
+            
+            .chapters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .price-main {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SEÇÃO 1: HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <div class="badge">✝️ LANÇAMENTO</div>
+                    <h1 class="hero-title">SOMOS TODOS UM</h1>
+                    <p class="hero-subtitle">A Verdade Bíblica Sobre a Unidade da Humanidade</p>
+                    <p class="hero-description">Da Criação à Eternidade: Descubra Como a Imagem de Deus em Você Conecta Toda a Humanidade</p>
+                    
+                    <div class="hero-features">
+                        <div class="feature">
+                            <span class="icon">⭐</span>
+                            <span>100% Fundamentado nas Escrituras</span>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">📖</span>
+                            <span>120 Páginas de Conteúdo Profundo</span>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">⚡</span>
+                            <span>Entrega em até 30 minutos</span>
+                        </div>
+                        <div class="feature">
+                            <span class="icon">🎁</span>
+                            <span>3 Bônus Exclusivos Inclusos</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-image">
+                    <img src="images/capa-livro.jpg" alt="Capa do Livro Somos Todos Um" class="book-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 2: PROBLEMA -->
+    <section class="section-light">
+        <div class="container">
+            <h2 class="section-title">Você Já Se Perguntou...</h2>
+            
+            <div class="questions-grid">
+                <div class="question-card">
+                    <span class="question-icon">❓</span>
+                    <p>Por que existe tanta <strong>divisão na igreja</strong> se todos servimos ao mesmo Deus?</p>
+                </div>
+                <div class="question-card">
+                    <span class="question-icon">❓</span>
+                    <p>Qual é o verdadeiro significado de <strong>"criados à imagem e semelhança de Deus"</strong>?</p>
+                </div>
+                <div class="question-card">
+                    <span class="question-icon">❓</span>
+                    <p>Como a unidade que <strong>Jesus orou em João 17</strong> pode se tornar realidade?</p>
+                </div>
+                <div class="question-card">
+                    <span class="question-icon">❓</span>
+                    <p>Qual o <strong>plano completo de Deus</strong> desde Gênesis até Apocalipse?</p>
+                </div>
+            </div>
+            
+            <p class="section-subtitle" style="margin-top: 40px;">Se você busca respostas <strong>BÍBLICAS</strong> (não filosóficas ou culturais), continue lendo...</p>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 3: CONTEÚDO -->
+    <section class="section-dark">
+        <div class="container">
+            <h2 class="section-title">O Que Você Vai Descobrir</h2>
+            
+            <div class="chapters-grid">
+                <div class="chapter-card">
+                    <div class="chapter-number">01</div>
+                    <h3>O Selo Divino</h3>
+                    <p><strong>Criados à Imagem e Semelhança de Deus</strong></p>
+                    <ul>
+                        <li>O que realmente significa Imago Dei</li>
+                        <li>Como este selo define toda a humanidade</li>
+                        <li>A dignidade inerente que o pecado não pode apagar</li>
+                    </ul>
+                </div>
+                
+                <div class="chapter-card">
+                    <div class="chapter-number">02</div>
+                    <h3>Raízes Comuns, Caminhos Divergentes</h3>
+                    <p><strong>A Fragmentação pelo Pecado</strong></p>
+                    <ul>
+                        <li>A unidade original vs. a divisão atual</li>
+                        <li>Babel: o diagnóstico da divisão humana</li>
+                        <li>Como a queda afetou nossa unidade</li>
+                    </ul>
+                </div>
+                
+                <div class="chapter-card">
+                    <div class="chapter-number">03</div>
+                    <h3>Ecos da Criação</h3>
+                    <p><strong>Reflexos da Imagem no Antigo Testamento</strong></p>
+                    <ul>
+                        <li>Israel como modelo de unidade</li>
+                        <li>Os profetas e a promessa de restauração</li>
+                        <li>Preparação para o "Espelho Perfeito"</li>
+                    </ul>
+                </div>
+                
+                <div class="chapter-card">
+                    <div class="chapter-number">04</div>
+                    <h3>O Espelho Perfeito</h3>
+                    <p><strong>Cristo e a Nova Criação</strong></p>
+                    <ul>
+                        <li>Jesus: a Imagem PERFEITA de Deus</li>
+                        <li>Como Cristo restaura a unidade</li>
+                        <li>A Nova Criação em você</li>
+                    </ul>
+                </div>
+                
+                <div class="chapter-card">
+                    <div class="chapter-number">05</div>
+                    <h3>"Andai Como Ele Andou"</h3>
+                    <p><strong>O Modelo Prático de Unidade</strong></p>
+                    <ul>
+                        <li>A vida de Jesus como manual de unidade</li>
+                        <li>Humildade, serviço e amor na prática</li>
+                        <li>Como aplicar HOJE em sua igreja</li>
+                    </ul>
+                </div>
+                
+                <div class="chapter-card">
+                    <div class="chapter-number">06</div>
+                    <h3>A Sinfonia da Eternidade</h3>
+                    <p><strong>A Consumação em Apocalipse</strong></p>
+                    <ul>
+                        <li>Todas as nações adorando juntas</li>
+                        <li>Como Gênesis e Apocalipse se conectam</li>
+                        <li>Seu papel nesta sinfonia eterna</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="bonus-highlight">
+                <h3>📚 BÔNUS: Guia de Estudo Completo</h3>
+                <p>50+ perguntas teológicas com respostas fundamentadas. Ideal para grupos de estudo, células e escola bíblica!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 4: OFERTA -->
+    <section class="section-cta">
+        <div class="container">
+            <h2 class="section-title-white">Investimento Acessível Para Todos</h2>
+            
+            <div class="offer-box">
+                <div class="final-price">
+                    <span class="price-label">De R$ 97,00</span>
+                    <span class="price-main">R$ 29,90</span>
+                    <span class="price-installment">Pagamento via PIX</span>
+                </div>
+                
+                <div class="botoes-finais-wrapper">
+                    <a href="https://mpago.la/1gAWaRV" target="_blank" class="btn-blindado btn-mp">
+                        <span class="icon">💳</span>
+                        <span class="text">COMPRAR NO MERCADO PAGO</span>
+                    </a>
+                    <a href="https://wa.me/5562992475080?text=Olá!%20Quero%20comprar%20o%20livro%20*Somos%20Todos%20Um*%20por%20R$%2029,90" target="_blank" class="btn-blindado btn-wa">
+                        <span class="icon">💬</span>
+                        <span class="text">COMPRAR NO WHATSAPP</span>
+                    </a>
+                </div>
+                
+                <div style="margin-top: 30px; opacity: 0.9;">
+                    <p>🔒 Pagamento 100% Seguro</p>
+                    <p>✅ Entrega Imediata</p>
+                    <p>📱 Suporte Direto com o Autor</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 5: FAQ -->
+    <section class="section-light">
+        <div class="container">
+            <h2 class="section-title">Perguntas Frequentes</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-icon">❓</span>
+                        <h3>Como recebo o livro?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Via Mercado Pago:</strong> Após o pagamento, você receberá o livro automaticamente por e-mail em até 5 minutos.</p>
+                        <p><strong>Via WhatsApp:</strong> Após confirmar o pagamento e enviar o comprovante, você receberá o material em até 30 minutos.</p>
+                        <p>O livro é em formato PDF e pode ser lido em qualquer dispositivo.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-icon">❓</span>
+                        <h3>Posso usar em minha igreja?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>SIM! Você pode imprimir e usar as perguntas de estudo com seu grupo, célula ou escola bíblica.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span class="faq-icon">❓</span>
+                        <h3>É para qual denominação?</h3>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Para TODAS! O foco é na Bíblia, não em tradições denominacionais.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RODAPÉ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Somos Todos Um</h4>
+                    <p>"Porque há um só Deus, e um só Mediador entre Deus e os homens, Jesus Cristo homem." (1 Timóteo 2:5)</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contato</h4>
+                    <p>WhatsApp: (62) 99247-5080</p>
+                    <p>E-mail: contato@bizmix.com.br</p>
+                </div>
+                
+                <div class="footer-section payment-info">
+                    <h4>Dados para Pagamento</h4>
+                    <div class="payment-row">
+                        <span class="icon">💳</span>
+                        <div class="info">
+                            <span class="label">Chave PIX:</span>
+                            <span class="value highlight">62992475080</span>
+                        </div>
+                    </div>
+                    <div class="payment-row">
+                        <span class="icon">🏦</span>
+                        <div class="info">
+                            <span class="label">Banco:</span>
+                            <span class="value">C6 Bank</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2025 Henrique - Bizmix | Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ Toggle
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const faqItem = question.parentElement;
+                const isActive = faqItem.classList.contains('active');
+                
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+                
+                if (!isActive) {
+                    faqItem.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
