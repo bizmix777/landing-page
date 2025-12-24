@@ -4,13 +4,13 @@
 
 [[redirects]]
   from = "/somos-todos-um/igrejas/*"
-  to = "/somos-todos-um/igrejas/:splat"
+  to = "/somos-todos-um/igrejas/igreja.html"
   status = 200
   force = true
   
 [[redirects]]
   from = "/somos-todos-um/igrejas"
-  to = "/somos-todos-um/igrejas/index.html"
+  to = "/somos-todos-um/igrejas/igreja.html"
   status = 200
   force = true
 
@@ -25,6 +25,7 @@
     Cache-Control = "no-cache, no-store, must-revalidate, max-age=0"
     Pragma = "no-cache"
     Expires = "0"
+    X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
   for = "/somos-todos-um/*"
