@@ -1,7 +1,19 @@
-# Força o Netlify a servir os arquivos corretos
-/somos-todos-um/igrejas/index.html  /somos-todos-um/igrejas/index.html  200
-/somos-todos-um/igrejas/            /somos-todos-um/igrejas/index.html  200
-/somos-todos-um/igrejas             /somos-todos-um/igrejas/index.html  200
-/somos-todos-um/index.html          /somos-todos-um/index.html          200
-/somos-todos-um/                    /somos-todos-um/index.html          200
-/somos-todos-um                     /somos-todos-um/index.html          200
+# Desabilitar cache completamente para /igrejas/
+/somos-todos-um/igrejas/*
+  Cache-Control: no-cache, no-store, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
+  X-Content-Type-Options: nosniff
+
+# Cache moderado para /somos-todos-um/
+/somos-todos-um/*
+  Cache-Control: public, max-age=300, must-revalidate
+
+# Cache para imagens
+/somos-todos-um/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Cache padrão
+/*
+  Cache-Control: public, max-age=3600
+
