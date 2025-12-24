@@ -1,22 +1,20 @@
 [build]
   publish = "."
+  command = ""
 
-[[redirects]]
-  from = "/somos-todos-um/igrejas"
-  to = "/somos-todos-um/igrejas/index.html"
-  status = 200
+[build.processing]
+  skip_processing = false
 
-[[redirects]]
-  from = "/somos-todos-um/igrejas/*"
-  to = "/somos-todos-um/igrejas/:splat"
-  status = 200
+[build.processing.css]
+  bundle = false
+  minify = false
 
-[[redirects]]
-  from = "/somos-todos-um"
-  to = "/somos-todos-um/index.html"
-  status = 200
+[build.processing.js]
+  bundle = false
+  minify = false
 
-[[redirects]]
-  from = "/somos-todos-um/*"
-  to = "/somos-todos-um/:splat"
-  status = 200
+[build.processing.html]
+  pretty_urls = false
+
+[build.processing.images]
+  compress = false
