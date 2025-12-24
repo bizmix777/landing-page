@@ -1,7 +1,7 @@
-/livro/*
-  Cache-Control: no-cache, no-store, must-revalidate
-  Pragma: no-cache
-  Expires: 0
-
-/*
-  Cache-Control: public, max-age=3600
+# Força o Netlify a servir os arquivos corretos
+/somos-todos-um/igrejas/index.html  /somos-todos-um/igrejas/index.html  200
+/somos-todos-um/igrejas/            /somos-todos-um/igrejas/index.html  200
+/somos-todos-um/igrejas             /somos-todos-um/igrejas/index.html  200
+/somos-todos-um/index.html          /somos-todos-um/index.html          200
+/somos-todos-um/                    /somos-todos-um/index.html          200
+/somos-todos-um                     /somos-todos-um/index.html          200
