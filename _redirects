@@ -1,21 +1,11 @@
-# Sistema de Igrejas - NA RAIZ
-/sis-ig/    /sis-ig/index.html  200
-/sis-ig     /sis-ig/index.html  200
+# Não redirecionar arquivos estáticos
+/*/images/*  200
+/*/css/*     200
+/*/js/*      200
 
-# Livro Digital
-/somos-todos-um/    /somos-todos-um/index.html  200
-/somos-todos-um     /somos-todos-um/index.html  200
+# Redirecionar apenas páginas HTML
+/somos-todos-um  /somos-todos-um/index.html  200
+/sis-ig          /sis-ig/index.html          200
 
-# Servir arquivos estáticos normalmente
-/somos-todos-um/images/* 200
-/somos-todos-um/css/* 200
-/sis-ig/images/* 200
-/sis-ig/css/* 200
-
-# Redirecionar páginas
-/somos-todos-um/* /somos-todos-um/index.html 200
-/sis-ig/* /sis-ig/index.html 200
-
-# Fallback para raiz
-/* /index.html 404
-
+# Fallback
+/*  /index.html  404
