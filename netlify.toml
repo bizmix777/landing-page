@@ -3,21 +3,33 @@
   command = ""
 
 [[redirects]]
-  from = "/somos-todos-um/sis-ig"
-  to = "/somos-todos-um/sis-ig/index.html"
+  from = "/sis-ig"
+  to = "/sis-ig/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/sis-ig/*"
+  to = "/sis-ig/:splat"
   status = 200
 
 [[redirects]]
   from = "/somos-todos-um/igrejas/*"
-  to = "/somos-todos-um/sis-ig/"
+  to = "/sis-ig/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/somos-todos-um/sis-ig/*"
+  to = "/sis-ig/"
   status = 301
   force = true
 
 [[headers]]
-  for = "/somos-todos-um/sis-ig/*"
+  for = "/sis-ig/*"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
-    X-Content-Type-Options = "nosniff"
+    Pragma = "no-cache"
+    Expires = "0"
 
 [[headers]]
   for = "/somos-todos-um/*"
