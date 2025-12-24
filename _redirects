@@ -1,8 +1,5 @@
-# Força o Netlify a servir os arquivos corretos - VERSÃO 2
-/somos-todos-um/igrejas/index.html  /somos-todos-um/igrejas/index.html  200!
+# FORCE REDIRECTS - Ignora cache e outras regras
 /somos-todos-um/igrejas/            /somos-todos-um/igrejas/index.html  200!
 /somos-todos-um/igrejas             /somos-todos-um/igrejas/index.html  200!
-/somos-todos-um/index.html          /somos-todos-um/index.html          200
 /somos-todos-um/                    /somos-todos-um/index.html          200
 /somos-todos-um                     /somos-todos-um/index.html          200
-
