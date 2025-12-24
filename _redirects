@@ -1,11 +1,7 @@
-# Sistema de Igrejas - NOVA PASTA
-/somos-todos-um/sis-ig/    /somos-todos-um/sis-ig/index.html  200
-/somos-todos-um/sis-ig    /somos-todos-um/sis-ig/index.html  200
+# Sistema de Igrejas - NA RAIZ
+/sis-ig/    /sis-ig/index.html  200
+/sis-ig     /sis-ig/index.html  200
 
 # Livro Digital
-/somos-todos-um/                    /somos-todos-um/index.html                  200
-/somos-todos-um                     /somos-todos-um/index.html                  200
-
-# Bloquear pasta antiga igrejas (redireciona para sis-ig)
-/somos-todos-um/igrejas/*           /somos-todos-um/sis-ig/            301
-/somos-todos-um/igrejas            /somos-todos-um/sis-ig/            301
+/somos-todos-um/    /somos-todos-um/index.html  200
+/somos-todos-um     /somos-todos-um/index.html  200
