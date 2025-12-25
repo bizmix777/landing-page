@@ -1,22 +1,13 @@
 [build]
-  publish = "dist"
-  command = "npm run build"
+  publish = "."
+  command = ""
 
-# 1. REGRA PARA O JURÍDICO (O 'force = true' é obrigatório aqui)
 [[redirects]]
   from = "/direito/*"
   to = "/direito/index.html"
   status = 200
   force = true
 
-# 2. REGRA PARA O SIS-IG
-[[redirects]]
-  from = "/sis-ig/*"
-  to = "/sis-ig/index.html"
-  status = 200
-  force = true
-
-# 3. REGRA PARA O SITE PRINCIPAL (Mantém o React funcionando)
 [[redirects]]
   from = "/*"
   to = "/index.html"
