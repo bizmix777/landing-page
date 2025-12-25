@@ -2,84 +2,21 @@
   publish = "dist"
   command = "npm run build"
 
-[[redirects]]
-  from = "/direito/*"
-  to = "/direito/index.html"
-  status = 200
-  force = true  # <--- ISSO AQUI É O QUE VAI RESOLVER
-
-[[redirects]]
-  from = "/sis-ig/*"
-  to = "/sis-ig/index.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
-
-
-
-
-
-
-
-
-[build]
-  publish = "."
-  command = ""
-
-# --- REGRAS DO SITE JURÍDICO ---
+# Regra 1: Para quando digitar bizmix.com.br/direito (sem barra)
 [[redirects]]
   from = "/direito"
   to = "/direito/index.html"
   status = 200
+  force = true
 
+# Regra 2: Para quando digitar bizmix.com.br/direito/ (com barra ou subpáginas)
 [[redirects]]
   from = "/direito/*"
   to = "/direito/index.html"
   status = 200
-
-# --- REGRAS DO SIS-IG ---
-[[redirects]]
-  from = "/sis-ig"
-  to = "/sis-ig/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/sis-ig/*"
-  to = "/sis-ig/:splat"
-  status = 200
-
-# --- REDIRECIONAMENTOS ANTIGOS ---
-[[redirects]]
-  from = "/somos-todos-um/igrejas/*"
-  to = "/sis-ig/"
-  status = 301
   force = true
 
-[[redirects]]
-  from = "/somos-todos-um/sis-ig/*"
-  to = "/sis-ig/"
-  status = 301
-  force = true
-
-# --- HEADERS DE SEGURANÇA E CACHE ---
-[[headers]]
-  for = "/sis-ig/*"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
-
-[[headers]]
-  for = "/somos-todos-um/*"
-  [headers.values]
-    Cache-Control = "public, max-age=300"
-
-# --- REGRA FINAL (SPA) ---
+# Regra 3: Para o site principal continuar funcionando
 [[redirects]]
   from = "/*"
   to = "/index.html"
