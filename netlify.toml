@@ -2,6 +2,18 @@
   publish = "."
   command = ""
 
+# --- REGRAS DO SITE JURÍDICO ---
+[[redirects]]
+  from = "/direito"
+  to = "/direito/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/direito/*"
+  to = "/direito/index.html"
+  status = 200
+
+# --- REGRAS DO SIS-IG ---
 [[redirects]]
   from = "/sis-ig"
   to = "/sis-ig/index.html"
@@ -12,6 +24,7 @@
   to = "/sis-ig/:splat"
   status = 200
 
+# --- REDIRECIONAMENTOS ANTIGOS ---
 [[redirects]]
   from = "/somos-todos-um/igrejas/*"
   to = "/sis-ig/"
@@ -24,6 +37,7 @@
   status = 301
   force = true
 
+# --- HEADERS DE SEGURANÇA E CACHE ---
 [[headers]]
   for = "/sis-ig/*"
   [headers.values]
@@ -35,3 +49,9 @@
   for = "/somos-todos-um/*"
   [headers.values]
     Cache-Control = "public, max-age=300"
+
+# --- REGRA FINAL (SPA) ---
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
