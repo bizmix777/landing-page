@@ -2,28 +2,21 @@
   publish = "."
   command = ""
 
-# 1. REGRA PARA O JURÍDICO (Prioridade Máxima)
+# REGRA 1: Quando você digita exatamente /direito (sem a barra no final)
+[[redirects]]
+  from = "/direito"
+  to = "/direito/index.html"
+  status = 200
+  force = true
+
+# REGRA 2: Quando você digita /direito/ ou qualquer coisa depois (ex: /direito/faq)
 [[redirects]]
   from = "/direito/*"
   to = "/direito/index.html"
   status = 200
   force = true
 
-# 2. REGRA PARA O SIS-IG
-[[redirects]]
-  from = "/sis-ig/*"
-  to = "/sis-ig/index.html"
-  status = 200
-  force = true
-
-# 3. REGRA PARA O SOMOS TODOS UM
-[[redirects]]
-  from = "/somos-todos-um/*"
-  to = "/somos-todos-um/index.html"
-  status = 200
-  force = true
-
-# 4. REGRA PARA O SITE PRINCIPAL (Sempre por último)
+# REGRA 3: Regra geral para o site principal (Sempre no final)
 [[redirects]]
   from = "/*"
   to = "/index.html"
