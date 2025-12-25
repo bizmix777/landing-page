@@ -2,12 +2,20 @@
   publish = "."
   command = ""
 
+# 1. REGRA PARA O JURÍDICO (Sempre no topo)
+[[redirects]]
+  from = "/direito"
+  to = "/direito/index.html"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/direito/*"
   to = "/direito/index.html"
   status = 200
   force = true
 
+# 2. REGRA PARA O SITE PRINCIPAL (Sempre por último)
 [[redirects]]
   from = "/*"
   to = "/index.html"
