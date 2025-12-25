@@ -2,21 +2,21 @@
   publish = "dist"
   command = "npm run build"
 
-# Regra 1: Para quando digitar bizmix.com.br/direito (sem barra)
-[[redirects]]
-  from = "/direito"
-  to = "/direito/index.html"
-  status = 200
-  force = true
-
-# Regra 2: Para quando digitar bizmix.com.br/direito/ (com barra ou subpáginas)
+# 1. REGRA PARA O JURÍDICO (O 'force = true' é obrigatório aqui)
 [[redirects]]
   from = "/direito/*"
   to = "/direito/index.html"
   status = 200
   force = true
 
-# Regra 3: Para o site principal continuar funcionando
+# 2. REGRA PARA O SIS-IG
+[[redirects]]
+  from = "/sis-ig/*"
+  to = "/sis-ig/index.html"
+  status = 200
+  force = true
+
+# 3. REGRA PARA O SITE PRINCIPAL (Mantém o React funcionando)
 [[redirects]]
   from = "/*"
   to = "/index.html"
