@@ -2,13 +2,12 @@
   publish = "."
   command = ""
 
-# Regra para priorizar a pasta física /direito
 [[redirects]]
   from = "/direito/*"
-  to = "/direito/:splat"
+  to = "/direito/index.html"
   status = 200
+  force = true
 
-# Regra para o site principal (React)
 [[redirects]]
   from = "/*"
   to = "/index.html"
