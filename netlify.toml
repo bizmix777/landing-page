@@ -2,21 +2,13 @@
   publish = "."
   command = ""
 
-# REGRA 1: Quando você digita exatamente /direito (sem a barra no final)
-[[redirects]]
-  from = "/direito"
-  to = "/direito/index.html"
-  status = 200
-  force = true
-
-# REGRA 2: Quando você digita /direito/ ou qualquer coisa depois (ex: /direito/faq)
+# Regra para priorizar a pasta física /direito
 [[redirects]]
   from = "/direito/*"
-  to = "/direito/index.html"
+  to = "/direito/:splat"
   status = 200
-  force = true
 
-# REGRA 3: Regra geral para o site principal (Sempre no final)
+# Regra para o site principal (React)
 [[redirects]]
   from = "/*"
   to = "/index.html"
