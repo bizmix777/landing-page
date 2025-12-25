@@ -1,4 +1,33 @@
 [build]
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/direito/*"
+  to = "/direito/index.html"
+  status = 200
+  force = true  # <--- ISSO AQUI É O QUE VAI RESOLVER
+
+[[redirects]]
+  from = "/sis-ig/*"
+  to = "/sis-ig/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+
+
+
+
+
+
+
+
+[build]
   publish = "."
   command = ""
 
