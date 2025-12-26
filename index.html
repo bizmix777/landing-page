@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMix - Plataforma Integrada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .transition-content {
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* Estilos para os botões dos parceiros */
+        .parceiro-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .parceiro-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .parceiro-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .parceiro-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .parceiro-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="/logo.png" alt="BizMix Logo" class="h-10 w-auto">
+                <span class="text-xl font-bold text-slate-900">BizMix</span>
+            </div>
+            <ul class="flex space-x-8">
+                <li><a href="/" class="text-slate-600 hover:text-slate-900 font-medium">Home</a></li>
+                <li><a href="/juridico" class="text-slate-600 hover:text-slate-900 font-medium">Jurídico</a></li>
+                <li><a href="/sis-ig" class="text-slate-600 hover:text-slate-900 font-medium">SIS-IG</a></li>
+                <li><a href="/somos-todos-um" class="text-slate-600 hover:text-slate-900 font-medium">Somos Todos Um</a></li>
+                <li><a href="/imoveis" class="text-slate-600 hover:text-slate-900 font-medium">Imóveis</a></li>
+            </ul>
+            <a href="https://wa.me/SEUNUMERO" class="bg-amber-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-amber-600">Contato</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="app" class="max-w-7xl mx-auto px-4 py-8">
+        <div id="content" class="transition-content opacity-0"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>© 2025 BizMix. Dr. Henrique | OAB/SC. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Sistema de Rotas SPA
+        const routes = {
+            '/': () => `
+                <div class="space-y-12">
+                    <!-- Hero Section -->
+                    <section class="text-center py-12">
+                        <h1 class="text-5xl font-bold text-slate-900 mb-4">Bem-vindo à BizMix</h1>
+                        <p class="text-xl text-slate-600 mb-8">Plataforma Integrada para Soluções Jurídicas e Imobiliárias</p>
+                        <a href="/juridico" class="bg-amber-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-amber-600 inline-block">Conheça Nossos Serviços</a>
+                    </section>
+
+                    <!-- Empresas Parceiras -->
+                    <section class="py-12">
+                        <h2 class="text-3xl font-bold text-center text-slate-900 mb-8">Empresas Parceiras</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            
+                            <!-- Parceiro 1: Somos Todos Um -->
+                            <div class="parceiro-card">
+                                <div class="parceiro-icon">🤝</div>
+                                <h3 class="text-xl font-semibold text-slate-900 mb-2">Somos Todos Um</h3>
+                                <p class="text-slate-600 mb-4">Comunidade focada em união e colaboração.</p>
+                                <a href="https://somos.bizmix.com.br" class="parceiro-btn" target="_blank">Acessar</a>
+                            </div>
+
+                            <!-- Parceiro 2: Direito -->
+                            <div class="parceiro-card">
+                                <div class="parceiro-icon">⚖️</div>
+                                <h3 class="text-xl font-semibold text-slate-900 mb-2">Direito</h3>
+                                <p class="text-slate-600 mb-4">Soluções jurídicas especializadas.</p>
+                                <a href="https://direito.bizmix.com.br" class="parceiro-btn" target="_blank">Acessar</a>
+                            </div>
+
+                            <!-- Parceiro 3: Temu -->
+                            <div class="parceiro-card">
+                                <div class="parceiro-icon">🛍️</div>
+                                <h3 class="text-xl font-semibold text-slate-900 mb-2">Temu</h3>
+                                <p class="text-slate-600 mb-4">Marketplace com produtos selecionados.</p>
+                                <a href="https://temu.bizmix.com.br" class="parceiro-btn" target="_blank">Acessar</a>
+                            </div>
+
+                            <!-- Parceiro 4: Amway -->
+                            <div class="parceiro-card">
+                                <div class="parceiro-icon">💼</div>
+                                <h3 class="text-xl font-semibold text-slate-900 mb-2">Amway</h3>
+                                <p class="text-slate-600 mb-4">Marketing multinível premium.</p>
+                                <a href="/amway" class="parceiro-btn">Acessar</a>
+                            </div>
+
+                            <!-- ============================================
+                                 TEMPLATE PARA ADICIONAR NOVOS PARCEIROS
+                                 ============================================
+                                 
+                                 COPIE E COLE ESTE BLOCO:
+                                 
+                            <div class="parceiro-card">
+                                <div class="parceiro-icon">🆕</div>
+                                <h3 class="text-xl font-semibold text-slate-900 mb-2">Nome do Parceiro</h3>
+                                <p class="text-slate-600 mb-4">Descrição breve do serviço.</p>
+                                <a href="https://novoparceiro.bizmix.com.br" class="parceiro-btn" target="_blank">Acessar</a>
+                            </div>
+                            
+                                 ============================================ -->
+
+                        </div>
+                    </section>
+
+                    <!-- Serviços -->
+                    <section class="py-12 bg-white rounded-lg shadow-sm">
+                        <h2 class="text-3xl font-bold text-center text-slate-900 mb-8">Nossos Serviços</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-8">
+                            <div class="text-center">
+                                <div class="text-4xl mb-4">⚖️</div>
+                                <h3 class="text-xl font-semibold mb-2">Jurídico</h3>
+                                <p class="text-slate-600">Consultoria e assessoria jurídica especializada.</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-4xl mb-4">🏠</div>
+                                <h3 class="text-xl font-semibold mb-2">Imóveis</h3>
+                                <p class="text-slate-600">Corretagem de imóveis e negócios imobiliários.</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-4xl mb-4">📊</div>
+                                <h3 class="text-xl font-semibold mb-2">SIS-IG</h3>
+                                <p class="text-slate-600">Sistema integrado de gestão empresarial.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            `,
+            '/juridico': () => `
+                <div class="space-y-8">
+                    <h1 class="text-4xl font-bold text-slate-900">Serviços Jurídicos</h1>
+                    <p class="text-lg text-slate-600">Consultoria e assessoria jurídica especializada para empresas e pessoas físicas.</p>
+                    <div class="bg-white rounded-lg shadow-sm p-8">
+                        <h2 class="text-2xl font-semibold mb-4">Áreas de Atuação</h2>
+                        <ul class="space-y-2 text-slate-600">
+                            <li>• Direito Empresarial</li>
+                            <li>• Direito Imobiliário</li>
+                            <li>• Contratos</li>
+                            <li>• Consultoria Preventiva</li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            '/sis-ig': () => `
+                <div class="space-y-8">
+                    <h1 class="text-4xl font-bold text-slate-900">SIS-IG</h1>
+                    <p class="text-lg text-slate-600">Sistema Integrado de Gestão Empresarial.</p>
+                    <div class="bg-white rounded-lg shadow-sm p-8">
+                        <h2 class="text-2xl font-semibold mb-4">Funcionalidades</h2>
+                        <p class="text-slate-600">Gestão completa para seu negócio com ferramentas integradas.</p>
+                    </div>
+                </div>
+            `,
+            '/somos-todos-um': () => `
+                <div class="space-y-8">
+                    <h1 class="text-4xl font-bold text-slate-900">Somos Todos Um</h1>
+                    <p class="text-lg text-slate-600">Comunidade focada em união, colaboração e crescimento mútuo.</p>
+                    <div class="bg-white rounded-lg shadow-sm p-8">
+                        <h2 class="text-2xl font-semibold mb-4">Nossa Missão</h2>
+                        <p class="text-slate-600">Conectar pessoas e empresas para o desenvolvimento coletivo.</p>
+                    </div>
+                </div>
+            `,
+            '/imoveis': () => `
+                <div class="space-y-8">
+                    <h1 class="text-4xl font-bold text-slate-900">Imóveis</h1>
+                    <p class="text-lg text-slate-600">Corretagem de imóveis e intermediação de negócios imobiliários.</p>
+                    <div class="bg-white rounded-lg shadow-sm p-8">
+                        <h2 class="text-2xl font-semibold mb-4">Serviços</h2>
+                        <ul class="space-y-2 text-slate-600">
+                            <li>• Compra e Venda</li>
+                            <li>• Locação</li>
+                            <li>• Avaliação de Imóveis</li>
+                            <li>• Consultoria Imobiliária</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        };
+
+        // Função para carregar conteúdo
+        function loadContent(path) {
+            const content = document.getElementById('content');
+            const route = routes[path] || routes['/'];
+            
+            content.classList.remove('opacity-100');
+            content.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                content.innerHTML = route();
+                content.classList.remove('opacity-0');
+                content.classList.add('opacity-100');
+            }, 300);
+        }
+
+        // Event listeners para navegação
+        document.addEventListener('DOMContentLoaded', () => {
+            loadContent(window.location.pathname);
+            
+            document.querySelectorAll('a[href^="/"]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const href = link.getAttribute('href');
+                    if (href.startsWith('/') && !href.startsWith('//')) {
+                        e.preventDefault();
+                        history.pushState(null, '', href);
+                        loadContent(href);
+                    }
+                });
+            });
+        });
+
+        // Listener para botão voltar do navegador
+        window.addEventListener('popstate', () => {
+            loadContent(window.location.pathname);
+        });
+    </script>
+</body>
+</html>
