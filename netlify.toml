@@ -1,21 +1,11 @@
-[build]
-  publish = "."
-  command = ""
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Content-Security-Policy = "default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.googleapis.com"
 
-# REGRA PARA O PORTAL JURÍDICO
-[[redirects]]
-  from = "/direito"
-  to = "/direito/juridico.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/direito/*"
-  to = "/direito/juridico.html"
-  status = 200
-  force = true
-
-# REGRA PARA O SITE PRINCIPAL
+# SPA Fallback (Carrega index.html para qualquer rota)
 [[redirects]]
   from = "/*"
   to = "/index.html"
