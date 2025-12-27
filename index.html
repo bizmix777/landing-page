@@ -1,225 +1,396 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizMix - Plataforma Integrada</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .transition-content {
-            transition: opacity 0.3s ease-in-out;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizMix - Inteligência de Negócios</title>
+
+<!-- ============================================ -->
+<!-- SEO: META TAGS BÁSICAS                      -->
+<!-- ============================================ -->
+<meta name="description" content="BizMix conecta oportunidades de negócios com segurança jurídica. Advocacia, intermediação de empresas e imóveis com expertise desde 1990.">
+<meta name="keywords" content="advocacia, negócios, imóveis, intermediação, consultoria jurídica, compra e venda de empresas, due diligence">
+<meta name="author" content="Dr. Henrique - BizMix">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://bizmix.com.br">
+
+<!-- ============================================ -->
+<!-- SEO: OPEN GRAPH (Facebook, LinkedIn)        -->
+<!-- ============================================ -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="BizMix - Inteligência de Negócios">
+<meta property="og:description" content="Conectamos oportunidades de negócios com segurança jurídica. Advocacia, intermediação e imóveis.">
+<meta property="og:image" content="https://bizmix.com.br/logo.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bizmix.com.br">
+<meta property="og:site_name" content="BizMix">
+<meta property="og:locale" content="pt_BR">
+
+<!-- ============================================ -->
+<!-- SEO: TWITTER CARD                           -->
+<!-- ============================================ -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BizMix - Inteligência de Negócios">
+<meta name="twitter:description" content="Conectamos oportunidades de negócios com segurança jurídica.">
+<meta name="twitter:image" content="https://bizmix.com.br/logo.png">
+
+<!-- ============================================ -->
+<!-- SEO: SCHEMA.ORG (JSON-LD) - ORGANIZAÇÃO     -->
+<!-- ============================================ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "BizMix",
+  "url": "https://bizmix.com.br",
+  "logo": "https://bizmix.com.br/logo.png",
+  "description": "Inteligência de negócios com segurança jurídica",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "BR"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+55-62-99247-5080",
+    "contactType": "Customer Service"
+  }
+}
+</script>
+
+<!-- ============================================ -->
+<!-- SEO: SCHEMA.ORG - SERVIÇOS PROFISSIONAIS    -->
+<!-- ============================================ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "BizMix - Advocacia e Negócios",
+  "image": "https://bizmix.com.br/logo.png",
+  "description": "Advocacia, intermediação de negócios e consultoria imobiliária",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "BR"
+  },
+  "telephone": "+55-62-99247-5080"
+}
+</script>
+
+<!-- ============================================ -->
+<!-- ANALYTICS: GOOGLE ANALYTICS                 -->
+<!-- SUBSTITUA G-XXXXXXXXXX PELO SEU ID          -->
+<!-- ============================================ -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+
+<!-- ============================================ -->
+<!-- VERIFICAÇÃO: GOOGLE SEARCH CONSOLE          -->
+<!-- SUBSTITUA PELO SEU CÓDIGO APÓS CRIAR CONTA  -->
+<!-- ============================================ -->
+<!-- <meta name="google-site-verification" content="SEU-CODIGO-AQUI"> -->
+
+<!-- ============================================ -->
+<!-- PERFORMANCE: PRELOAD DE RECURSOS CRÍTICOS   -->
+<!-- ============================================ -->
+<link rel="preload" href="logo.png" as="image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- ============================================ -->
+<!-- FAVICON (ADICIONE DEPOIS DE CRIAR)          -->
+<!-- ============================================ -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="favicon-512x512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+}
+.hero-bg {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+</style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-    <!-- Header -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
-        <nav class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <img src="/logo.png" alt="BizMix Logo" class="h-10 w-auto">
-                <span class="text-xl font-bold text-slate-900">BizMix</span>
-            </div>
-            <ul class="flex space-x-8">
-                <li><a href="/" class="text-slate-600 hover:text-slate-900 font-medium">Home</a></li>
-                <li><a href="/juridico" class="text-slate-600 hover:text-slate-900 font-medium">Jurídico</a></li>
-                <li><a href="/sis-ig" class="text-slate-600 hover:text-slate-900 font-medium">SIS-IG</a></li>
-                <li><a href="/somos-todos-um" class="text-slate-600 hover:text-slate-900 font-medium">Somos Todos Um</a></li>
-                <li><a href="/imoveis" class="text-slate-600 hover:text-slate-900 font-medium">Imóveis</a></li>
-            </ul>
-            <a href="https://wa.me/SEUNUMERO" class="bg-amber-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-amber-600">Contato</a>
-        </nav>
-    </header>
 
-    <!-- Main Content -->
-    <main id="app" class="max-w-7xl mx-auto px-4 py-8">
-        <div id="content" class="transition-content opacity-0"></div>
-    </main>
+<body class="bg-slate-50 text-slate-800">
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p>© 2025 BizMix. Dr. Henrique | OAB/SC. Todos os direitos reservados.</p>
+<!--Navbar -->
+<nav class="absolute w-full z-50 top-0">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="flex justify-between items-center py-6">
+      <!-- LOGO -->
+      <div class="flex items-center">
+        <img src="logo.png" alt="BizMix Logo" class="h-16" width="200" height="64" loading="eager">
+      </div>
+      <!-- Menu -->
+      <div class="hidden md:flex space-x-8 items-center">
+        <a href="#solucoes" class="text-white hover:text-blue-400 transition">Soluções</a>
+        <a href="#bizmix" class="text-white hover:text-blue-400 transition">A BizMix</a>
+        <a href="SEU_LINK_DO_TYPEFORM_AQUI" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">Iniciar Projeto</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section (Capa) -->
+<header class="hero-bg h-screen flex items-center justify-center text-center px-4" role="banner" aria-label="Seção principal">
+  <div class="max-w-5xl mt-16">
+    <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+      Conectamos Oportunidades<br><span class="text-blue-400">Garantimos Resultados</span>
+    </h1>
+    <p class="text-xl text-slate-300 mb-10 max-w-3xl mx-auto">
+      A BizMix une a extremidade comercial das vendas com a segurança jurídica da advocacia. Seja para imóveis, empresas ou tecnologia: nós estruturamos o negócio para você lucrar com segurança.
+    </p>
+    <div class="flex flex-col md:flex-row gap-4 justify-center">
+      <a href="#solucoes" class="bg-white text-slate-900 px-8 py-4 rounded-lg font-semibold hover:bg-slate-100 transition text-lg">O Que Fazemos?</a>
+      <a href="SEU_LINK_DO_TYPEFORM_AQUI" target="_blank" class="bg-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-blue-700 transition text-lg">Falar com Especialista</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================ -->
+<!-- SEÇÃO ATUALIZADA: EMPRESAS PARCEIRAS        -->
+<!-- COM OS 4 NOVOS BOTÕES                       -->
+<!-- ============================================ -->
+<section class="bg-white border-b border-slate-200 py-12">
+  <div class="max-w-6xl mx-auto px-4">
+    <h3 class="text-center text-2xl font-bold text-slate-800 mb-10">Empresas Parceiras</h3>
+    
+    <!-- Grid de Parceiros ATUALIZADO -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Parceiro 1: Somos Todos Um -->
+      <a href="https://somos.bizmix.com.br" target="_blank" class="group bg-gradient-to-br from-blue-50 to-slate-50 p-6 rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
+        <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">🤝</div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Somos Todos Um</h3>
+        <p class="text-slate-600 text-sm">Plataforma de conexão e colaboração</p>
+      </a>
+
+      <!-- Parceiro 2: Direito -->
+      <a href="https://direito.bizmix.com.br" target="_blank" class="group bg-gradient-to-br from-blue-50 to-slate-50 p-6 rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
+        <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">⚖️</div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Direito</h3>
+        <p class="text-slate-600 text-sm">Soluções jurídicas especializadas</p>
+      </a>
+
+      <!-- Parceiro 3: Temu -->
+      <a href="https://temu.bizmix.com.br" target="_blank" class="group bg-gradient-to-br from-blue-50 to-slate-50 p-6 rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
+        <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">🛍️</div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Temu</h3>
+        <p class="text-slate-600 text-sm">Marketplace e soluções comerciais</p>
+      </a>
+
+      <!-- Parceiro 4: Amway -->
+      <a href="amway.html" class="group bg-gradient-to-br from-blue-50 to-slate-50 p-6 rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300">
+        <div class="text-4xl mb-4 group-hover:scale-110 transition-transform">💼</div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Amway</h3>
+        <p class="text-slate-600 text-sm">Negócios e oportunidades</p>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- 2. COMO POSSO AJUDAR -->
+<section id="solucoes" class="py-24 bg-slate-50" aria-labelledby="servicos-title">
+  <div class="max-w-6xl mx-auto px-4">
+    <h2 id="servicos-title" class="text-3xl font-bold text-center text-slate-900 mb-16">Como Posso Ajudar</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+      
+      <!-- Card 1 -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
+        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+          <i class="fas fa-balance-scale text-2xl text-blue-600"></i>
         </div>
-    </footer>
+        <h3 class="text-xl font-bold mb-3">Advocacia</h3>
+        <p class="text-slate-600">Contratos, due diligence, regularização e proteção jurídica para seus negócios e patrimônio.</p>
+      </div>
 
-    <!-- JavaScript -->
-    <script>
-        // Sistema de Rotas SPA
-        const routes = {
-            '/': () => `
-                <div class="space-y-12">
-                    <!-- Hero Section -->
-                    <section class="text-center py-12">
-                        <h1 class="text-5xl font-bold text-slate-900 mb-4">Bem-vindo à BizMix</h1>
-                        <p class="text-xl text-slate-600 mb-8">Plataforma Integrada para Soluções Jurídicas e Imobiliárias</p>
-                        <a href="/juridico" class="bg-amber-500 text-white px-8 py-3 rounded-lg font-semibold hover:bg-amber-600 inline-block">Conheça Nossos Serviços</a>
-                    </section>
+      <!-- Card 2 -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
+        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+          <i class="fas fa-handshake text-2xl text-blue-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">Negócios</h3>
+        <p class="text-slate-600">Intermediação na compra e venda de empresas, produtos e tecnologias com segurança e estratégia.</p>
+      </div>
 
-                    <!-- 1. EMPRESAS PARCEIRAS (SEÇÃO ATUALIZADA) -->
-                    <section class="bg-white border-b border-slate-200 py-12">
-                        <div class="max-w-6xl mx-auto px-4">
-                            <h3 class="text-center text-2xl font-bold text-slate-800 mb-10">Empresas Parceiras</h3>
-                            
-                            <!-- Grid de Parceiros -->
-                            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition duration-500">
-                                
-                                <!-- Parceiro 1: Somos Todos Um -->
-                                <a href="https://somos.bizmix.com.br" target="_blank" class="flex items-center space-x-2 text-xl font-bold text-slate-600 hover:text-blue-600 transition cursor-pointer group">
-                                    <i class="fas fa-hands-helping text-blue-600 group-hover:scale-110 transition"></i>
-                                    <span>Somos Todos Um</span>
-                                </a>
+      <!-- Card 3 -->
+      <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition">
+        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+          <i class="fas fa-building text-2xl text-blue-600"></i>
+        </div>
+        <h3 class="text-xl font-bold mb-3">Imóveis</h3>
+        <p class="text-slate-600">Corretor de imóveis com visão jurídica: da negociação ao registro, sem surpresas.</p>
+      </div>
 
-                                <!-- Parceiro 2: Direito -->
-                                <a href="https://direito.bizmix.com.br" target="_blank" class="flex items-center space-x-2 text-xl font-bold text-slate-600 hover:text-blue-600 transition cursor-pointer group">
-                                    <i class="fas fa-balance-scale text-blue-600 group-hover:scale-110 transition"></i>
-                                    <span>Direito</span>
-                                </a>
+    </div>
+  </div>
+</section>
 
-                                <!-- Parceiro 3: Temu -->
-                                <a href="https://temu.bizmix.com.br" target="_blank" class="flex items-center space-x-2 text-xl font-bold text-slate-600 hover:text-blue-600 transition cursor-pointer group">
-                                    <i class="fas fa-shopping-cart text-blue-600 group-hover:scale-110 transition"></i>
-                                    <span>Temu</span>
-                                </a>
+<!-- Sobre a BizMix -->
+<section id="bizmix" class="py-24 bg-white" aria-labelledby="bizmix-title">
+  <div class="max-w-4xl mx-auto px-4 text-center">
+    <h2 id="bizmix-title" class="text-3xl font-bold text-slate-900 mb-8">Por que a BizMix?</h2>
+    <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 shadow-sm">
+      <p class="text-lg text-slate-700 mb-6">
+        Não somos apenas uma consultoria. Somos uma <strong>aceleradora de resultados</strong> com base sólida.
+      </p>
+      <p class="text-lg text-slate-700">
+        Nossa fundação combina o pioneirismo tecnológico de 1990 (primeira empresa de laser e internet da região) com a robustez jurídica atual. <strong>O resultado?</strong> Negócios que fecham mais rápido, contratos que protegem de verdade e uma visão comercial que enxerga o que outros não veem.
+      </p>
 
-                                <!-- Parceiro 4: Amway -->
-                                <a href="/amway/amway.html" class="flex items-center space-x-2 text-xl font-bold text-slate-600 hover:text-blue-600 transition cursor-pointer group">
-                                    <i class="fas fa-chart-line text-blue-600 group-hover:scale-110 transition"></i>
-                                    <span>Amway</span>
-                                </a>
+      <!-- Dados de Autoridade (Institucional) -->
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="text-blue-600 font-bold text-xl mb-1">Desde 1990</div>
+          <div class="text-sm text-slate-500">Inovando no Mercado</div>
+        </div>
+        <div class="text-center">
+          <div class="text-blue-600 font-bold text-xl mb-1">Segurança</div>
+          <div class="text-sm text-slate-500">Base Jurídica Sólida (OAB)</div>
+        </div>
+        <div class="text-center">
+          <div class="text-blue-600 font-bold text-xl mb-1">Expertise</div>
+          <div class="text-sm text-slate-500">Vendas & Intermediação</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-                                <!-- 
-                                     COMO ADICIONAR NOVOS PARCEIROS NO FUTURO
-                                     
-                                     COPIE E COLE ESTE BLOCO:
-                                     
-                                <a href="https://novoparceiro.bizmix.com.br" target="_blank" class="flex items-center space-x-2 text-xl font-bold text-slate-600 hover:text-blue-600 transition cursor-pointer group">
-                                    <i class="fas fa-star text-blue-600 group-hover:scale-110 transition"></i>
-                                    <span>Nome do Novo Parceiro</span>
-                                </a>
-                                
-                                     Ícones disponíveis: fa-handshake, fa-briefcase, fa-building, 
-                                     fa-store, fa-globe, fa-rocket, fa-lightbulb, fa-cogs
-                                      -->
+<!-- Footer / Contato -->
+<footer id="contato" class="bg-slate-900 text-white py-16" role="contentinfo">
+  <div class="max-w-6xl mx-auto px-4 text-center">
+    <h2 id="contato-title" class="text-3xl font-bold mb-6">Vamos conversar sobre o seu futuro?</h2>
+    <p class="text-slate-400 mb-10 text-lg">Estou à disposição para entender seu cenário e propor soluções.</p>
+    
+    <!-- WHATSAPP CONFIGURADO -->
+    <a href="https://wa.me/5562992475080" target="_blank" class="inline-flex items-center bg-green-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-700 transition text-lg">
+      <i class="fab fa-whatsapp mr-3 text-2xl"></i>
+      Chamar no WhatsApp
+    </a>
 
-                            </div>
-                        </div>
-                    </section>
+    <!-- LINKS INTERNOS (SEO) -->
+    <div class="mt-12 flex flex-wrap justify-center gap-6 text-slate-400">
+      <a href="#solucoes" class="hover:text-white transition">Serviços</a>
+      <span class="text-slate-700">|</span>
+      <a href="#bizmix" class="hover:text-white transition">Sobre a BizMix</a>
+      <span class="text-slate-700">|</span>
+      <a href="#contato" class="hover:text-white transition">Contato</a>
+      <span class="text-slate-700">|</span>
+      <a href="amway.html" class="hover:text-white transition">Amway</a>
+      <span class="text-slate-700">|</span>
+      <a href="politica-privacidade.html" class="hover:text-white transition">Política de Privacidade</a>
+    </div>
 
-                    <!-- Serviços -->
-                    <section class="py-12 bg-white rounded-lg shadow-sm">
-                        <h2 class="text-3xl font-bold text-center text-slate-900 mb-8">Nossos Serviços</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-8">
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">⚖️</div>
-                                <h3 class="text-xl font-semibold mb-2">Jurídico</h3>
-                                <p class="text-slate-600">Consultoria e assessoria jurídica especializada.</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">🏠</div>
-                                <h3 class="text-xl font-semibold mb-2">Imóveis</h3>
-                                <p class="text-slate-600">Corretagem de imóveis e negócios imobiliários.</p>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-4xl mb-4">📊</div>
-                                <h3 class="text-xl font-semibold mb-2">SIS-IG</h3>
-                                <p class="text-slate-600">Sistema integrado de gestão empresarial.</p>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            `,
-            '/juridico': () => `
-                <div class="space-y-8">
-                    <h1 class="text-4xl font-bold text-slate-900">Serviços Jurídicos</h1>
-                    <p class="text-lg text-slate-600">Consultoria e assessoria jurídica especializada para empresas e pessoas físicas.</p>
-                    <div class="bg-white rounded-lg shadow-sm p-8">
-                        <h2 class="text-2xl font-semibold mb-4">Áreas de Atuação</h2>
-                        <ul class="space-y-2 text-slate-600">
-                            <li>• Direito Empresarial</li>
-                            <li>• Direito Imobiliário</li>
-                            <li>• Contratos</li>
-                            <li>• Consultoria Preventiva</li>
-                        </ul>
-                    </div>
-                </div>
-            `,
-            '/sis-ig': () => `
-                <div class="space-y-8">
-                    <h1 class="text-4xl font-bold text-slate-900">SIS-IG</h1>
-                    <p class="text-lg text-slate-600">Sistema Integrado de Gestão Empresarial.</p>
-                    <div class="bg-white rounded-lg shadow-sm p-8">
-                        <h2 class="text-2xl font-semibold mb-4">Funcionalidades</h2>
-                        <p class="text-slate-600">Gestão completa para seu negócio com ferramentas integradas.</p>
-                    </div>
-                </div>
-            `,
-            '/somos-todos-um': () => `
-                <div class="space-y-8">
-                    <h1 class="text-4xl font-bold text-slate-900">Somos Todos Um</h1>
-                    <p class="text-lg text-slate-600">Comunidade focada em união, colaboração e crescimento mútuo.</p>
-                    <div class="bg-white rounded-lg shadow-sm p-8">
-                        <h2 class="text-2xl font-semibold mb-4">Nossa Missão</h2>
-                        <p class="text-slate-600">Conectar pessoas e empresas para o desenvolvimento coletivo.</p>
-                    </div>
-                </div>
-            `,
-            '/imoveis': () => `
-                <div class="space-y-8">
-                    <h1 class="text-4xl font-bold text-slate-900">Imóveis</h1>
-                    <p class="text-lg text-slate-600">Corretagem de imóveis e intermediação de negócios imobiliários.</p>
-                    <div class="bg-white rounded-lg shadow-sm p-8">
-                        <h2 class="text-2xl font-semibold mb-4">Serviços</h2>
-                        <ul class="space-y-2 text-slate-600">
-                            <li>• Compra e Venda</li>
-                            <li>• Locação</li>
-                            <li>• Avaliação de Imóveis</li>
-                            <li>• Consultoria Imobiliária</li>
-                        </ul>
-                    </div>
-                </div>
-            `
-        };
+    <div class="mt-16 pt-8 border-t border-slate-800 text-sm text-slate-500">
+      &copy; 2025 BizMix. Todos os direitos reservados.
+    </div>
+  </div>
+</footer>
 
-        // Função para carregar conteúdo
-        function loadContent(path) {
-            const content = document.getElementById('content');
-            const route = routes[path] || routes['/'];
-            
-            content.classList.remove('opacity-100');
-            content.classList.add('opacity-0');
-            
-            setTimeout(() => {
-                content.innerHTML = route();
-                content.classList.remove('opacity-0');
-                content.classList.add('opacity-100');
-            }, 300);
-        }
+<!-- ============================================ -->
+<!-- SEO: RICH SNIPPETS - FAQ SCHEMA             -->
+<!-- ============================================ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "O que é a Due Diligence Imobiliária e qual sua finalidade?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Due Diligence Imobiliária é a investigação detalhada da situação jurídica de um imóvel antes da compra."
+      }
+    }
+  ]
+}
+</script>
 
-        // Event listeners para navegação
-        document.addEventListener('DOMContentLoaded', () => {
-            loadContent(window.location.pathname);
-            
-            document.querySelectorAll('a[href^="/"]').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const href = link.getAttribute('href');
-                    if (href.startsWith('/') && !href.startsWith('//')) {
-                        e.preventDefault();
-                        history.pushState(null, '', href);
-                        loadContent(href);
-                    }
-                });
-            });
-        });
+<!-- Início da Seção FAQ BizMix -->
+<section id="faq-juridico" style="max-width: 800px; margin: 60px auto; padding: 40px 20px; background: #f8fafc; border-radius: 12px;">
+  <h2 style="text-align: center; font-size: 2rem; font-weight: bold; color: #1e293b; margin-bottom: 30px;">Segurança Jurídica: Perguntas Frequentes</h2>
 
-        // Listener para botão voltar do navegador
-        window.addEventListener('popstate', () => {
-            loadContent(window.location.pathname);
-        });
-    </script>
+  <style>
+    details {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    details:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    }
+    summary {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #1e293b;
+      list-style: none;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    .resposta {
+      margin-top: 16px;
+      color: #475569;
+      line-height: 1.7;
+    }
+  </style>
+
+  <details>
+    <summary>1. O que é a Due Diligence Imobiliária e qual sua finalidade?</summary>
+    <div class="resposta">
+      <strong>Due Diligence Imobiliária</strong> é a investigação detalhada da situação jurídica de um imóvel antes da compra. Inclui análise de certidões, matrículas, débitos e regularidade documental para evitar surpresas futuras.
+    </div>
+  </details>
+
+  <details>
+    <summary>2. Qual a relevância da Outorga Uxória nos contratos?</summary>
+    <div class="resposta">
+      A <strong>Outorga Uxória</strong> (ou marital) é a autorização do cônjuge para alienação de bens imóveis. Sua ausência pode anular o negócio jurídico, protegendo o patrimônio familiar.
+    </div>
+  </details>
+
+  <details>
+    <summary>3. Por que a Escritura Pública não garante a propriedade definitiva?</summary>
+    <div class="resposta">
+      A <strong>Escritura Pública</strong> formaliza a compra e venda, mas a propriedade só se transfere com o <strong>registro no Cartório de Imóveis</strong>. Sem registro, o comprador não é o proprietário legal.
+    </div>
+  </details>
+
+  <details>
+    <summary>4. Como o contrato deve abordar os Vícios Ocultos?</summary>
+    <div class="resposta">
+      <strong>Vícios Ocultos</strong> são defeitos não aparentes no imóvel. O contrato deve prever cláusulas de garantia e responsabilidade do vendedor, protegendo o comprador de prejuízos futuros.
+    </div>
+  </details>
+
+  <details>
+    <summary>5. O que assegura a Cláusula de Irretratabilidade?</summary>
+    <div class="resposta">
+      A <strong>Cláusula de Irretratabilidade</strong> impede o arrependimento das partes após a assinatura do contrato, garantindo segurança jurídica e evitando desistências unilaterais.
+    </div>
+  </details>
+
+</section>
+<!-- Fim da Seção FAQ BizMix -->
+
 </body>
 </html>
