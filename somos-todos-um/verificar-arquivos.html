@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação de Arquivos</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #fff;
+        }
+        .arquivo {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .existe {
+            background: #28a745;
+        }
+        .nao-existe {
+            background: #dc3545;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Verificação de Arquivos</h1>
+    <button onclick="verificarTodos()">Verificar Todos os Arquivos</button>
+    <div id="resultado"></div>
+
+    <script>
+        const arquivos = [
+            { nome: 'Dashboard Admin', caminho: 'admin/index.html' },
+            { nome: 'Gestão de Igrejas', caminho: 'admin/igrejas.html' },
+            { nome: 'Login Admin', caminho: 'admin/login.html' },
+            { nome: 'Dashboard Comissões', caminho: 'livro/dashboard-comissoes.html' },
+            { nome: 'Nova Venda', caminho: 'livro/venda.html' },
+            { nome: 'Comprovantes', caminho: 'livro/comprovante.html' },
+            { nome: 'Igrejas (Livro)', caminho: 'livro/igrejas.html' },
+            { nome: 'Página de Compra', caminho: 'livro/comprar.html' },
+            { nome: 'Cadastro', caminho: 'cadastro/cadastro.html' },
+            { nome: 'Landing Page', caminho: 'index.html' }
+        ];
+
+        async function verificarArquivo(arquivo) {
+            try {
+                const response = await fetch(arquivo.caminho, { method: 'HEAD' });
+                return {
+                    ...arquivo,
+                    existe: response.ok,
+                    status: response.status
+                };
+            } catch (error) {
+                return {
+                    ...arquivo,
+                    existe: false,
+                    status: 'ERRO'
+                };
+            }
+        }
+
+        async function verificarTodos() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>Verificando...</p>';
+
+            const resultados = await Promise.all(arquivos.map(verificarArquivo));
+
+            resultado.innerHTML = resultados.map(r => `
+                <div class="arquivo ${r.existe ? 'existe' : 'nao-existe'}">
+                    ${r.existe ? '✅' : '❌'} ${r.nome}<br>
+                    Caminho: ${r.caminho}<br>
+                    Status: ${r.status}
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
