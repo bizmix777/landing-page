@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Principal - Somos Todos Um</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 3rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .card-description {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .card-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateX(5px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateX(5px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateX(5px);
+        }
+
+        .btn-icon {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Somos Todos Um - Menu Principal</h1>
+            <p>Acesso rápido a todas as páginas do sistema</p>
+        </div>
+
+        <div class="grid">
+            <!-- LANDING PAGE -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🏠</div>
+                    <div class="card-title">Landing Page</div>
+                </div>
+                <div class="card-description">
+                    Página principal de vendas do livro "Somos Todos Um"
+                </div>
+                <div class="card-links">
+                    <a href="index.html" class="btn btn-primary">
+                        <span class="btn-icon">🌐</span>
+                        <span>Acessar Landing Page</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- ÁREA ADMINISTRATIVA -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔐</div>
+                    <div class="card-title">Área Administrativa</div>
+                </div>
+                <div class="card-description">
+                    Painel administrativo e gestão do sistema
+                </div>
+                <div class="card-links">
+                    <a href="admin/login.html" class="btn btn-warning">
+                        <span class="btn-icon">🔑</span>
+                        <span>Login Admin</span>
+                    </a>
+                    <a href="admin/index.html" class="btn btn-secondary">
+                        <span class="btn-icon">📊</span>
+                        <span>Dashboard Admin</span>
+                    </a>
+                    <a href="admin/igrejas.html" class="btn btn-secondary">
+                        <span class="btn-icon">🏛️</span>
+                        <span>Gestão de Igrejas</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- SISTEMA DE VENDAS -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">💰</div>
+                    <div class="card-title">Sistema de Vendas</div>
+                </div>
+                <div class="card-description">
+                    Gerenciamento de vendas, comissões e comprovantes
+                </div>
+                <div class="card-links">
+                    <a href="livro/dashboard-comissoes.html" class="btn btn-success">
+                        <span class="btn-icon">📈</span>
+                        <span>Dashboard de Comissões</span>
+                    </a>
+                    <a href="livro/venda.html" class="btn btn-primary">
+                        <span class="btn-icon">🛒</span>
+                        <span>Nova Venda</span>
+                    </a>
+                    <a href="livro/comprovante.html" class="btn btn-secondary">
+                        <span class="btn-icon">📄</span>
+                        <span>Comprovantes</span>
+                    </a>
+                    <a href="livro/igrejas.html" class="btn btn-secondary">
+                        <span class="btn-icon">⛪</span>
+                        <span>Igrejas (Livro)</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- CHECKOUT E CADASTRO -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">💳</div>
+                    <div class="card-title">Checkout & Cadastro</div>
+                </div>
+                <div class="card-description">
+                    Páginas de compra e cadastro de usuários
+                </div>
+                <div class="card-links">
+                    <a href="livro/comprar.html" class="btn btn-success">
+                        <span class="btn-icon">💰</span>
+                        <span>Página de Compra</span>
+                    </a>
+                    <a href="cadastro/cadastro.html" class="btn btn-primary">
+                        <span class="btn-icon">📝</span>
+                        <span>Cadastro de Usuários</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
