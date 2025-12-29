@@ -4,632 +4,535 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nova Venda - Somos Todos Um</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark: #1f2937;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-        }
-        
+
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
         }
-        
+
         .container {
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
+        }
+
+        .header {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
             padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
         }
-        
-        h1 {
-            color: var(--dark);
-            border-bottom: 3px solid var(--primary);
-            padding-bottom: 12px;
-            margin-bottom: 25px;
-            font-size: 1.8em;
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .header-actions {
             display: flex;
-            align-items: center;
-            gap: 12px;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        
-        .info-box {
-            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
-            padding: 18px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .info-box h3 {
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .info-box p {
-            color: #4b5563;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-        
-        .form-section {
-            margin-bottom: 25px;
-        }
-        
-        .form-section h2 {
-            color: var(--primary);
-            margin-bottom: 18px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e5e7eb;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .form-group {
-            margin-bottom: 18px;
-        }
-        
-        .form-group label {
-            display: block;
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
             font-weight: 600;
-            margin-bottom: 6px;
-            color: #374151;
-            font-size: 0.9em;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
         }
-        
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
         .form-group label .required {
-            color: var(--danger);
+            color: #e74c3c;
         }
-        
+
         .form-group input,
         .form-group select,
         .form-group textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e5e7eb;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
-            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--primary);
+            border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
         }
-        
-        .resumo-venda {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
+
+        .info-box {
+            background: #e8f4fd;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+
+        .summary-box {
+            background: #f8f9fa;
             padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
+            margin-top: 20px;
         }
-        
-        .resumo-venda h3 {
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .resumo-item {
+
+        .summary-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            font-size: 0.95em;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
         }
-        
-        .resumo-item:last-child {
+
+        .summary-item:last-child {
             border-bottom: none;
-            font-size: 1.1em;
-            font-weight: bold;
-            margin-top: 10px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #667eea;
         }
-        
-        .btn {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+
+        .btn-submit {
             width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--success), #059669);
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
         }
-        
-        .btn-primary:hover {
+
+        .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
-        
-        .btn-primary:disabled {
-            background: #9ca3af;
+
+        .btn-submit:disabled {
+            background: #ccc;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
-        
-        .btn-copiar {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
-            margin-top: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.3s;
-        }
-        
-        .btn-copiar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        
-        .sucesso {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            color: #065f46;
-            padding: 25px;
-            border-radius: 12px;
-            border-left: 4px solid var(--success);
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .sucesso h2 {
-            color: #065f46;
-            margin-bottom: 18px;
-            font-size: 1.3em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .dados-pagamento {
-            background: white;
-            color: #333;
+
+        .loading {
+            text-align: center;
             padding: 20px;
-            border-radius: 10px;
-            margin: 18px 0;
-            border: 2px solid var(--success);
+            color: #666;
         }
-        
-        .dados-pagamento h3 {
-            color: var(--success);
-            margin-bottom: 15px;
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
-        
-        .chave-pix-box {
-            background: #f9fafb;
-            padding: 12px;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
             border-radius: 8px;
-            border: 2px dashed var(--primary);
-            margin: 12px 0;
-            word-break: break-all;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            color: var(--dark);
-        }
-        
-        .info-item {
-            margin: 10px 0;
-            padding: 10px;
-            background: #f9fafb;
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-        
-        .info-item strong {
-            color: var(--primary);
-        }
-        
-        .instrucoes {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            padding: 18px;
-            border-radius: 10px;
-            border-left: 4px solid var(--warning);
-            margin-top: 18px;
-        }
-        
-        .instrucoes h4 {
-            color: #92400e;
-            margin-bottom: 10px;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .instrucoes ol {
-            margin-left: 20px;
-            color: #92400e;
-            font-size: 0.9em;
-        }
-        
-        .instrucoes ol li {
-            margin: 6px 0;
-        }
-        
-        .erro {
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            color: #991b1b;
-            padding: 18px;
-            border-radius: 10px;
-            border-left: 4px solid var(--danger);
             margin-bottom: 20px;
-            display: none;
         }
-        
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         @media (max-width: 768px) {
-            .form-row {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .form-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 1.5em;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>
-            <i class="fas fa-shopping-cart"></i>
-            Nova Venda
-        </h1>
-        
-        <div class="info-box">
-            <h3><i class="fas fa-info-circle"></i> Instruções</h3>
-            <p>Preencha todos os campos obrigatórios (*) para registrar sua venda. Após o envio, você receberá os dados para pagamento via PIX.</p>
+        <div class="header">
+            <h1>🛒 Nova Venda</h1>
+            <p>Registre uma venda e ajude sua igreja a crescer</p>
+            <div class="header-actions">
+                <a href="/index.html" class="btn btn-secondary">🏠 Página Inicial</a>
+                <a href="/igrejas.html" class="btn btn-secondary">⛪ Igrejas Parceiras</a>
+                <a href="/livro/index.html" class="btn btn-secondary">📊 Dashboard</a>
+            </div>
         </div>
-        
-        <div id="mensagemSucesso" class="sucesso"></div>
-        <div id="mensagemErro" class="erro"></div>
-        
-        <form id="formVenda" onsubmit="salvarVenda(event)">
-            <div class="form-section">
-                <h2><i class="fas fa-user"></i> Dados do Comprador</h2>
-                
-                <div class="form-group">
-                    <label>Nome Completo: <span class="required">*</span></label>
-                    <input type="text" id="nomeComprador" required placeholder="Ex: João da Silva">
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Email: <span class="required">*</span></label>
-                        <input type="email" id="emailComprador" required placeholder="joao@email.com">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Telefone: <span class="required">*</span></label>
-                        <input type="tel" id="telefoneComprador" required placeholder="(11) 98765-4321">
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>WhatsApp:</label>
-                        <input type="tel" id="whatsappComprador" placeholder="(11) 98765-4321">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Quantidade: <span class="required">*</span></label>
-                        <input type="number" id="quantidade" required value="1" min="1" onchange="calcularResumo()">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Endereço de Entrega:</label>
-                    <textarea id="enderecoEntrega" rows="2" placeholder="Rua, número, bairro, cidade - Estado"></textarea>
-                </div>
+
+        <div class="card">
+            <div class="info-box">
+                <p><strong>📋 Como funciona:</strong></p>
+                <p>1. Preencha os dados do comprador</p>
+                <p>2. Selecione a igreja que será beneficiada</p>
+                <p>3. Informe os detalhes da venda</p>
+                <p>4. A comissão será calculada automaticamente</p>
             </div>
-            
-            <div class="form-section">
-                <h2><i class="fas fa-church"></i> Igreja Parceira</h2>
-                
-                <div class="form-group">
-                    <label>Selecione a Igreja: <span class="required">*</span></label>
-                    <select id="igrejaId" required onchange="calcularResumo()">
-                        <option value="">Carregando igrejas...</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-section">
-                <h2><i class="fas fa-dollar-sign"></i> Dados da Venda</h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Valor Unitário (R$): <span class="required">*</span></label>
-                        <input type="number" id="valorVenda" required step="0.01" min="0.01" placeholder="0.00" onchange="calcularResumo()">
+
+            <div id="alertContainer"></div>
+
+            <form id="formVenda">
+                <!-- DADOS DO COMPRADOR -->
+                <div class="form-section">
+                    <h2>👤 Dados do Comprador</h2>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="nome_comprador">Nome Completo: <span class="required">*</span></label>
+                            <input type="text" id="nome_comprador" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email_comprador">Email: <span class="required">*</span></label>
+                            <input type="email" id="email_comprador" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone_comprador">Telefone:</label>
+                            <input type="tel" id="telefone_comprador" placeholder="(00) 00000-0000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="whatsapp_comprador">WhatsApp:</label>
+                            <input type="tel" id="whatsapp_comprador" placeholder="(00) 00000-0000">
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="endereco_entrega">Endereço de Entrega:</label>
+                            <textarea id="endereco_entrega" placeholder="Rua, número, complemento, bairro, cidade, estado, CEP"></textarea>
+                        </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Forma de Pagamento: <span class="required">*</span></label>
-                        <select id="formaPagamento" required>
-                            <option value="">Selecione...</option>
-                            <option value="PIX">PIX</option>
-                            <option value="Boleto">Boleto</option>
-                            <option value="Cartão de Crédito">Cartão de Crédito</option>
-                            <option value="Cartão de Débito">Cartão de Débito</option>
-                            <option value="Dinheiro">Dinheiro</option>
-                        </select>
+                </div>
+
+                <!-- IGREJA -->
+                <div class="form-section">
+                    <h2>⛪ Igreja Beneficiada</h2>
+                    <div id="loadingIgrejas" class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Carregando igrejas...</p>
+                    </div>
+                    <div class="form-grid" id="igrejaContainer" style="display: none;">
+                        <div class="form-group full-width">
+                            <label for="igreja_id">Selecione a Igreja: <span class="required">*</span></label>
+                            <select id="igreja_id" required>
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="codigo_indicacao">Código de Indicação (opcional):</label>
+                            <input type="text" id="codigo_indicacao" placeholder="Ex: IGREJA2024">
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div id="resumoVenda" class="resumo-venda" style="display: none;">
-                <h3><i class="fas fa-receipt"></i> Resumo da Venda</h3>
-                <div class="resumo-item">
-                    <span>Quantidade:</span>
-                    <span id="resumoQuantidade">-</span>
+
+                <!-- DADOS DA VENDA -->
+                <div class="form-section">
+                    <h2>💰 Dados da Venda</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="quantidade">Quantidade: <span class="required">*</span></label>
+                            <input type="number" id="quantidade" min="1" value="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="valor_unitario">Valor Unitário (R$): <span class="required">*</span></label>
+                            <input type="number" id="valor_unitario" step="0.01" min="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="forma_pagamento">Forma de Pagamento:</label>
+                            <select id="forma_pagamento">
+                                <option value="pix">PIX</option>
+                                <option value="cartao_credito">Cartão de Crédito</option>
+                                <option value="cartao_debito">Cartão de Débito</option>
+                                <option value="boleto">Boleto</option>
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="transferencia">Transferência</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status_pagamento">Status do Pagamento:</label>
+                            <select id="status_pagamento">
+                                <option value="pendente">Pendente</option>
+                                <option value="confirmado">Confirmado</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="resumo-item">
-                    <span>Valor Unitário:</span>
-                    <span id="resumoValorUnitario">R$ 0,00</span>
+
+                <!-- RESUMO -->
+                <div class="summary-box">
+                    <h3 style="margin-bottom: 15px;">📊 Resumo da Venda</h3>
+                    <div class="summary-item">
+                        <span>Quantidade:</span>
+                        <span id="resumo_quantidade">1</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Valor Unitário:</span>
+                        <span id="resumo_unitario">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Valor Total:</span>
+                        <span id="resumo_total">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>Comissão da Igreja (<span id="resumo_percentual">0</span>%):</span>
+                        <span id="resumo_comissao">R$ 0,00</span>
+                    </div>
                 </div>
-                <div class="resumo-item">
-                    <span>Valor Total:</span>
-                    <span id="resumoValorTotal">R$ 0,00</span>
-                </div>
-                <div class="resumo-item">
-                    <span>Comissão (<span id="resumoPercentual">0</span>%):</span>
-                    <span id="resumoComissao">R$ 0,00</span>
-                </div>
-                <div class="resumo-item">
-                    <span>Igreja:</span>
-                    <span id="resumoIgreja">-</span>
-                </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary" id="btnEnviar">
-                <i class="fas fa-check-circle"></i> Registrar Venda
-            </button>
-        </form>
+
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    ✅ Registrar Venda
+                </button>
+            </form>
+        </div>
     </div>
-    
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        
-        const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        const CHAVE_PIX = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
-        const NOME_FAVORECIDO = 'Henrique Gomes da Silva';
-        const BANCO = 'C6 Bank (336)';
-        
+        const SUPABASE_URL = 'https://pqkqgvdnwmfhbfqjzquu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxa3FndmRud21maGJmcWp6cXV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQxMTI4NTYsImV4cCI6MjA0OTY4ODg1Nn0.kTvfhLlLdTh1SbKYLVB7HZvRm_4lZ0OXAJQMlFiXYtc';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         let igrejasData = [];
-        
+
+        // Carregar igrejas
         async function carregarIgrejas() {
             try {
-                const { data, error } = await clienteSupabase
+                const { data, error } = await supabase
                     .from('igrejas')
                     .select('*')
                     .eq('ativo', true)
                     .order('nome', { ascending: true });
-                
+
                 if (error) throw error;
+
+                igrejasData = data || [];
                 
-                igrejasData = data;
-                
-                const select = document.getElementById('igrejaId');
-                select.innerHTML = '<option value="">Selecione uma igreja...</option>';
-                
-                data.forEach(igreja => {
-                    const option = document.createElement('option');
-                    option.value = igreja.id;
-                    option.textContent = igreja.nome + ' - ' + (igreja.responsavel || '');
-                    option.dataset.percentual = igreja.percentual_comissao;
-                    option.dataset.nome = igreja.nome;
-                    select.appendChild(option);
-                });
-                
-            } catch (erro) {
-                console.error('Erro ao carregar igrejas:', erro);
-                document.getElementById('igrejaId').innerHTML = '<option value="">Erro ao carregar igrejas</option>';
+                const select = document.getElementById('igreja_id');
+                select.innerHTML = '<option value="">Selecione...</option>' + 
+                    igrejasData.map(igreja => 
+                        `<option value="${igreja.id}" data-comissao="${igreja.percentual_comissao || 0}">
+                            ${igreja.nome} - ${igreja.percentual_comissao || 0}% de comissão
+                        </option>`
+                    ).join('');
+
+                document.getElementById('loadingIgrejas').style.display = 'none';
+                document.getElementById('igrejaContainer').style.display = 'grid';
+            } catch (error) {
+                console.error('Erro ao carregar igrejas:', error);
+                showAlert('Erro ao carregar igrejas. Recarregue a página.', 'error');
             }
         }
-        
+
+        // Calcular valores
         function calcularResumo() {
-            const valorUnitario = parseFloat(document.getElementById('valorVenda').value) || 0;
-            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-            const igrejaSelect = document.getElementById('igrejaId');
-            const igrejaOption = igrejaSelect.options[igrejaSelect.selectedIndex];
-            
-            if (valorUnitario > 0 && igrejaSelect.value) {
-                const valorTotal = valorUnitario * quantidade;
-                const percentual = parseFloat(igrejaOption.dataset.percentual) || 0;
-                const comissao = (valorTotal * percentual) / 100;
-                const igrejaNome = igrejaOption.dataset.nome || '';
-                
-                document.getElementById('resumoQuantidade').textContent = quantidade;
-                document.getElementById('resumoValorUnitario').textContent = 'R$ ' + valorUnitario.toFixed(2).replace('.', ',');
-                document.getElementById('resumoValorTotal').textContent = 'R$ ' + valorTotal.toFixed(2).replace('.', ',');
-                document.getElementById('resumoPercentual').textContent = percentual.toFixed(2);
-                document.getElementById('resumoComissao').textContent = 'R$ ' + comissao.toFixed(2).replace('.', ',');
-                document.getElementById('resumoIgreja').textContent = igrejaNome;
-                
-                document.getElementById('resumoVenda').style.display = 'block';
-            } else {
-                document.getElementById('resumoVenda').style.display = 'none';
-            }
+            const quantidade = parseInt(document.getElementById('quantidade').value) || 0;
+            const valorUnitario = parseFloat(document.getElementById('valor_unitario').value) || 0;
+            const igrejaSelect = document.getElementById('igreja_id');
+            const selectedOption = igrejaSelect.options[igrejaSelect.selectedIndex];
+            const percentualComissao = parseFloat(selectedOption.getAttribute('data-comissao')) || 0;
+
+            const valorTotal = quantidade * valorUnitario;
+            const valorComissao = valorTotal * (percentualComissao / 100);
+
+            document.getElementById('resumo_quantidade').textContent = quantidade;
+            document.getElementById('resumo_unitario').textContent = `R$ ${valorUnitario.toFixed(2)}`;
+            document.getElementById('resumo_total').textContent = `R$ ${valorTotal.toFixed(2)}`;
+            document.getElementById('resumo_percentual').textContent = percentualComissao.toFixed(2);
+            document.getElementById('resumo_comissao').textContent = `R$ ${valorComissao.toFixed(2)}`;
         }
-        
-        function copiarChavePix() {
-            navigator.clipboard.writeText(CHAVE_PIX).then(() => {
-                alert('✅ Chave PIX copiada com sucesso!');
-            }).catch(() => {
-                alert('❌ Erro ao copiar. Copie manualmente.');
-            });
-        }
-        
-        async function salvarVenda(event) {
-            event.preventDefault();
-            
-            const btnEnviar = document.getElementById('btnEnviar');
-            btnEnviar.disabled = true;
-            btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-            
-            document.getElementById('mensagemSucesso').style.display = 'none';
-            document.getElementById('mensagemErro').style.display = 'none';
-            
+
+        // Event listeners para cálculo automático
+        document.getElementById('quantidade').addEventListener('input', calcularResumo);
+        document.getElementById('valor_unitario').addEventListener('input', calcularResumo);
+        document.getElementById('igreja_id').addEventListener('change', calcularResumo);
+
+        // Submeter formulário
+        document.getElementById('formVenda').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btnSubmit = document.getElementById('btnSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = '⏳ Processando...';
+
+            const quantidade = parseInt(document.getElementById('quantidade').value);
+            const valorUnitario = parseFloat(document.getElementById('valor_unitario').value);
+            const igrejaId = document.getElementById('igreja_id').value;
+            const igrejaSelect = document.getElementById('igreja_id');
+            const selectedOption = igrejaSelect.options[igrejaSelect.selectedIndex];
+            const percentualComissao = parseFloat(selectedOption.getAttribute('data-comissao')) || 0;
+
+            const valorTotal = quantidade * valorUnitario;
+            const valorComissao = valorTotal * (percentualComissao / 100);
+
+            const vendaData = {
+                nome_comprador: document.getElementById('nome_comprador').value,
+                email_comprador: document.getElementById('email_comprador').value,
+                telefone_comprador: document.getElementById('telefone_comprador').value,
+                whatsapp_comprador: document.getElementById('whatsapp_comprador').value,
+                endereco_entrega: document.getElementById('endereco_entrega').value,
+                igreja_id: parseInt(igrejaId),
+                codigo_indicacao: document.getElementById('codigo_indicacao').value,
+                quantidade: quantidade,
+                valor_unitario: valorUnitario,
+                valor_total: valorTotal,
+                percentual_comissao: percentualComissao,
+                valor_comissao: valorComissao,
+                forma_pagamento: document.getElementById('forma_pagamento').value,
+                status_pagamento: document.getElementById('status_pagamento').value,
+                origem: 'venda_igreja'
+            };
+
             try {
-                const valorUnitario = parseFloat(document.getElementById('valorVenda').value);
-                const quantidade = parseInt(document.getElementById('quantidade').value);
-                const valorTotal = valorUnitario * quantidade;
-                
-                const igrejaSelect = document.getElementById('igrejaId');
-                const igrejaOption = igrejaSelect.options[igrejaSelect.selectedIndex];
-                const percentual = parseFloat(igrejaOption.dataset.percentual);
-                const comissao = (valorTotal * percentual) / 100;
-                const igrejaNome = igrejaOption.dataset.nome;
-                
-                const dados = {
-                    nome_comprador: document.getElementById('nomeComprador').value,
-                    email_comprador: document.getElementById('emailComprador').value,
-                    telefone_comprador: document.getElementById('telefoneComprador').value,
-                    whatsapp_comprador: document.getElementById('whatsappComprador').value || null,
-                    endereco_entrega: document.getElementById('enderecoEntrega').value || null,
-                    quantidade: quantidade,
-                    valor_venda: valorTotal,
-                    comissao_valor: comissao,
-                    percentual_formatado: percentual.toFixed(2) + '%',
-                    forma_pagamento: document.getElementById('formaPagamento').value,
-                    igreja_id: document.getElementById('igrejaId').value,
-                    status: 'pendente',
-                    data_venda: new Date().toISOString()
-                };
-                
-                const { data, error } = await clienteSupabase
+                const { data, error } = await supabase
                     .from('vendas')
-                    .insert([dados])
-                    .select();
-                
+                    .insert([vendaData]);
+
                 if (error) throw error;
-                
-                const vendaId = data[0].id;
-                
-                document.getElementById('mensagemSucesso').innerHTML = 
-                    '<h2><i class="fas fa-check-circle"></i> Venda Registrada com Sucesso!</h2>' +
-                    '<div class="info-item"><strong>📋 Código da Venda:</strong><br>' + vendaId + '</div>' +
-                    '<div class="info-item"><strong>🏛️ Igreja Parceira:</strong> ' + igrejaNome + '</div>' +
-                    '<div class="info-item"><strong>💵 Valor Total:</strong> R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</div>' +
-                    '<div class="info-item"><strong>💰 Comissão da Igreja:</strong> R$ ' + comissao.toFixed(2).replace('.', ',') + ' (' + percentual.toFixed(2) + '%)</div>' +
-                    
-                    '<div class="dados-pagamento">' +
-                    '<h3><i class="fas fa-credit-card"></i> DADOS PARA PAGAMENTO VIA PIX</h3>' +
-                    '<div class="info-item"><strong>🔑 Tipo de Chave:</strong> Chave Aleatória</div>' +
-                    '<div class="info-item"><strong>🔑 Chave PIX:</strong></div>' +
-                    '<div class="chave-pix-box">' + CHAVE_PIX + '</div>' +
-                    '<button class="btn-copiar" onclick="copiarChavePix()"><i class="fas fa-copy"></i> Copiar Chave PIX</button>' +
-                    '<div class="info-item"><strong>👤 Favorecido:</strong> ' + NOME_FAVORECIDO + '</div>' +
-                    '<div class="info-item"><strong>🏦 Banco:</strong> ' + BANCO + '</div>' +
-                    '<div class="info-item"><strong>💵 Valor a Pagar:</strong> <span style="font-size: 1.2em; color: #10b981; font-weight: bold;">R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</span></div>' +
-                    '</div>' +
-                    
-                    '<div class="instrucoes">' +
-                    '<h4><i class="fas fa-mobile-alt"></i> COMO PAGAR:</h4>' +
-                    '<ol>' +
-                    '<li>Abra o app do seu banco</li>' +
-                    '<li>Acesse a área <strong>PIX</strong></li>' +
-                    '<li>Escolha <strong>"Pix Copia e Cola"</strong> ou <strong>"Chave PIX"</strong></li>' +
-                    '<li>Cole a chave acima (use o botão "Copiar")</li>' +
-                    '<li>Confirme o nome: <strong>' + NOME_FAVORECIDO + '</strong></li>' +
-                    '<li>Confirme o valor: <strong>R$ ' + valorTotal.toFixed(2).replace('.', ',') + '</strong></li>' +
-                    '<li>Finalize o pagamento</li>' +
-                    '</ol>' +
-                    '</div>' +
-                    
-                    '<div class="instrucoes" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left-color: #3b82f6;">' +
-                    '<h4 style="color: #1e40af;"><i class="fas fa-exclamation-triangle"></i> APÓS REALIZAR O PAGAMENTO:</h4>' +
-                    '<ol style="color: #1e40af;">' +
-                    '<li>Tire print/foto do comprovante de pagamento</li>' +
-                    '<li>Acesse: <strong>somos.bizmix.com.br/comprovante.html</strong></li>' +
-                    '<li>Digite o código da venda: <strong>' + vendaId + '</strong></li>' +
-                    '<li>Envie o comprovante</li>' +
-                    '<li>Aguarde a confirmação por email</li>' +
-                    '</ol>' +
-                    '</div>';
-                
-                document.getElementById('mensagemSucesso').style.display = 'block';
-                
+
+                showAlert('✅ Venda registrada com sucesso!', 'success');
                 document.getElementById('formVenda').reset();
-                document.getElementById('resumoVenda').style.display = 'none';
-                
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
-            } catch (erro) {
-                console.error('Erro ao salvar venda:', erro);
-                document.getElementById('mensagemErro').innerHTML = 
-                    '<h3><i class="fas fa-times-circle"></i> Erro ao Registrar Venda</h3>' +
-                    '<p>' + erro.message + '</p>';
-                document.getElementById('mensagemErro').style.display = 'block';
+                calcularResumo();
+
+                setTimeout(() => {
+                    window.location.href = '/livro/index.html';
+                }, 2000);
+
+            } catch (error) {
+                console.error('Erro ao registrar venda:', error);
+                showAlert('❌ Erro ao registrar venda. Tente novamente.', 'error');
             } finally {
-                btnEnviar.disabled = false;
-                btnEnviar.innerHTML = '<i class="fas fa-check-circle"></i> Registrar Venda';
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = '✅ Registrar Venda';
             }
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
         }
-        
+
         carregarIgrejas();
     </script>
 </body>
