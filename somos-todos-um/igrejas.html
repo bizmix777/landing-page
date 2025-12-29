@@ -4,332 +4,325 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Igrejas Parceiras - Somos Todos Um</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --success: #10b981;
-            --dark: #1f2937;
-        }
-        
+
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        /* Header */
+
         .header {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 30px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             margin-bottom: 30px;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
-        
-        .header h1 {
-            color: white;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .header p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1em;
+
+        .header-icon {
+            font-size: 4rem;
+            color: #667eea;
             margin-bottom: 20px;
         }
-        
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
         .header-actions {
             display: flex;
             gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
         }
-        
+
         .btn {
-            padding: 12px 25px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            text-decoration: none;
+            gap: 10px;
         }
-        
+
         .btn-primary {
-            background: linear-gradient(135deg, var(--success), #059669);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-        
-        .btn-outline {
-            background: white;
-            color: var(--primary);
-            border: 2px solid white;
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
         }
-        
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
         }
-        
-        /* Cards Grid */
-        .igrejas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .igreja-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .igreja-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-        
-        .igreja-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-        
-        .igreja-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8em;
-            margin-bottom: 15px;
-        }
-        
-        .igreja-card h3 {
-            color: var(--dark);
-            font-size: 1.3em;
-            margin-bottom: 15px;
-        }
-        
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-            color: #6b7280;
-            font-size: 0.9em;
-        }
-        
-        .info-item i {
-            color: var(--primary);
-            width: 20px;
-        }
-        
-        .comissao-badge {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            color: #065f46;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 15px;
-        }
-        
-        /* Loading */
+
         .loading {
             text-align: center;
             padding: 60px 20px;
-            color: white;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        /* Empty State */
-        .empty-state {
-            background: white;
-            border-radius: 15px;
-            padding: 60px 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+
+        .loading p {
+            color: #666;
+            font-size: 1.2rem;
         }
-        
-        .empty-state i {
-            font-size: 4em;
-            color: #d1d5db;
+
+        .churches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .church-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .church-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .church-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .church-name {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .church-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+        }
+
+        .info-item i {
+            color: #667eea;
+            width: 20px;
+        }
+
+        .commission-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            color: #ccc;
             margin-bottom: 20px;
         }
-        
-        .empty-state h3 {
-            color: var(--dark);
-            font-size: 1.5em;
+
+        .empty-state h2 {
+            color: #333;
+            font-size: 1.8rem;
             margin-bottom: 10px;
         }
-        
+
         .empty-state p {
-            color: #6b7280;
+            color: #999;
+            font-size: 1.2rem;
         }
-        
-        /* Responsive */
+
         @media (max-width: 768px) {
             .header h1 {
-                font-size: 1.8em;
+                font-size: 2rem;
             }
-            
-            .igrejas-grid {
+
+            .churches-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>
-                <i class="fas fa-church"></i>
-                Igrejas Parceiras
-            </h1>
-            <p>Conheça as igrejas que fazem parte do projeto Somos Todos Um</p>
-            <div class="header-actions">
-                <a href="/venda.html" class="btn btn-primary">
-                    <i class="fas fa-shopping-cart"></i> Fazer uma Compra
-                </a>
-                <a href="/" class="btn btn-outline">
-                    <i class="fas fa-home"></i> Página Inicial
-                </a>
-            </div>
-        </div>
-        
-        <!-- Loading -->
-        <div id="loadingIgrejas" class="loading">
-            <div class="spinner"></div>
-            <p>Carregando igrejas parceiras...</p>
-        </div>
-        
-        <!-- Grid de Igrejas -->
-        <div id="igrejasGrid" class="igrejas-grid" style="display: none;"></div>
-        
-        <!-- Empty State -->
-        <div id="emptyState" class="empty-state" style="display: none;">
+    <div class="header">
+        <div class="header-icon">
             <i class="fas fa-church"></i>
-            <h3>Nenhuma igreja cadastrada ainda</h3>
-            <p>Em breve teremos igrejas parceiras aqui!</p>
+        </div>
+        <h1>Igrejas Parceiras</h1>
+        <p>Conheça as igrejas que fazem parte do projeto Somos Todos Um</p>
+        <div class="header-actions">
+            <a href="/livro/venda.html" class="btn btn-primary">
+                <i class="fas fa-shopping-cart"></i>
+                Fazer uma Compra
+            </a>
+            <a href="/index.html" class="btn btn-secondary">
+                <i class="fas fa-home"></i>
+                Página Inicial
+            </a>
         </div>
     </div>
-    
+
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Carregando igrejas parceiras...</p>
+    </div>
+
+    <div id="churchesGrid" class="churches-grid" style="display: none;">
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-icon">
+            <i class="fas fa-church"></i>
+        </div>
+        <h2>Nenhuma igreja cadastrada ainda</h2>
+        <p>Em breve teremos igrejas parceiras aqui!</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        
-        const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
+        const SUPABASE_URL = 'https://pqkqgvdnwmfhbfqjzquu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxa3FndmRud21maGJmcWp6cXV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQxMTI4NTYsImV4cCI6MjA0OTY4ODg1Nn0.kTvfhLlLdTh1SbKYLVB7HZvRm_4lZ0OXAJQMlFiXYtc';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         async function carregarIgrejas() {
             try {
-                const { data, error } = await clienteSupabase
+                const { data, error } = await supabase
                     .from('igrejas')
                     .select('*')
                     .eq('ativo', true)
                     .order('nome', { ascending: true });
-                
+
                 if (error) throw error;
-                
-                document.getElementById('loadingIgrejas').style.display = 'none';
-                
-                if (data.length === 0) {
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (!data || data.length === 0) {
                     document.getElementById('emptyState').style.display = 'block';
                     return;
                 }
-                
-                const grid = document.getElementById('igrejasGrid');
-                grid.innerHTML = '';
-                
-                data.forEach(igreja => {
-                    const card = document.createElement('div');
-                    card.className = 'igreja-card';
-                    
-                    card.innerHTML = `
-                        <div class="igreja-icon">
-                            <i class="fas fa-church"></i>
-                        </div>
-                        <h3>${igreja.nome}</h3>
-                        ${igreja.responsavel ? `<div class="info-item"><i class="fas fa-user"></i> ${igreja.responsavel}</div>` : ''}
-                        ${igreja.telefone ? `<div class="info-item"><i class="fas fa-phone"></i> ${igreja.telefone}</div>` : ''}
-                        ${igreja.email ? `<div class="info-item"><i class="fas fa-envelope"></i> ${igreja.email}</div>` : ''}
-                        ${igreja.cidade && igreja.estado ? `<div class="info-item"><i class="fas fa-map-marker-alt"></i> ${igreja.cidade} - ${igreja.estado}</div>` : ''}
-                        <div class="comissao-badge">
-                            <i class="fas fa-hand-holding-usd"></i> ${parseFloat(igreja.percentual_comissao || 0).toFixed(2)}% de comissão
-                        </div>
-                    `;
-                    
-                    grid.appendChild(card);
-                });
-                
-                grid.style.display = 'grid';
-                
-            } catch (erro) {
-                console.error('Erro ao carregar igrejas:', erro);
-                document.getElementById('loadingIgrejas').innerHTML = 
-                    '<p style="color: white;">❌ Erro ao carregar igrejas. Tente novamente mais tarde.</p>';
+
+                renderizarIgrejas(data);
+            } catch (error) {
+                console.error('Erro ao carregar igrejas:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
             }
         }
-        
+
+        function renderizarIgrejas(igrejas) {
+            const grid = document.getElementById('churchesGrid');
+            grid.style.display = 'grid';
+
+            grid.innerHTML = igrejas.map(igreja => `
+                <div class="church-card">
+                    <div class="church-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <div class="church-name">${igreja.nome || 'Nome não informado'}</div>
+                    <div class="church-info">
+                        ${igreja.responsavel ? `
+                            <div class="info-item">
+                                <i class="fas fa-user"></i>
+                                <span>${igreja.responsavel}</span>
+                            </div>
+                        ` : ''}
+                        ${igreja.telefone ? `
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${igreja.telefone}</span>
+                            </div>
+                        ` : ''}
+                        ${igreja.email ? `
+                            <div class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${igreja.email}</span>
+                            </div>
+                        ` : ''}
+                        ${igreja.cidade && igreja.estado ? `
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${igreja.cidade} - ${igreja.estado}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${igreja.percentual_comissao ? `
+                        <div class="commission-badge">
+                            <i class="fas fa-percentage"></i> ${igreja.percentual_comissao}% de comissão
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
         carregarIgrejas();
     </script>
 </body>
