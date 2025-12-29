@@ -3,146 +3,497 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comprar Livro - SOMOS TODOS UM</title>
-    <link rel="stylesheet" href="css/comprar.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Comprar Livro - Somos Todos Um</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .product-showcase {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .product-image {
+            text-align: center;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .product-details h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .product-features {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .product-features li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #666;
+        }
+
+        .product-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .price-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .price-old {
+            text-decoration: line-through;
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .price-new {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .price-installments {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .commission-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .commission-info strong {
+            color: #856404;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .summary-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 1.1rem;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #667eea;
+            margin-top: 10px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .guarantee-badge {
+            text-align: center;
+            background: #28a745;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .product-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 25px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <!-- HEADER -->
-        <header class="header">
-            <h1>📚 SOMOS TODOS UM</h1>
-            <p class="subtitle">Transforme sua vida com este livro inspirador</p>
-        </header>
+        <div class="header">
+            <h1>📚 Comprar Livro "Somos Todos Um"</h1>
+            <p>Adquira seu exemplar digital agora mesmo!</p>
+        </div>
 
-        <!-- SEÇÃO PRINCIPAL -->
-        <section class="main-section">
-            <div class="book-showcase">
-                <div class="book-image">
-                    <img src="images/livro-capa.jpg" alt="Livro Somos Todos Um" onerror="this.src='https://via.placeholder.com/300x400?text=SOMOS+TODOS+UM'">
+        <!-- PRODUTO -->
+        <div class="product-showcase">
+            <div class="product-image">
+                <img src="images/capa-livro.jpg" alt="Capa do Livro Somos Todos Um">
+            </div>
+            <div class="product-details">
+                <h2>Livro Digital: SOMOS TODOS UM</h2>
+                <p style="color: #666; margin-bottom: 20px;">A Verdade Bíblica Sobre a Unidade da Humanidade</p>
+                
+                <ul class="product-features">
+                    <li>📖 120 páginas de conteúdo profundo</li>
+                    <li>✝️ 6 capítulos teológicos</li>
+                    <li>❓ 50+ perguntas de estudo</li>
+                    <li>🎁 3 bônus exclusivos inclusos</li>
+                    <li>⚡ Entrega imediata por e-mail</li>
+                    <li>📱 Leia em qualquer dispositivo</li>
+                </ul>
+
+                <div class="price-box">
+                    <div class="price-old">De R$ 170,90</div>
+                    <div class="price-new">R$ 29,90</div>
+                    <div class="price-installments">ou 12x de R$ 2,99</div>
                 </div>
-                <div class="book-info">
-                    <h2>Livro "SOMOS TODOS UM"</h2>
-                    <div class="rating">
-                        ⭐⭐⭐⭐⭐ <span>4.9/5 (127 avaliações)</span>
-                    </div>
-                    <div class="price">
-                        <span class="price-label">Apenas</span>
-                        <span class="price-value">R$ 29,90</span>
-                    </div>
-                    <div class="benefits">
-                        <h3>✨ O que você vai receber:</h3>
-                        <ul>
-                            <li>✅ Livro físico de alta qualidade</li>
-                            <li>✅ Entrega em todo Brasil</li>
-                            <li>✅ Conteúdo transformador</li>
-                            <li>✅ Mensagens inspiradoras</li>
-                            <li>✅ Apoio a uma causa nobre</li>
-                        </ul>
-                    </div>
+
+                <div class="commission-info">
+                    <strong>🎁 BÔNUS:</strong> 40% do valor desta venda será destinado para apoiar o projeto!
+                </div>
+
+                <div class="guarantee-badge">
+                    ✅ Garantia de 7 dias - 100% do seu dinheiro de volta
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- FORMULÁRIO DE COMPRA -->
-        <section class="purchase-section">
-            <h2>🛒 Complete seu pedido</h2>
-            <form id="formCompra" class="purchase-form">
-                <div class="form-group">
-                    <label for="nome">Nome Completo *</label>
-                    <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
-                </div>
+        <!-- FORMULÁRIO -->
+        <div class="card">
+            <div id="alertContainer"></div>
 
-                <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
-                </div>
+            <form id="formCompra">
+                <!-- DADOS DO COMPRADOR -->
+                <div class="form-section">
+                    <h2>👤 Seus Dados</h2>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="nome_comprador">Nome Completo: <span class="required">*</span></label>
+                            <input type="text" id="nome_comprador" required>
+                        </div>
 
-                <div class="form-group">
-                    <label for="whatsapp">WhatsApp *</label>
-                    <input type="tel" id="whatsapp" name="whatsapp" required placeholder="(00) 00000-0000">
-                </div>
+                        <div class="form-group">
+                            <label for="email_comprador">Email: <span class="required">*</span></label>
+                            <input type="email" id="email_comprador" required placeholder="Receberá o livro neste e-mail">
+                        </div>
 
-                <div class="form-group">
-                    <label for="codigo">Código de Indicação (opcional)</label>
-                    <input type="text" id="codigo" name="codigo" placeholder="Digite o código se tiver">
-                    <small id="codigoStatus" class="codigo-status"></small>
-                </div>
-
-                <div class="form-group">
-                    <label for="quantidade">Quantidade</label>
-                    <select id="quantidade" name="quantidade">
-                        <option value="1">1 livro - R$ 29,90</option>
-                        <option value="2">2 livros - R$ 59,80</option>
-                        <option value="3">3 livros - R$ 89,70</option>
-                        <option value="5">5 livros - R$ 149,50</option>
-                        <option value="10">10 livros - R$ 299,00</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="endereco">Endereço Completo *</label>
-                    <textarea id="endereco" name="endereco" required placeholder="Rua, número, complemento, bairro, cidade, estado, CEP" rows="3"></textarea>
-                </div>
-
-                <!-- RESUMO DO PEDIDO -->
-                <div class="order-summary">
-                    <h3>📋 Resumo do Pedido</h3>
-                    <div class="summary-line">
-                        <span>Quantidade:</span>
-                        <span id="resumoQuantidade">1 livro</span>
+                        <div class="form-group">
+                            <label for="telefone_comprador">Telefone/WhatsApp:</label>
+                            <input type="tel" id="telefone_comprador" placeholder="(00) 00000-0000">
+                        </div>
                     </div>
-                    <div class="summary-line">
-                        <span>Valor unitário:</span>
+                </div>
+
+                <!-- PAGAMENTO -->
+                <div class="form-section">
+                    <h2>💳 Forma de Pagamento</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="forma_pagamento">Escolha a forma de pagamento:</label>
+                            <select id="forma_pagamento">
+                                <option value="pix">PIX (Aprovação Imediata)</option>
+                                <option value="cartao_credito">Cartão de Crédito (até 12x)</option>
+                                <option value="boleto">Boleto Bancário</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantidade">Quantidade:</label>
+                            <input type="number" id="quantidade" min="1" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RESUMO -->
+                <div class="summary-box">
+                    <h3 style="margin-bottom: 15px;">📊 Resumo do Pedido</h3>
+                    <div class="summary-item">
+                        <span>Livro Digital "Somos Todos Um"</span>
                         <span>R$ 29,90</span>
                     </div>
-                    <div class="summary-line total">
-                        <span>Total:</span>
-                        <span id="resumoTotal">R$ 29,90</span>
+                    <div class="summary-item">
+                        <span>Quantidade:</span>
+                        <span id="resumo_quantidade">1</span>
                     </div>
-                    <div class="summary-line comissao" id="resumoComissao" style="display: none;">
-                        <span>Comissão gerada (40%):</span>
-                        <span id="resumoComissaoValor">R$ 0,00</span>
+                    <div class="summary-item">
+                        <span>3 Bônus Exclusivos</span>
+                        <span style="color: #28a745;">GRÁTIS</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>TOTAL A PAGAR:</span>
+                        <span id="resumo_total">R$ 29,90</span>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">
-                    💳 FINALIZAR COMPRA
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    🛒 FINALIZAR COMPRA
                 </button>
+
+                <p style="text-align: center; color: #666; margin-top: 15px; font-size: 0.9rem;">
+                    🔒 Pagamento 100% seguro e criptografado
+                </p>
             </form>
-        </section>
-
-        <!-- GARANTIA -->
-        <section class="guarantee">
-            <h3>🔒 Compra 100% Segura</h3>
-            <p>Seus dados estão protegidos. Pagamento via PIX.</p>
-        </section>
-    </div>
-
-    <!-- MODAL DE CONFIRMAÇÃO -->
-    <div id="modalPix" class="modal">
-        <div class="modal-content">
-            <h2>✅ Pedido Confirmado!</h2>
-            <p><strong>Número do Pedido:</strong> <span id="numeroPedido"></span></p>
-            <p><strong>Valor Total:</strong> <span id="valorPix"></span></p>
-            
-            <div class="pix-instructions">
-                <h3>📱 Instruções para Pagamento via PIX</h3>
-                <ol>
-                    <li>Abra o aplicativo do seu banco</li>
-                    <li>Escolha a opção PIX</li>
-                    <li>Faça o pagamento para a chave PIX:</li>
-                </ol>
-                <div class="pix-key">
-                    <strong>Chave PIX:</strong> bizmix777@gmail.com
-                </div>
-                <p class="pix-note">⚠️ Após realizar o pagamento, envie o comprovante para nosso WhatsApp: <strong>(00) 00000-0000</strong></p>
-            </div>
-
-            <button onclick="fecharModal()" class="btn-close">Entendi</button>
         </div>
     </div>
 
-    <script src="js/comprar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://pqkqgvdnwmfhbfqjzquu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxa3FndmRud21maGJmcWp6cXV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQxMTI4NTYsImV4cCI6MjA0OTY4ODg1Nn0.kTvfhLlLdTh1SbKYLVB7HZvRm_4lZ0OXAJQMlFiXYtc';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const PRECO_LIVRO = 29.90;
+        const COMISSAO_FIXA = 40; // 40%
+
+        // Calcular valores
+        function calcularResumo() {
+            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+            const valorTotal = quantidade * PRECO_LIVRO;
+
+            document.getElementById('resumo_quantidade').textContent = quantidade;
+            document.getElementById('resumo_total').textContent = `R$ ${valorTotal.toFixed(2)}`;
+        }
+
+        document.getElementById('quantidade').addEventListener('input', calcularResumo);
+
+        // Submeter formulário
+        document.getElementById('formCompra').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btnSubmit = document.getElementById('btnSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = '⏳ Processando...';
+
+            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+            const valorTotal = quantidade * PRECO_LIVRO;
+            const valorComissao = valorTotal * (COMISSAO_FIXA / 100);
+
+            const compraData = {
+                nome_comprador: document.getElementById('nome_comprador').value,
+                email_comprador: document.getElementById('email_comprador').value,
+                telefone_comprador: document.getElementById('telefone_comprador').value,
+                whatsapp_comprador: document.getElementById('telefone_comprador').value,
+                quantidade: quantidade,
+                valor_unitario: PRECO_LIVRO,
+                valor_total: valorTotal,
+                percentual_comissao: COMISSAO_FIXA,
+                valor_comissao: valorComissao,
+                forma_pagamento: document.getElementById('forma_pagamento').value,
+                status_pagamento: 'pendente',
+                origem: 'compra_livro',
+                igreja_id: null
+            };
+
+            try {
+                const { data, error } = await supabase
+                    .from('vendas')
+                    .insert([compraData]);
+
+                if (error) throw error;
+
+                showAlert('✅ Pedido registrado com sucesso! Você receberá as instruções de pagamento por e-mail.', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '/index.html';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Erro ao processar compra:', error);
+                showAlert('❌ Erro ao processar compra. Tente novamente.', 'error');
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = '🛒 FINALIZAR COMPRA';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 8000);
+        }
+    </script>
 </body>
 </html>
