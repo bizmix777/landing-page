@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Comprovante - Somos Todos Um</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: var(--dark);
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 12px;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .info-box h3 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-box p {
+            color: #4b5563;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #374151;
+            font-size: 0.9em;
+        }
+        
+        .form-group label .required {
+            color: var(--danger);
+        }
+        
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .upload-area {
+            border: 3px dashed var(--primary);
+            border-radius: 12px;
+            padding: 35px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-area:hover {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+            border-color: #5568d3;
+            transform: translateY(-2px);
+        }
+        
+        .upload-area.dragover {
+            background: linear-gradient(135deg, #e8ecff 0%, #dbeafe 100%);
+            border-color: var(--success);
+            border-width: 4px;
+        }
+        
+        .upload-icon {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+        
+        .upload-area p {
+            color: #4b5563;
+            font-size: 0.95em;
+            margin: 5px 0;
+        }
+        
+        .upload-area p strong {
+            color: var(--primary);
+        }
+        
+        .preview-area {
+            margin-top: 18px;
+            display: none;
+        }
+        
+        .preview-image {
+            max-width: 100%;
+            max-height: 350px;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .file-info {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 12px;
+            border-left: 4px solid var(--success);
+        }
+        
+        .file-info strong {
+            color: #065f46;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .sucesso {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .sucesso h2 {
+            color: #065f46;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sucesso p {
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+        
+        .erro {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            padding: 18px;
+            border-radius: 10px;
+            border-left: 4px solid var(--danger);
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .erro h3 {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 25px;
+            color: white;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .venda-info {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid var(--warning);
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .venda-info h3 {
+            color: #92400e;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .info-item {
+            margin: 8px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        
+        .info-item strong {
+            color: var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .upload-area {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <i class="fas fa-file-upload"></i>
+            Enviar Comprovante
+        </h1>
+        
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> Instruções</h3>
+            <p>Digite o código da sua venda e envie o comprovante de pagamento. Formatos aceitos: JPG, PNG, PDF (máx. 5MB).</p>
+        </div>
+        
+        <div id="mensagemSucesso" class="sucesso"></div>
+        <div id="mensagemErro" class="erro"></div>
+        
+        <div id="formBusca">
+            <div class="form-group">
+                <label>Código da Venda: <span class="required">*</span></label>
+                <input type="text" id="codigoVenda" placeholder="Ex: 6670487a-9bde-4f6d-87cb-37c79f5d3308">
+            </div>
+            
+            <button class="btn btn-primary" onclick="buscarVenda()">
+                <i class="fas fa-search"></i> Buscar Venda
+            </button>
+        </div>
+        
+        <div id="vendaInfo" class="venda-info"></div>
+        
+        <form id="formComprovante" style="display: none;" onsubmit="enviarComprovante(event)">
+            <div class="form-group">
+                <label>Comprovante de Pagamento: <span class="required">*</span></label>
+                
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('arquivoComprovante').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <p><strong>Clique aqui</strong> ou arraste o arquivo</p>
+                    <p style="font-size: 0.85em; color: #6b7280; margin-top: 8px;">JPG, PNG ou PDF (máx. 5MB)</p>
+                </div>
+                
+                <input type="file" id="arquivoComprovante" accept="image/jpeg,image/png,application/pdf" style="display: none;" onchange="previewArquivo(event)">
+                
+                <div id="previewArea" class="preview-area"></div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" id="btnEnviar" disabled>
+                <i class="fas fa-paper-plane"></i> Enviar Comprovante
+            </button>
+        </form>
+    </div>
+    
+    <script>
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let vendaAtual = null;
+        let arquivoSelecionado = null;
+        
+        const uploadArea = document.getElementById('uploadArea');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('dragover');
+            }, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.remove('dragover');
+            }, false);
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('arquivoComprovante').files = files;
+                previewArquivo({ target: { files: files } });
+            }
+        }, false);
+        
+        async function buscarVenda() {
+            const codigo = document.getElementById('codigoVenda').value.trim();
+            
+            if (!codigo) {
+                alert('Por favor, digite o código da venda.');
+                return;
+            }
+            
+            document.getElementById('mensagemErro').style.display = 'none';
+            document.getElementById('mensagemSucesso').style.display = 'none';
+            
+            try {
+                const { data, error } = await clienteSupabase
+                    .from('vendas')
+                    .select('*, igrejas(nome)')
+                    .eq('id', codigo)
+                    .single();
+                
+                if (error) throw error;
+                
+                if (!data) {
+                    throw new Error('Venda não encontrada. Verifique o código e tente novamente.');
+                }
+                
+                vendaAtual = data;
+                
+                if (data.status === 'pago') {
+                    document.getElementById('mensagemErro').innerHTML = 
+                        '<h3><i class="fas fa-exclamation-triangle"></i> Venda Já Paga</h3>' +
+                        '<p>Esta venda já foi marcada como paga. Se houver algum problema, entre em contato conosco.</p>';
+                    document.getElementById('mensagemErro').style.display = 'block';
+                    return;
+                }
+                
+                const igrejaNome = data.igrejas ? data.igrejas.nome : 'Não informada';
+                
+                document.getElementById('vendaInfo').innerHTML = 
+                    '<h3><i class="fas fa-receipt"></i> Dados da Venda</h3>' +
+                    '<div class="info-item"><strong>👤 Comprador:</strong> ' + data.nome_comprador + '</div>' +
+                    '<div class="info-item"><strong>📧 Email:</strong> ' + data.email_comprador + '</div>' +
+                    '<div class="info-item"><strong>🏛️ Igreja:</strong> ' + igrejaNome + '</div>' +
+                    '<div class="info-item"><strong>💵 Valor Total:</strong> R$ ' + parseFloat(data.valor_venda).toFixed(2).replace('.', ',') + '</div>' +
+                    '<div class="info-item"><strong>💳 Forma de Pagamento:</strong> ' + data.forma_pagamento + '</div>' +
+                    '<div class="info-item"><strong>📅 Data da Venda:</strong> ' + new Date(data.data_venda).toLocaleDateString('pt-BR') + '</div>' +
+                    '<div class="info-item"><strong>📊 Status:</strong> <span style="color: #f59e0b; font-weight: bold;">Pendente</span></div>';
+                
+                document.getElementById('vendaInfo').style.display = 'block';
+                document.getElementById('formComprovante').style.display = 'block';
+                
+            } catch (erro) {
+                console.error('Erro ao buscar venda:', erro);
+                document.getElementById('mensagemErro').innerHTML = 
+                    '<h3><i class="fas fa-times-circle"></i> Erro ao Buscar Venda</h3>' +
+                    '<p>' + erro.message + '</p>';
+                document.getElementById('mensagemErro').style.display = 'block';
+            }
+        }
+        
+        function previewArquivo(event) {
+            const arquivo = event.target.files[0];
+            
+            if (!arquivo) return;
+            
+            if (arquivo.size > 5 * 1024 * 1024) {
+                alert('❌ Arquivo muito grande! Tamanho máximo: 5MB');
+                document.getElementById('arquivoComprovante').value = '';
+                return;
+            }
+            
+            const tiposPermitidos = ['image/jpeg', 'image/png', 'application/pdf'];
+            if (!tiposPermitidos.includes(arquivo.type)) {
+                alert('❌ Formato não permitido! Use JPG, PNG ou PDF');
+                document.getElementById('arquivoComprovante').value = '';
+                return;
+            }
+            
+            arquivoSelecionado = arquivo;
+            
+            const previewArea = document.getElementById('previewArea');
+            previewArea.innerHTML = '';
+            
+            if (arquivo.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewArea.innerHTML = 
+                        '<img src="' + e.target.result + '" class="preview-image">' +
+                        '<div class="file-info">' +
+                        '<strong>📎 Arquivo:</strong> ' + arquivo.name + '<br>' +
+                        '<strong>📏 Tamanho:</strong> ' + (arquivo.size / 1024).toFixed(2) + ' KB' +
+                        '</div>';
+                };
+                reader.readAsDataURL(arquivo);
+            } else {
+                previewArea.innerHTML = 
+                    '<div class="file-info">' +
+                    '<strong>📄 PDF Selecionado</strong><br>' +
+                    '<strong>📎 Arquivo:</strong> ' + arquivo.name + '<br>' +
+                    '<strong>📏 Tamanho:</strong> ' + (arquivo.size / 1024).toFixed(2) + ' KB' +
+                    '</div>';
+            }
+            
+            previewArea.style.display = 'block';
+            document.getElementById('btnEnviar').disabled = false;
+        }
+        
+        async function enviarComprovante(event) {
+            event.preventDefault();
+            
+            if (!arquivoSelecionado) {
+                alert('Por favor, selecione um arquivo.');
+                return;
+            }
+            
+            if (!vendaAtual) {
+                alert('Erro: Venda não encontrada.');
+                return;
+            }
+            
+            const btnEnviar = document.getElementById('btnEnviar');
+            btnEnviar.disabled = true;
+            btnEnviar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            
+            document.getElementById('mensagemErro').style.display = 'none';
+            document.getElementById('mensagemSucesso').style.display = 'none';
+            
+            try {
+                const timestamp = Date.now();
+                const extensao = arquivoSelecionado.name.split('.').pop();
+                const nomeArquivo = `${vendaAtual.id}_${timestamp}.${extensao}`;
+                
+                const { data: uploadData, error: uploadError } = await clienteSupabase.storage
+                    .from('comprovantes')
+                    .upload(nomeArquivo, arquivoSelecionado, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: urlData } = clienteSupabase.storage
+                    .from('comprovantes')
+                    .getPublicUrl(nomeArquivo);
+                
+                const comprovanteUrl = urlData.publicUrl;
+                
+                const { error: updateError } = await clienteSupabase
+                    .from('vendas')
+                    .update({
+                        comprovante_url: comprovanteUrl,
+                        status: 'pago',
+                        data_pagamento: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', vendaAtual.id);
+                
+                if (updateError) throw updateError;
+                
+                document.getElementById('mensagemSucesso').innerHTML = 
+                    '<h2><i class="fas fa-check-circle"></i> Comprovante Enviado com Sucesso!</h2>' +
+                    '<p><strong>Status da Venda:</strong> Pagamento Confirmado</p>' +
+                    '<p><strong>Data do Pagamento:</strong> ' + new Date().toLocaleDateString('pt-BR') + '</p>' +
+                    '<p>Você receberá um email de confirmação em breve.</p>' +
+                    '<p style="margin-top: 15px; font-weight: bold;">Obrigado por sua compra! 🎉</p>';
+                
+                document.getElementById('mensagemSucesso').style.display = 'block';
+                
+                document.getElementById('formBusca').style.display = 'none';
+                document.getElementById('vendaInfo').style.display = 'none';
+                document.getElementById('formComprovante').style.display = 'none';
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } catch (erro) {
+                console.error('Erro ao enviar comprovante:', erro);
+                document.getElementById('mensagemErro').innerHTML = 
+                    '<h3><i class="fas fa-times-circle"></i> Erro ao Enviar Comprovante</h3>' +
+                    '<p>' + erro.message + '</p>';
+                document.getElementById('mensagemErro').style.display = 'block';
+                
+                btnEnviar.disabled = false;
+                btnEnviar.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Comprovante';
+            }
+        }
+    </script>
+</body>
+</html>
