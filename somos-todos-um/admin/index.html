@@ -16,7 +16,6 @@
             background: #f5f7fa;
         }
 
-        /* Sidebar */
         .sidebar {
             position: fixed;
             left: 0;
@@ -53,13 +52,11 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Main Content */
         .main-content {
             margin-left: 250px;
             padding: 20px;
         }
 
-        /* Header */
         .header {
             background: white;
             padding: 20px 30px;
@@ -97,7 +94,6 @@
             background: #c0392b;
         }
 
-        /* Stats Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -147,7 +143,6 @@
             color: #9b59b6;
         }
 
-        /* Chart Section */
         .chart-section {
             background: white;
             padding: 25px;
@@ -161,7 +156,6 @@
             margin-bottom: 20px;
         }
 
-        /* Recent Sales */
         .recent-sales {
             background: white;
             padding: 25px;
@@ -215,12 +209,6 @@
             color: #856404;
         }
 
-        .status-badge.failed {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        /* Loading */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -252,7 +240,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -276,12 +263,10 @@
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
 
-    <!-- Sidebar -->
     <div class="sidebar">
         <h2>📊 Dashboard</h2>
         <a href="index.html" class="menu-item active">🏠 Início</a>
@@ -292,9 +277,7 @@
         <a href="venda.html" class="menu-item">💳 Vendas</a>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
         <div class="header">
             <h1>Dashboard Administrativo</h1>
             <div class="user-info">
@@ -303,7 +286,6 @@
             </div>
         </div>
 
-        <!-- Stats Cards -->
         <div class="stats-grid">
             <div class="stat-card blue">
                 <h3>Total de Vendas</h3>
@@ -330,13 +312,11 @@
             </div>
         </div>
 
-        <!-- Chart Section -->
         <div class="chart-section">
             <h2>Vendas nos Últimos 7 Dias</h2>
             <canvas id="salesChart" width="400" height="100"></canvas>
         </div>
 
-        <!-- Recent Sales -->
         <div class="recent-sales">
             <h2>Vendas Recentes</h2>
             <table class="sales-table">
@@ -363,18 +343,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Configuração do Supabase
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxNzY2MDAsImV4cCI6MjA1MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_tG4G2vYm3YfI';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Verificar autenticação ao carregar a página
         window.addEventListener('DOMContentLoaded', async function() {
             const userSession = localStorage.getItem('userSession');
             
             if (!userSession) {
-                // Não está logado, redirecionar para login
-                window.location.href = 'admin.html';
+                window.location.href = 'login.html';
                 return;
             }
 
@@ -382,36 +359,27 @@
             const now = new Date().getTime();
             const sessionAge = now - session.timestamp;
             
-            // Verificar se a sessão expirou (24 horas)
             if (sessionAge > 24 * 60 * 60 * 1000) {
                 localStorage.removeItem('userSession');
-                window.location.href = 'admin.html';
+                window.location.href = 'login.html';
                 return;
             }
 
-            // Mostrar email do usuário
             document.getElementById('userEmail').textContent = session.email;
-
-            // Carregar dados do dashboard
             await loadDashboardData();
-
-            // Ocultar loading
             document.getElementById('loadingOverlay').classList.add('hidden');
         });
 
-        // Função de logout
         function logout() {
             if (confirm('Tem certeza que deseja sair?')) {
                 localStorage.removeItem('userSession');
                 sessionStorage.clear();
-                window.location.href = 'admin.html';
+                window.location.href = 'login.html';
             }
         }
 
-        // Carregar dados do dashboard
         async function loadDashboardData() {
             try {
-                // Carregar total de igrejas
                 const { data: igrejas, error: igrejasError } = await supabase
                     .from('igrejas')
                     .select('*');
@@ -420,10 +388,7 @@
                     document.getElementById('totalIgrejas').textContent = igrejas.length;
                 }
 
-                // Carregar vendas recentes (simulado - ajuste conforme sua tabela)
                 loadRecentSales();
-
-                // Criar gráfico
                 createSalesChart();
 
             } catch (error) {
@@ -431,11 +396,9 @@
             }
         }
 
-        // Carregar vendas recentes (exemplo)
         function loadRecentSales() {
             const tbody = document.getElementById('recentSalesBody');
             
-            // Dados de exemplo - substitua pela consulta real ao Supabase
             const salesData = [
                 { data: '03/01/2026', igreja: 'Igreja Batista Central', valor: 'R$ 500,00', comissao: 'R$ 50,00', status: 'success' },
                 { data: '02/01/2026', igreja: 'Igreja Assembleia de Deus', valor: 'R$ 300,00', comissao: 'R$ 30,00', status: 'pending' },
@@ -453,7 +416,6 @@
             `).join('');
         }
 
-        // Criar gráfico de vendas
         function createSalesChart() {
             const ctx = document.getElementById('salesChart').getContext('2d');
             
