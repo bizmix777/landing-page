@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrativo - Somos Todos Um</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,39 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .sidebar {
@@ -22,55 +55,57 @@
             top: 0;
             width: 250px;
             height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 20px 0;
             overflow-y: auto;
         }
 
         .sidebar h2 {
-            margin-bottom: 30px;
-            font-size: 24px;
-            text-align: center;
+            padding: 0 20px 20px;
+            color: #667eea;
+            border-bottom: 2px solid #f0f0f0;
+            margin-bottom: 20px;
         }
 
         .menu-item {
             display: block;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            color: white;
+            padding: 15px 20px;
+            color: #333;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
         }
 
         .menu-item:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
         }
 
         .menu-item.active {
-            background: rgba(255, 255, 255, 0.3);
+            background: #667eea;
+            color: white;
+            border-left: 4px solid #764ba2;
         }
 
         .main-content {
             margin-left: 250px;
-            padding: 20px;
+            padding: 30px;
         }
 
         .header {
             background: white;
             padding: 20px 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
         }
 
         .header h1 {
             color: #333;
-            font-size: 28px;
+            font-size: 1.8rem;
         }
 
         .user-info {
@@ -79,19 +114,25 @@
             gap: 15px;
         }
 
+        .user-info span {
+            color: #666;
+            font-weight: 600;
+        }
+
         .btn-logout {
+            padding: 10px 20px;
             background: #e74c3c;
             color: white;
             border: none;
-            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .btn-logout:hover {
             background: #c0392b;
+            transform: translateY(-2px);
         }
 
         .stats-grid {
@@ -105,85 +146,112 @@
             background: white;
             padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
         }
 
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .stat-card.blue::before { background: #3498db; }
+        .stat-card.green::before { background: #27ae60; }
+        .stat-card.purple::before { background: #9b59b6; }
+        .stat-card.red::before { background: #e74c3c; }
+        .stat-card.orange::before { background: #f39c12; }
+
         .stat-card h3 {
-            color: #666;
-            font-size: 14px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            font-weight: 600;
             margin-bottom: 10px;
             text-transform: uppercase;
         }
 
         .stat-card .value {
-            color: #333;
-            font-size: 32px;
-            font-weight: bold;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
             margin-bottom: 5px;
         }
 
         .stat-card .change {
-            font-size: 14px;
+            font-size: 0.85rem;
             color: #27ae60;
-        }
-
-        .stat-card.blue .value {
-            color: #3498db;
-        }
-
-        .stat-card.green .value {
-            color: #27ae60;
-        }
-
-        .stat-card.purple .value {
-            color: #9b59b6;
-        }
-
-        .stat-card.red .value {
-            color: #e74c3c;
         }
 
         .recent-sales {
             background: white;
-            padding: 25px;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .recent-sales h2 {
             color: #333;
             margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
         }
 
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .sales-table {
             width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
+            border-collapse: collapse;
         }
 
-        .loading-overlay.hidden {
-            display: none;
+        .sales-table thead {
+            background: #f8f9fa;
         }
 
-        .spinner {
-            border: 4px solid rgba(102, 126, 234, 0.3);
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
+        .sales-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .sales-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .sales-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge.danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge.info {
+            background: #d1ecf1;
+            color: #0c5460;
         }
 
         @media (max-width: 768px) {
@@ -195,11 +263,6 @@
 
             .main-content {
                 margin-left: 0;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 15px;
             }
 
             .stats-grid {
@@ -218,9 +281,9 @@
         <a href="index.html" class="menu-item active">🏠 Início</a>
         <a href="dashboard-comissoes.html" class="menu-item">💰 Comissões</a>
         <a href="igrejas.html" class="menu-item">⛪ Igrejas</a>
-        <a href="comprar.html" class="menu-item">🛒 Comprar</a>
-        <a href="comprovante.html" class="menu-item">📄 Comprovantes</a>
         <a href="venda.html" class="menu-item">💳 Vendas</a>
+        <a href="/comprar.html" class="menu-item">🛒 Comprar</a>
+        <a href="/ig_parceiras.html" class="menu-item">🌐 Igrejas Públicas</a>
     </div>
 
     <div class="main-content">
@@ -236,98 +299,180 @@
             <div class="stat-card blue">
                 <h3>Total de Vendas</h3>
                 <div class="value" id="totalVendas">R$ 0,00</div>
-                <div class="change">↑ +12% este mês</div>
+                <div class="change" id="changeVendas">Calculando...</div>
             </div>
 
             <div class="stat-card green">
-                <h3>Comissões Pagas</h3>
-                <div class="value" id="comissoesPagas">R$ 0,00</div>
-                <div class="change">↑ +8% este mês</div>
+                <h3>Vendas Diretas</h3>
+                <div class="value" id="vendasDiretas">R$ 0,00</div>
+                <div class="change" id="changeVendasDiretas">Sem comissão</div>
             </div>
 
             <div class="stat-card purple">
-                <h3>Igrejas Cadastradas</h3>
-                <div class="value" id="totalIgrejas">0</div>
-                <div class="change">↑ +3 novas</div>
+                <h3>Vendas com Igreja</h3>
+                <div class="value" id="vendasIgreja">R$ 0,00</div>
+                <div class="change" id="changeVendasIgreja">Com comissão</div>
+            </div>
+
+            <div class="stat-card orange">
+                <h3>Comissões a Pagar</h3>
+                <div class="value" id="comissoesPendentes">R$ 0,00</div>
+                <div class="change" id="changeComissoes">Pendentes</div>
             </div>
 
             <div class="stat-card red">
-                <h3>Comissões Pendentes</h3>
-                <div class="value" id="comissoesPendentes">R$ 0,00</div>
-                <div class="change">5 pendentes</div>
+                <h3>Igrejas Ativas</h3>
+                <div class="value" id="totalIgrejas">0</div>
+                <div class="change" id="changeIgrejas">Cadastradas</div>
             </div>
         </div>
 
         <div class="recent-sales">
-            <h2>Bem-vindo ao Dashboard!</h2>
-            <p>Use o menu lateral para navegar pelas funcionalidades do sistema.</p>
+            <h2>📊 Vendas Recentes (Últimas 10)</h2>
+            <table class="sales-table">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Cliente</th>
+                        <th>Igreja</th>
+                        <th>Origem</th>
+                        <th>Valor</th>
+                        <th>Comissão</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="recentSalesBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px;">Carregando dados...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // ✅ CREDENCIAIS CORRETAS
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
         const { createClient } = window.supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        window.addEventListener('DOMContentLoaded', async function() {
-            console.log('🚀 Dashboard carregado');
-            
-            const userSession = localStorage.getItem('userSession');
-            
-            if (!userSession) {
-                console.log('❌ Sessão não encontrada, redirecionando...');
+        // Verificar sessão
+        function checkSession() {
+            const session = localStorage.getItem('adminSession');
+            if (!session) {
                 window.location.href = 'login.html';
-                return;
+                return false;
             }
 
-            const session = JSON.parse(userSession);
+            const sessionData = JSON.parse(session);
             const now = new Date().getTime();
-            const sessionAge = now - session.timestamp;
             
-            if (sessionAge > 24 * 60 * 60 * 1000) {
-                console.log('⏰ Sessão expirada, redirecionando...');
-                localStorage.removeItem('userSession');
+            if (now > sessionData.expires) {
+                localStorage.removeItem('adminSession');
+                alert('Sessão expirada. Faça login novamente.');
                 window.location.href = 'login.html';
-                return;
+                return false;
             }
 
-            console.log('✅ Sessão válida:', session.email);
-            document.getElementById('userEmail').textContent = session.email;
-            
-            await loadDashboardData();
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        });
-
-        function logout() {
-            if (confirm('Tem certeza que deseja sair?')) {
-                console.log('👋 Fazendo logout...');
-                localStorage.removeItem('userSession');
-                sessionStorage.clear();
-                window.location.href = 'login.html';
-            }
+            document.getElementById('userEmail').textContent = sessionData.email;
+            return true;
         }
 
+        function logout() {
+            localStorage.removeItem('adminSession');
+            window.location.href = 'login.html';
+        }
+
+        // Carregar dados do dashboard
         async function loadDashboardData() {
             try {
-                console.log('📊 Carregando dados do dashboard...');
-                
-                const { data: igrejas, error: igrejasError } = await supabaseClient
-                    .from('igrejas')
-                    .select('*');
+                // Buscar todas as vendas
+                const { data: vendas, error } = await supabase
+                    .from('vendas')
+                    .select(`
+                        *,
+                        igrejas (
+                            nome
+                        )
+                    `)
+                    .order('created_at', { ascending: false });
 
-                if (!igrejasError && igrejas) {
-                    console.log('✅ Igrejas carregadas:', igrejas.length);
-                    document.getElementById('totalIgrejas').textContent = igrejas.length;
+                if (error) throw error;
+
+                console.log('Vendas carregadas:', vendas);
+
+                // Calcular totais
+                const totalVendas = vendas.reduce((sum, v) => sum + parseFloat(v.valor_total || 0), 0);
+                const vendasDiretas = vendas.filter(v => v.origem === 'compra_direta');
+                const vendasComIgreja = vendas.filter(v => v.origem !== 'compra_direta');
+                const totalVendasDiretas = vendasDiretas.reduce((sum, v) => sum + parseFloat(v.valor_total || 0), 0);
+                const totalVendasIgreja = vendasComIgreja.reduce((sum, v) => sum + parseFloat(v.valor_total || 0), 0);
+                const totalComissoes = vendas.reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0);
+
+                // Buscar total de igrejas
+                const { data: igrejas, error: igrejasError } = await supabase
+                    .from('igrejas')
+                    .select('id');
+
+                if (igrejasError) throw igrejasError;
+
+                // Atualizar cards
+                document.getElementById('totalVendas').textContent = `R$ ${totalVendas.toFixed(2)}`;
+                document.getElementById('vendasDiretas').textContent = `R$ ${totalVendasDiretas.toFixed(2)}`;
+                document.getElementById('vendasIgreja').textContent = `R$ ${totalVendasIgreja.toFixed(2)}`;
+                document.getElementById('comissoesPendentes').textContent = `R$ ${totalComissoes.toFixed(2)}`;
+                document.getElementById('totalIgrejas').textContent = igrejas.length;
+
+                document.getElementById('changeVendas').textContent = `${vendas.length} vendas realizadas`;
+                document.getElementById('changeVendasDiretas').textContent = `${vendasDiretas.length} vendas`;
+                document.getElementById('changeVendasIgreja').textContent = `${vendasComIgreja.length} vendas`;
+                document.getElementById('changeComissoes').textContent = `${vendasComIgreja.length} vendas com comissão`;
+                document.getElementById('changeIgrejas').textContent = `${igrejas.length} cadastradas`;
+
+                // Preencher tabela de vendas recentes
+                const tbody = document.getElementById('recentSalesBody');
+                tbody.innerHTML = '';
+
+                const vendasRecentes = vendas.slice(0, 10);
+
+                if (vendasRecentes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 30px;">Nenhuma venda registrada ainda.</td></tr>';
                 } else {
-                    console.log('⚠️ Erro ao carregar igrejas:', igrejasError);
+                    vendasRecentes.forEach(venda => {
+                        const row = document.createElement('tr');
+                        const data = new Date(venda.created_at).toLocaleDateString('pt-BR');
+                        const igreja = venda.igrejas ? venda.igrejas.nome : '(Compra Direta)';
+                        const origem = venda.origem === 'compra_direta' ? 'Direta' : 'Igreja';
+                        const statusClass = venda.status_pagamento === 'pago' ? 'success' : 
+                                          venda.status_pagamento === 'pendente' ? 'warning' : 'danger';
+                        
+                        row.innerHTML = `
+                            <td>${data}</td>
+                            <td>${venda.nome_comprador || 'N/A'}</td>
+                            <td>${igreja}</td>
+                            <td><span class="badge info">${origem}</span></td>
+                            <td>R$ ${parseFloat(venda.valor_total || 0).toFixed(2)}</td>
+                            <td>R$ ${parseFloat(venda.valor_comissao || 0).toFixed(2)}</td>
+                            <td><span class="badge ${statusClass}">${venda.status_pagamento || 'pendente'}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
                 }
 
             } catch (error) {
-                console.error('❌ Erro ao carregar dados:', error);
+                console.error('Erro ao carregar dashboard:', error);
+                alert('Erro ao carregar dados do dashboard: ' + error.message);
+            } finally {
+                document.getElementById('loadingOverlay').classList.add('hidden');
             }
+        }
+
+        // Inicializar
+        if (checkSession()) {
+            loadDashboardData();
         }
     </script>
 </body>
