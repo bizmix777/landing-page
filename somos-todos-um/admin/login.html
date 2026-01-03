@@ -90,10 +90,6 @@
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
         .btn-login:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -154,16 +150,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        @media (max-width: 480px) {
-            .login-container {
-                padding: 30px 20px;
-            }
-
-            .login-header h1 {
-                font-size: 24px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -179,31 +165,15 @@
         <form id="loginForm" onsubmit="handleLogin(event); return false;">
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    placeholder="seu@email.com" 
-                    required
-                    autocomplete="email"
-                >
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required autocomplete="email">
             </div>
 
             <div class="form-group">
                 <label for="password">Senha</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="Digite sua senha" 
-                    required
-                    autocomplete="current-password"
-                >
+                <input type="password" id="password" name="password" placeholder="Digite sua senha" required autocomplete="current-password">
             </div>
 
-            <button type="submit" class="btn-login" id="btnLogin">
-                Entrar
-            </button>
+            <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
 
             <div class="loading" id="loading">
                 <div class="spinner"></div>
@@ -214,7 +184,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxNzY2MDAsImV4cCI6MjA1MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_tG4G2vYm3YfI';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
         const { createClient } = window.supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -228,10 +198,7 @@
             errorMessage.textContent = message;
             errorMessage.classList.add('show');
             successMessage.classList.remove('show');
-            
-            setTimeout(() => {
-                errorMessage.classList.remove('show');
-            }, 5000);
+            setTimeout(() => errorMessage.classList.remove('show'), 5000);
         }
 
         function showSuccess(message) {
@@ -247,8 +214,9 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            console.log('🔐 Tentando fazer login...');
+            console.log('🔐 Iniciando login...');
             console.log('📧 Email:', email);
+            console.log('🔑 Supabase URL:', SUPABASE_URL);
 
             if (!email || !password) {
                 showError('Por favor, preencha todos os campos.');
@@ -261,20 +229,18 @@
             errorMessage.classList.remove('show');
 
             try {
-                console.log('📤 Enviando requisição ao Supabase...');
+                console.log('📤 Enviando requisição...');
 
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
 
-                console.log('📥 Resposta do Supabase:');
-                console.log('✅ Data:', data);
-                console.log('❌ Error:', error);
+                console.log('📥 Resposta:');
+                console.log('Data:', data);
+                console.log('Error:', error);
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
                 console.log('✅ Login bem-sucedido!');
                 showSuccess('Login realizado com sucesso! Redirecionando...');
@@ -285,28 +251,24 @@
                     timestamp: new Date().getTime()
                 }));
 
-                console.log('💾 Sessão salva no localStorage');
-
                 setTimeout(() => {
-                    console.log('🔄 Redirecionando para index.html...');
                     window.location.href = 'index.html';
                 }, 1000);
 
             } catch (error) {
-                console.error('💥 Erro no login:', error);
+                console.error('❌ Erro:', error);
                 
                 let errorMsg = 'Erro ao fazer login. Tente novamente.';
                 
                 if (error.message.includes('Invalid login credentials')) {
                     errorMsg = 'E-mail ou senha incorretos.';
                 } else if (error.message.includes('Email not confirmed')) {
-                    errorMsg = 'E-mail não confirmado. Verifique sua caixa de entrada.';
+                    errorMsg = 'E-mail não confirmado.';
                 } else if (error.message) {
                     errorMsg = error.message;
                 }
                 
                 showError(errorMsg);
-                
                 btnLogin.disabled = false;
                 btnLogin.textContent = 'Entrar';
                 loading.classList.remove('show');
@@ -316,20 +278,14 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Página de login carregada');
-            
             const userSession = localStorage.getItem('userSession');
-            
             if (userSession) {
                 const session = JSON.parse(userSession);
                 const now = new Date().getTime();
                 const sessionAge = now - session.timestamp;
-                
                 if (sessionAge < 24 * 60 * 60 * 1000) {
-                    console.log('✅ Sessão válida encontrada, redirecionando...');
                     window.location.href = 'index.html';
                 } else {
-                    console.log('⏰ Sessão expirada, removendo...');
                     localStorage.removeItem('userSession');
                 }
             }
