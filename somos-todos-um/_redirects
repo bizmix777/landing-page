@@ -1,0 +1,14 @@
+# Permitir acesso direto aos arquivos HTML
+/comprar.html  /comprar.html  200
+/teste.html    /teste.html    200
+/ig_parceiras.html  /ig_parceiras.html  200
+
+# Permitir acesso à pasta admin
+/admin/*  /admin/:splat  200
+
+# Regras para a pasta /livro
+/livro  /livro/index.html  200
+/livro/*  /livro/:splat  200
+
+# SPA fallback - deve ser a ÚLTIMA regra
+/*  /index.html  200
