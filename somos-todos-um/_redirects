@@ -1,29 +1,39 @@
-# IMPORTANTE: Regras específicas ANTES das gerais
+# ===================================
+# REGRAS DE REDIRECIONAMENTO
+# Cloudflare Pages
+# ===================================
 
-# Arquivos HTML específicos (sem wildcard)
-/comprar.html                /comprar.html                200!
-/teste.html                  /teste.html                  200!
-/ig_parceiras.html           /ig_parceiras.html           200!
-/index.html                  /index.html                  200!
+# Arquivos HTML na raiz
+/teste-supabase.html     /teste-supabase.html     200
+/comprar.html            /comprar.html            200
+/teste.html              /teste.html              200
+/ig_parceiras.html       /ig_parceiras.html       200
+/index.html              /index.html              200
 
 # Pasta admin
-/admin                       /admin/index.html            200
-/admin/                      /admin/index.html            200
-/admin/login.html            /admin/login.html            200!
-/admin/venda.html            /admin/venda.html            200!
-/admin/igrejas.html          /admin/igrejas.html          200!
-/admin/dashboard-comissoes.html  /admin/dashboard-comissoes.html  200!
-/admin/*                     /admin/:splat                200
+/admin/login.html                    /admin/login.html                    200
+/admin/index.html                    /admin/index.html                    200
+/admin/admin.html                    /admin/admin.html                    200
+/admin/dashboard-comissoes.html      /admin/dashboard-comissoes.html      200
+/admin/venda.html                    /admin/venda.html                    200
+/admin/igrejas.html                  /admin/igrejas.html                  200
+/admin/comprovante.html              /admin/comprovante.html              200
+/admin/*                             /admin/:splat                        200
 
 # Pasta livro
-/livro                       /livro/index.html            200
-/livro/                      /livro/index.html            200
-/livro/*                     /livro/:splat                200
+/livro                   /livro/index.html        200
+/livro/                  /livro/index.html        200
+/livro/*                 /livro/:splat            200
 
-# Arquivos estáticos
-/images/*                    /images/:splat               200
-/css/*                       /css/:splat                  200
-/js/*                        /js/:splat                   200
+# Arquivos estáticos (CSS, JS, imagens)
+/js/*                    /js/:splat               200
+/css/*                   /css/:splat              200
+/images/*                /images/:splat           200
+/assets/*                /assets/:splat           200
+
+# Favicon e outros recursos
+/favicon.ico             /favicon.ico             200
+/robots.txt              /robots.txt              200
 
 # SPA fallback - ÚLTIMA regra
-/*                           /index.html                  200
+/*                       /index.html              200
