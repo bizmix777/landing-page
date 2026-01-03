@@ -462,7 +462,7 @@
                 <button class="btn-close" onclick="closeModal()">&times;</button>
             </div>
 
-            <form id="igrejaForm" onsubmit="saveIgreja(event)">
+            <form id="igrejaForm" onsubmit="saveIgreja(event); return false;">
                 <input type="hidden" id="igrejaId">
 
                 <div class="form-group">
@@ -591,7 +591,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxNzY2MDAsImV4cCI6MjA1MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_tG4G2vYm3YfI';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
         const { createClient } = window.supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -599,6 +599,7 @@
         let currentEditId = null;
 
         window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Página de igrejas carregada');
             checkAuth();
             loadIgrejas();
         });
@@ -606,6 +607,7 @@
         function checkAuth() {
             const userSession = localStorage.getItem('userSession');
             if (!userSession) {
+                console.log('❌ Sessão não encontrada');
                 window.location.href = 'login.html';
                 return;
             }
@@ -615,9 +617,12 @@
             const sessionAge = now - session.timestamp;
             
             if (sessionAge > 24 * 60 * 60 * 1000) {
+                console.log('⏰ Sessão expirada');
                 localStorage.removeItem('userSession');
                 window.location.href = 'login.html';
             }
+            
+            console.log('✅ Sessão válida:', session.email);
         }
 
         function logout() {
@@ -628,17 +633,23 @@
         }
 
         async function loadIgrejas() {
+            console.log('📊 Carregando igrejas...');
             try {
                 const { data, error } = await supabaseClient
                     .from('igrejas')
                     .select('*')
                     .order('nome', { ascending: true });
 
+                console.log('📥 Resposta do Supabase:');
+                console.log('Data:', data);
+                console.log('Error:', error);
+
                 if (error) throw error;
 
+                console.log('✅ Igrejas carregadas:', data.length);
                 displayIgrejas(data);
             } catch (error) {
-                console.error('Erro ao carregar igrejas:', error);
+                console.error('❌ Erro ao carregar igrejas:', error);
                 showMessage('Erro ao carregar dados: ' + error.message, 'error');
                 document.getElementById('tableBody').innerHTML = `
                     <tr><td colspan="9" class="empty-state">
@@ -703,6 +714,7 @@
         }
 
         async function editIgreja(id) {
+            console.log('✏️ Editando igreja:', id);
             try {
                 const { data, error } = await supabaseClient
                     .from('igrejas')
@@ -733,13 +745,16 @@
 
                 document.getElementById('modal').classList.add('show');
             } catch (error) {
-                console.error('Erro ao carregar igreja:', error);
+                console.error('❌ Erro ao carregar igreja:', error);
                 showMessage('Erro ao carregar dados: ' + error.message, 'error');
             }
         }
 
         async function saveIgreja(event) {
             event.preventDefault();
+            event.stopPropagation();
+
+            console.log('💾 Salvando igreja...');
 
             const igrejaData = {
                 nome: document.getElementById('nome').value,
@@ -759,8 +774,11 @@
                 observacoes: document.getElementById('observacoes').value
             };
 
+            console.log('📤 Dados a serem salvos:', igrejaData);
+
             try {
                 if (currentEditId) {
+                    console.log('🔄 Atualizando igreja:', currentEditId);
                     const { error } = await supabaseClient
                         .from('igrejas')
                         .update(igrejaData)
@@ -769,6 +787,7 @@
                     if (error) throw error;
                     showMessage('Igreja atualizada com sucesso!', 'success');
                 } else {
+                    console.log('➕ Inserindo nova igreja');
                     const { error } = await supabaseClient
                         .from('igrejas')
                         .insert([igrejaData]);
@@ -780,15 +799,19 @@
                 closeModal();
                 loadIgrejas();
             } catch (error) {
-                console.error('Erro ao salvar igreja:', error);
+                console.error('❌ Erro ao salvar igreja:', error);
                 showMessage('Erro ao salvar: ' + error.message, 'error');
             }
+
+            return false;
         }
 
         async function deleteIgreja(id) {
             if (!confirm('Tem certeza que deseja excluir esta igreja?')) {
                 return;
             }
+
+            console.log('🗑️ Excluindo igreja:', id);
 
             try {
                 const { error } = await supabaseClient
@@ -801,7 +824,7 @@
                 showMessage('Igreja excluída com sucesso!', 'success');
                 loadIgrejas();
             } catch (error) {
-                console.error('Erro ao excluir igreja:', error);
+                console.error('❌ Erro ao excluir igreja:', error);
                 showMessage('Erro ao excluir: ' + error.message, 'error');
             }
         }
