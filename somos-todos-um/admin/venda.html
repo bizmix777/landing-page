@@ -267,7 +267,7 @@
             <p>Registre uma venda e ajude sua igreja a crescer</p>
             <div class="header-actions">
                 <a href="/index.html" class="btn btn-secondary">🏠 Página Inicial</a>
-                <a href="/ig_parceiras.html">⛪ Igrejas Parceiras</a>
+                <a href="/ig_parceiras.html" class="btn btn-secondary">⛪ Igrejas Parceiras</a>
                 <a href="/admin/dashboard-comissoes.html" class="btn btn-secondary">📊 Dashboard</a>
             </div>
         </div>
@@ -403,20 +403,26 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://pqkqgvdnwmfhbfqjzquu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxa3FndmRud21maGJmcWp6cXV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQxMTI4NTYsImV4cCI6MjA0OTY4ODg1Nn0.kTvfhLlLdTh1SbKYLVB7HZvRm_4lZ0OXAJQMlFiXYtc';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // ✅ CREDENCIAIS CORRETAS
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let igrejasData = [];
 
         // Carregar igrejas
         async function carregarIgrejas() {
+            console.log('📊 Carregando igrejas...');
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('igrejas')
                     .select('*')
                     .eq('ativo', true)
                     .order('nome', { ascending: true });
+
+                console.log('📥 Resposta:', data, error);
 
                 if (error) throw error;
 
@@ -432,9 +438,16 @@
 
                 document.getElementById('loadingIgrejas').style.display = 'none';
                 document.getElementById('igrejaContainer').style.display = 'grid';
+                
+                console.log('✅ Igrejas carregadas:', igrejasData.length);
             } catch (error) {
-                console.error('Erro ao carregar igrejas:', error);
-                showAlert('Erro ao carregar igrejas. Recarregue a página.', 'error');
+                console.error('❌ Erro ao carregar igrejas:', error);
+                document.getElementById('loadingIgrejas').innerHTML = `
+                    <p style="color: #e74c3c;">❌ Erro ao carregar igrejas: ${error.message}</p>
+                    <button onclick="carregarIgrejas()" class="btn btn-secondary" style="margin-top: 10px;">
+                        🔄 Tentar Novamente
+                    </button>
+                `;
             }
         }
 
@@ -485,7 +498,7 @@
                 telefone_comprador: document.getElementById('telefone_comprador').value,
                 whatsapp_comprador: document.getElementById('whatsapp_comprador').value,
                 endereco_entrega: document.getElementById('endereco_entrega').value,
-                igreja_id: parseInt(igrejaId),
+                igreja_id: igrejaId,
                 codigo_indicacao: document.getElementById('codigo_indicacao').value,
                 quantidade: quantidade,
                 valor_unitario: valorUnitario,
@@ -497,10 +510,15 @@
                 origem: 'venda_igreja'
             };
 
+            console.log('📤 Enviando venda:', vendaData);
+
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('vendas')
-                    .insert([vendaData]);
+                    .insert([vendaData])
+                    .select();
+
+                console.log('📥 Resposta:', data, error);
 
                 if (error) throw error;
 
@@ -513,8 +531,8 @@
                 }, 2000);
 
             } catch (error) {
-                console.error('Erro ao registrar venda:', error);
-                showAlert('❌ Erro ao registrar venda. Tente novamente.', 'error');
+                console.error('❌ Erro ao registrar venda:', error);
+                showAlert('❌ Erro ao registrar venda: ' + error.message, 'error');
             } finally {
                 btnSubmit.disabled = false;
                 btnSubmit.textContent = '✅ Registrar Venda';
@@ -533,7 +551,8 @@
             }, 5000);
         }
 
-        carregarIgrejas();
+        // Carregar igrejas ao iniciar
+        window.addEventListener('DOMContentLoaded', carregarIgrejas);
     </script>
 </body>
 </html>
