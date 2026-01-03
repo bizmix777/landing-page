@@ -1,14 +1,29 @@
-# Permitir acesso direto aos arquivos HTML
-/comprar.html  /comprar.html  200
-/teste.html    /teste.html    200
-/ig_parceiras.html  /ig_parceiras.html  200
+# IMPORTANTE: Regras específicas ANTES das gerais
 
-# Permitir acesso à pasta admin
-/admin/*  /admin/:splat  200
+# Arquivos HTML específicos (sem wildcard)
+/comprar.html                /comprar.html                200!
+/teste.html                  /teste.html                  200!
+/ig_parceiras.html           /ig_parceiras.html           200!
+/index.html                  /index.html                  200!
 
-# Regras para a pasta /livro
-/livro  /livro/index.html  200
-/livro/*  /livro/:splat  200
+# Pasta admin
+/admin                       /admin/index.html            200
+/admin/                      /admin/index.html            200
+/admin/login.html            /admin/login.html            200!
+/admin/venda.html            /admin/venda.html            200!
+/admin/igrejas.html          /admin/igrejas.html          200!
+/admin/dashboard-comissoes.html  /admin/dashboard-comissoes.html  200!
+/admin/*                     /admin/:splat                200
 
-# SPA fallback - deve ser a ÚLTIMA regra
-/*  /index.html  200
+# Pasta livro
+/livro                       /livro/index.html            200
+/livro/                      /livro/index.html            200
+/livro/*                     /livro/:splat                200
+
+# Arquivos estáticos
+/images/*                    /images/:splat               200
+/css/*                       /css/:splat                  200
+/js/*                        /js/:splat                   200
+
+# SPA fallback - ÚLTIMA regra
+/*                           /index.html                  200
