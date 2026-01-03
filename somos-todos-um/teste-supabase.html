@@ -10,89 +10,156 @@
             padding: 20px;
             background: #f0f0f0;
         }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
         .result {
             background: white;
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
         .success { color: green; }
         .error { color: red; }
+        button {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
-    <h1>🧪 Teste de Conexão Supabase</h1>
-    <button onclick="testarConexao()">🔍 Testar Conexão</button>
-    <div id="resultado" class="result"></div>
+    <div class="container">
+        <h1>🧪 Teste de Conexão Supabase</h1>
+        <p>Clique no botão abaixo para testar a conexão com o banco de dados.</p>
+        <button onclick="testarConexao()">🔍 Testar Conexão</button>
+        <div id="resultado" class="result"></div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        console.log('🚀 Página de teste carregada');
+
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
         const { createClient } = window.supabase;
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        console.log('✅ Supabase client criado');
+        console.log('URL:', SUPABASE_URL);
+
         async function testarConexao() {
+            console.log('🔍 Iniciando teste de conexão...');
+            
             const resultado = document.getElementById('resultado');
-            resultado.innerHTML = '<p>⏳ Testando conexão...</p>';
+            resultado.innerHTML = '<p>⏳ Testando conexão... Aguarde...</p>';
 
             try {
-                console.log('🔍 Testando conexão com Supabase...');
-                console.log('URL:', SUPABASE_URL);
-                console.log('KEY:', SUPABASE_KEY.substring(0, 20) + '...');
-
                 // Teste 1: Buscar igrejas
-                console.log('📥 Buscando igrejas...');
-                const { data: igrejas, error: igrejasError } = await supabase
+                console.log('📥 Tentando buscar igrejas...');
+                
+                const { data: igrejas, error: igrejasError, status, statusText } = await supabase
                     .from('igrejas')
                     .select('*')
-                    .limit(5);
+                    .limit(10);
+
+                console.log('📊 Status da resposta:', status, statusText);
+                console.log('📊 Dados recebidos:', igrejas);
+                console.log('📊 Erro (se houver):', igrejasError);
 
                 if (igrejasError) {
                     console.error('❌ Erro ao buscar igrejas:', igrejasError);
                     throw igrejasError;
                 }
 
-                console.log('✅ Igrejas encontradas:', igrejas);
-
                 // Teste 2: Buscar vendas
-                console.log('📥 Buscando vendas...');
+                console.log('📥 Tentando buscar vendas...');
+                
                 const { data: vendas, error: vendasError } = await supabase
                     .from('vendas')
                     .select('*')
-                    .limit(5);
+                    .limit(10);
+
+                console.log('📊 Vendas recebidas:', vendas);
+                console.log('📊 Erro vendas (se houver):', vendasError);
 
                 if (vendasError) {
                     console.error('❌ Erro ao buscar vendas:', vendasError);
                     throw vendasError;
                 }
 
-                console.log('✅ Vendas encontradas:', vendas);
-
                 // Sucesso!
+                console.log('✅ TESTE CONCLUÍDO COM SUCESSO!');
+                
                 resultado.innerHTML = `
                     <h2 class="success">✅ CONEXÃO OK!</h2>
-                    <p><strong>Igrejas encontradas:</strong> ${igrejas.length}</p>
-                    <p><strong>Vendas encontradas:</strong> ${vendas.length}</p>
-                    <h3>Detalhes das Igrejas:</h3>
-                    <pre>${JSON.stringify(igrejas, null, 2)}</pre>
-                    <h3>Detalhes das Vendas:</h3>
-                    <pre>${JSON.stringify(vendas, null, 2)}</pre>
+                    <p><strong>✅ Igrejas encontradas:</strong> ${igrejas ? igrejas.length : 0}</p>
+                    <p><strong>✅ Vendas encontradas:</strong> ${vendas ? vendas.length : 0}</p>
+                    
+                    <h3>📋 Detalhes das Igrejas:</h3>
+                    ${igrejas && igrejas.length > 0 ? 
+                        `<pre>${JSON.stringify(igrejas, null, 2)}</pre>` : 
+                        '<p class="error">⚠️ Nenhuma igreja encontrada na tabela.</p>'
+                    }
+                    
+                    <h3>📋 Detalhes das Vendas:</h3>
+                    ${vendas && vendas.length > 0 ? 
+                        `<pre>${JSON.stringify(vendas, null, 2)}</pre>` : 
+                        '<p class="error">⚠️ Nenhuma venda encontrada na tabela.</p>'
+                    }
                 `;
 
             } catch (error) {
-                console.error('❌ ERRO:', error);
+                console.error('❌ ERRO CAPTURADO:', error);
+                
                 resultado.innerHTML = `
                     <h2 class="error">❌ ERRO NA CONEXÃO</h2>
-                    <p><strong>Mensagem:</strong> ${error.message}</p>
+                    <p><strong>Mensagem:</strong> ${error.message || 'Erro desconhecido'}</p>
                     <p><strong>Código:</strong> ${error.code || 'N/A'}</p>
                     <p><strong>Detalhes:</strong> ${error.details || 'N/A'}</p>
-                    <h3>Erro Completo:</h3>
+                    <p><strong>Hint:</strong> ${error.hint || 'N/A'}</p>
+                    
+                    <h3>🔍 Possíveis Causas:</h3>
+                    <ul>
+                        <li>❌ Tabela 'igrejas' ou 'vendas' não existe no Supabase</li>
+                        <li>❌ RLS (Row Level Security) está bloqueando acesso público</li>
+                        <li>❌ Credenciais Supabase inválidas ou expiradas</li>
+                        <li>❌ CORS bloqueando requisições do Cloudflare</li>
+                    </ul>
+                    
+                    <h3>📋 Erro Completo:</h3>
                     <pre>${JSON.stringify(error, null, 2)}</pre>
+                    
+                    <h3>🔧 Próximos Passos:</h3>
+                    <ol>
+                        <li>Verifique se as tabelas existem no Supabase</li>
+                        <li>Desabilite RLS ou crie políticas públicas</li>
+                        <li>Verifique as credenciais (URL e KEY)</li>
+                    </ol>
                 `;
             }
         }
+
+        // Testar automaticamente ao carregar
+        console.log('⚠️ Aguardando clique no botão...');
     </script>
 </body>
 </html>
