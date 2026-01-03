@@ -233,9 +233,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // Configuração do Supabase
-        const SUPABASE_URL = https://zofxhfbjgvpbqjtlkbbk.supabase.co;
-        const SUPABASE_KEY = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM;
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxNzY2MDAsImV4cCI6MjA1MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_tG4G2vYm3YfI';
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Elementos do DOM
@@ -305,7 +304,7 @@
 
                 // Redirecionar para dashboard após 1 segundo
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'index.html';
                 }, 1000);
 
             } catch (error) {
@@ -340,7 +339,6 @@
             }
 
             if (confirm(`Enviar link de recuperação para ${email}?`)) {
-                // Aqui você implementaria a recuperação de senha com Supabase
                 supabase.auth.resetPasswordForEmail(email)
                     .then(() => {
                         showSuccess('Link de recuperação enviado! Verifique seu e-mail.');
@@ -366,7 +364,7 @@
                 
                 // Se a sessão tem menos de 24 horas, redirecionar
                 if (sessionAge < 24 * 60 * 60 * 1000) {
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'index.html';
                 } else {
                     // Sessão expirada, limpar
                     localStorage.removeItem('userSession');
