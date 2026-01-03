@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Igrejas Parceiras - Somos Todos Um</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -24,87 +25,148 @@
         }
 
         .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
             text-align: center;
-            color: white;
-            margin-bottom: 40px;
-            padding: 40px 20px;
-        }
-
-        .header-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
         }
 
         .header h1 {
-            font-size: 42px;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2rem;
         }
 
         .header p {
-            font-size: 18px;
-            opacity: 0.9;
+            color: #666;
+            font-size: 1rem;
         }
 
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+        .btn-back {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
             text-decoration: none;
-            display: inline-flex;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .igrejas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .igreja-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .igreja-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .igreja-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .btn-primary {
-            background: white;
+        .igreja-card h3 i {
             color: #667eea;
         }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
+        .igreja-info {
+            margin-bottom: 15px;
+        }
+
+        .igreja-info p {
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .igreja-info i {
+            color: #667eea;
+            width: 20px;
+        }
+
+        .btn-comprar {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: 2px solid white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .divider {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            margin: 40px 0;
-            border-radius: 2px;
+        .btn-comprar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .loading {
             text-align: center;
-            color: white;
-            padding: 60px 20px;
+            padding: 50px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
 
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+        .loading i {
+            font-size: 3rem;
+            color: #667eea;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -112,100 +174,28 @@
             100% { transform: rotate(360deg); }
         }
 
-        .churches-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .church-card {
+        .no-results {
+            text-align: center;
+            padding: 50px;
             background: white;
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .church-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .church-name {
-            font-size: 22px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .church-info {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             color: #666;
-            font-size: 14px;
-            line-height: 1.8;
         }
 
-        .church-info-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .church-info-icon {
-            font-size: 16px;
-            min-width: 20px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: white;
-            padding: 80px 20px;
-        }
-
-        .empty-state h2 {
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-
-        .empty-state p {
-            font-size: 18px;
-            opacity: 0.9;
+        .no-results i {
+            font-size: 3rem;
+            color: #e0e0e0;
+            margin-bottom: 20px;
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 32px;
-            }
-
-            .header-icon {
-                font-size: 60px;
-            }
-
-            .churches-grid {
+            .igrejas-grid {
                 grid-template-columns: 1fr;
             }
 
-            .actions {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
+            .header h1 {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -213,132 +203,162 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-icon">⛪</div>
-            <h1>Igrejas Parceiras</h1>
-            <p>Conheça as igrejas que fazem parte do projeto Somos Todos Um</p>
+            <h1>⛪ Igrejas Parceiras</h1>
+            <p>Escolha sua igreja e ajude-a a ganhar comissão com sua compra!</p>
+            <a href="/index.html" class="btn-back">← Voltar para Página Inicial</a>
         </div>
 
-        <div class="actions">
-            <a href="comprar.html" class="btn btn-primary">
-                🛒 Fazer uma Compra
-            </a>
-            <a href="index.html" class="btn btn-secondary">
-                🏠 Página Inicial
-            </a>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar igreja por nome, cidade ou pastor...">
         </div>
 
-        <div class="divider"></div>
-
-        <div id="loading" class="loading">
-            <div class="spinner"></div>
-            <p>Carregando igrejas parceiras...</p>
-        </div>
-
-        <div id="churchesGrid" class="churches-grid" style="display: none;"></div>
-
-        <div id="emptyState" class="empty-state" style="display: none;">
-            <h2>Nenhuma igreja cadastrada</h2>
-            <p>Em breve teremos igrejas parceiras disponíveis!</p>
+        <div id="igrejasContainer">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Carregando igrejas parceiras...</p>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // ✅ CREDENCIAIS CORRETAS
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
         const { createClient } = window.supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Página de igrejas públicas carregada');
-            loadChurches();
-        });
+        let todasIgrejas = [];
+        let carregamentoCompleto = false; // ✅ FLAG PARA EVITAR LOOP
 
-        async function loadChurches() {
-            console.log('📊 Carregando igrejas parceiras...');
-            
+        console.log('🚀 Página de igrejas parceiras carregada');
+
+        // ✅ CARREGAR IGREJAS (APENAS UMA VEZ)
+        async function carregarIgrejas() {
+            // ✅ EVITAR MÚLTIPLAS CHAMADAS
+            if (carregamentoCompleto) {
+                console.log('⚠️ Igrejas já foram carregadas. Ignorando nova chamada.');
+                return;
+            }
+
             try {
-                const { data, error } = await supabaseClient
+                console.log('📥 Buscando igrejas no Supabase...');
+
+                const { data, error } = await supabase
                     .from('igrejas')
                     .select('*')
-                    .eq('ativo', true)
-                    .order('nome', { ascending: true });
+                    .eq('ativa', true)
+                    .order('nome');
 
-                console.log('📥 Resposta do Supabase:');
-                console.log('Data:', data);
-                console.log('Error:', error);
-
-                if (error) throw error;
-
-                document.getElementById('loading').style.display = 'none';
-
-                if (!data || data.length === 0) {
-                    console.log('⚠️ Nenhuma igreja encontrada');
-                    document.getElementById('emptyState').style.display = 'block';
-                    return;
+                if (error) {
+                    console.error('❌ Erro ao buscar igrejas:', error);
+                    throw error;
                 }
 
-                console.log('✅ Igrejas carregadas:', data.length);
-                displayChurches(data);
-                
+                console.log('✅ Igrejas carregadas:', data);
+
+                todasIgrejas = data || [];
+                carregamentoCompleto = true; // ✅ MARCAR COMO COMPLETO
+
+                renderizarIgrejas(todasIgrejas);
+
             } catch (error) {
                 console.error('❌ Erro ao carregar igrejas:', error);
-                document.getElementById('loading').innerHTML = `
-                    <div class="spinner"></div>
-                    <p>Erro ao carregar igrejas: ${error.message}</p>
-                    <p style="margin-top: 20px;">
-                        <a href="index.html" class="btn btn-secondary">Voltar para Início</a>
-                    </p>
+                document.getElementById('igrejasContainer').innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Erro ao carregar igrejas</h3>
+                        <p>${error.message}</p>
+                        <button onclick="location.reload()" class="btn-comprar" style="max-width: 200px; margin: 20px auto;">
+                            🔄 Tentar Novamente
+                        </button>
+                    </div>
                 `;
             }
         }
 
-        function displayChurches(churches) {
-            const grid = document.getElementById('churchesGrid');
-            grid.style.display = 'grid';
+        // ✅ RENDERIZAR IGREJAS
+        function renderizarIgrejas(igrejas) {
+            const container = document.getElementById('igrejasContainer');
 
-            grid.innerHTML = churches.map(church => `
-                <div class="church-card">
-                    <div class="church-name">
-                        ⛪ ${church.nome || 'Igreja Sem Nome'}
+            if (!igrejas || igrejas.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-church"></i>
+                        <h3>Nenhuma igreja encontrada</h3>
+                        <p>Não há igrejas parceiras cadastradas no momento.</p>
                     </div>
-                    <div class="church-info">
-                        ${church.responsavel ? `
-                            <div class="church-info-item">
-                                <span class="church-info-icon">👤</span>
-                                <span><strong>Responsável:</strong> ${church.responsavel}</span>
-                            </div>
-                        ` : ''}
-                        
-                        ${church.cidade && church.estado ? `
-                            <div class="church-info-item">
-                                <span class="church-info-icon">📍</span>
-                                <span><strong>Localização:</strong> ${church.cidade} - ${church.estado}</span>
-                            </div>
-                        ` : ''}
-                        
-                        ${church.telefone ? `
-                            <div class="church-info-item">
-                                <span class="church-info-icon">📞</span>
-                                <span><strong>Telefone:</strong> ${church.telefone}</span>
-                            </div>
-                        ` : ''}
-                        
-                        ${church.email ? `
-                            <div class="church-info-item">
-                                <span class="church-info-icon">✉️</span>
-                                <span><strong>Email:</strong> ${church.email}</span>
-                            </div>
-                        ` : ''}
-                        
-                        <div class="church-info-item" style="margin-top: 15px;">
-                            <span class="status-badge">✓ Parceira Ativa</span>
-                        </div>
+                `;
+                return;
+            }
+
+            const grid = document.createElement('div');
+            grid.className = 'igrejas-grid';
+
+            igrejas.forEach(igreja => {
+                const card = document.createElement('div');
+                card.className = 'igreja-card';
+
+                const linkVenda = `/admin/venda.html?igreja=${igreja.id}`;
+
+                card.innerHTML = `
+                    <h3>
+                        <i class="fas fa-church"></i>
+                        ${igreja.nome}
+                    </h3>
+                    <div class="igreja-info">
+                        ${igreja.cidade ? `<p><i class="fas fa-map-marker-alt"></i> ${igreja.cidade}${igreja.estado ? ', ' + igreja.estado : ''}</p>` : ''}
+                        ${igreja.pastor ? `<p><i class="fas fa-user"></i> Pastor: ${igreja.pastor}</p>` : ''}
+                        ${igreja.telefone ? `<p><i class="fas fa-phone"></i> ${igreja.telefone}</p>` : ''}
+                        ${igreja.email ? `<p><i class="fas fa-envelope"></i> ${igreja.email}</p>` : ''}
+                        <p><i class="fas fa-percentage"></i> Comissão: ${igreja.percentual_comissao}%</p>
                     </div>
-                </div>
-            `).join('');
+                    <a href="${linkVenda}" class="btn-comprar">
+                        🛒 Comprar e Ajudar Esta Igreja
+                    </a>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(grid);
+
+            console.log(`✅ ${igrejas.length} igrejas renderizadas`);
         }
+
+        // ✅ BUSCA (COM DEBOUNCE PARA EVITAR MÚLTIPLAS CHAMADAS)
+        let timeoutBusca;
+        function buscarIgrejas() {
+            clearTimeout(timeoutBusca);
+            
+            timeoutBusca = setTimeout(() => {
+                const termo = document.getElementById('searchInput').value.toLowerCase().trim();
+
+                if (!termo) {
+                    renderizarIgrejas(todasIgrejas);
+                    return;
+                }
+
+                const igrejasFiltradas = todasIgrejas.filter(igreja => {
+                    return (
+                        igreja.nome?.toLowerCase().includes(termo) ||
+                        igreja.cidade?.toLowerCase().includes(termo) ||
+                        igreja.estado?.toLowerCase().includes(termo) ||
+                        igreja.pastor?.toLowerCase().includes(termo)
+                    );
+                });
+
+                renderizarIgrejas(igrejasFiltradas);
+            }, 300); // ✅ AGUARDA 300ms APÓS PARAR DE DIGITAR
+        }
+
+        // ✅ ADICIONAR LISTENER APENAS UMA VEZ
+        document.getElementById('searchInput').addEventListener('input', buscarIgrejas);
+
+        // ✅ CARREGAR IGREJAS APENAS UMA VEZ AO CARREGAR A PÁGINA
+        carregarIgrejas();
     </script>
 </body>
 </html>
