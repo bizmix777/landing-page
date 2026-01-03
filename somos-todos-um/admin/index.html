@@ -127,10 +127,6 @@
             color: #27ae60;
         }
 
-        .stat-card.red .value {
-            color: #e74c3c;
-        }
-
         .stat-card.blue .value {
             color: #3498db;
         }
@@ -143,17 +139,8 @@
             color: #9b59b6;
         }
 
-        .chart-section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .chart-section h2 {
-            color: #333;
-            margin-bottom: 20px;
+        .stat-card.red .value {
+            color: #e74c3c;
         }
 
         .recent-sales {
@@ -166,47 +153,6 @@
         .recent-sales h2 {
             color: #333;
             margin-bottom: 20px;
-        }
-
-        .sales-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .sales-table th {
-            background: #f8f9fa;
-            padding: 12px;
-            text-align: left;
-            color: #666;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .sales-table td {
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #333;
-        }
-
-        .sales-table tr:hover {
-            background: #f8f9fa;
-        }
-
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-badge.success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-badge.pending {
-            background: #fff3cd;
-            color: #856404;
         }
 
         .loading-overlay {
@@ -312,45 +258,27 @@
             </div>
         </div>
 
-        <div class="chart-section">
-            <h2>Vendas nos Últimos 7 Dias</h2>
-            <canvas id="salesChart" width="400" height="100"></canvas>
-        </div>
-
         <div class="recent-sales">
-            <h2>Vendas Recentes</h2>
-            <table class="sales-table">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Igreja</th>
-                        <th>Valor</th>
-                        <th>Comissão</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="recentSalesBody">
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 30px;">
-                            Carregando dados...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <h2>Bem-vindo ao Dashboard!</h2>
+            <p>Use o menu lateral para navegar pelas funcionalidades do sistema.</p>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxNzY2MDAsImV4cCI6MjA1MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_tG4G2vYm3YfI';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         window.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 Dashboard carregado');
+            
             const userSession = localStorage.getItem('userSession');
             
             if (!userSession) {
+                console.log('❌ Sessão não encontrada, redirecionando...');
                 window.location.href = 'login.html';
                 return;
             }
@@ -360,18 +288,22 @@
             const sessionAge = now - session.timestamp;
             
             if (sessionAge > 24 * 60 * 60 * 1000) {
+                console.log('⏰ Sessão expirada, redirecionando...');
                 localStorage.removeItem('userSession');
                 window.location.href = 'login.html';
                 return;
             }
 
+            console.log('✅ Sessão válida:', session.email);
             document.getElementById('userEmail').textContent = session.email;
+            
             await loadDashboardData();
             document.getElementById('loadingOverlay').classList.add('hidden');
         });
 
         function logout() {
             if (confirm('Tem certeza que deseja sair?')) {
+                console.log('👋 Fazendo logout...');
                 localStorage.removeItem('userSession');
                 sessionStorage.clear();
                 window.location.href = 'login.html';
@@ -380,77 +312,22 @@
 
         async function loadDashboardData() {
             try {
-                const { data: igrejas, error: igrejasError } = await supabase
+                console.log('📊 Carregando dados do dashboard...');
+                
+                const { data: igrejas, error: igrejasError } = await supabaseClient
                     .from('igrejas')
                     .select('*');
 
                 if (!igrejasError && igrejas) {
+                    console.log('✅ Igrejas carregadas:', igrejas.length);
                     document.getElementById('totalIgrejas').textContent = igrejas.length;
+                } else {
+                    console.log('⚠️ Erro ao carregar igrejas:', igrejasError);
                 }
-
-                loadRecentSales();
-                createSalesChart();
 
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
+                console.error('❌ Erro ao carregar dados:', error);
             }
-        }
-
-        function loadRecentSales() {
-            const tbody = document.getElementById('recentSalesBody');
-            
-            const salesData = [
-                { data: '03/01/2026', igreja: 'Igreja Batista Central', valor: 'R$ 500,00', comissao: 'R$ 50,00', status: 'success' },
-                { data: '02/01/2026', igreja: 'Igreja Assembleia de Deus', valor: 'R$ 300,00', comissao: 'R$ 30,00', status: 'pending' },
-                { data: '01/01/2026', igreja: 'Igreja Metodista', valor: 'R$ 450,00', comissao: 'R$ 45,00', status: 'success' },
-            ];
-
-            tbody.innerHTML = salesData.map(sale => `
-                <tr>
-                    <td>${sale.data}</td>
-                    <td>${sale.igreja}</td>
-                    <td>${sale.valor}</td>
-                    <td>${sale.comissao}</td>
-                    <td><span class="status-badge ${sale.status}">${sale.status === 'success' ? 'Pago' : 'Pendente'}</span></td>
-                </tr>
-            `).join('');
-        }
-
-        function createSalesChart() {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['27/12', '28/12', '29/12', '30/12', '31/12', '01/01', '02/01'],
-                    datasets: [{
-                        label: 'Vendas (R$)',
-                        data: [1200, 1900, 1500, 2100, 1800, 2400, 2000],
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
         }
     </script>
 </body>
