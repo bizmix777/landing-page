@@ -589,230 +589,233 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxNzY2MDAsImV4cCI6MjA1MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_tG4G2vYm3YfI';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<script>
+    const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxNzY2MDAsImV4cCI6MjA1MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_tG4G2vYm3YfI';
+    
+    // CORREÇÃO: Usar window.supabase
+    const { createClient } = window.supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentEditId = null;
+    let currentEditId = null;
 
-        window.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
-            loadIgrejas();
+    window.addEventListener('DOMContentLoaded', function() {
+        checkAuth();
+        loadIgrejas();
+    });
+
+    function checkAuth() {
+        const userSession = localStorage.getItem('userSession');
+        if (!userSession) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const session = JSON.parse(userSession);
+        const now = new Date().getTime();
+        const sessionAge = now - session.timestamp;
+        
+        if (sessionAge > 24 * 60 * 60 * 1000) {
+            localStorage.removeItem('userSession');
+            window.location.href = 'login.html';
+        }
+    }
+
+    function logout() {
+        if (confirm('Tem certeza que deseja sair?')) {
+            localStorage.removeItem('userSession');
+            window.location.href = 'login.html';
+        }
+    }
+
+    async function loadIgrejas() {
+        try {
+            const { data, error } = await supabaseClient
+                .from('igrejas')
+                .select('*')
+                .order('nome', { ascending: true });
+
+            if (error) throw error;
+
+            displayIgrejas(data);
+        } catch (error) {
+            console.error('Erro ao carregar igrejas:', error);
+            showMessage('Erro ao carregar dados: ' + error.message, 'error');
+            document.getElementById('tableBody').innerHTML = `
+                <tr><td colspan="9" class="empty-state">
+                    <h3>Erro ao carregar dados</h3>
+                    <p>${error.message}</p>
+                </td></tr>
+            `;
+        }
+    }
+
+    function displayIgrejas(igrejas) {
+        const tbody = document.getElementById('tableBody');
+        
+        if (!igrejas || igrejas.length === 0) {
+            tbody.innerHTML = `
+                <tr><td colspan="9" class="empty-state">
+                    <h3>Nenhuma igreja cadastrada</h3>
+                    <p>Clique em "Adicionar Igreja" para começar</p>
+                </td></tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = igrejas.map(igreja => `
+            <tr>
+                <td>${igreja.nome || '-'}</td>
+                <td>${igreja.responsavel || '-'}</td>
+                <td>${igreja.email || '-'}</td>
+                <td>${igreja.telefone || '-'}</td>
+                <td>${igreja.cidade || '-'}</td>
+                <td>${igreja.estado || '-'}</td>
+                <td>${igreja.percentual_comissao ? igreja.percentual_comissao + '%' : '-'}</td>
+                <td><span class="status-badge ${igreja.ativo ? 'ativo' : 'inativo'}">${igreja.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                <td class="action-buttons">
+                    <button class="btn-edit" onclick="editIgreja('${igreja.id}')">✏️ Editar</button>
+                    <button class="btn-delete" onclick="deleteIgreja('${igreja.id}')">🗑️ Excluir</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function filterTable() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchValue) ? '' : 'none';
         });
+    }
 
-        function checkAuth() {
-            const userSession = localStorage.getItem('userSession');
-            if (!userSession) {
-                window.location.href = 'login.html';
-                return;
-            }
+    function openModal() {
+        currentEditId = null;
+        document.getElementById('modalTitle').textContent = 'Adicionar Igreja';
+        document.getElementById('igrejaForm').reset();
+        document.getElementById('igrejaId').value = '';
+        document.getElementById('modal').classList.add('show');
+    }
 
-            const session = JSON.parse(userSession);
-            const now = new Date().getTime();
-            const sessionAge = now - session.timestamp;
-            
-            if (sessionAge > 24 * 60 * 60 * 1000) {
-                localStorage.removeItem('userSession');
-                window.location.href = 'login.html';
-            }
-        }
+    function closeModal() {
+        document.getElementById('modal').classList.remove('show');
+    }
 
-        function logout() {
-            if (confirm('Tem certeza que deseja sair?')) {
-                localStorage.removeItem('userSession');
-                window.location.href = 'login.html';
-            }
-        }
+    async function editIgreja(id) {
+        try {
+            const { data, error } = await supabaseClient
+                .from('igrejas')
+                .select('*')
+                .eq('id', id)
+                .single();
 
-        async function loadIgrejas() {
-            try {
-                const { data, error } = await supabase
-                    .from('igrejas')
-                    .select('*')
-                    .order('nome', { ascending: true });
+            if (error) throw error;
 
-                if (error) throw error;
+            currentEditId = id;
+            document.getElementById('modalTitle').textContent = 'Editar Igreja';
+            document.getElementById('igrejaId').value = id;
+            document.getElementById('nome').value = data.nome || '';
+            document.getElementById('responsavel').value = data.responsavel || '';
+            document.getElementById('email').value = data.email || '';
+            document.getElementById('telefone').value = data.telefone || '';
+            document.getElementById('whatsapp').value = data.whatsapp || '';
+            document.getElementById('endereco').value = data.endereco || '';
+            document.getElementById('cidade').value = data.cidade || '';
+            document.getElementById('estado').value = data.estado || '';
+            document.getElementById('cep').value = data.cep || '';
+            document.getElementById('comissao').value = data.percentual_comissao || '';
+            document.getElementById('chavePix').value = data.chave_pix || '';
+            document.getElementById('tipoPix').value = data.tipo_chave_pix || '';
+            document.getElementById('status').value = data.ativo ? 'Ativo' : 'Inativo';
+            document.getElementById('codigoIndicacao').value = data.codigo_indicacao || '';
+            document.getElementById('observacoes').value = data.observacoes || '';
 
-                displayIgrejas(data);
-            } catch (error) {
-                console.error('Erro ao carregar igrejas:', error);
-                showMessage('Erro ao carregar dados: ' + error.message, 'error');
-                document.getElementById('tableBody').innerHTML = `
-                    <tr><td colspan="9" class="empty-state">
-                        <h3>Erro ao carregar dados</h3>
-                        <p>${error.message}</p>
-                    </td></tr>
-                `;
-            }
-        }
-
-        function displayIgrejas(igrejas) {
-            const tbody = document.getElementById('tableBody');
-            
-            if (!igrejas || igrejas.length === 0) {
-                tbody.innerHTML = `
-                    <tr><td colspan="9" class="empty-state">
-                        <h3>Nenhuma igreja cadastrada</h3>
-                        <p>Clique em "Adicionar Igreja" para começar</p>
-                    </td></tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = igrejas.map(igreja => `
-                <tr>
-                    <td>${igreja.nome || '-'}</td>
-                    <td>${igreja.responsavel || '-'}</td>
-                    <td>${igreja.email || '-'}</td>
-                    <td>${igreja.telefone || '-'}</td>
-                    <td>${igreja.cidade || '-'}</td>
-                    <td>${igreja.estado || '-'}</td>
-                    <td>${igreja.percentual_comissao ? igreja.percentual_comissao + '%' : '-'}</td>
-                    <td><span class="status-badge ${igreja.ativo ? 'ativo' : 'inativo'}">${igreja.ativo ? 'Ativo' : 'Inativo'}</span></td>
-                    <td class="action-buttons">
-                        <button class="btn-edit" onclick="editIgreja('${igreja.id}')">✏️ Editar</button>
-                        <button class="btn-delete" onclick="deleteIgreja('${igreja.id}')">🗑️ Excluir</button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function filterTable() {
-            const searchValue = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchValue) ? '' : 'none';
-            });
-        }
-
-        function openModal() {
-            currentEditId = null;
-            document.getElementById('modalTitle').textContent = 'Adicionar Igreja';
-            document.getElementById('igrejaForm').reset();
-            document.getElementById('igrejaId').value = '';
             document.getElementById('modal').classList.add('show');
+        } catch (error) {
+            console.error('Erro ao carregar igreja:', error);
+            showMessage('Erro ao carregar dados: ' + error.message, 'error');
         }
+    }
 
-        function closeModal() {
-            document.getElementById('modal').classList.remove('show');
-        }
+    async function saveIgreja(event) {
+        event.preventDefault();
 
-        async function editIgreja(id) {
-            try {
-                const { data, error } = await supabase
+        const igrejaData = {
+            nome: document.getElementById('nome').value,
+            responsavel: document.getElementById('responsavel').value,
+            email: document.getElementById('email').value,
+            telefone: document.getElementById('telefone').value,
+            whatsapp: document.getElementById('whatsapp').value,
+            endereco: document.getElementById('endereco').value,
+            cidade: document.getElementById('cidade').value,
+            estado: document.getElementById('estado').value,
+            cep: document.getElementById('cep').value,
+            percentual_comissao: parseFloat(document.getElementById('comissao').value) || 15.00,
+            chave_pix: document.getElementById('chavePix').value,
+            tipo_chave_pix: document.getElementById('tipoPix').value,
+            ativo: document.getElementById('status').value === 'Ativo',
+            codigo_indicacao: document.getElementById('codigoIndicacao').value,
+            observacoes: document.getElementById('observacoes').value
+        };
+
+        try {
+            if (currentEditId) {
+                const { error } = await supabaseClient
                     .from('igrejas')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
+                    .update(igrejaData)
+                    .eq('id', currentEditId);
 
                 if (error) throw error;
-
-                currentEditId = id;
-                document.getElementById('modalTitle').textContent = 'Editar Igreja';
-                document.getElementById('igrejaId').value = id;
-                document.getElementById('nome').value = data.nome || '';
-                document.getElementById('responsavel').value = data.responsavel || '';
-                document.getElementById('email').value = data.email || '';
-                document.getElementById('telefone').value = data.telefone || '';
-                document.getElementById('whatsapp').value = data.whatsapp || '';
-                document.getElementById('endereco').value = data.endereco || '';
-                document.getElementById('cidade').value = data.cidade || '';
-                document.getElementById('estado').value = data.estado || '';
-                document.getElementById('cep').value = data.cep || '';
-                document.getElementById('comissao').value = data.percentual_comissao || '';
-                document.getElementById('chavePix').value = data.chave_pix || '';
-                document.getElementById('tipoPix').value = data.tipo_chave_pix || '';
-                document.getElementById('status').value = data.ativo ? 'Ativo' : 'Inativo';
-                document.getElementById('codigoIndicacao').value = data.codigo_indicacao || '';
-                document.getElementById('observacoes').value = data.observacoes || '';
-
-                document.getElementById('modal').classList.add('show');
-            } catch (error) {
-                console.error('Erro ao carregar igreja:', error);
-                showMessage('Erro ao carregar dados: ' + error.message, 'error');
-            }
-        }
-
-        async function saveIgreja(event) {
-            event.preventDefault();
-
-            const igrejaData = {
-                nome: document.getElementById('nome').value,
-                responsavel: document.getElementById('responsavel').value,
-                email: document.getElementById('email').value,
-                telefone: document.getElementById('telefone').value,
-                whatsapp: document.getElementById('whatsapp').value,
-                endereco: document.getElementById('endereco').value,
-                cidade: document.getElementById('cidade').value,
-                estado: document.getElementById('estado').value,
-                cep: document.getElementById('cep').value,
-                percentual_comissao: parseFloat(document.getElementById('comissao').value) || 15.00,
-                chave_pix: document.getElementById('chavePix').value,
-                tipo_chave_pix: document.getElementById('tipoPix').value,
-                ativo: document.getElementById('status').value === 'Ativo',
-                codigo_indicacao: document.getElementById('codigoIndicacao').value,
-                observacoes: document.getElementById('observacoes').value
-            };
-
-            try {
-                if (currentEditId) {
-                    const { error } = await supabase
-                        .from('igrejas')
-                        .update(igrejaData)
-                        .eq('id', currentEditId);
-
-                    if (error) throw error;
-                    showMessage('Igreja atualizada com sucesso!', 'success');
-                } else {
-                    const { error } = await supabase
-                        .from('igrejas')
-                        .insert([igrejaData]);
-
-                    if (error) throw error;
-                    showMessage('Igreja cadastrada com sucesso!', 'success');
-                }
-
-                closeModal();
-                loadIgrejas();
-            } catch (error) {
-                console.error('Erro ao salvar igreja:', error);
-                showMessage('Erro ao salvar: ' + error.message, 'error');
-            }
-        }
-
-        async function deleteIgreja(id) {
-            if (!confirm('Tem certeza que deseja excluir esta igreja?')) {
-                return;
-            }
-
-            try {
-                const { error } = await supabase
+                showMessage('Igreja atualizada com sucesso!', 'success');
+            } else {
+                const { error } = await supabaseClient
                     .from('igrejas')
-                    .delete()
-                    .eq('id', id);
+                    .insert([igrejaData]);
 
                 if (error) throw error;
-
-                showMessage('Igreja excluída com sucesso!', 'success');
-                loadIgrejas();
-            } catch (error) {
-                console.error('Erro ao excluir igreja:', error);
-                showMessage('Erro ao excluir: ' + error.message, 'error');
+                showMessage('Igreja cadastrada com sucesso!', 'success');
             }
+
+            closeModal();
+            loadIgrejas();
+        } catch (error) {
+            console.error('Erro ao salvar igreja:', error);
+            showMessage('Erro ao salvar: ' + error.message, 'error');
+        }
+    }
+
+    async function deleteIgreja(id) {
+        if (!confirm('Tem certeza que deseja excluir esta igreja?')) {
+            return;
         }
 
-        function showMessage(text, type) {
-            const message = document.getElementById('message');
-            message.textContent = text;
-            message.className = 'message ' + type + ' show';
-            
-            setTimeout(() => {
-                message.classList.remove('show');
-            }, 5000);
+        try {
+            const { error } = await supabaseClient
+                .from('igrejas')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+
+            showMessage('Igreja excluída com sucesso!', 'success');
+            loadIgrejas();
+        } catch (error) {
+            console.error('Erro ao excluir igreja:', error);
+            showMessage('Erro ao excluir: ' + error.message, 'error');
         }
-    </script>
+    }
+
+    function showMessage(text, type) {
+        const message = document.getElementById('message');
+        message.textContent = text;
+        message.className = 'message ' + type + ' show';
+        
+        setTimeout(() => {
+            message.classList.remove('show');
+        }, 5000);
+    }
+</script>
 </body>
 </html>
