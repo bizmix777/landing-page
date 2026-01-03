@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Supabase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste de Conexão Supabase</h1>
+    <button onclick="testarConexao()">🔍 Testar Conexão</button>
+    <div id="resultado" class="result"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = window.supabase;
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function testarConexao() {
+            const resultado = document.getElementById('resultado');
+            resultado.innerHTML = '<p>⏳ Testando conexão...</p>';
+
+            try {
+                console.log('🔍 Testando conexão com Supabase...');
+                console.log('URL:', SUPABASE_URL);
+                console.log('KEY:', SUPABASE_KEY.substring(0, 20) + '...');
+
+                // Teste 1: Buscar igrejas
+                console.log('📥 Buscando igrejas...');
+                const { data: igrejas, error: igrejasError } = await supabase
+                    .from('igrejas')
+                    .select('*')
+                    .limit(5);
+
+                if (igrejasError) {
+                    console.error('❌ Erro ao buscar igrejas:', igrejasError);
+                    throw igrejasError;
+                }
+
+                console.log('✅ Igrejas encontradas:', igrejas);
+
+                // Teste 2: Buscar vendas
+                console.log('📥 Buscando vendas...');
+                const { data: vendas, error: vendasError } = await supabase
+                    .from('vendas')
+                    .select('*')
+                    .limit(5);
+
+                if (vendasError) {
+                    console.error('❌ Erro ao buscar vendas:', vendasError);
+                    throw vendasError;
+                }
+
+                console.log('✅ Vendas encontradas:', vendas);
+
+                // Sucesso!
+                resultado.innerHTML = `
+                    <h2 class="success">✅ CONEXÃO OK!</h2>
+                    <p><strong>Igrejas encontradas:</strong> ${igrejas.length}</p>
+                    <p><strong>Vendas encontradas:</strong> ${vendas.length}</p>
+                    <h3>Detalhes das Igrejas:</h3>
+                    <pre>${JSON.stringify(igrejas, null, 2)}</pre>
+                    <h3>Detalhes das Vendas:</h3>
+                    <pre>${JSON.stringify(vendas, null, 2)}</pre>
+                `;
+
+            } catch (error) {
+                console.error('❌ ERRO:', error);
+                resultado.innerHTML = `
+                    <h2 class="error">❌ ERRO NA CONEXÃO</h2>
+                    <p><strong>Mensagem:</strong> ${error.message}</p>
+                    <p><strong>Código:</strong> ${error.code || 'N/A'}</p>
+                    <p><strong>Detalhes:</strong> ${error.details || 'N/A'}</p>
+                    <h3>Erro Completo:</h3>
+                    <pre>${JSON.stringify(error, null, 2)}</pre>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
