@@ -543,7 +543,7 @@
                     </div>
                     <div class="form-group">
                         <label for="comissao">Comissão (%)</label>
-                        <input type="number" id="comissao" step="0.01" min="0" max="100" placeholder="10.00">
+                        <input type="number" id="comissao" step="0.01" min="0" max="100" placeholder="15.00">
                     </div>
                 </div>
 
@@ -571,6 +571,16 @@
                             <option value="Inativo">Inativo</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="codigoIndicacao">Código de Indicação</label>
+                    <input type="text" id="codigoIndicacao" placeholder="Código único para indicação">
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <input type="text" id="observacoes" placeholder="Observações gerais">
                 </div>
 
                 <button type="submit" class="btn-save">Salvar</button>
@@ -658,11 +668,11 @@
                     <td>${igreja.telefone || '-'}</td>
                     <td>${igreja.cidade || '-'}</td>
                     <td>${igreja.estado || '-'}</td>
-                    <td>${igreja.comissao ? igreja.comissao + '%' : '-'}</td>
-                    <td><span class="status-badge ${(igreja.status || 'Ativo').toLowerCase()}">${igreja.status || 'Ativo'}</span></td>
+                    <td>${igreja.percentual_comissao ? igreja.percentual_comissao + '%' : '-'}</td>
+                    <td><span class="status-badge ${igreja.ativo ? 'ativo' : 'inativo'}">${igreja.ativo ? 'Ativo' : 'Inativo'}</span></td>
                     <td class="action-buttons">
-                        <button class="btn-edit" onclick="editIgreja(${igreja.id})">✏️ Editar</button>
-                        <button class="btn-delete" onclick="deleteIgreja(${igreja.id})">🗑️ Excluir</button>
+                        <button class="btn-edit" onclick="editIgreja('${igreja.id}')">✏️ Editar</button>
+                        <button class="btn-delete" onclick="deleteIgreja('${igreja.id}')">🗑️ Excluir</button>
                     </td>
                 </tr>
             `).join('');
@@ -712,10 +722,12 @@
                 document.getElementById('cidade').value = data.cidade || '';
                 document.getElementById('estado').value = data.estado || '';
                 document.getElementById('cep').value = data.cep || '';
-                document.getElementById('comissao').value = data.comissao || '';
+                document.getElementById('comissao').value = data.percentual_comissao || '';
                 document.getElementById('chavePix').value = data.chave_pix || '';
-                document.getElementById('tipoPix').value = data.tipo_pix || '';
-                document.getElementById('status').value = data.status || 'Ativo';
+                document.getElementById('tipoPix').value = data.tipo_chave_pix || '';
+                document.getElementById('status').value = data.ativo ? 'Ativo' : 'Inativo';
+                document.getElementById('codigoIndicacao').value = data.codigo_indicacao || '';
+                document.getElementById('observacoes').value = data.observacoes || '';
 
                 document.getElementById('modal').classList.add('show');
             } catch (error) {
@@ -737,10 +749,12 @@
                 cidade: document.getElementById('cidade').value,
                 estado: document.getElementById('estado').value,
                 cep: document.getElementById('cep').value,
-                comissao: parseFloat(document.getElementById('comissao').value) || null,
+                percentual_comissao: parseFloat(document.getElementById('comissao').value) || 15.00,
                 chave_pix: document.getElementById('chavePix').value,
-                tipo_pix: document.getElementById('tipoPix').value,
-                status: document.getElementById('status').value
+                tipo_chave_pix: document.getElementById('tipoPix').value,
+                ativo: document.getElementById('status').value === 'Ativo',
+                codigo_indicacao: document.getElementById('codigoIndicacao').value,
+                observacoes: document.getElementById('observacoes').value
             };
 
             try {
