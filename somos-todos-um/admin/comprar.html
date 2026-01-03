@@ -506,11 +506,9 @@
                 document.getElementById('formCompra').reset();
                 calcularResumo();
 
-                // Redirecionar após 3 segundos
-                setTimeout(() => {
-                    console.log('🔄 Redirecionando para página inicial...');
-                    window.location.href = '/index.html';
-                }, 3000);
+                // Reabilitar botão (SEM REDIRECIONAR)
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = '🛒 FINALIZAR COMPRA';
 
             } catch (error) {
                 console.error('❌ Erro ao processar compra:', error);
