@@ -48,6 +48,32 @@
             text-decoration: none;
             border-radius: 8px;
             font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
         .igrejas-grid {
@@ -94,6 +120,12 @@
             text-decoration: none;
             border-radius: 8px;
             font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-comprar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         .loading {
@@ -101,6 +133,14 @@
             padding: 50px;
             background: white;
             border-radius: 15px;
+        }
+
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -114,8 +154,12 @@
     <div class="container">
         <div class="header">
             <h1>⛪ Igrejas Parceiras</h1>
-            <p>Escolha sua igreja e ajude-a a ganhar comissão!</p>
-            <a href="/index.html" class="btn-back">← Voltar</a>
+            <p>Escolha sua igreja e ajude-a a ganhar comissão com sua compra!</p>
+            <a href="/index.html" class="btn-back">← Voltar para Página Inicial</a>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar igreja por nome, cidade ou pastor...">
         </div>
 
         <div id="igrejasContainer">
@@ -127,15 +171,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        console.log('INÍCIO DO SCRIPT');
+        console.log('🚀 INÍCIO DO SCRIPT');
 
-        // Aguardar 1 segundo para garantir que Supabase carregou
+        let todasIgrejas = [];
+
         setTimeout(function() {
-            console.log('Iniciando carregamento...');
+            console.log('⏱️ Iniciando carregamento após 1 segundo...');
 
             if (!window.supabase) {
-                console.error('ERRO: Supabase não carregou');
-                document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>Erro ao carregar biblioteca</p></div>';
+                console.error('❌ ERRO: Supabase não carregou');
+                document.getElementById('igrejasContainer').innerHTML = '<div class="error-box"><p>❌ Erro ao carregar biblioteca Supabase</p></div>';
                 return;
             }
 
@@ -145,57 +190,101 @@
                 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
             );
 
-            console.log('Supabase criado');
+            console.log('✅ Supabase client criado');
 
+            // ✅ REMOVIDO O FILTRO .eq('ativa', true)
             supabase
                 .from('igrejas')
                 .select('*')
-                .eq('ativa', true)
                 .order('nome')
                 .then(function(response) {
-                    console.log('RESPOSTA:', response);
+                    console.log('📊 RESPOSTA COMPLETA:', response);
 
                     if (response.error) {
-                        console.error('ERRO:', response.error);
-                        document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>Erro: ' + response.error.message + '</p></div>';
+                        console.error('❌ ERRO:', response.error);
+                        document.getElementById('igrejasContainer').innerHTML = '<div class="error-box"><p>❌ Erro: ' + response.error.message + '</p></div>';
                         return;
                     }
 
                     const igrejas = response.data;
-                    console.log('IGREJAS:', igrejas);
+                    console.log('✅ IGREJAS RECEBIDAS:', igrejas);
+                    console.log('📊 TOTAL:', igrejas.length);
 
                     if (!igrejas || igrejas.length === 0) {
-                        document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>Nenhuma igreja encontrada</p></div>';
+                        document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>⚠️ Nenhuma igreja encontrada</p></div>';
                         return;
                     }
 
-                    let html = '<div class="igrejas-grid">';
+                    todasIgrejas = igrejas;
+                    renderizarIgrejas(igrejas);
 
-                    for (let i = 0; i < igrejas.length; i++) {
-                        const igreja = igrejas[i];
-                        html += '<div class="igreja-card">';
-                        html += '<h3>⛪ ' + igreja.nome + '</h3>';
-                        html += '<div class="igreja-info">';
-                        if (igreja.cidade) html += '<p>📍 ' + igreja.cidade + (igreja.estado ? ', ' + igreja.estado : '') + '</p>';
-                        if (igreja.pastor) html += '<p>👤 Pastor: ' + igreja.pastor + '</p>';
-                        if (igreja.telefone) html += '<p>📞 ' + igreja.telefone + '</p>';
-                        html += '<p>💰 Comissão: ' + igreja.percentual_comissao + '%</p>';
-                        html += '</div>';
-                        html += '<a href="/admin/venda.html?igreja=' + igreja.id + '" class="btn-comprar">🛒 Comprar e Ajudar</a>';
-                        html += '</div>';
-                    }
+                    // Adicionar busca
+                    document.getElementById('searchInput').addEventListener('input', function() {
+                        const termo = this.value.toLowerCase().trim();
+                        
+                        if (!termo) {
+                            renderizarIgrejas(todasIgrejas);
+                            return;
+                        }
 
-                    html += '</div>';
+                        const filtradas = todasIgrejas.filter(function(i) {
+                            return (
+                                (i.nome && i.nome.toLowerCase().includes(termo)) ||
+                                (i.cidade && i.cidade.toLowerCase().includes(termo)) ||
+                                (i.estado && i.estado.toLowerCase().includes(termo)) ||
+                                (i.pastor && i.pastor.toLowerCase().includes(termo))
+                            );
+                        });
 
-                    document.getElementById('igrejasContainer').innerHTML = html;
-                    console.log('RENDERIZADO COM SUCESSO');
+                        renderizarIgrejas(filtradas);
+                    });
+
+                    console.log('✅ RENDERIZADO COM SUCESSO');
                 })
                 .catch(function(error) {
-                    console.error('ERRO CATCH:', error);
-                    document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>Erro: ' + error.message + '</p></div>';
+                    console.error('❌ ERRO CATCH:', error);
+                    document.getElementById('igrejasContainer').innerHTML = '<div class="error-box"><p>❌ Erro: ' + error.message + '</p></div>';
                 });
 
         }, 1000);
+
+        function renderizarIgrejas(igrejas) {
+            console.log('🎨 Renderizando', igrejas.length, 'igrejas');
+
+            if (!igrejas || igrejas.length === 0) {
+                document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>⚠️ Nenhuma igreja encontrada com esse filtro</p></div>';
+                return;
+            }
+
+            let html = '<div class="igrejas-grid">';
+
+            for (let i = 0; i < igrejas.length; i++) {
+                const igreja = igrejas[i];
+                html += '<div class="igreja-card">';
+                html += '<h3>⛪ ' + igreja.nome + '</h3>';
+                html += '<div class="igreja-info">';
+                
+                if (igreja.cidade) {
+                    html += '<p>📍 ' + igreja.cidade;
+                    if (igreja.estado) html += ', ' + igreja.estado;
+                    html += '</p>';
+                }
+                
+                if (igreja.pastor) html += '<p>👤 Pastor: ' + igreja.pastor + '</p>';
+                if (igreja.telefone) html += '<p>📞 ' + igreja.telefone + '</p>';
+                if (igreja.email) html += '<p>✉️ ' + igreja.email + '</p>';
+                if (igreja.percentual_comissao) html += '<p>💰 Comissão: ' + igreja.percentual_comissao + '%</p>';
+                
+                html += '</div>';
+                html += '<a href="/admin/venda.html?igreja=' + igreja.id + '" class="btn-comprar">🛒 Comprar e Ajudar Esta Igreja</a>';
+                html += '</div>';
+            }
+
+            html += '</div>';
+
+            document.getElementById('igrejasContainer').innerHTML = html;
+            console.log('✅ Renderização completa');
+        }
     </script>
 </body>
 </html>
