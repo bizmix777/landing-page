@@ -29,6 +29,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            flex-direction: column;
         }
 
         .loading-overlay.hidden {
@@ -47,6 +48,12 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        .loading-message {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.1rem;
         }
 
         .sidebar {
@@ -147,102 +154,28 @@
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: hidden;
+            text-align: center;
+            transition: all 0.3s ease;
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
         }
-
-        .stat-card.green::before { background: #27ae60; }
-        .stat-card.orange::before { background: #f39c12; }
-        .stat-card.blue::before { background: #3498db; }
-        .stat-card.purple::before { background: #9b59b6; }
 
         .stat-card h3 {
             color: #7f8c8d;
             font-size: 0.9rem;
-            font-weight: 600;
             margin-bottom: 10px;
-            text-transform: uppercase;
         }
 
         .stat-card .value {
             font-size: 2rem;
             font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 5px;
+            color: #28a745;
         }
 
-        .stat-card .change {
-            font-size: 0.85rem;
-            color: #27ae60;
-        }
-
-        .filters {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filters label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .filters select,
-        .filters input {
-            padding: 10px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        .filters button {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .filters button:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
-        .btn-export {
-            padding: 10px 20px;
-            background: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-export:hover {
-            background: #229954;
-            transform: translateY(-2px);
-        }
-
-        .comissoes-table-container {
+        .comissoes-container {
             background: white;
             padding: 30px;
             border-radius: 10px;
@@ -250,7 +183,7 @@
             overflow-x: auto;
         }
 
-        .comissoes-table-container h2 {
+        .comissoes-container h2 {
             color: #333;
             margin-bottom: 20px;
             padding-bottom: 15px;
@@ -307,33 +240,24 @@
             color: #721c24;
         }
 
-        .btn-action {
-            padding: 5px 12px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-right: 5px;
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
         }
 
-        .btn-pay {
-            background: #27ae60;
-            color: white;
-        }
-
-        .btn-pay:hover {
-            background: #229954;
-        }
-
-        .btn-view {
-            background: #3498db;
-            color: white;
-        }
-
-        .btn-view:hover {
-            background: #2980b9;
+        .filter-bar select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
         }
 
         @media (max-width: 768px) {
@@ -350,17 +274,13 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
         }
     </style>
 </head>
 <body>
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
+        <div class="loading-message">Carregando comissões...</div>
     </div>
 
     <div class="sidebar">
@@ -368,9 +288,9 @@
         <a href="index.html" class="menu-item">🏠 Início</a>
         <a href="dashboard-comissoes.html" class="menu-item active">💰 Comissões</a>
         <a href="igrejas.html" class="menu-item">⛪ Igrejas</a>
-        <a href="venda.html" class="menu-item">💳 Vendas</a>
+        <a href="venda.html" class="menu-item">💳 Nova Venda</a>
         <a href="/comprar.html" class="menu-item">🛒 Comprar</a>
-        <a href="/ig_parceiras.html" class="menu-item">🌐 Igrejas Públicas</a>
+        <a href="/igrejas.html" class="menu-item">🌐 Igrejas Públicas</a>
     </div>
 
     <div class="main-content">
@@ -383,89 +303,55 @@
         </div>
 
         <div class="stats-grid">
-            <div class="stat-card green">
+            <div class="stat-card">
                 <h3>Total de Comissões</h3>
                 <div class="value" id="totalComissoes">R$ 0,00</div>
-                <div class="change" id="changeTotal">Todas as vendas</div>
             </div>
-
-            <div class="stat-card orange">
-                <h3>Comissões Pendentes</h3>
-                <div class="value" id="comissoesPendentes">R$ 0,00</div>
-                <div class="change" id="changePendentes">Aguardando pagamento</div>
-            </div>
-
-            <div class="stat-card blue">
+            <div class="stat-card">
                 <h3>Comissões Pagas</h3>
                 <div class="value" id="comissoesPagas">R$ 0,00</div>
-                <div class="change" id="changePagas">Já quitadas</div>
             </div>
-
-            <div class="stat-card purple">
-                <h3>Igrejas com Vendas</h3>
-                <div class="value" id="igrejasComVendas">0</div>
-                <div class="change" id="changeIgrejas">Igrejas ativas</div>
+            <div class="stat-card">
+                <h3>Comissões Pendentes</h3>
+                <div class="value" id="comissoesPendentes">R$ 0,00</div>
+            </div>
+            <div class="stat-card">
+                <h3>Igrejas com Comissão</h3>
+                <div class="value" id="igrejasComComissao">0</div>
             </div>
         </div>
 
-        <div class="filters">
-            <label for="filterIgreja">Filtrar por Igreja:</label>
-            <select id="filterIgreja">
+        <div class="filter-bar">
+            <select id="filtroIgreja">
                 <option value="">Todas as Igrejas</option>
             </select>
-
-            <label for="filterStatus">Status:</label>
-            <select id="filterStatus">
-                <option value="">Todos</option>
+            <select id="filtroStatus">
+                <option value="">Todos os Status</option>
                 <option value="pendente">Pendente</option>
-                <option value="pago">Pago</option>
+                <option value="aprovado">Aprovado</option>
+                <option value="cancelado">Cancelado</option>
             </select>
-
-            <button onclick="applyFilters()">🔍 Filtrar</button>
-            <button class="btn-export" onclick="exportToCSV()">📊 Exportar CSV</button>
         </div>
 
-        <div class="comissoes-table-container">
-            <h2>📊 Comissões por Igreja</h2>
+        <div class="comissoes-container">
+            <h2>📋 Comissões por Igreja</h2>
             <table class="comissoes-table">
                 <thead>
                     <tr>
                         <th>Igreja</th>
-                        <th>Total de Vendas</th>
-                        <th>Valor Total</th>
-                        <th>% Comissão</th>
-                        <th>Total Comissão</th>
-                        <th>Pendente</th>
-                        <th>Pago</th>
-                        <th>Ações</th>
+                        <th>Cidade/Estado</th>
+                        <th>Vendas</th>
+                        <th>Total Vendido</th>
+                        <th>Comissão Total</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody id="comissoesTableBody">
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 30px;">Carregando dados...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="comissoes-table-container" style="margin-top: 30px;">
-            <h2>📋 Detalhamento de Vendas com Comissão</h2>
-            <table class="comissoes-table">
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Cliente</th>
-                        <th>Igreja</th>
-                        <th>Valor Venda</th>
-                        <th>% Comissão</th>
-                        <th>Valor Comissão</th>
-                        <th>Status Pagamento</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="vendasDetalhesBody">
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 30px;">Carregando dados...</td>
+                        <td colspan="6" style="text-align: center; padding: 30px;">
+                            <div class="spinner" style="margin: 0 auto;"></div>
+                            <p style="margin-top: 15px;">Carregando dados...</p>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -474,290 +360,250 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // ✅ CREDENCIAIS CORRETAS
+        console.log('🚀 COMISSÕES - SCRIPT INICIADO');
+
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        
-        const { createClient } = window.supabase;
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let allVendas = [];
-        let allIgrejas = [];
+        var supabaseClient = null;
+        var todasIgrejas = [];
+        var todasVendas = [];
 
-        // Verificar sessão
+        // SISTEMA DE STORAGE COM FALLBACK
+        var StorageManager = {
+            getItem: function(key) {
+                try {
+                    var value = localStorage.getItem(key);
+                    if (value) return value;
+                } catch (e) {
+                    console.error('Erro localStorage:', e);
+                }
+
+                try {
+                    var value = sessionStorage.getItem(key);
+                    if (value) return value;
+                } catch (e) {
+                    console.error('Erro sessionStorage:', e);
+                }
+
+                return null;
+            },
+
+            removeItem: function(key) {
+                try { localStorage.removeItem(key); } catch (e) {}
+                try { sessionStorage.removeItem(key); } catch (e) {}
+            }
+        };
+
         function checkSession() {
-            const session = localStorage.getItem('adminSession');
-            if (!session) {
-                window.location.href = 'login.html';
-                return false;
-            }
-
-            const sessionData = JSON.parse(session);
-            const now = new Date().getTime();
+            console.log('🔍 VERIFICANDO SESSÃO...');
             
-            if (now > sessionData.expires) {
-                localStorage.removeItem('adminSession');
-                alert('Sessão expirada. Faça login novamente.');
-                window.location.href = 'login.html';
+            var session = StorageManager.getItem('adminSession');
+            console.log('📦 Sessão recuperada:', session);
+
+            if (!session) {
+                console.log('❌ Nenhuma sessão encontrada - redirecionando');
+                setTimeout(function() {
+                    window.location.replace('login.html');
+                }, 500);
                 return false;
             }
 
-            document.getElementById('userEmail').textContent = sessionData.email;
-            return true;
+            try {
+                var sessionData = JSON.parse(session);
+                var now = new Date().getTime();
+                
+                if (now > sessionData.expires) {
+                    console.log('⏰ Sessão expirada - removendo');
+                    StorageManager.removeItem('adminSession');
+                    setTimeout(function() {
+                        alert('Sessão expirada. Faça login novamente.');
+                        window.location.replace('login.html');
+                    }, 500);
+                    return false;
+                }
+
+                document.getElementById('userEmail').textContent = sessionData.email;
+                console.log('✅ Sessão válida para:', sessionData.email);
+                return true;
+
+            } catch (e) {
+                console.error('❌ Erro ao processar sessão:', e);
+                StorageManager.removeItem('adminSession');
+                setTimeout(function() {
+                    window.location.replace('login.html');
+                }, 500);
+                return false;
+            }
         }
 
         function logout() {
-            localStorage.removeItem('adminSession');
-            window.location.href = 'login.html';
+            console.log('🚪 Fazendo logout...');
+            StorageManager.removeItem('adminSession');
+            window.location.replace('login.html');
         }
 
-        // Carregar dados
-        async function loadComissoesData() {
-            try {
-                // Buscar vendas com comissão
-                const { data: vendas, error: vendasError } = await supabase
-                    .from('vendas')
-                    .select(`
-                        *,
-                        igrejas (
-                            id,
-                            nome,
-                            percentual_comissao
-                        )
-                    `)
-                    .not('igreja_id', 'is', null)
-                    .order('created_at', { ascending: false });
+        function iniciar() {
+            console.log('📥 Iniciando dashboard de comissões...');
 
-                if (vendasError) throw vendasError;
-
-                allVendas = vendas;
-
-                // Buscar todas as igrejas
-                const { data: igrejas, error: igrejasError } = await supabase
-                    .from('igrejas')
-                    .select('*')
-                    .order('nome');
-
-                if (igrejasError) throw igrejasError;
-
-                allIgrejas = igrejas;
-
-                // Preencher filtro de igrejas
-                const filterIgreja = document.getElementById('filterIgreja');
-                filterIgreja.innerHTML = '<option value="">Todas as Igrejas</option>';
-                igrejas.forEach(igreja => {
-                    filterIgreja.innerHTML += `<option value="${igreja.id}">${igreja.nome}</option>`;
-                });
-
-                // Calcular totais
-                const totalComissoes = vendas.reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0);
-                const comissoesPendentes = vendas
-                    .filter(v => v.status_pagamento !== 'pago')
-                    .reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0);
-                const comissoesPagas = vendas
-                    .filter(v => v.status_pagamento === 'pago')
-                    .reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0);
-
-                const igrejasComVendas = new Set(vendas.map(v => v.igreja_id)).size;
-
-                // Atualizar cards
-                document.getElementById('totalComissoes').textContent = `R$ ${totalComissoes.toFixed(2)}`;
-                document.getElementById('comissoesPendentes').textContent = `R$ ${comissoesPendentes.toFixed(2)}`;
-                document.getElementById('comissoesPagas').textContent = `R$ ${comissoesPagas.toFixed(2)}`;
-                document.getElementById('igrejasComVendas').textContent = igrejasComVendas;
-
-                document.getElementById('changeTotal').textContent = `${vendas.length} vendas com comissão`;
-                document.getElementById('changePendentes').textContent = `${vendas.filter(v => v.status_pagamento !== 'pago').length} vendas`;
-                document.getElementById('changePagas').textContent = `${vendas.filter(v => v.status_pagamento === 'pago').length} vendas`;
-                document.getElementById('changeIgrejas').textContent = `${igrejasComVendas} igrejas`;
-
-                // Preencher tabelas
-                renderComissoesPorIgreja(vendas, igrejas);
-                renderVendasDetalhes(vendas);
-
-            } catch (error) {
-                console.error('Erro ao carregar comissões:', error);
-                alert('Erro ao carregar dados: ' + error.message);
-            } finally {
-                document.getElementById('loadingOverlay').classList.add('hidden');
-            }
-        }
-
-        // Renderizar tabela de comissões por igreja
-        function renderComissoesPorIgreja(vendas, igrejas) {
-            const tbody = document.getElementById('comissoesTableBody');
-            tbody.innerHTML = '';
-
-            // Agrupar vendas por igreja
-            const vendasPorIgreja = {};
-
-            vendas.forEach(venda => {
-                const igrejaId = venda.igreja_id;
-                if (!vendasPorIgreja[igrejaId]) {
-                    vendasPorIgreja[igrejaId] = {
-                        igreja: venda.igrejas,
-                        vendas: [],
-                        totalVendas: 0,
-                        valorTotal: 0,
-                        totalComissao: 0,
-                        comissaoPendente: 0,
-                        comissaoPaga: 0
-                    };
-                }
-
-                vendasPorIgreja[igrejaId].vendas.push(venda);
-                vendasPorIgreja[igrejaId].totalVendas++;
-                vendasPorIgreja[igrejaId].valorTotal += parseFloat(venda.valor_total || 0);
-                vendasPorIgreja[igrejaId].totalComissao += parseFloat(venda.valor_comissao || 0);
-
-                if (venda.status_pagamento === 'pago') {
-                    vendasPorIgreja[igrejaId].comissaoPaga += parseFloat(venda.valor_comissao || 0);
-                } else {
-                    vendasPorIgreja[igrejaId].comissaoPendente += parseFloat(venda.valor_comissao || 0);
-                }
-            });
-
-            // Renderizar linhas
-            Object.values(vendasPorIgreja).forEach(dados => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><strong>${dados.igreja.nome}</strong></td>
-                    <td>${dados.totalVendas}</td>
-                    <td>R$ ${dados.valorTotal.toFixed(2)}</td>
-                    <td>${dados.igreja.percentual_comissao}%</td>
-                    <td><strong>R$ ${dados.totalComissao.toFixed(2)}</strong></td>
-                    <td><span class="badge warning">R$ ${dados.comissaoPendente.toFixed(2)}</span></td>
-                    <td><span class="badge success">R$ ${dados.comissaoPaga.toFixed(2)}</span></td>
-                    <td>
-                        <button class="btn-action btn-view" onclick="viewIgrejaDetails('${dados.igreja.id}')">
-                            👁️ Ver Detalhes
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            if (Object.keys(vendasPorIgreja).length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px;">Nenhuma venda com comissão registrada.</td></tr>';
-            }
-        }
-
-        // Renderizar tabela de detalhes de vendas
-        function renderVendasDetalhes(vendas) {
-            const tbody = document.getElementById('vendasDetalhesBody');
-            tbody.innerHTML = '';
-
-            if (vendas.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 30px;">Nenhuma venda com comissão registrada.</td></tr>';
+            if (!checkSession()) {
+                console.log('⛔ Sessão inválida - parando execução');
                 return;
             }
 
-            vendas.forEach(venda => {
+            if (typeof window.supabase === 'undefined') {
+                console.error('❌ Supabase não carregou');
+                alert('Erro ao carregar sistema');
+                return;
+            }
+
+            const { createClient } = window.supabase;
+            supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('✅ Supabase criado');
+
+            carregarDados();
+        }
+
+        function carregarDados() {
+            console.log('📥 Carregando dados de comissões...');
+
+            Promise.all([
+                supabaseClient.from('igrejas').select('*').order('nome'),
+                supabaseClient.from('vendas').select('*').not('igreja_id', 'is', null)
+            ])
+            .then(function(results) {
+                const igrejasResult = results[0];
+                const vendasResult = results[1];
+
+                console.log('📊 Igrejas:', igrejasResult);
+                console.log('📊 Vendas:', vendasResult);
+
+                if (igrejasResult.error) throw igrejasResult.error;
+                if (vendasResult.error) throw vendasResult.error;
+
+                todasIgrejas = igrejasResult.data || [];
+                todasVendas = vendasResult.data || [];
+
+                calcularEstatisticas();
+                preencherFiltros();
+                renderizarComissoes();
+
+                setupFiltros();
+
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                console.log('✅ Carregamento completo');
+            })
+            .catch(function(error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar dados: ' + error.message);
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            });
+        }
+
+        function calcularEstatisticas() {
+            let totalComissoes = 0;
+            let comissoesPagas = 0;
+            let comissoesPendentes = 0;
+            const igrejasSet = new Set();
+
+            todasVendas.forEach(function(venda) {
+                const comissao = parseFloat(venda.valor_comissao || 0);
+                totalComissoes += comissao;
+
+                if (venda.status_pagamento === 'aprovado') {
+                    comissoesPagas += comissao;
+                } else if (venda.status_pagamento === 'pendente') {
+                    comissoesPendentes += comissao;
+                }
+
+                if (venda.igreja_id) {
+                    igrejasSet.add(venda.igreja_id);
+                }
+            });
+
+            document.getElementById('totalComissoes').textContent = 'R$ ' + totalComissoes.toFixed(2);
+            document.getElementById('comissoesPagas').textContent = 'R$ ' + comissoesPagas.toFixed(2);
+            document.getElementById('comissoesPendentes').textContent = 'R$ ' + comissoesPendentes.toFixed(2);
+            document.getElementById('igrejasComComissao').textContent = igrejasSet.size;
+        }
+
+        function preencherFiltros() {
+            const selectIgreja = document.getElementById('filtroIgreja');
+            selectIgreja.innerHTML = '<option value="">Todas as Igrejas</option>';
+
+            todasIgrejas.forEach(function(igreja) {
+                const option = document.createElement('option');
+                option.value = igreja.id;
+                option.textContent = igreja.nome;
+                selectIgreja.appendChild(option);
+            });
+        }
+
+        function setupFiltros() {
+            document.getElementById('filtroIgreja').addEventListener('change', renderizarComissoes);
+            document.getElementById('filtroStatus').addEventListener('change', renderizarComissoes);
+        }
+
+        function renderizarComissoes() {
+            const filtroIgreja = document.getElementById('filtroIgreja').value;
+            const filtroStatus = document.getElementById('filtroStatus').value;
+
+            const comissoesPorIgreja = {};
+
+            todasVendas.forEach(function(venda) {
+                if (filtroStatus && venda.status_pagamento !== filtroStatus) return;
+                if (filtroIgreja && venda.igreja_id !== filtroIgreja) return;
+
+                const igrejaId = venda.igreja_id;
+                if (!igrejaId) return;
+
+                if (!comissoesPorIgreja[igrejaId]) {
+                    comissoesPorIgreja[igrejaId] = {
+                        vendas: 0,
+                        totalVendido: 0,
+                        comissaoTotal: 0
+                    };
+                }
+
+                comissoesPorIgreja[igrejaId].vendas++;
+                comissoesPorIgreja[igrejaId].totalVendido += parseFloat(venda.valor_total || 0);
+                comissoesPorIgreja[igrejaId].comissaoTotal += parseFloat(venda.valor_comissao || 0);
+            });
+
+            const tbody = document.getElementById('comissoesTableBody');
+            tbody.innerHTML = '';
+
+            if (Object.keys(comissoesPorIgreja).length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;">Nenhuma comissão encontrada.</td></tr>';
+                return;
+            }
+
+            Object.keys(comissoesPorIgreja).forEach(function(igrejaId) {
+                const igreja = todasIgrejas.find(i => i.id === igrejaId);
+                if (!igreja) return;
+
+                const dados = comissoesPorIgreja[igrejaId];
                 const row = document.createElement('tr');
-                const data = new Date(venda.created_at).toLocaleDateString('pt-BR');
-                const statusClass = venda.status_pagamento === 'pago' ? 'success' : 'warning';
-                
+
                 row.innerHTML = `
-                    <td>${data}</td>
-                    <td>${venda.nome_comprador || 'N/A'}</td>
-                    <td>${venda.igrejas.nome}</td>
-                    <td>R$ ${parseFloat(venda.valor_total || 0).toFixed(2)}</td>
-                    <td>${venda.percentual_comissao}%</td>
-                    <td><strong>R$ ${parseFloat(venda.valor_comissao || 0).toFixed(2)}</strong></td>
-                    <td><span class="badge ${statusClass}">${venda.status_pagamento || 'pendente'}</span></td>
-                    <td>
-                        ${venda.status_pagamento !== 'pago' ? 
-                            `<button class="btn-action btn-pay" onclick="marcarComoPago('${venda.id}')">✅ Marcar Pago</button>` : 
-                            '<span class="badge success">✅ Pago</span>'
-                        }
-                    </td>
+                    <td><strong>${igreja.nome}</strong></td>
+                    <td>${igreja.cidade || 'N/A'}${igreja.estado ? ', ' + igreja.estado : ''}</td>
+                    <td>${dados.vendas}</td>
+                    <td><strong>R$ ${dados.totalVendido.toFixed(2)}</strong></td>
+                    <td><strong style="color: #28a745;">R$ ${dados.comissaoTotal.toFixed(2)}</strong></td>
+                    <td><span class="badge success">✓ Ativa</span></td>
                 `;
                 tbody.appendChild(row);
             });
+
+            console.log('✅ Renderizadas comissões de', Object.keys(comissoesPorIgreja).length, 'igrejas');
         }
 
-        // Aplicar filtros
-        function applyFilters() {
-            const igrejaId = document.getElementById('filterIgreja').value;
-            const status = document.getElementById('filterStatus').value;
-
-            let vendasFiltradas = allVendas;
-
-            if (igrejaId) {
-                vendasFiltradas = vendasFiltradas.filter(v => v.igreja_id === igrejaId);
-            }
-
-            if (status) {
-                vendasFiltradas = vendasFiltradas.filter(v => v.status_pagamento === status);
-            }
-
-            renderVendasDetalhes(vendasFiltradas);
-        }
-
-        // Marcar comissão como paga
-        async function marcarComoPago(vendaId) {
-            if (!confirm('Confirmar que esta comissão foi paga?')) return;
-
-            try {
-                const { error } = await supabase
-                    .from('vendas')
-                    .update({ status_pagamento: 'pago' })
-                    .eq('id', vendaId);
-
-                if (error) throw error;
-
-                alert('Comissão marcada como paga!');
-                loadComissoesData();
-
-            } catch (error) {
-                console.error('Erro ao atualizar:', error);
-                alert('Erro ao atualizar: ' + error.message);
-            }
-        }
-
-        // Ver detalhes da igreja
-        function viewIgrejaDetails(igrejaId) {
-            document.getElementById('filterIgreja').value = igrejaId;
-            document.getElementById('filterStatus').value = '';
-            applyFilters();
-            
-            // Scroll para a tabela de detalhes
-            document.getElementById('vendasDetalhesBody').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        // Exportar para CSV
-        function exportToCSV() {
-            const igrejaId = document.getElementById('filterIgreja').value;
-            const status = document.getElementById('filterStatus').value;
-
-            let vendasExportar = allVendas;
-
-            if (igrejaId) {
-                vendasExportar = vendasExportar.filter(v => v.igreja_id === igrejaId);
-            }
-
-            if (status) {
-                vendasExportar = vendasExportar.filter(v => v.status_pagamento === status);
-            }
-
-            let csv = 'Data,Cliente,Igreja,Valor Venda,% Comissão,Valor Comissão,Status\n';
-
-            vendasExportar.forEach(venda => {
-                const data = new Date(venda.created_at).toLocaleDateString('pt-BR');
-                csv += `${data},"${venda.nome_comprador}","${venda.igrejas.nome}",${venda.valor_total},${venda.percentual_comissao}%,${venda.valor_comissao},${venda.status_pagamento}\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `comissoes_${new Date().toISOString().split('T')[0]}.csv`;
-            link.click();
-        }
-
-        // Inicializar
-        if (checkSession()) {
-            loadComissoesData();
-        }
+        // AGUARDAR 1 SEGUNDO ANTES DE VERIFICAR SESSÃO
+        setTimeout(function() {
+            console.log('⏰ Iniciando verificação após delay...');
+            iniciar();
+        }, 1000);
     </script>
 </body>
 </html>
