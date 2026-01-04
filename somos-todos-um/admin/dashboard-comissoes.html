@@ -369,7 +369,6 @@
         var todasIgrejas = [];
         var todasVendas = [];
 
-        // SISTEMA DE STORAGE COM FALLBACK
         var StorageManager = {
             getItem: function(key) {
                 try {
@@ -399,13 +398,10 @@
             console.log('🔍 VERIFICANDO SESSÃO...');
             
             var session = StorageManager.getItem('adminSession');
-            console.log('📦 Sessão recuperada:', session);
 
             if (!session) {
                 console.log('❌ Nenhuma sessão encontrada - redirecionando');
-                setTimeout(function() {
-                    window.location.replace('login.html');
-                }, 500);
+                window.location.replace('login.html');
                 return false;
             }
 
@@ -416,10 +412,8 @@
                 if (now > sessionData.expires) {
                     console.log('⏰ Sessão expirada - removendo');
                     StorageManager.removeItem('adminSession');
-                    setTimeout(function() {
-                        alert('Sessão expirada. Faça login novamente.');
-                        window.location.replace('login.html');
-                    }, 500);
+                    alert('Sessão expirada. Faça login novamente.');
+                    window.location.replace('login.html');
                     return false;
                 }
 
@@ -430,9 +424,7 @@
             } catch (e) {
                 console.error('❌ Erro ao processar sessão:', e);
                 StorageManager.removeItem('adminSession');
-                setTimeout(function() {
-                    window.location.replace('login.html');
-                }, 500);
+                window.location.replace('login.html');
                 return false;
             }
         }
@@ -599,11 +591,10 @@
             console.log('✅ Renderizadas comissões de', Object.keys(comissoesPorIgreja).length, 'igrejas');
         }
 
-        // AGUARDAR 1 SEGUNDO ANTES DE VERIFICAR SESSÃO
         setTimeout(function() {
             console.log('⏰ Iniciando verificação após delay...');
             iniciar();
-        }, 1000);
+        }, 300);
     </script>
 </body>
 </html>
