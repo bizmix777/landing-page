@@ -1,478 +1,20 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nova Venda - Somos Todos Um</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2rem;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 1rem;
-        }
-
-        .btn-back {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: #f0f0f0;
-            color: #333;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-back:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
-
-        .product-showcase {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-        }
-
-        .product-image {
-            text-align: center;
-        }
-
-        .product-image img {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .product-details h2 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.8rem;
-        }
-
-        .product-features {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-        }
-
-        .product-features li {
-            padding: 10px 0;
-            padding-left: 30px;
-            position: relative;
-            color: #666;
-        }
-
-        .product-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #28a745;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-
-        .price-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .price-old {
-            text-decoration: line-through;
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-
-        .price-new {
-            font-size: 3rem;
-            font-weight: 700;
-            margin: 10px 0;
-        }
-
-        .price-installments {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .commission-info {
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            color: #155724;
-        }
-
-        .card {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-
-        .form-section {
-            margin-bottom: 30px;
-        }
-
-        .form-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-
-        .form-group label .required {
-            color: #e74c3c;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .summary-box {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 1.1rem;
-        }
-
-        .summary-item:last-child {
-            border-bottom: none;
-            font-weight: 700;
-            font-size: 1.3rem;
-            color: #667eea;
-            margin-top: 10px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 20px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
-        }
-
-        .btn-submit:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .guarantee-badge {
-            text-align: center;
-            background: #28a745;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .product-showcase {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .card {
-                padding: 25px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🛒 Nova Venda</h1>
-            <p>Registre uma nova venda com comissão para igreja</p>
-            <a href="index.html" class="btn-back">← Voltar para Dashboard</a>
-        </div>
-
-        <!-- PRODUTO -->
-        <div class="product-showcase">
-            <div class="product-image">
-                <img src="/images/capa-livro.jpg" alt="Capa do Livro Somos Todos Um" onerror="this.src='https://via.placeholder.com/400x600/667eea/ffffff?text=Somos+Todos+Um'">
-            </div>
-            <div class="product-details">
-                <h2>Livro Digital: SOMOS TODOS UM</h2>
-                <p style="color: #666; margin-bottom: 20px;">A Verdade Bíblica Sobre a Unidade da Humanidade</p>
-                
-                <ul class="product-features">
-                    <li>📖 120 páginas de conteúdo profundo</li>
-                    <li>✝️ 6 capítulos teológicos</li>
-                    <li>❓ 50+ perguntas de estudo</li>
-                    <li>🎁 3 bônus exclusivos inclusos</li>
-                    <li>⚡ Entrega imediata por e-mail</li>
-                    <li>📱 Leia em qualquer dispositivo</li>
-                </ul>
-
-                <div class="price-box">
-                    <div class="price-old">De R$ 170,90</div>
-                    <div class="price-new">R$ 29,90</div>
-                    <div class="price-installments">ou 12x de R$ 2,99</div>
-                </div>
-
-                <div class="commission-info">
-                    <strong>💰 COMISSÃO:</strong> A igreja selecionada receberá comissão sobre esta venda!
-                </div>
-
-                <div class="guarantee-badge">
-                    ✅ Garantia de 7 dias - 100% do seu dinheiro de volta
-                </div>
-            </div>
-        </div>
-
-        <!-- FORMULÁRIO -->
-        <div class="card">
-            <div id="alertContainer"></div>
-
-            <form id="formVenda">
-                <!-- IGREJA -->
-                <div class="form-section">
-                    <h2>⛪ Igreja Parceira</h2>
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label for="igreja_id">Selecione a Igreja: <span class="required">*</span></label>
-                            <select id="igreja_id" required>
-                                <option value="">Carregando igrejas...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="percentual_comissao">Percentual de Comissão:</label>
-                            <input type="text" id="percentual_comissao" readonly value="0%">
-                        </div>
-                        <div class="form-group">
-                            <label for="valor_comissao">Valor da Comissão:</label>
-                            <input type="text" id="valor_comissao" readonly value="R$ 0,00">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- DADOS DO COMPRADOR -->
-                <div class="form-section">
-                    <h2>👤 Dados do Comprador</h2>
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label for="nome_comprador">Nome Completo: <span class="required">*</span></label>
-                            <input type="text" id="nome_comprador" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email_comprador">Email: <span class="required">*</span></label>
-                            <input type="email" id="email_comprador" required placeholder="Receberá o livro neste e-mail">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="telefone_comprador">Telefone/WhatsApp:</label>
-                            <input type="tel" id="telefone_comprador" placeholder="(00) 00000-0000">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PAGAMENTO -->
-                <div class="form-section">
-                    <h2>💳 Forma de Pagamento</h2>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="forma_pagamento">Escolha a forma de pagamento:</label>
-                            <select id="forma_pagamento">
-                                <option value="pix">PIX (Aprovação Imediata)</option>
-                                <option value="cartao_credito">Cartão de Crédito (até 12x)</option>
-                                <option value="boleto">Boleto Bancário</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="quantidade">Quantidade:</label>
-                            <input type="number" id="quantidade" min="1" value="1">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RESUMO -->
-                <div class="summary-box">
-                    <h3 style="margin-bottom: 15px;">📊 Resumo do Pedido</h3>
-                    <div class="summary-item">
-                        <span>Livro Digital "Somos Todos Um"</span>
-                        <span>R$ 29,90</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Quantidade:</span>
-                        <span id="resumo_quantidade">1</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Igreja:</span>
-                        <span id="resumo_igreja">Não selecionada</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>Comissão para Igreja:</span>
-                        <span id="resumo_comissao" style="color: #28a745;">R$ 0,00</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>3 Bônus Exclusivos</span>
-                        <span style="color: #28a745;">GRÁTIS</span>
-                    </div>
-                    <div class="summary-item">
-                        <span>TOTAL A PAGAR:</span>
-                        <span id="resumo_total">R$ 29,90</span>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit" id="btnSubmit">
-                    🛒 FINALIZAR VENDA
-                </button>
-
-                <p style="text-align: center; color: #666; margin-top: 15px; font-size: 0.9rem;">
-                    🔒 Pagamento 100% seguro e criptografado
-                </p>
-            </form>
-        </div>
-    </div>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        console.log('🚀 Página venda.html carregada');
+        console.log('🚀 SCRIPT INICIADO');
 
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
         const PRECO_LIVRO = 29.90;
-        let todasIgrejas = [];
         let supabase;
 
-        setTimeout(function() {
-            if (!window.supabase) {
+        // Função para inicializar
+        function iniciar() {
+            console.log('📥 Inicializando...');
+
+            if (typeof window.supabase === 'undefined') {
                 console.error('❌ Supabase não carregou');
-                showAlert('Erro ao carregar sistema. Recarregue a página.', 'error');
+                document.getElementById('igreja_id').innerHTML = '<option value="">Erro ao carregar</option>';
                 return;
             }
 
@@ -481,57 +23,74 @@
             console.log('✅ Supabase criado');
 
             carregarIgrejas();
-            setupEventListeners();
-        }, 1000);
-
-        async function carregarIgrejas() {
-            try {
-                console.log('📥 Carregando igrejas...');
-
-                // ✅ REMOVIDO O FILTRO .eq('ativa', true)
-                const { data, error } = await supabase
-                    .from('igrejas')
-                    .select('*')
-                    .order('nome');
-
-                if (error) throw error;
-
-                todasIgrejas = data || [];
-                console.log('✅ Igrejas carregadas:', todasIgrejas.length);
-
-                const select = document.getElementById('igreja_id');
-                select.innerHTML = '<option value="">Selecione uma igreja</option>';
-
-                todasIgrejas.forEach(function(igreja) {
-                    const option = document.createElement('option');
-                    option.value = igreja.id;
-                    option.textContent = igreja.nome + ' - ' + igreja.percentual_comissao + '%';
-                    option.dataset.percentual = igreja.percentual_comissao;
-                    option.dataset.nome = igreja.nome;
-                    select.appendChild(option);
-                });
-
-                // Verificar se há igreja na URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const igrejaId = urlParams.get('igreja');
-                if (igrejaId) {
-                    select.value = igrejaId;
-                    select.dispatchEvent(new Event('change'));
-                }
-
-            } catch (error) {
-                console.error('❌ Erro ao carregar igrejas:', error);
-                showAlert('Erro ao carregar igrejas: ' + error.message, 'error');
-            }
         }
 
-        function setupEventListeners() {
+        // Carregar igrejas
+        function carregarIgrejas() {
+            console.log('📥 Carregando igrejas...');
+
+            supabase
+                .from('igrejas')
+                .select('*')
+                .order('nome')
+                .then(function(response) {
+                    console.log('📊 RESPOSTA:', response);
+
+                    if (response.error) {
+                        console.error('❌ ERRO:', response.error);
+                        document.getElementById('igreja_id').innerHTML = '<option value="">Erro: ' + response.error.message + '</option>';
+                        return;
+                    }
+
+                    const igrejas = response.data;
+                    console.log('✅ IGREJAS:', igrejas);
+
+                    const select = document.getElementById('igreja_id');
+                    select.innerHTML = '<option value="">Selecione uma igreja</option>';
+
+                    if (!igrejas || igrejas.length === 0) {
+                        select.innerHTML = '<option value="">Nenhuma igreja cadastrada</option>';
+                        return;
+                    }
+
+                    for (let i = 0; i < igrejas.length; i++) {
+                        const igreja = igrejas[i];
+                        const option = document.createElement('option');
+                        option.value = igreja.id;
+                        option.textContent = igreja.nome + ' - ' + igreja.percentual_comissao + '%';
+                        option.setAttribute('data-percentual', igreja.percentual_comissao);
+                        option.setAttribute('data-nome', igreja.nome);
+                        select.appendChild(option);
+                    }
+
+                    console.log('✅ Dropdown preenchido com', igrejas.length, 'igrejas');
+
+                    // Verificar URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const igrejaId = urlParams.get('igreja');
+                    if (igrejaId) {
+                        select.value = igrejaId;
+                        select.dispatchEvent(new Event('change'));
+                    }
+
+                    setupEventos();
+                })
+                .catch(function(error) {
+                    console.error('❌ ERRO CATCH:', error);
+                    document.getElementById('igreja_id').innerHTML = '<option value="">Erro: ' + error.message + '</option>';
+                });
+        }
+
+        // Setup eventos
+        function setupEventos() {
+            console.log('⚙️ Configurando eventos...');
+
             // Mudança de igreja
             document.getElementById('igreja_id').addEventListener('change', function() {
                 const option = this.options[this.selectedIndex];
                 if (option.value) {
-                    const percentual = parseFloat(option.dataset.percentual) || 0;
-                    const nome = option.dataset.nome;
+                    const percentual = parseFloat(option.getAttribute('data-percentual')) || 0;
+                    const nome = option.getAttribute('data-nome');
                     calcularComissao(percentual, nome);
                 } else {
                     document.getElementById('percentual_comissao').value = '0%';
@@ -546,15 +105,17 @@
                 const select = document.getElementById('igreja_id');
                 const option = select.options[select.selectedIndex];
                 if (option.value) {
-                    const percentual = parseFloat(option.dataset.percentual) || 0;
-                    const nome = option.dataset.nome;
+                    const percentual = parseFloat(option.getAttribute('data-percentual')) || 0;
+                    const nome = option.getAttribute('data-nome');
                     calcularComissao(percentual, nome);
                 }
                 calcularResumo();
             });
 
-            // Submit do formulário
+            // Submit
             document.getElementById('formVenda').addEventListener('submit', submeterVenda);
+
+            console.log('✅ Eventos configurados');
         }
 
         function calcularComissao(percentual, nomeIgreja) {
@@ -616,7 +177,7 @@
                 origem: 'venda_igreja'
             };
 
-            console.log('📦 Dados da venda:', vendaData);
+            console.log('📦 Dados:', vendaData);
 
             try {
                 const { data, error } = await supabase
@@ -624,11 +185,9 @@
                     .insert([vendaData])
                     .select();
 
-                console.log('📥 Resposta:', data, error);
-
                 if (error) throw error;
 
-                console.log('✅ Venda registrada com sucesso!');
+                console.log('✅ Sucesso!');
                 showAlert('✅ Venda registrada com sucesso! ID: ' + data[0].id, 'success');
                 
                 document.getElementById('formVenda').reset();
@@ -640,7 +199,7 @@
 
             } catch (error) {
                 console.error('❌ Erro:', error);
-                showAlert('❌ Erro ao registrar venda: ' + error.message, 'error');
+                showAlert('❌ Erro: ' + error.message, 'error');
                 
                 btnSubmit.disabled = false;
                 btnSubmit.textContent = '🛒 FINALIZAR VENDA';
@@ -649,15 +208,20 @@
 
         function showAlert(message, type) {
             const alertContainer = document.getElementById('alertContainer');
-            alertContainer.innerHTML = `
-                <div class="alert alert-${type}">
-                    ${message}
-                </div>
-            `;
+            alertContainer.innerHTML = '<div class="alert alert-' + type + '">' + message + '</div>';
             
             setTimeout(function() {
                 alertContainer.innerHTML = '';
             }, 8000);
+        }
+
+        // Inicializar quando carregar
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(iniciar, 1000);
+            });
+        } else {
+            setTimeout(iniciar, 1000);
         }
 
         calcularResumo();
