@@ -188,7 +188,6 @@
             isSessionStorageAvailable: false,
 
             init: function() {
-                // Testar localStorage
                 try {
                     localStorage.setItem('__test__', 'test');
                     localStorage.removeItem('__test__');
@@ -199,7 +198,6 @@
                     this.isLocalStorageAvailable = false;
                 }
 
-                // Testar sessionStorage
                 try {
                     sessionStorage.setItem('__test__', 'test');
                     sessionStorage.removeItem('__test__');
@@ -298,21 +296,15 @@
             }
         };
 
-        // Inicializar StorageManager
         StorageManager.init();
 
-        // Verificar se JÁ está logado
         function verificarSeJaEstaLogado() {
             var session = StorageManager.getItem('adminSession');
-            console.log('🔍 Verificando sessão existente:', session);
             
             if (session) {
                 try {
                     var sessionData = JSON.parse(session);
                     var now = new Date().getTime();
-                    
-                    console.log('📊 Sessão encontrada:', sessionData);
-                    console.log('⏰ Agora:', now, '| Expira:', sessionData.expires);
                     
                     if (now < sessionData.expires) {
                         console.log('✅ Sessão válida - redirecionando para dashboard');
@@ -326,13 +318,10 @@
                     console.error('❌ Erro ao verificar sessão:', e);
                     StorageManager.removeItem('adminSession');
                 }
-            } else {
-                console.log('ℹ️ Nenhuma sessão encontrada');
             }
             return false;
         }
 
-        // Verificar ao carregar a página
         if (!verificarSeJaEstaLogado()) {
             console.log('✅ Pronto para fazer login');
         }
@@ -349,7 +338,6 @@
             btnLogin.disabled = true;
             btnLogin.textContent = '⏳ Verificando...';
 
-            // CREDENCIAIS DE TESTE
             var ADMIN_EMAIL = 'admin@somostodosum.com';
             var ADMIN_PASSWORD = 'admin123';
 
@@ -357,18 +345,16 @@
                 if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
                     console.log('✅ Credenciais corretas');
 
-                    // Criar sessão
                     var sessionData = {
                         email: email,
                         loginTime: new Date().getTime(),
-                        expires: new Date().getTime() + (24 * 60 * 60 * 1000) // 24 horas
+                        expires: new Date().getTime() + (24 * 60 * 60 * 1000)
                     };
 
                     console.log('💾 Salvando sessão:', sessionData);
                     var salvou = StorageManager.setItem('adminSession', JSON.stringify(sessionData));
 
                     if (salvou) {
-                        // Verificar se salvou
                         var verificacao = StorageManager.getItem('adminSession');
                         console.log('🔍 Verificando se salvou:', verificacao);
 
@@ -379,7 +365,7 @@
                             setTimeout(function() {
                                 console.log('🔄 Redirecionando para dashboard...');
                                 window.location.replace('index.html');
-                            }, 1500);
+                            }, 500);
                         } else {
                             console.error('❌ ERRO: Sessão não foi recuperada!');
                             showAlert('❌ Erro ao verificar sessão. Verifique as configurações do navegador.', 'error');
@@ -399,7 +385,7 @@
                     btnLogin.disabled = false;
                     btnLogin.textContent = 'Entrar';
                 }
-            }, 1000);
+            }, 500);
         });
 
         function showAlert(message, type) {
