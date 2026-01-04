@@ -297,7 +297,7 @@
 <body>
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <div class="loading-message">Verificando autenticação...</div>
+        <div class="loading-message">Carregando dashboard...</div>
     </div>
 
     <div class="sidebar">
@@ -392,7 +392,6 @@
 
         var supabaseClient = null;
 
-        // SISTEMA DE STORAGE COM FALLBACK
         var StorageManager = {
             getItem: function(key) {
                 try {
@@ -426,9 +425,7 @@
 
             if (!session) {
                 console.log('❌ Nenhuma sessão encontrada - redirecionando');
-                setTimeout(function() {
-                    window.location.replace('login.html');
-                }, 500);
+                window.location.replace('login.html');
                 return false;
             }
 
@@ -437,17 +434,13 @@
                 var now = new Date().getTime();
                 
                 console.log('📊 Dados da sessão:', sessionData);
-                console.log('⏰ Tempo atual:', now);
-                console.log('⏰ Expira em:', sessionData.expires);
                 console.log('⏰ Tempo restante:', Math.round((sessionData.expires - now) / 1000 / 60), 'minutos');
                 
                 if (now > sessionData.expires) {
                     console.log('⏰ Sessão expirada - removendo');
                     StorageManager.removeItem('adminSession');
-                    setTimeout(function() {
-                        alert('Sessão expirada. Faça login novamente.');
-                        window.location.replace('login.html');
-                    }, 500);
+                    alert('Sessão expirada. Faça login novamente.');
+                    window.location.replace('login.html');
                     return false;
                 }
 
@@ -458,9 +451,7 @@
             } catch (e) {
                 console.error('❌ Erro ao processar sessão:', e);
                 StorageManager.removeItem('adminSession');
-                setTimeout(function() {
-                    window.location.replace('login.html');
-                }, 500);
+                window.location.replace('login.html');
                 return false;
             }
         }
@@ -594,11 +585,10 @@
             console.log('✅ Renderizadas', vendas.length, 'vendas');
         }
 
-        // AGUARDAR 2 SEGUNDOS ANTES DE VERIFICAR SESSÃO
         setTimeout(function() {
             console.log('⏰ Iniciando verificação após delay...');
             iniciar();
-        }, 2000);
+        }, 500);
     </script>
 </body>
 </html>
