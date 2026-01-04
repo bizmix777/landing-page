@@ -500,8 +500,7 @@
 
             try {
                 console.log('📤 Enviando dados:', { nome, email, cpf, igrejaId });
-
-                const response = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/quick-processor', {
+                const response = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/criar-pagamento-pix', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
