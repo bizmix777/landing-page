@@ -114,6 +114,12 @@
             border: 1px solid #c3e6cb;
         }
 
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
         .back-link {
             text-align: center;
             margin-top: 20px;
@@ -127,6 +133,15 @@
 
         .back-link a:hover {
             text-decoration: underline;
+        }
+
+        .debug-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: #666;
         }
     </style>
 </head>
@@ -142,18 +157,22 @@
         <form id="loginForm">
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" required placeholder="seu@email.com">
+                <input type="email" id="email" required placeholder="seu@email.com" value="admin@somostodosum.com">
             </div>
 
             <div class="form-group">
                 <label for="password">Senha:</label>
-                <input type="password" id="password" required placeholder="••••••••">
+                <input type="password" id="password" required placeholder="••••••••" value="admin123">
             </div>
 
             <button type="submit" class="btn-login" id="btnLogin">
                 Entrar
             </button>
         </form>
+
+        <div class="debug-info" id="debugInfo">
+            Verificando sistema...
+        </div>
 
         <div class="back-link">
             <a href="/">← Voltar para o site</a>
@@ -163,65 +182,219 @@
     <script>
         console.log('🔐 Página de Login Carregada');
 
+        // SISTEMA DE STORAGE COM FALLBACK
+        var StorageManager = {
+            isLocalStorageAvailable: false,
+            isSessionStorageAvailable: false,
+
+            init: function() {
+                // Testar localStorage
+                try {
+                    localStorage.setItem('__test__', 'test');
+                    localStorage.removeItem('__test__');
+                    this.isLocalStorageAvailable = true;
+                    console.log('✅ localStorage disponível');
+                } catch (e) {
+                    console.warn('⚠️ localStorage NÃO disponível:', e.message);
+                    this.isLocalStorageAvailable = false;
+                }
+
+                // Testar sessionStorage
+                try {
+                    sessionStorage.setItem('__test__', 'test');
+                    sessionStorage.removeItem('__test__');
+                    this.isSessionStorageAvailable = true;
+                    console.log('✅ sessionStorage disponível');
+                } catch (e) {
+                    console.warn('⚠️ sessionStorage NÃO disponível:', e.message);
+                    this.isSessionStorageAvailable = false;
+                }
+
+                this.updateDebugInfo();
+            },
+
+            setItem: function(key, value) {
+                if (this.isLocalStorageAvailable) {
+                    try {
+                        localStorage.setItem(key, value);
+                        console.log('💾 Salvo em localStorage:', key);
+                        return true;
+                    } catch (e) {
+                        console.error('❌ Erro ao salvar em localStorage:', e);
+                    }
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    try {
+                        sessionStorage.setItem(key, value);
+                        console.log('💾 Salvo em sessionStorage:', key);
+                        return true;
+                    } catch (e) {
+                        console.error('❌ Erro ao salvar em sessionStorage:', e);
+                    }
+                }
+
+                console.error('❌ Nenhum storage disponível!');
+                return false;
+            },
+
+            getItem: function(key) {
+                if (this.isLocalStorageAvailable) {
+                    try {
+                        var value = localStorage.getItem(key);
+                        if (value) {
+                            console.log('📥 Recuperado de localStorage:', key);
+                            return value;
+                        }
+                    } catch (e) {
+                        console.error('❌ Erro ao ler localStorage:', e);
+                    }
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    try {
+                        var value = sessionStorage.getItem(key);
+                        if (value) {
+                            console.log('📥 Recuperado de sessionStorage:', key);
+                            return value;
+                        }
+                    } catch (e) {
+                        console.error('❌ Erro ao ler sessionStorage:', e);
+                    }
+                }
+
+                return null;
+            },
+
+            removeItem: function(key) {
+                if (this.isLocalStorageAvailable) {
+                    try {
+                        localStorage.removeItem(key);
+                    } catch (e) {}
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    try {
+                        sessionStorage.removeItem(key);
+                    } catch (e) {}
+                }
+            },
+
+            updateDebugInfo: function() {
+                var info = '🔧 Status: ';
+                if (this.isLocalStorageAvailable) {
+                    info += 'localStorage ✅ | ';
+                } else {
+                    info += 'localStorage ❌ | ';
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    info += 'sessionStorage ✅';
+                } else {
+                    info += 'sessionStorage ❌';
+                }
+
+                document.getElementById('debugInfo').textContent = info;
+            }
+        };
+
+        // Inicializar StorageManager
+        StorageManager.init();
+
         // Verificar se JÁ está logado
         function verificarSeJaEstaLogado() {
-            const session = localStorage.getItem('adminSession');
+            var session = StorageManager.getItem('adminSession');
+            console.log('🔍 Verificando sessão existente:', session);
+            
             if (session) {
                 try {
-                    const sessionData = JSON.parse(session);
-                    const now = new Date().getTime();
+                    var sessionData = JSON.parse(session);
+                    var now = new Date().getTime();
+                    
+                    console.log('📊 Sessão encontrada:', sessionData);
+                    console.log('⏰ Agora:', now, '| Expira:', sessionData.expires);
                     
                     if (now < sessionData.expires) {
-                        console.log('✅ Usuário já está logado - redirecionando para dashboard');
-                        window.location.href = 'index.html';
+                        console.log('✅ Sessão válida - redirecionando para dashboard');
+                        window.location.replace('index.html');
                         return true;
                     } else {
                         console.log('⏰ Sessão expirada - removendo');
-                        localStorage.removeItem('adminSession');
+                        StorageManager.removeItem('adminSession');
                     }
                 } catch (e) {
                     console.error('❌ Erro ao verificar sessão:', e);
-                    localStorage.removeItem('adminSession');
+                    StorageManager.removeItem('adminSession');
                 }
+            } else {
+                console.log('ℹ️ Nenhuma sessão encontrada');
             }
             return false;
         }
 
         // Verificar ao carregar a página
-        verificarSeJaEstaLogado();
+        if (!verificarSeJaEstaLogado()) {
+            console.log('✅ Pronto para fazer login');
+        }
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
 
-            const btnLogin = document.getElementById('btnLogin');
+            console.log('🔐 Tentando login com:', email);
+
+            var btnLogin = document.getElementById('btnLogin');
             btnLogin.disabled = true;
             btnLogin.textContent = '⏳ Verificando...';
 
-            // CREDENCIAIS DE TESTE (SUBSTITUA POR AUTENTICAÇÃO REAL)
-            const ADMIN_EMAIL = 'admin@somostodosum.com';
-            const ADMIN_PASSWORD = 'admin123';
+            // CREDENCIAIS DE TESTE
+            var ADMIN_EMAIL = 'admin@somostodosum.com';
+            var ADMIN_PASSWORD = 'admin123';
 
             setTimeout(function() {
                 if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                    // Login bem-sucedido
-                    const sessionData = {
+                    console.log('✅ Credenciais corretas');
+
+                    // Criar sessão
+                    var sessionData = {
                         email: email,
+                        loginTime: new Date().getTime(),
                         expires: new Date().getTime() + (24 * 60 * 60 * 1000) // 24 horas
                     };
 
-                    localStorage.setItem('adminSession', JSON.stringify(sessionData));
+                    console.log('💾 Salvando sessão:', sessionData);
+                    var salvou = StorageManager.setItem('adminSession', JSON.stringify(sessionData));
 
-                    showAlert('✅ Login realizado com sucesso!', 'success');
+                    if (salvou) {
+                        // Verificar se salvou
+                        var verificacao = StorageManager.getItem('adminSession');
+                        console.log('🔍 Verificando se salvou:', verificacao);
 
-                    setTimeout(function() {
-                        window.location.href = 'index.html';
-                    }, 1000);
+                        if (verificacao) {
+                            console.log('✅ Sessão salva com sucesso!');
+                            showAlert('✅ Login realizado com sucesso!', 'success');
+
+                            setTimeout(function() {
+                                console.log('🔄 Redirecionando para dashboard...');
+                                window.location.replace('index.html');
+                            }, 1500);
+                        } else {
+                            console.error('❌ ERRO: Sessão não foi recuperada!');
+                            showAlert('❌ Erro ao verificar sessão. Verifique as configurações do navegador.', 'error');
+                            btnLogin.disabled = false;
+                            btnLogin.textContent = 'Entrar';
+                        }
+                    } else {
+                        console.error('❌ ERRO: Não foi possível salvar a sessão!');
+                        showAlert('⚠️ AVISO: Storage bloqueado. Desative o modo anônimo ou extensões de privacidade.', 'warning');
+                        btnLogin.disabled = false;
+                        btnLogin.textContent = 'Entrar';
+                    }
 
                 } else {
-                    // Login falhou
+                    console.log('❌ Credenciais incorretas');
                     showAlert('❌ Email ou senha incorretos!', 'error');
                     btnLogin.disabled = false;
                     btnLogin.textContent = 'Entrar';
