@@ -3,534 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalizar Compra - Somos Todos Um</title>
+    <title>Checkout - Somos Todos Um</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Basic Reset & Body */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
             padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
         }
-
         .container {
-            max-width: 800px;
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
             padding: 30px;
-            margin-top: 20px;
-            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
         h1 {
-            text-align: center;
-            color: #2c3e50;
+            color: #333;
             margin-bottom: 30px;
-            font-size: 2.2em;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 15px;
+            text-align: center;
         }
-
-        h2 {
-            color: #34495e;
-            font-size: 1.6em;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 10px;
-        }
-
-        /* Card Styling */
-        .card {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid #e0e0e0;
-        }
-
-        /* Product Summary */
-        .product-summary p {
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            color: #555;
-        }
-
-        .product-summary ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 15px;
-        }
-
-        .product-summary ul li {
-            margin-bottom: 8px;
-            color: #444;
-            font-size: 0.95em;
-        }
-
-        .product-summary ul li::before {
-            content: '✅';
-            margin-right: 8px;
-            color: #27ae60;
-        }
-
-        /* Form Styling */
         .form-group {
             margin-bottom: 20px;
         }
-
-        .form-group label {
+        label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #444;
-            font-size: 0.95em;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="tel"],
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1em;
+            margin-bottom: 5px;
             color: #555;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            outline: none;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 10px;
-            width: 18px;
-            height: 18px;
-            accent-color: #27ae60;
-        }
-
-        .checkbox-group label {
-            font-weight: normal;
-            color: #555;
-            font-size: 0.95em;
-        }
-
-        .btn-primary {
-            display: block;
-            width: 100%;
-            padding: 15px 20px;
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1em;
             font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-align: center;
-            text-decoration: none;
         }
-
-        .btn-primary:hover {
-            background-color: #219d57;
-            transform: translateY(-2px);
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
         }
-
-        /* PIX Details */
-        .pix-details {
-            text-align: center;
-        }
-
-        .qr-code-area img {
-            max-width: 250px;
-            height: auto;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            margin: 20px auto;
-            display: block;
-        }
-
-        .pix-code-display {
-            background-color: #f8f8f8;
-            border: 1px dashed #ddd;
+        button {
+            width: 100%;
             padding: 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            word-break: break-all;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9em;
-            color: #333;
-        }
-
-        .copy-button {
-            background-color: #3498db;
+            background: #4CAF50;
             color: white;
-            padding: 10px 15px;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
+            font-size: 18px;
             cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .copy-button:hover {
-            background-color: #2980b9;
-        }
-
-        .payment-status {
-            font-size: 1.1em;
             font-weight: bold;
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 6px;
         }
-
-        .payment-status.pending {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
+        button:hover {
+            background: #45a049;
         }
-
-        .payment-status.paid {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        /* Back Link */
-        .back-link {
-            text-align: center;
+        #resultado {
             margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            display: none;
         }
-
-        .back-link a {
-            color: #3498db;
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
+        #qrcode {
+            text-align: center;
+            margin: 20px 0;
         }
-
-        .back-link a:hover {
-            color: #2980b9;
+        #qrcode img {
+            max-width: 300px;
         }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px;
-                margin: 10px;
-            }
-            h1 {
-                font-size: 1.8em;
-            }
-            h2 {
-                font-size: 1.4em;
-            }
-            .form-group input,
-            .form-group select,
-            .btn-primary {
-                font-size: 0.95em;
-                padding: 12px;
-            }
-            .qr-code-area img {
-                max-width: 180px;
-            }
+        .codigo-pix {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status {
+            text-align: center;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 5px;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📚 Finalizar Compra</h1>
-
-        <div class="card product-summary">
-            <h2>Seu Livro Digital</h2>
-            <p><strong>Livro Digital - Somos Todos Um</strong></p>
-            <p>Preço: R$ 47,00</p>
-            <ul>
-                <li>Acesso imediato ao conteúdo</li>
-                <li>Download em PDF para ler offline</li>
-                <li>Atualizações gratuitas futuras</li>
-                <li>Conteúdo exclusivo para seu crescimento espiritual</li>
-            </ul>
-        </div>
-
-        <div class="card checkout-form">
-            <h2>Dados para a Compra</h2>
-            <form id="formCheckout" onsubmit="return false;">
-                <div class="form-group">
-                    <label for="nome">Nome Completo *</label>
-                    <input 
-                        type="text" 
-                        id="nome" 
-                        name="nome" 
-                        placeholder="Seu nome completo"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="email">E-mail *</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="seu@email.com"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="cpf">CPF *</label>
-                    <input 
-                        type="text" 
-                        id="cpf" 
-                        name="cpf" 
-                        placeholder="000.000.000-00"
-                        required
-                        maxlength="14"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="telefone">Telefone/WhatsApp *</label>
-                    <input 
-                        type="tel" 
-                        id="telefone" 
-                        name="telefone" 
-                        placeholder="(11) 99999-9999"
-                        required
-                        maxlength="15"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="igreja">Igreja (opcional)</label>
-                    <select id="igreja" name="igreja">
-                        <option value="">Selecione sua igreja</option>
-                        <!-- Igrejas serão carregadas aqui via JS -->
-                    </select>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="doacaoIgreja" name="doacaoIgreja">
-                    <label for="doacaoIgreja">Quero ajudar uma igreja com minha compra (10% do valor)</label>
-                </div>
-
-                <button type="button" onclick="gerarPagamentoPix()" class="btn-primary">
-                    🔒 Gerar PIX para Pagamento
-                </button>
-            </form>
-        </div>
-
-        <div id="pixSection" class="card pix-details" style="display: none;">
-            <h2>📱 Pague com PIX</h2>
-            <div class="qr-code-area">
-                <img id="qrCodeImage" src="" alt="QR Code PIX">
+        <h1>📖 Livro Digital<br>Somos Todos Um</h1>
+        
+        <form id="formCheckout">
+            <div class="form-group">
+                <label for="nome">Nome Completo *</label>
+                <input type="text" id="nome" required>
             </div>
-            <p>Copie o código PIX abaixo e pague no seu aplicativo bancário:</p>
-            <div class="pix-code-display" id="pixCodeText"></div>
-            <button type="button" onclick="copyPixCode()" class="copy-button">Copiar Código PIX</button>
-            <div id="paymentStatus" class="payment-status pending">Aguardando pagamento...</div>
-        </div>
 
-        <div class="back-link">
-            <a href="https://somos.bizmix.com.br/">← Voltar para o site</a>
+            <div class="form-group">
+                <label for="email">E-mail *</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="cpf">CPF *</label>
+                <input type="text" id="cpf" required maxlength="14">
+            </div>
+
+            <div class="form-group">
+                <label for="telefone">Telefone/WhatsApp *</label>
+                <input type="tel" id="telefone" required maxlength="15">
+            </div>
+
+            <div class="form-group">
+                <label for="igreja">Igreja (opcional)</label>
+                <select id="igreja">
+                    <option value="">Selecione sua igreja</option>
+                </select>
+            </div>
+
+            <button type="button" id="btnGerar">Gerar PIX - R$ 47,00</button>
+        </form>
+
+        <div id="resultado">
+            <h2>✅ PIX Gerado!</h2>
+            <div id="qrcode"></div>
+            <div class="codigo-pix" id="codigoPix"></div>
+            <div class="status">⏳ Aguardando pagamento...</div>
         </div>
     </div>
 
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase Client Initialization
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhhZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Inicializar Supabase
+        const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        const PRECO_LIVRO = 47.00;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadChurches();
-
-            // CPF Mask
-            document.getElementById('cpf').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length <= 11) {
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                }
-                e.target.value = value;
-            });
-
-            // Telefone Mask
-            document.getElementById('telefone').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length <= 11) {
-                    if (value.length <= 10) {
-                        // Telefone fixo: (11) 1234-5678
-                        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-                        value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-                    } else {
-                        // Celular: (11) 91234-5678
-                        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-                        value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-                    }
-                }
-                e.target.value = value;
-            });
+        // Máscara CPF
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length <= 11) {
+                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                v = v.replace(/(\d{3})(\d)/, '$1.$2');
+                v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            }
+            e.target.value = v;
         });
 
-        async function loadChurches() {
-            const { data, error } = await supabase
-                .from('igrejas')
-                .select('id, nome');
-
-            if (error) {
-                console.error('Erro ao carregar igrejas:', error.message);
-                return;
+        // Máscara Telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length <= 11) {
+                v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
+                v = v.replace(/(\d)(\d{4})$/, '$1-$2');
             }
+            e.target.value = v;
+        });
 
-            const selectIgreja = document.getElementById('igreja');
-            data.forEach(igreja => {
-                const option = document.createElement('option');
-                option.value = igreja.id;
-                option.textContent = igreja.nome;
-                selectIgreja.appendChild(option);
-            });
-        }
-
-        async function gerarPagamentoPix() {
-            console.log('🚀 FUNÇÃO gerarPagamentoPix() CHAMADA'); // Debug
+        // Botão Gerar PIX
+        document.getElementById('btnGerar').addEventListener('click', async function() {
+            console.log('🚀 Botão clicado');
             
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
             const cpf = document.getElementById('cpf').value;
             const telefone = document.getElementById('telefone').value;
             const igrejaId = document.getElementById('igreja').value || null;
-            const querDoar = document.getElementById('doacaoIgreja').checked;
 
-                alert('Por favor, preencha todos os campos obrigatórios.');
+            if (!nome || !email || !cpf || !telefone) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                console.log('❌ Campos obrigatórios não preenchidos');
                 return;
             }
 
-            // Basic email validation
-            if (!/\S+@\S+\.\S+/.test(email)) {
-                alert('Por favor, insira um e-mail válido.');
-                return;
-            }
-
-            // Basic CPF validation (just length after mask removal)
-            if (cpf.replace(/\D/g, '').length !== 11) {
-                alert('Por favor, insira um CPF válido com 11 dígitos.');
-                return;
-            }
-
-            // Basic Telefone validation (just length after mask removal)
-            const cleanTelefone = telefone.replace(/\D/g, '');
-            if (cleanTelefone.length < 10 || cleanTelefone.length > 11) {
-                alert('Por favor, insira um telefone válido com 10 ou 11 dígitos (incluindo DDD).');
-                return;
-            }
-
-            // Show loading or disable button
-            const btnPix = document.querySelector('.btn-primary');
-            btnPix.textContent = 'Gerando PIX...';
-            btnPix.disabled = true;
+            console.log('📤 Enviando:', { nome, email, cpf, telefone, igrejaId });
 
             try {
-                console.log('📤 Enviando dados:', { nome, email, cpf, telefone, igrejaId, valor: PRECO_LIVRO });
-
-                const { data, error } = await supabase.functions.invoke('criar-pagamento-pix', {
+                const { data, error } = await supabaseClient.functions.invoke('criar-pagamento-pix', {
                     body: {
-                        nome,
-                        email,
-                        cpf,
-                        telefone,
-                        igrejaId: querDoar ? igrejaId : null, // Only send igrejaId if donation is checked
-                        valor: PRECO_LIVRO
+                        nome: nome,
+                        email: email,
+                        cpf: cpf,
+                        telefone: telefone,
+                        igrejaId: igrejaId,
+                        valor: 47.00
                     }
                 });
 
                 if (error) {
-                    console.error('❌ Erro ao invocar função:', error);
-                    alert(`Erro ao gerar pagamento: ${error.message || JSON.stringify(error)}`);
+                    console.error('❌ Erro:', error);
+                    alert('Erro ao gerar PIX: ' + error.message);
                     return;
                 }
 
-                if (!data.success) {
-                    console.error('❌ Erro da função:', data.error);
-                    alert(`Erro ao gerar pagamento: ${data.error}`);
-                    return;
+                console.log('✅ Sucesso:', data);
+
+                if (data.qr_code_base64) {
+                    document.getElementById('qrcode').innerHTML = '<img src="data:image/png;base64,' + data.qr_code_base64 + '" alt="QR Code PIX">';
                 }
 
-                // Display PIX details
-                document.getElementById('qrCodeImage').src = `data:image/png;base64,${data.qr_code_base64}`;
-                document.getElementById('pixCodeText').textContent = data.qr_code;
-                document.getElementById('pixSection').style.display = 'block';
-                document.getElementById('formCheckout').style.display = 'none'; // Hide form
+                if (data.qr_code) {
+                    document.getElementById('codigoPix').textContent = data.qr_code;
+                }
 
-                // Scroll to PIX section
-                document.getElementById('pixSection').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('resultado').style.display = 'block';
+                document.getElementById('formCheckout').style.display = 'none';
 
-                // Update payment status (placeholder for now, real-time update would need webhooks)
-                updatePaymentStatus('pending');
-
-            } catch (error) {
-                console.error('❌ Erro inesperado:', error);
-                alert('Ocorreu um erro inesperado ao gerar o PIX. Tente novamente mais tarde.');
-            } finally {
-                btnPix.textContent = '🔒 Gerar PIX para Pagamento';
-                btnPix.disabled = false;
+            } catch (err) {
+                console.error('❌ Erro na execução:', err);
+                alert('Erro ao processar pagamento: ' + err.message);
             }
-        }
+        });
 
-        function copyPixCode() {
-            const pixCode = document.getElementById('pixCodeText').textContent;
-            navigator.clipboard.writeText(pixCode).then(() => {
-                alert('Código PIX copiado para a área de transferência!');
-            }).catch(err => {
-                console.error('Erro ao copiar o código PIX:', err);
-                alert('Não foi possível copiar o código PIX. Por favor, copie manualmente.');
-            });
-        }
-
-        function updatePaymentStatus(status) {
-            const paymentStatusDiv = document.getElementById('paymentStatus');
-            paymentStatusDiv.classList.remove('pending', 'paid');
-            if (status === 'pending') {
-                paymentStatusDiv.classList.add('pending');
-                paymentStatusDiv.textContent = 'Aguardando pagamento...';
-            } else if (status === 'paid') {
-                paymentStatusDiv.classList.add('paid');
-                paymentStatusDiv.textContent = 'Pagamento confirmado! Em breve você receberá o acesso.';
-            }
-            // Future: Implement webhook to update this status in real-time
-        }
+        console.log('✅ Script carregado com sucesso!');
     </script>
 </body>
 </html>
