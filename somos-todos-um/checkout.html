@@ -101,11 +101,11 @@
         .btn-copied {
             background: #4CAF50 !important;
         }
-        .btn-verificar {
+        .btn-confirmacao {
             background: #FF9800;
             margin-top: 20px;
         }
-        .btn-verificar:hover {
+        .btn-confirmacao:hover {
             background: #F57C00;
         }
         #resultado {
@@ -248,8 +248,8 @@
 
             <div class="status">⏳ Aguardando confirmação do pagamento...</div>
 
-            <button type="button" id="btnVerificar" class="btn-verificar">
-                🔍 Já Paguei - Verificar Status
+            <button type="button" id="btnConfirmacao" class="btn-confirmacao">
+                ✅ Já Paguei - Verificar Status
             </button>
         </div>
     </div>
@@ -355,11 +355,11 @@
         });
 
         // Botão Verificar Status
-        document.getElementById('btnVerificar').addEventListener('click', function() {
+        document.getElementById('btnConfirmacao').addEventListener('click', function() {
             if (vendaIdAtual) {
                 window.location.href = `/confirmacao.html?venda=${vendaIdAtual}`;
             } else {
-                alert('Erro: ID da venda não encontrado. Tente gerar o PIX novamente.');
+                alert('Erro: ID da venda não encontrado');
             }
         });
 
@@ -410,12 +410,9 @@
 
                 console.log('✅ Sucesso:', data);
 
-                // Salvar dados importantes
+                // Salvar dados
                 codigoPixAtual = data.qr_code;
                 vendaIdAtual = data.venda_id;
-
-                // Salvar no localStorage para recuperar depois
-                localStorage.setItem('ultima_venda', vendaIdAtual);
 
                 // Mostrar QR Code
                 if (data.qr_code_base64) {
