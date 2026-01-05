@@ -29,6 +29,11 @@
             margin-bottom: 30px;
             text-align: center;
         }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
         .form-group {
             margin-bottom: 20px;
         }
@@ -55,6 +60,7 @@
             font-size: 18px;
             cursor: pointer;
             font-weight: bold;
+            margin-bottom: 10px;
         }
         button:hover {
             background: #45a049;
@@ -62,6 +68,15 @@
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
+        }
+        .btn-copy {
+            background: #2196F3;
+        }
+        .btn-copy:hover {
+            background: #0b7dda;
+        }
+        .btn-copied {
+            background: #4CAF50 !important;
         }
         #resultado {
             margin-top: 30px;
@@ -76,15 +91,48 @@
         }
         #qrcode img {
             max-width: 300px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
         }
-        .codigo-pix {
+        .instrucoes {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+        .instrucoes h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .instrucoes ol {
+            margin-left: 20px;
+            color: #555;
+        }
+        .instrucoes li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .codigo-pix-container {
             background: #fff;
             padding: 15px;
-            border: 1px solid #ddd;
+            border: 2px solid #2196F3;
             border-radius: 5px;
+            margin: 20px 0;
+        }
+        .codigo-pix {
             word-break: break-all;
             font-family: monospace;
-            font-size: 12px;
+            font-size: 11px;
+            color: #333;
+            max-height: 100px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 3px;
         }
         .status {
             text-align: center;
@@ -92,11 +140,18 @@
             background: #fff3cd;
             border-radius: 5px;
             margin-top: 15px;
+            font-weight: bold;
         }
         .loading {
             text-align: center;
             padding: 20px;
             display: none;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -133,10 +188,28 @@
         </div>
 
         <div id="resultado">
-            <h2>✅ PIX Gerado!</h2>
+            <h2>✅ PIX Gerado com Sucesso!</h2>
+            
+            <div class="instrucoes">
+                <h3>📱 Como Pagar:</h3>
+                <ol>
+                    <li><strong>Opção 1:</strong> Escaneie o QR Code abaixo com o app do seu banco</li>
+                    <li><strong>Opção 2:</strong> Copie o código PIX e cole no app do seu banco (Pix Copia e Cola)</li>
+                </ol>
+            </div>
+
             <div id="qrcode"></div>
-            <div class="codigo-pix" id="codigoPix"></div>
-            <div class="status">⏳ Aguardando pagamento...</div>
+
+            <div class="divider">OU</div>
+
+            <div class="codigo-pix-container">
+                <button type="button" id="btnCopiar" class="btn-copy">
+                    📋 Copiar Código PIX
+                </button>
+                <div class="codigo-pix" id="codigoPix"></div>
+            </div>
+
+            <div class="status">⏳ Aguardando confirmação do pagamento...</div>
         </div>
     </div>
 
@@ -145,6 +218,8 @@
         const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        let codigoPixAtual = '';
 
         // Máscara CPF
         document.getElementById('cpf').addEventListener('input', function(e) {
@@ -165,6 +240,27 @@
                 v = v.replace(/(\d)(\d{4})$/, '$1-$2');
             }
             e.target.value = v;
+        });
+
+        // Botão Copiar Código PIX
+        document.getElementById('btnCopiar').addEventListener('click', function() {
+            const btn = this;
+            
+            // Copiar para clipboard
+            navigator.clipboard.writeText(codigoPixAtual).then(function() {
+                // Feedback visual
+                btn.textContent = '✅ Código Copiado!';
+                btn.classList.add('btn-copied');
+                
+                // Voltar ao normal após 3 segundos
+                setTimeout(function() {
+                    btn.textContent = '📋 Copiar Código PIX';
+                    btn.classList.remove('btn-copied');
+                }, 3000);
+            }).catch(function(err) {
+                console.error('Erro ao copiar:', err);
+                alert('Erro ao copiar. Por favor, copie manualmente o código abaixo.');
+            });
         });
 
         // Botão Gerar PIX
@@ -215,10 +311,15 @@
 
                 console.log('✅ Sucesso:', data);
 
+                // Salvar código PIX
+                codigoPixAtual = data.qr_code;
+
+                // Mostrar QR Code
                 if (data.qr_code_base64) {
                     document.getElementById('qrcode').innerHTML = '<img src="data:image/png;base64,' + data.qr_code_base64 + '" alt="QR Code PIX">';
                 }
 
+                // Mostrar código PIX
                 if (data.qr_code) {
                     document.getElementById('codigoPix').textContent = data.qr_code;
                 }
