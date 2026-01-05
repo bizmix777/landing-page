@@ -38,7 +38,7 @@
             color: #555;
             font-weight: bold;
         }
-        input, select {
+        input {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
@@ -58,6 +58,10 @@
         }
         button:hover {
             background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
         #resultado {
             margin-top: 30px;
@@ -89,6 +93,11 @@
             border-radius: 5px;
             margin-top: 15px;
         }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -116,15 +125,12 @@
                 <input type="tel" id="telefone" required maxlength="15">
             </div>
 
-            <div class="form-group">
-                <label for="igreja">Igreja (opcional)</label>
-                <select id="igreja">
-                    <option value="">Selecione sua igreja</option>
-                </select>
-            </div>
-
             <button type="button" id="btnGerar">Gerar PIX - R$ 47,00</button>
         </form>
+
+        <div class="loading" id="loading">
+            <p>⏳ Gerando PIX...</p>
+        </div>
 
         <div id="resultado">
             <h2>✅ PIX Gerado!</h2>
@@ -169,7 +175,6 @@
             const email = document.getElementById('email').value;
             const cpf = document.getElementById('cpf').value;
             const telefone = document.getElementById('telefone').value;
-            const igrejaId = document.getElementById('igreja').value || null;
 
             if (!nome || !email || !cpf || !telefone) {
                 alert('Por favor, preencha todos os campos obrigatórios!');
@@ -177,7 +182,13 @@
                 return;
             }
 
-            console.log('📤 Enviando:', { nome, email, cpf, telefone, igrejaId });
+            // Desabilitar botão e mostrar loading
+            const btn = document.getElementById('btnGerar');
+            btn.disabled = true;
+            btn.textContent = 'Gerando PIX...';
+            document.getElementById('loading').style.display = 'block';
+
+            console.log('📤 Enviando:', { nome, email, cpf, telefone });
 
             try {
                 const { data, error } = await supabaseClient.functions.invoke('criar-pagamento-pix', {
@@ -186,14 +197,19 @@
                         email: email,
                         cpf: cpf,
                         telefone: telefone,
-                        igrejaId: igrejaId,
+                        igrejaId: null,
                         valor: 47.00
                     }
                 });
 
+                console.log('📥 Resposta completa:', { data, error });
+
                 if (error) {
                     console.error('❌ Erro:', error);
-                    alert('Erro ao gerar PIX: ' + error.message);
+                    alert('Erro ao gerar PIX: ' + (error.message || JSON.stringify(error)));
+                    btn.disabled = false;
+                    btn.textContent = 'Gerar PIX - R$ 47,00';
+                    document.getElementById('loading').style.display = 'none';
                     return;
                 }
 
@@ -207,12 +223,16 @@
                     document.getElementById('codigoPix').textContent = data.qr_code;
                 }
 
+                document.getElementById('loading').style.display = 'none';
                 document.getElementById('resultado').style.display = 'block';
                 document.getElementById('formCheckout').style.display = 'none';
 
             } catch (err) {
                 console.error('❌ Erro na execução:', err);
                 alert('Erro ao processar pagamento: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Gerar PIX - R$ 47,00';
+                document.getElementById('loading').style.display = 'none';
             }
         });
 
