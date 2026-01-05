@@ -101,6 +101,13 @@
         .btn-copied {
             background: #4CAF50 !important;
         }
+        .btn-verificar {
+            background: #FF9800;
+            margin-top: 20px;
+        }
+        .btn-verificar:hover {
+            background: #F57C00;
+        }
         #resultado {
             margin-top: 30px;
             padding: 20px;
@@ -240,6 +247,10 @@
             </div>
 
             <div class="status">⏳ Aguardando confirmação do pagamento...</div>
+
+            <button type="button" id="btnVerificar" class="btn-verificar">
+                🔍 Já Paguei - Verificar Status
+            </button>
         </div>
     </div>
 
@@ -251,6 +262,7 @@
 
         let codigoPixAtual = '';
         let igrejaIdAtual = null;
+        let vendaIdAtual = null;
 
         // Função para ler parâmetros da URL
         function getUrlParameter(name) {
@@ -342,6 +354,15 @@
             });
         });
 
+        // Botão Verificar Status
+        document.getElementById('btnVerificar').addEventListener('click', function() {
+            if (vendaIdAtual) {
+                window.location.href = `/confirmacao.html?venda=${vendaIdAtual}`;
+            } else {
+                alert('Erro: ID da venda não encontrado. Tente gerar o PIX novamente.');
+            }
+        });
+
         // Botão Gerar PIX
         document.getElementById('btnGerar').addEventListener('click', async function() {
             console.log('🚀 Botão clicado');
@@ -389,12 +410,19 @@
 
                 console.log('✅ Sucesso:', data);
 
+                // Salvar dados importantes
                 codigoPixAtual = data.qr_code;
+                vendaIdAtual = data.venda_id;
 
+                // Salvar no localStorage para recuperar depois
+                localStorage.setItem('ultima_venda', vendaIdAtual);
+
+                // Mostrar QR Code
                 if (data.qr_code_base64) {
                     document.getElementById('qrcode').innerHTML = '<img src="data:image/png;base64,' + data.qr_code_base64 + '" alt="QR Code PIX">';
                 }
 
+                // Mostrar código PIX
                 if (data.qr_code) {
                     document.getElementById('codigoPix').textContent = data.qr_code;
                 }
