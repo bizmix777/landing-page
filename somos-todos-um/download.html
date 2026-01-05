@@ -256,11 +256,15 @@
                     return;
                 }
 
-                // Mostrar informações do cliente
+                // Mostrar informações do cliente (CORRIGIDO - usando os nomes corretos dos campos)
+                const nomeCliente = venda.nome_comprador || venda.nome || 'Cliente';
+                const emailCliente = venda.email_comprador || venda.email || 'email@exemplo.com';
+                const dataCompra = venda.criado_em ? new Date(venda.criado_em).toLocaleDateString('pt-BR') : 'Data não disponível';
+
                 document.getElementById('clienteInfo').innerHTML = `
-                    <p><strong>Cliente:</strong> ${venda.nome}</p>
-                    <p><strong>Email:</strong> ${venda.email}</p>
-                    <p><strong>Data da compra:</strong> ${new Date(venda.criado_em).toLocaleDateString('pt-BR')}</p>
+                    <p><strong>Cliente:</strong> ${nomeCliente}</p>
+                    <p><strong>Email:</strong> ${emailCliente}</p>
+                    <p><strong>Data da compra:</strong> ${dataCompra}</p>
                 `;
 
                 // Gerar URL assinada
