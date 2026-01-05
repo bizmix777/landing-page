@@ -4,113 +4,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - Somos Todos Um</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* Basic Reset & Body */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            max-width: 800px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 16px;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .alert {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            color: #856404;
-            padding: 15px;
-            border-radius: 10px;
+            margin-top: 20px;
             margin-bottom: 20px;
-            display: none;
         }
 
-        .alert.success {
-            background: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-        }
-
-        .alert.error {
-            background: #f8d7da;
-            border-color: #dc3545;
-            color: #721c24;
-        }
-
-        .produto {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .produto h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-
-        .produto ul {
-            list-style: none;
-            margin-bottom: 15px;
-        }
-
-        .produto li {
-            padding: 8px 0;
-            padding-left: 25px;
-            position: relative;
-        }
-
-        .produto li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        .preco {
-            font-size: 32px;
-            color: #667eea;
-            font-weight: bold;
+        h1 {
             text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        /* Card Styling */
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Product Summary */
+        .product-summary p {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .product-summary ul {
+            list-style: none;
+            padding: 0;
             margin-top: 15px;
         }
 
+        .product-summary ul li {
+            margin-bottom: 8px;
+            color: #444;
+            font-size: 0.95em;
+        }
+
+        .product-summary ul li::before {
+            content: '✅';
+            margin-right: 8px;
+            color: #27ae60;
+        }
+
+        /* Form Styling */
         .form-group {
             margin-bottom: 20px;
         }
@@ -118,170 +95,211 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
+            font-weight: bold;
+            color: #444;
+            font-size: 0.95em;
         }
 
-        .form-group input,
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
         .form-group select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            color: #555;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
         .form-group input:focus,
         .form-group select:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
             outline: none;
-            border-color: #667eea;
         }
 
         .checkbox-group {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .checkbox-group input[type="checkbox"] {
-            width: auto;
             margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            accent-color: #27ae60;
         }
 
-        .btn {
+        .checkbox-group label {
+            font-weight: normal;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        .btn-primary {
+            display: block;
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 20px;
+            background-color: #27ae60;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 18px;
+            border-radius: 6px;
+            font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .pix-container {
-            display: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .pix-container h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .qr-code {
-            margin: 20px 0;
-        }
-
-        .qr-code img {
-            max-width: 300px;
-            border: 3px solid #667eea;
-            border-radius: 10px;
-        }
-
-        .pix-code {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            word-break: break-all;
-            font-family: monospace;
-            margin: 15px 0;
-            border: 2px solid #e0e0e0;
-        }
-
-        .btn-copy {
-            background: #28a745;
-            margin-top: 10px;
-        }
-
-        .status-pagamento {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-            padding: 20px;
-            background: #fff3cd;
-            border-radius: 10px;
-        }
-
-        .status-pagamento h3 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-
-        .voltar {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #667eea;
             text-decoration: none;
         }
 
-        .voltar:hover {
-            text-decoration: underline;
+        .btn-primary:hover {
+            background-color: #219d57;
+            transform: translateY(-2px);
         }
 
-        #igrejaGroup {
-            display: none;
-            margin-top: 15px;
+        /* PIX Details */
+        .pix-details {
+            text-align: center;
+        }
+
+        .qr-code-area img {
+            max-width: 250px;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .pix-code-display {
+            background-color: #f8f8f8;
+            border: 1px dashed #ddd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            word-break: break-all;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        .copy-button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .copy-button:hover {
+            background-color: #2980b9;
+        }
+
+        .payment-status {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .payment-status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .payment-status.paid {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Back Link */
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .back-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: #2980b9;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.4em;
+            }
+            .form-group input,
+            .form-group select,
+            .btn-primary {
+                font-size: 0.95em;
+                padding: 12px;
+            }
+            .qr-code-area img {
+                max-width: 180px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>📚 Finalizar Compra</h1>
-            <p>Livro Digital - Somos Todos Um</p>
+        <h1>📚 Finalizar Compra</h1>
+
+        <div class="card product-summary">
+            <h2>Seu Livro Digital</h2>
+            <p><strong>Livro Digital - Somos Todos Um</strong></p>
+            <p>Preço: R$ 47,00</p>
+            <ul>
+                <li>Acesso imediato ao conteúdo</li>
+                <li>Download em PDF para ler offline</li>
+                <li>Atualizações gratuitas futuras</li>
+                <li>Conteúdo exclusivo para seu crescimento espiritual</li>
+            </ul>
         </div>
 
-        <div class="content">
-            <div id="alertContainer" class="alert"></div>
-
-            <div class="produto">
-                <h2>Seu Livro Digital</h2>
-                <ul>
-                    <li>Acesso imediato após confirmação do pagamento</li>
-                    <li>Leitura online protegida por senha</li>
-                    <li>Download do PDF com proteção</li>
-                    <li>Suporte por email</li>
-                </ul>
-                <div class="preco">R$ 47,00</div>
-            </div>
-
-            <form id="checkoutForm">
+        <div class="card checkout-form">
+            <h2>Dados para a Compra</h2>
+            <form id="formCheckout" onsubmit="return false;">
                 <div class="form-group">
                     <label for="nome">Nome Completo *</label>
                     <input 
                         type="text" 
                         id="nome" 
                         name="nome" 
-                        placeholder="Nome Completo"
+                        placeholder="Seu nome completo"
                         required
                     >
                 </div>
 
                 <div class="form-group">
-                    <label for="email">Email *</label>
+                    <label for="email">E-mail *</label>
                     <input 
                         type="email" 
                         id="email" 
                         name="email" 
-                        placeholder="Email"
+                        placeholder="seu@email.com"
                         required
                     >
                 </div>
@@ -298,7 +316,6 @@
                     >
                 </div>
 
-                <!-- NOVO CAMPO DE TELEFONE -->
                 <div class="form-group">
                     <label for="telefone">Telefone/WhatsApp *</label>
                     <input 
@@ -311,242 +328,208 @@
                     >
                 </div>
 
-                <div class="checkbox-group">
-                    <input type="checkbox" id="ajudarIgreja" name="ajudarIgreja">
-                    <label for="ajudarIgreja">Quero ajudar uma igreja com minha compra (10% do valor)</label>
-                </div>
-
-                <div id="igrejaGroup" class="form-group">
-                    <label for="igreja">Escolha a igreja:</label>
+                <div class="form-group">
+                    <label for="igreja">Igreja (opcional)</label>
                     <select id="igreja" name="igreja">
-                        <option value="">Carregando igrejas...</option>
+                        <option value="">Selecione sua igreja</option>
+                        <!-- Igrejas serão carregadas aqui via JS -->
                     </select>
                 </div>
 
-                <button type="submit" class="btn" id="btnPagar">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="doacaoIgreja" name="doacaoIgreja">
+                    <label for="doacaoIgreja">Quero ajudar uma igreja com minha compra (10% do valor)</label>
+                </div>
+
+                <button type="button" onclick="gerarPagamentoPix()" class="btn-primary">
                     🔒 Gerar PIX para Pagamento
                 </button>
             </form>
+        </div>
 
-            <div id="pixContainer" class="pix-container">
-                <h3>📱 Pague com PIX</h3>
-                <p>Escaneie o QR Code com o app do seu banco ou copie o código PIX</p>
-                
-                <div class="qr-code">
-                    <img id="qrCodeImg" src="" alt="QR Code PIX">
-                </div>
-
-                <div class="pix-code" id="pixCode"></div>
-
-                <button class="btn btn-copy" onclick="copiarCodigoPix()">
-                    📋 Copiar Código PIX
-                </button>
+        <div id="pixSection" class="card pix-details" style="display: none;">
+            <h2>📱 Pague com PIX</h2>
+            <div class="qr-code-area">
+                <img id="qrCodeImage" src="" alt="QR Code PIX">
             </div>
+            <p>Copie o código PIX abaixo e pague no seu aplicativo bancário:</p>
+            <div class="pix-code-display" id="pixCodeText"></div>
+            <button type="button" onclick="copyPixCode()" class="copy-button">Copiar Código PIX</button>
+            <div id="paymentStatus" class="payment-status pending">Aguardando pagamento...</div>
+        </div>
 
-            <div id="statusPagamento" class="status-pagamento">
-                <h3>Aguardando pagamento...</h3>
-                <p>Assim que confirmarmos o pagamento, você receberá o livro por email!</p>
-                <p><small>Verificando automaticamente...</small></p>
-            </div>
-
-            <a href="https://somos.bizmix.com.br" class="voltar">← Voltar para o site</a>
+        <div class="back-link">
+            <a href="https://somos.bizmix.com.br/">← Voltar para o site</a>
         </div>
     </div>
 
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        console.log('🚀 CHECKOUT INICIADO');
-
-        // Configuração Supabase
+        // Supabase Client Initialization
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhhZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        const supabase = supabase_js.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const PRECO_LIVRO = 47.00;
 
-        // Máscara de CPF
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            }
-            e.target.value = value;
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChurches();
 
-        // Máscara de Telefone
-        document.getElementById('telefone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                if (value.length <= 10) {
-                    // Telefone fixo: (11) 1234-5678
-                    value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-                    value = value.replace(/(\d)(\d{4})$/, '$1-$2');
-                } else {
-                    // Celular: (11) 91234-5678
-                    value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
-                    value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+            // CPF Mask
+            document.getElementById('cpf').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
                 }
-            }
-            e.target.value = value;
+                e.target.value = value;
+            });
+
+            // Telefone Mask
+            document.getElementById('telefone').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    if (value.length <= 10) {
+                        // Telefone fixo: (11) 1234-5678
+                        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                        value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+                    } else {
+                        // Celular: (11) 91234-5678
+                        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                        value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+                    }
+                }
+                e.target.value = value;
+            });
         });
 
-        // Mostrar/ocultar seleção de igreja
-        document.getElementById('ajudarIgreja').addEventListener('change', function(e) {
-            const igrejaGroup = document.getElementById('igrejaGroup');
-            if (e.target.checked) {
-                igrejaGroup.style.display = 'block';
-            } else {
-                igrejaGroup.style.display = 'none';
-                document.getElementById('igreja').value = '';
+        async function loadChurches() {
+            const { data, error } = await supabase
+                .from('igrejas')
+                .select('id, nome');
+
+            if (error) {
+                console.error('Erro ao carregar igrejas:', error.message);
+                return;
             }
-        });
 
-        // Carregar igrejas
-        async function carregarIgrejas() {
-            try {
-                const { data, error } = await supabase
-                    .from('igrejas')
-                    .select('*')
-                    .eq('ativa', true)
-                    .order('nome');
-
-                if (error) throw error;
-
-                const select = document.getElementById('igreja');
-                select.innerHTML = '<option value="">Selecione uma igreja</option>';
-                
-                data.forEach(igreja => {
-                    const option = document.createElement('option');
-                    option.value = igreja.id;
-                    option.textContent = igreja.nome;
-                    select.appendChild(option);
-                });
-
-                console.log('✅ Igrejas carregadas:', data.length);
-            } catch (error) {
-                console.error('❌ Erro ao carregar igrejas:', error);
-            }
+            const selectIgreja = document.getElementById('igreja');
+            data.forEach(igreja => {
+                const option = document.createElement('option');
+                option.value = igreja.id;
+                option.textContent = igreja.nome;
+                selectIgreja.appendChild(option);
+            });
         }
 
-        // Carregar igrejas ao iniciar
-        carregarIgrejas();
-
-        // Submissão do formulário
-        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            await gerarPagamentoPix();
-        });
-
-        // Função principal de pagamento
         async function gerarPagamentoPix() {
-            const btnPagar = document.getElementById('btnPagar');
-            btnPagar.disabled = true;
-            btnPagar.textContent = 'Processando...';
+            console.log('🚀 FUNÇÃO gerarPagamentoPix() CHAMADA'); // Debug
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const cpf = document.getElementById('cpf').value;
+            const telefone = document.getElementById('telefone').value;
+            const igrejaId = document.getElementById('igreja').value || null;
+            const querDoar = document.getElementById('doacaoIgreja').checked;
+
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            // Basic email validation
+            if (!/\S+@\S+\.\S+/.test(email)) {
+                alert('Por favor, insira um e-mail válido.');
+                return;
+            }
+
+            // Basic CPF validation (just length after mask removal)
+            if (cpf.replace(/\D/g, '').length !== 11) {
+                alert('Por favor, insira um CPF válido com 11 dígitos.');
+                return;
+            }
+
+            // Basic Telefone validation (just length after mask removal)
+            const cleanTelefone = telefone.replace(/\D/g, '');
+            if (cleanTelefone.length < 10 || cleanTelefone.length > 11) {
+                alert('Por favor, insira um telefone válido com 10 ou 11 dígitos (incluindo DDD).');
+                return;
+            }
+
+            // Show loading or disable button
+            const btnPix = document.querySelector('.btn-primary');
+            btnPix.textContent = 'Gerando PIX...';
+            btnPix.disabled = true;
 
             try {
-                const nome = document.getElementById('nome').value;
-                const email = document.getElementById('email').value;
-                const cpf = document.getElementById('cpf').value;
-                const telefone = document.getElementById('telefone').value; // CAPTURA O TELEFONE
-                const ajudarIgreja = document.getElementById('ajudarIgreja').checked;
-                const igrejaId = ajudarIgreja ? document.getElementById('igreja').value : null;
-
-                if (ajudarIgreja && !igrejaId) {
-                    mostrarAlerta('Por favor, selecione uma igreja', 'error');
-                    btnPagar.disabled = false;
-                    btnPagar.textContent = '🔒 Gerar PIX para Pagamento';
-                    return;
-                }
-
-                console.log('📤 Enviando dados:', { nome, email, cpf, telefone, igrejaId }); // LOG DO TELEFONE
+                console.log('📤 Enviando dados:', { nome, email, cpf, telefone, igrejaId, valor: PRECO_LIVRO });
 
                 const { data, error } = await supabase.functions.invoke('criar-pagamento-pix', {
                     body: {
                         nome,
                         email,
                         cpf,
-                        telefone, // ENVIA O TELEFONE
-                        igrejaId,
+                        telefone,
+                        igrejaId: querDoar ? igrejaId : null, // Only send igrejaId if donation is checked
                         valor: PRECO_LIVRO
                     }
                 });
 
-                console.log('📥 Resposta:', data);
-
-                if (error) throw error;
-
-                if (!data.success) {
-                    throw new Error(data.error || 'Erro ao gerar pagamento');
+                if (error) {
+                    console.error('❌ Erro ao invocar função:', error);
+                    alert(`Erro ao gerar pagamento: ${error.message || JSON.stringify(error)}`);
+                    return;
                 }
 
-                // Mostrar PIX
-                document.getElementById('qrCodeImg').src = `data:image/png;base64,${data.qr_code_base64}`;
-                document.getElementById('pixCode').textContent = data.qr_code;
-                document.getElementById('pixContainer').style.display = 'block';
-                document.getElementById('statusPagamento').style.display = 'block';
+                if (!data.success) {
+                    console.error('❌ Erro da função:', data.error);
+                    alert(`Erro ao gerar pagamento: ${data.error}`);
+                    return;
+                }
 
-                // Ocultar formulário
-                document.getElementById('checkoutForm').style.display = 'none';
+                // Display PIX details
+                document.getElementById('qrCodeImage').src = `data:image/png;base64,${data.qr_code_base64}`;
+                document.getElementById('pixCodeText').textContent = data.qr_code;
+                document.getElementById('pixSection').style.display = 'block';
+                document.getElementById('formCheckout').style.display = 'none'; // Hide form
 
-                // Iniciar verificação de pagamento
-                verificarPagamento(data.pagamento_id);
+                // Scroll to PIX section
+                document.getElementById('pixSection').scrollIntoView({ behavior: 'smooth' });
 
-                mostrarAlerta('PIX gerado com sucesso! Efetue o pagamento.', 'success');
+                // Update payment status (placeholder for now, real-time update would need webhooks)
+                updatePaymentStatus('pending');
 
             } catch (error) {
-                console.error('❌ Erro:', error);
-                mostrarAlerta('❌ Erro ao gerar pagamento: ' + error.message, 'error');
-                btnPagar.disabled = false;
-                btnPagar.textContent = '🔒 Gerar PIX para Pagamento';
+                console.error('❌ Erro inesperado:', error);
+                alert('Ocorreu um erro inesperado ao gerar o PIX. Tente novamente mais tarde.');
+            } finally {
+                btnPix.textContent = '🔒 Gerar PIX para Pagamento';
+                btnPix.disabled = false;
             }
         }
 
-        // Copiar código PIX
-        function copiarCodigoPix() {
-            const pixCode = document.getElementById('pixCode').textContent;
+        function copyPixCode() {
+            const pixCode = document.getElementById('pixCodeText').textContent;
             navigator.clipboard.writeText(pixCode).then(() => {
-                mostrarAlerta('Código PIX copiado!', 'success');
+                alert('Código PIX copiado para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar o código PIX:', err);
+                alert('Não foi possível copiar o código PIX. Por favor, copie manualmente.');
             });
         }
 
-        // Verificar pagamento
-        async function verificarPagamento(pagamentoId) {
-            const intervalo = setInterval(async () => {
-                try {
-                    const { data, error } = await supabase
-                        .from('vendas')
-                        .select('status_pagamento')
-                        .eq('id_transacao_mp', pagamentoId)
-                        .single();
-
-                    if (error) throw error;
-
-                    if (data.status_pagamento === 'aprovado') {
-                        clearInterval(intervalo);
-                        mostrarAlerta('✅ Pagamento confirmado! Verifique seu email.', 'success');
-                        document.getElementById('statusPagamento').innerHTML = `
-                            <h3>✅ Pagamento Confirmado!</h3>
-                            <p>Seu livro foi enviado para o email: ${document.getElementById('email').value}</p>
-                        `;
-                    }
-                } catch (error) {
-                    console.error('Erro ao verificar pagamento:', error);
-                }
-            }, 5000); // Verificar a cada 5 segundos
-        }
-
-        // Mostrar alertas
-        function mostrarAlerta(mensagem, tipo) {
-            const alertContainer = document.getElementById('alertContainer');
-            alertContainer.textContent = mensagem;
-            alertContainer.className = `alert ${tipo}`;
-            alertContainer.style.display = 'block';
-
-            setTimeout(() => {
-                alertContainer.style.display = 'none';
-            }, 5000);
+        function updatePaymentStatus(status) {
+            const paymentStatusDiv = document.getElementById('paymentStatus');
+            paymentStatusDiv.classList.remove('pending', 'paid');
+            if (status === 'pending') {
+                paymentStatusDiv.classList.add('pending');
+                paymentStatusDiv.textContent = 'Aguardando pagamento...';
+            } else if (status === 'paid') {
+                paymentStatusDiv.classList.add('paid');
+                paymentStatusDiv.textContent = 'Pagamento confirmado! Em breve você receberá o acesso.';
+            }
+            // Future: Implement webhook to update this status in real-time
         }
     </script>
 </body>
