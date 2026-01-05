@@ -34,6 +34,29 @@
             margin-bottom: 20px;
             text-align: center;
         }
+        .igreja-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            display: none;
+        }
+        .igreja-info h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        .igreja-info .nome-igreja {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .igreja-info .detalhes {
+            font-size: 14px;
+            opacity: 0.8;
+        }
         .form-group {
             margin-bottom: 20px;
         }
@@ -159,6 +182,13 @@
     <div class="container">
         <h1>📖 Livro Digital<br>Somos Todos Um</h1>
         
+        <!-- Info da Igreja (aparece só se vier por indicação) -->
+        <div class="igreja-info" id="igrejaInfo">
+            <h3>✨ Você foi indicado por:</h3>
+            <div class="nome-igreja" id="nomeIgreja"></div>
+            <div class="detalhes" id="detalhesIgreja"></div>
+        </div>
+        
         <form id="formCheckout">
             <div class="form-group">
                 <label for="nome">Nome Completo *</label>
@@ -220,6 +250,58 @@
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         let codigoPixAtual = '';
+        let igrejaIdAtual = null;
+
+        // Função para ler parâmetros da URL
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Buscar igreja ao carregar a página
+        async function buscarIgreja() {
+            const codigoIgreja = getUrlParameter('igreja');
+            
+            if (!codigoIgreja) {
+                console.log('✅ Compra direta (sem igreja)');
+                return;
+            }
+
+            console.log('🔍 Buscando igreja:', codigoIgreja);
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .eq('codigo', codigoIgreja)
+                    .eq('ativo', true)
+                    .single();
+
+                if (error) {
+                    console.error('❌ Erro ao buscar igreja:', error);
+                    return;
+                }
+
+                if (data) {
+                    console.log('✅ Igreja encontrada:', data);
+                    igrejaIdAtual = data.id;
+                    
+                    // Mostrar info da igreja
+                    document.getElementById('nomeIgreja').textContent = data.nome;
+                    document.getElementById('detalhesIgreja').textContent = 
+                        `${data.cidade ? data.cidade : ''}${data.estado ? ' - ' + data.estado : ''}${data.pastor ? ' | Pastor: ' + data.pastor : ''}`;
+                    document.getElementById('igrejaInfo').style.display = 'block';
+                } else {
+                    console.log('⚠️ Igreja não encontrada');
+                }
+
+            } catch (err) {
+                console.error('❌ Erro na busca:', err);
+            }
+        }
+
+        // Buscar igreja ao carregar
+        buscarIgreja();
 
         // Máscara CPF
         document.getElementById('cpf').addEventListener('input', function(e) {
@@ -246,13 +328,10 @@
         document.getElementById('btnCopiar').addEventListener('click', function() {
             const btn = this;
             
-            // Copiar para clipboard
             navigator.clipboard.writeText(codigoPixAtual).then(function() {
-                // Feedback visual
                 btn.textContent = '✅ Código Copiado!';
                 btn.classList.add('btn-copied');
                 
-                // Voltar ao normal após 3 segundos
                 setTimeout(function() {
                     btn.textContent = '📋 Copiar Código PIX';
                     btn.classList.remove('btn-copied');
@@ -278,13 +357,12 @@
                 return;
             }
 
-            // Desabilitar botão e mostrar loading
             const btn = document.getElementById('btnGerar');
             btn.disabled = true;
             btn.textContent = 'Gerando PIX...';
             document.getElementById('loading').style.display = 'block';
 
-            console.log('📤 Enviando:', { nome, email, cpf, telefone });
+            console.log('📤 Enviando:', { nome, email, cpf, telefone, igrejaId: igrejaIdAtual });
 
             try {
                 const { data, error } = await supabaseClient.functions.invoke('criar-pagamento-pix', {
@@ -293,7 +371,7 @@
                         email: email,
                         cpf: cpf,
                         telefone: telefone,
-                        igrejaId: null,
+                        igrejaId: igrejaIdAtual,
                         valor: 47.00
                     }
                 });
@@ -311,15 +389,12 @@
 
                 console.log('✅ Sucesso:', data);
 
-                // Salvar código PIX
                 codigoPixAtual = data.qr_code;
 
-                // Mostrar QR Code
                 if (data.qr_code_base64) {
                     document.getElementById('qrcode').innerHTML = '<img src="data:image/png;base64,' + data.qr_code_base64 + '" alt="QR Code PIX">';
                 }
 
-                // Mostrar código PIX
                 if (data.qr_code) {
                     document.getElementById('codigoPix').textContent = data.qr_code;
                 }
