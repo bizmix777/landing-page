@@ -248,6 +248,7 @@
                 }
 
                 console.log('📦 Venda encontrada:', venda);
+                console.log('📋 Todos os campos da venda:', Object.keys(venda));
 
                 // Verificar se pagamento foi confirmado
                 if (venda.status_pagamento !== 'pago') {
@@ -256,10 +257,36 @@
                     return;
                 }
 
-                // Mostrar informações do cliente (CORRIGIDO - usando os nomes corretos dos campos)
+                // Mostrar informações do cliente (CORRIGIDO - testando múltiplos campos)
                 const nomeCliente = venda.nome_comprador || venda.nome || 'Cliente';
                 const emailCliente = venda.email_comprador || venda.email || 'email@exemplo.com';
-                const dataCompra = venda.criado_em ? new Date(venda.criado_em).toLocaleDateString('pt-BR') : 'Data não disponível';
+
+                // Tentar múltiplos campos possíveis para a data
+                const dataCriacaoRaw = venda.criado_em || venda.created_at || venda.data_criacao || venda.timestamp || venda.data_compra;
+
+                console.log('📅 Campo de data encontrado:', dataCriacaoRaw);
+
+                let dataCompra = 'Data não disponível';
+                if (dataCriacaoRaw) {
+                    try {
+                        const dataObj = new Date(dataCriacaoRaw);
+                        if (!isNaN(dataObj.getTime())) {
+                            dataCompra = dataObj.toLocaleDateString('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                        } else {
+                            console.error('❌ Data inválida:', dataCriacaoRaw);
+                        }
+                    } catch (e) {
+                        console.error('❌ Erro ao formatar data:', e);
+                    }
+                } else {
+                    console.error('❌ Nenhum campo de data encontrado');
+                }
 
                 document.getElementById('clienteInfo').innerHTML = `
                     <p><strong>Cliente:</strong> ${nomeCliente}</p>
