@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Links - Igrejas</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .link-box {
+            background: #e3f2fd;
+            padding: 8px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        .btn-copiar {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-copiar:hover {
+            background: #0b7dda;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Links de Indicação - Igrejas</h1>
+        
+        <div id="loading" class="loading">
+            ⏳ Carregando igrejas...
+        </div>
+
+        <table id="tabelaIgrejas" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Igreja</th>
+                    <th>Código</th>
+                    <th>Link de Indicação</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="corpoTabela">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function carregarIgrejas() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .eq('ativo', true)
+                    .order('nome');
+
+                if (error) {
+                    console.error('Erro:', error);
+                    document.getElementById('loading').textContent = '❌ Erro ao carregar igrejas';
+                    return;
+                }
+
+                const tbody = document.getElementById('corpoTabela');
+                tbody.innerHTML = '';
+
+                data.forEach(igreja => {
+                    const link = `https://somos.bizmix.com.br/checkout.html?igreja=${igreja.codigo}`;
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${igreja.nome}</strong><br><small>${igreja.cidade || ''} ${igreja.estado || ''}</small></td>
+                        <td><code>${igreja.codigo}</code></td>
+                        <td><div class="link-box">${link}</div></td>
+                        <td><button class="btn-copiar" onclick="copiarLink('${link}', this)">📋 Copiar</button></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('tabelaIgrejas').style.display = 'table';
+
+            } catch (err) {
+                console.error('Erro:', err);
+                document.getElementById('loading').textContent = '❌ Erro ao carregar';
+            }
+        }
+
+        function copiarLink(link, btn) {
+            navigator.clipboard.writeText(link).then(() => {
+                const textoOriginal = btn.textContent;
+                btn.textContent = '✅ Copiado!';
+                btn.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    btn.textContent = textoOriginal;
+                    btn.style.background = '#2196F3';
+                }, 2000);
+            });
+        }
+
+        carregarIgrejas();
+    </script>
+</body>
+</html>
