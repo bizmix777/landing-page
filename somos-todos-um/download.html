@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - Somos Todos Um</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .logo {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .btn-download {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .info-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            text-align: left;
+            border-left: 4px solid #667eea;
+        }
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .info-box li {
+            color: #555;
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .erro {
+            background: #f8d7da;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        .cliente-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .cliente-info p {
+            color: #1976d2;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <h1>Verificando acesso...</h1>
+            <p class="subtitle">Aguarde enquanto validamos seu pagamento.</p>
+        </div>
+
+        <div id="conteudo" style="display: none;">
+            <div class="logo">📖</div>
+            <h1>Seu Livro Digital Está Pronto!</h1>
+            <p class="subtitle">
+                Parabéns pela aquisição!<br>
+                Clique no botão abaixo para fazer o download.
+            </p>
+
+            <div class="cliente-info" id="clienteInfo"></div>
+
+            <a href="#" id="btnDownloadPDF" class="btn-download">
+                📥 Baixar Livro Digital (PDF)
+            </a>
+
+            <div class="info-box">
+                <h3>📚 Sobre o Livro</h3>
+                <ul>
+                    <li>Formato: PDF de alta qualidade</li>
+                    <li>Compatível com todos os dispositivos</li>
+                    <li>Pode ser lido offline</li>
+                    <li>Acesso ilimitado e vitalício</li>
+                </ul>
+            </div>
+
+            <div class="info-box" style="margin-top: 20px;">
+                <h3>💡 Dicas de Leitura</h3>
+                <ul>
+                    <li>Use Adobe Reader ou navegador para melhor experiência</li>
+                    <li>Salve o arquivo em local seguro</li>
+                    <li>Você pode imprimir para leitura física</li>
+                    <li>Compartilhe sua experiência nas redes sociais!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="erro" style="display: none;">
+            <div class="logo">❌</div>
+            <h1>Acesso Negado</h1>
+            <div class="erro">
+                <p><strong>Não foi possível validar seu acesso.</strong></p>
+                <p style="margin-top: 10px;">Possíveis motivos:</p>
+                <ul style="margin-top: 10px; text-align: left;">
+                    <li>Pagamento ainda não confirmado</li>
+                    <li>Link inválido ou expirado</li>
+                    <li>Venda não encontrada</li>
+                </ul>
+                <p style="margin-top: 15px;">
+                    Se você já pagou, aguarde alguns minutos e tente novamente.<br>
+                    Caso o problema persista, entre em contato conosco.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        async function verificarAcesso() {
+            const vendaId = getUrlParameter('venda');
+            
+            if (!vendaId) {
+                mostrarErro();
+                return;
+            }
+
+            console.log('🔍 Verificando venda:', vendaId);
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('vendas')
+                    .select('*')
+                    .eq('id', vendaId)
+                    .single();
+
+                if (error || !data) {
+                    console.error('❌ Erro ao buscar venda:', error);
+                    mostrarErro();
+                    return;
+                }
+
+                console.log('📦 Venda encontrada:', data);
+
+                // Verificar se pagamento foi confirmado
+                if (data.status_pagamento !== 'pago') {
+                    console.log('⚠️ Pagamento não confirmado:', data.status_pagamento);
+                    mostrarErro();
+                    return;
+                }
+
+                // Mostrar informações do cliente
+                document.getElementById('clienteInfo').innerHTML = `
+                    <p><strong>Cliente:</strong> ${data.nome}</p>
+                    <p><strong>Email:</strong> ${data.email}</p>
+                    <p><strong>Data da compra:</strong> ${new Date(data.criado_em).toLocaleDateString('pt-BR')}</p>
+                `;
+
+                // Configurar botão de download
+                // Por enquanto, vamos usar um PDF de exemplo
+                // Depois você substitui pela URL real do seu PDF
+                const pdfUrl = 'https://seu-storage.com/somos-todos-um.pdf'; // SUBSTITUIR DEPOIS
+                document.getElementById('btnDownloadPDF').href = pdfUrl;
+                document.getElementById('btnDownloadPDF').download = 'Somos-Todos-Um.pdf';
+
+                // Registrar o download
+                await registrarDownload(vendaId);
+
+                mostrarConteudo();
+
+            } catch (err) {
+                console.error('❌ Erro:', err);
+                mostrarErro();
+            }
+        }
+
+        async function registrarDownload(vendaId) {
+            try {
+                // Atualizar contador de downloads
+                const { error } = await supabaseClient
+                    .from('vendas')
+                    .update({ 
+                        downloads: supabaseClient.raw('downloads + 1'),
+                        ultimo_download: new Date().toISOString()
+                    })
+                    .eq('id', vendaId);
+
+                if (error) {
+                    console.error('Erro ao registrar download:', error);
+                }
+            } catch (err) {
+                console.error('Erro ao registrar download:', err);
+            }
+        }
+
+        function mostrarConteudo() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('conteudo').style.display = 'block';
+        }
+
+        function mostrarErro() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('erro').style.display = 'block';
+        }
+
+        // Verificar ao carregar
+        verificarAcesso();
+    </script>
+</body>
+</html>
