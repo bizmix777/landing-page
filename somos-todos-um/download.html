@@ -56,10 +56,17 @@
             margin: 20px 0;
             transition: transform 0.3s, box-shadow 0.3s;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            border: none;
+            cursor: pointer;
         }
         .btn-download:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .btn-download:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
         }
         .info-box {
             background: #f8f9fa;
@@ -128,6 +135,14 @@
             margin: 5px 0;
             font-size: 14px;
         }
+        .expira-em {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #856404;
+        }
     </style>
 </head>
 <body>
@@ -148,9 +163,13 @@
 
             <div class="cliente-info" id="clienteInfo"></div>
 
-            <a href="#" id="btnDownloadPDF" class="btn-download">
+            <button id="btnDownloadPDF" class="btn-download">
                 📥 Baixar Livro Digital (PDF)
-            </a>
+            </button>
+
+            <div class="expira-em" id="expiraEm" style="display: none;">
+                ⏰ Link válido por <strong id="tempoRestante">60 minutos</strong>
+            </div>
 
             <div class="info-box">
                 <h3>📚 Sobre o Livro</h3>
@@ -178,8 +197,8 @@
             <h1>Acesso Negado</h1>
             <div class="erro">
                 <p><strong>Não foi possível validar seu acesso.</strong></p>
-                <p style="margin-top: 10px;">Possíveis motivos:</p>
-                <ul style="margin-top: 10px; text-align: left;">
+                <p style="margin-top: 10px;" id="mensagemErro">Possíveis motivos:</p>
+                <ul style="margin-top: 10px; text-align: left;" id="listaErros">
                     <li>Pagamento ainda não confirmado</li>
                     <li>Link inválido ou expirado</li>
                     <li>Venda não encontrada</li>
@@ -197,6 +216,8 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
+        let downloadUrl = null;
+
         function getUrlParameter(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
@@ -206,86 +227,135 @@
             const vendaId = getUrlParameter('venda');
             
             if (!vendaId) {
-                mostrarErro();
+                mostrarErro('Link inválido. Parâmetro "venda" não encontrado.');
                 return;
             }
 
             console.log('🔍 Verificando venda:', vendaId);
 
             try {
-                const { data, error } = await supabaseClient
+                // Buscar informações da venda
+                const { data: venda, error: vendaError } = await supabaseClient
                     .from('vendas')
                     .select('*')
                     .eq('id', vendaId)
                     .single();
 
-                if (error || !data) {
-                    console.error('❌ Erro ao buscar venda:', error);
-                    mostrarErro();
+                if (vendaError || !venda) {
+                    console.error('❌ Erro ao buscar venda:', vendaError);
+                    mostrarErro('Venda não encontrada.');
                     return;
                 }
 
-                console.log('📦 Venda encontrada:', data);
+                console.log('📦 Venda encontrada:', venda);
 
                 // Verificar se pagamento foi confirmado
-                if (data.status_pagamento !== 'pago') {
-                    console.log('⚠️ Pagamento não confirmado:', data.status_pagamento);
-                    mostrarErro();
+                if (venda.status_pagamento !== 'pago') {
+                    console.log('⚠️ Pagamento não confirmado:', venda.status_pagamento);
+                    mostrarErro('Pagamento ainda não foi confirmado. Aguarde alguns minutos e tente novamente.');
                     return;
                 }
 
                 // Mostrar informações do cliente
                 document.getElementById('clienteInfo').innerHTML = `
-                    <p><strong>Cliente:</strong> ${data.nome}</p>
-                    <p><strong>Email:</strong> ${data.email}</p>
-                    <p><strong>Data da compra:</strong> ${new Date(data.criado_em).toLocaleDateString('pt-BR')}</p>
+                    <p><strong>Cliente:</strong> ${venda.nome}</p>
+                    <p><strong>Email:</strong> ${venda.email}</p>
+                    <p><strong>Data da compra:</strong> ${new Date(venda.criado_em).toLocaleDateString('pt-BR')}</p>
                 `;
 
-                // Configurar botão de download
-                // Por enquanto, vamos usar um PDF de exemplo
-                // Depois você substitui pela URL real do seu PDF
-                const pdfUrl = 'https://seu-storage.com/somos-todos-um.pdf'; // SUBSTITUIR DEPOIS
-                document.getElementById('btnDownloadPDF').href = pdfUrl;
-                document.getElementById('btnDownloadPDF').download = 'Somos-Todos-Um.pdf';
+                // Gerar URL assinada
+                console.log('🔐 Gerando URL assinada...');
+                
+                const { data: urlData, error: urlError } = await supabaseClient.functions.invoke('gerar-url-download', {
+                    body: { vendaId: vendaId }
+                });
 
-                // Registrar o download
-                await registrarDownload(vendaId);
+                if (urlError || !urlData.success) {
+                    console.error('❌ Erro ao gerar URL:', urlError);
+                    mostrarErro('Erro ao gerar link de download.');
+                    return;
+                }
+
+                downloadUrl = urlData.downloadUrl;
+                console.log('✅ URL assinada gerada');
+
+                // Mostrar tempo de expiração
+                document.getElementById('expiraEm').style.display = 'block';
+                iniciarContadorExpiracao(urlData.expiresIn);
 
                 mostrarConteudo();
 
             } catch (err) {
                 console.error('❌ Erro:', err);
-                mostrarErro();
+                mostrarErro('Erro ao processar requisição: ' + err.message);
             }
         }
 
-        async function registrarDownload(vendaId) {
-            try {
-                // Atualizar contador de downloads
-                const { error } = await supabaseClient
-                    .from('vendas')
-                    .update({ 
-                        downloads: supabaseClient.raw('downloads + 1'),
-                        ultimo_download: new Date().toISOString()
-                    })
-                    .eq('id', vendaId);
-
-                if (error) {
-                    console.error('Erro ao registrar download:', error);
+        function iniciarContadorExpiracao(segundos) {
+            let tempoRestante = segundos;
+            
+            const atualizarTempo = () => {
+                const minutos = Math.floor(tempoRestante / 60);
+                const segs = tempoRestante % 60;
+                
+                document.getElementById('tempoRestante').textContent = 
+                    `${minutos} minuto${minutos !== 1 ? 's' : ''} e ${segs} segundo${segs !== 1 ? 's' : ''}`;
+                
+                tempoRestante--;
+                
+                if (tempoRestante < 0) {
+                    clearInterval(intervalo);
+                    document.getElementById('expiraEm').innerHTML = 
+                        '<strong>⚠️ Link expirado! Recarregue a página para gerar um novo.</strong>';
+                    document.getElementById('btnDownloadPDF').disabled = true;
                 }
-            } catch (err) {
-                console.error('Erro ao registrar download:', err);
-            }
+            };
+            
+            atualizarTempo();
+            const intervalo = setInterval(atualizarTempo, 1000);
         }
+
+        // Botão de download
+        document.getElementById('btnDownloadPDF').addEventListener('click', async function() {
+            if (!downloadUrl) {
+                alert('Erro: URL de download não disponível');
+                return;
+            }
+
+            const btn = this;
+            btn.disabled = true;
+            btn.textContent = '⏳ Preparando download...';
+
+            try {
+                // Abrir em nova aba
+                window.open(downloadUrl, '_blank');
+                
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.textContent = '✅ Download Iniciado! Clique novamente se necessário';
+                }, 2000);
+
+            } catch (err) {
+                console.error('Erro ao baixar:', err);
+                alert('Erro ao iniciar download');
+                btn.disabled = false;
+                btn.textContent = '📥 Baixar Livro Digital (PDF)';
+            }
+        });
 
         function mostrarConteudo() {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('conteudo').style.display = 'block';
         }
 
-        function mostrarErro() {
+        function mostrarErro(mensagem) {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('erro').style.display = 'block';
+            
+            if (mensagem) {
+                document.getElementById('mensagemErro').textContent = mensagem;
+                document.getElementById('listaErros').style.display = 'none';
+            }
         }
 
         // Verificar ao carregar
