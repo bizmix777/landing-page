@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comissões - Área do Parceiro</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-info h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box.primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-box.primary .label,
+        .stat-box.primary .value {
+            color: white;
+        }
+
+        .stat-box .label {
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-box .value {
+            color: #333;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .comissao-item {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .comissao-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .comissao-info h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .comissao-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .comissao-valor {
+            text-align: right;
+        }
+
+        .comissao-valor .valor {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .comissao-valor .data {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            color: #1565c0;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            color: #1976d2;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box ul {
+            margin-top: 10px;
+            margin-left: 20px;
+            color: #1976d2;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                text-align: center;
+                padding: 20px;
+            }
+
+            .header-info h1 {
+                font-size: 22px;
+            }
+
+            .header-actions {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .comissao-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .comissao-valor {
+                text-align: center;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <p>⏳ Carregando comissões...</p>
+    </div>
+
+    <div class="container" id="conteudo" style="display: none;">
+        <div class="header">
+            <div class="header-info">
+                <h1>💰 Minhas Comissões</h1>
+                <p>Acompanhe suas comissões e pagamentos</p>
+            </div>
+            <div class="header-actions">
+                <a href="dashboard.html" class="btn btn-secondary">← Voltar ao Dashboard</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="stats-row">
+                <div class="stat-box primary">
+                    <div class="label">Total a Receber</div>
+                    <div class="value" id="totalReceber">R$ 0,00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Total Recebido</div>
+                    <div class="value" id="totalRecebido">R$ 0,00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Total Geral</div>
+                    <div class="value" id="totalGeral">R$ 0,00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Taxa de Comissão</div>
+                    <div class="value" id="taxaComissao">0%</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>ℹ️ Como funciona o pagamento de comissões?</h3>
+                <p>Suas comissões são calculadas automaticamente sobre cada venda realizada através do seu link de indicação.</p>
+                <ul>
+                    <li><strong>Vendas Pagas:</strong> Comissão disponível para saque</li>
+                    <li><strong>Vendas Pendentes:</strong> Aguardando confirmação de pagamento</li>
+                    <li><strong>Pagamento:</strong> Realizado mensalmente via PIX ou transferência bancária</li>
+                </ul>
+            </div>
+
+            <h2>📊 Detalhamento por Venda</h2>
+            
+            <div id="listaComissoes">
+                <!-- Comissões serão inseridas aqui -->
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="icon">💸</div>
+                <h3>Nenhuma comissão registrada</h3>
+                <p>Você ainda não possui comissões. Comece a divulgar seu link de indicação para gerar vendas e receber comissões!</p>
+                <a href="dashboard.html" class="btn btn-primary" style="margin-top: 20px;">Ver Meu Link de Indicação</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+            
+            const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+            let parceiroAtual = null
+
+            window.addEventListener('DOMContentLoaded', async () => {
+                const parceiroLogado = localStorage.getItem('parceiro_logado')
+                
+                if (!parceiroLogado) {
+                    window.location.href = 'login.html'
+                    return
+                }
+
+                parceiroAtual = JSON.parse(parceiroLogado)
+                await carregarComissoes()
+            })
+
+            async function carregarComissoes() {
+                try {
+                    const { data: vendas, error } = await clienteSupabase
+                        .from('vendas')
+                        .select('*')
+                        .eq('parceiro_id', parceiroAtual.id)
+                        .order('created_at', { ascending: false })
+
+                    if (error) throw error
+
+                    if (!vendas || vendas.length === 0) {
+                        document.getElementById('listaComissoes').style.display = 'none'
+                        document.getElementById('emptyState').style.display = 'block'
+                        document.getElementById('loading').style.display = 'none'
+                        document.getElementById('conteudo').style.display = 'block'
+                        return
+                    }
+
+                    calcularEstatisticas(vendas)
+                    renderizarComissoes(vendas)
+
+                    document.getElementById('loading').style.display = 'none'
+                    document.getElementById('conteudo').style.display = 'block'
+
+                } catch (error) {
+                    console.error('❌ Erro ao carregar comissões:', error)
+                    alert('Erro ao carregar comissões: ' + error.message)
+                }
+            }
+
+            function calcularEstatisticas(vendas) {
+                const taxaComissao = parceiroAtual.comissao / 100
+
+                let totalReceber = 0
+                let totalRecebido = 0
+
+                vendas.forEach(venda => {
+                    const valor = parseFloat(venda.valor_total || 0)
+                    const comissao = valor * taxaComissao
+
+                    if (venda.status_pagamento === 'pago') {
+                        totalReceber += comissao
+                    }
+                    // Aqui você pode adicionar lógica para comissões já pagas
+                })
+
+                const totalGeral = totalReceber + totalRecebido
+
+                document.getElementById('totalReceber').textContent = `R$ ${totalReceber.toFixed(2).replace('.', ',')}`
+                document.getElementById('totalRecebido').textContent = `R$ ${totalRecebido.toFixed(2).replace('.', ',')}`
+                document.getElementById('totalGeral').textContent = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`
+                document.getElementById('taxaComissao').textContent = `${parceiroAtual.comissao}%`
+            }
+
+            function renderizarComissoes(vendas) {
+                const lista = document.getElementById('listaComissoes')
+                const taxaComissao = parceiroAtual.comissao / 100
+
+                lista.innerHTML = vendas.map(venda => {
+                    const data = new Date(venda.created_at).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                    })
+                    const valor = parseFloat(venda.valor_total || 0)
+                    const comissao = valor * taxaComissao
+
+                    let badgeClass = 'badge-warning'
+                    let statusTexto = 'Pendente'
+                    let statusDescricao = 'Aguardando confirmação de pagamento'
+
+                    if (venda.status_pagamento === 'pago') {
+                        badgeClass = 'badge-success'
+                        statusTexto = 'Disponível'
+                        statusDescricao = 'Comissão disponível para saque'
+                    } else if (venda.status_pagamento === 'cancelado') {
+                        badgeClass = 'badge-info'
+                        statusTexto = 'Cancelado'
+                        statusDescricao = 'Venda cancelada - sem comissão'
+                    }
+
+                    return `
+                        <div class="comissao-item">
+                            <div class="comissao-info">
+                                <h3>${venda.nome_comprador}</h3>
+                                <p>Venda: R$ ${valor.toFixed(2).replace('.', ',')} | ${statusDescricao}</p>
+                                <span class="badge ${badgeClass}">${statusTexto}</span>
+                            </div>
+                            <div class="comissao-valor">
+                                <div class="valor">R$ ${comissao.toFixed(2).replace('.', ',')}</div>
+                                <div class="data">${data}</div>
+                            </div>
+                        </div>
+                    `
+                }).join('')
+            }
+        })()
+    </script>
+</body>
+</html>
