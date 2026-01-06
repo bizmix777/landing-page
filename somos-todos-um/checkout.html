@@ -322,6 +322,7 @@
             let vendaIdAtual = null
             let igrejaIdAtual = null
 
+            // Máscaras de input
             document.getElementById('cpf').addEventListener('input', function(e) {
                 let value = e.target.value.replace(/\D/g, '')
                 if (value.length <= 11) {
@@ -341,6 +342,7 @@
                 e.target.value = value
             })
 
+            // Verificar se há código de igreja na URL
             window.addEventListener('DOMContentLoaded', () => {
                 const urlParams = new URLSearchParams(window.location.search)
                 const codigoIgreja = urlParams.get('igreja')
@@ -350,25 +352,27 @@
                 }
             })
 
+            // Função para buscar igreja
             async function buscarIgreja(codigoIgreja) {
                 try {
-                    console.log('Buscando igreja:', codigoIgreja)
+                    console.log('🔍 Buscando igreja:', codigoIgreja)
                     
                     const { data: igreja, error } = await clienteSupabase
                         .from('igrejas')
-                        .select('id, nome, responsavel, status')
+                        .select('id, nome, responsavel, ativo')
                         .eq('codigo_indicacao', codigoIgreja)
-                        .eq('status', 'ativa')
+                        .eq('ativo', true)
                         .single()
 
                     if (error || !igreja) {
-                        console.log('Igreja não encontrada')
+                        console.log('❌ Igreja não encontrada')
                         return
                     }
 
-                    console.log('Igreja encontrada:', igreja)
+                    console.log('✅ Igreja encontrada:', igreja)
                     igrejaIdAtual = igreja.id
 
+                    // Mostrar informações da igreja
                     document.getElementById('nomeIgreja').textContent = igreja.nome
                     if (igreja.responsavel) {
                         document.getElementById('detalhesIgreja').textContent = `Responsável: ${igreja.responsavel}`
@@ -376,16 +380,18 @@
                     document.getElementById('igrejaInfo').style.display = 'block'
 
                 } catch (error) {
-                    console.error('Erro ao buscar igreja:', error)
+                    console.error('❌ Erro ao buscar igreja:', error)
                 }
             }
 
+            // Gerar PIX
             document.getElementById('btnGerar').addEventListener('click', async () => {
                 const nome = document.getElementById('nome').value.trim()
                 const email = document.getElementById('email').value.trim()
                 const cpf = document.getElementById('cpf').value.replace(/\D/g, '')
                 const telefone = document.getElementById('telefone').value.replace(/\D/g, '')
 
+                // Validações
                 if (!nome || !email || !cpf || !telefone) {
                     alert('Por favor, preencha todos os campos obrigatórios')
                     return
@@ -401,10 +407,14 @@
                     return
                 }
 
+                // Mostrar loading
                 document.getElementById('formCheckout').style.display = 'none'
                 document.getElementById('loading').style.display = 'block'
 
                 try {
+                    console.log('💳 Gerando PIX...')
+                    
+                    // Chamar Edge Function para criar pagamento PIX
                     const response = await fetch(`${SUPABASE_URL}/functions/v1/criar-pagamento-pix`, {
                         method: 'POST',
                         headers: {
@@ -427,26 +437,34 @@
                         throw new Error(data.error || 'Erro ao gerar PIX')
                     }
 
-                    console.log('PIX gerado:', data)
+                    console.log('✅ PIX gerado:', data)
                     vendaIdAtual = data.vendaId
 
-                    document.getElementById('qrcode').innerHTML = `<img src="${data.qrCodeBase64}" alt="QR Code PIX">`
+                    // Mostrar QR Code
+                    document.getElementById('qrcode').innerHTML = `
+                        <img src="${data.qrCodeBase64}" alt="QR Code PIX">
+                    `
+
+                    // Mostrar código PIX
                     document.getElementById('codigoPix').textContent = data.qrCode
 
+                    // Configurar botão de copiar
                     document.getElementById('btnCopiar').addEventListener('click', () => {
                         navigator.clipboard.writeText(data.qrCode)
                         alert('✅ Código PIX copiado!')
                     })
 
+                    // Configurar botão de confirmação
                     document.getElementById('btnConfirmacao').addEventListener('click', () => {
                         window.location.href = `confirmacao.html?venda=${vendaIdAtual}`
                     })
 
+                    // Esconder loading e mostrar resultado
                     document.getElementById('loading').style.display = 'none'
                     document.getElementById('resultado').style.display = 'block'
 
                 } catch (error) {
-                    console.error('Erro:', error)
+                    console.error('❌ Erro:', error)
                     alert('❌ Erro ao gerar PIX: ' + error.message)
                     document.getElementById('loading').style.display = 'none'
                     document.getElementById('formCheckout').style.display = 'block'
