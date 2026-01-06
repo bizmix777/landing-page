@@ -83,12 +83,6 @@
             color: #c62828;
         }
 
-        .alert-info {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            color: #1565c0;
-        }
-
         .form-group {
             margin-bottom: 20px;
         }
@@ -368,7 +362,6 @@
                     btnCadastrar.disabled = true
                     btnCadastrar.textContent = '⏳ Criando conta...'
 
-                    // Validar senhas
                     const senha = document.getElementById('senha').value
                     const confirmarSenha = document.getElementById('confirmarSenha').value
 
@@ -376,21 +369,17 @@
                         throw new Error('As senhas não coincidem')
                     }
 
-                    // Validar termos
                     if (!document.getElementById('aceitarTermos').checked) {
                         throw new Error('Você precisa aceitar os termos de uso')
                     }
 
-                    // Gerar código de parceiro único
                     const nomeCompleto = document.getElementById('nomeCompleto').value
                     const primeiroNome = nomeCompleto.split(' ')[0].toUpperCase()
                     const timestamp = Date.now().toString().slice(-4)
                     const codigoParceiro = `${primeiroNome}${timestamp}`
 
-                    // Gerar hash da senha
                     const senhaHash = await gerarHashSenha(senha)
 
-                    // Dados do novo parceiro
                     const novoParceiro = {
                         nome_completo: nomeCompleto,
                         email: document.getElementById('email').value.toLowerCase(),
@@ -405,7 +394,6 @@
                         status: 'ativo'
                     }
 
-                    // Verificar se e-mail já existe
                     const { data: emailExiste } = await clienteSupabase
                         .from('parceiros')
                         .select('id')
@@ -416,7 +404,6 @@
                         throw new Error('Este e-mail já está cadastrado')
                     }
 
-                    // Inserir no banco
                     const { data, error } = await clienteSupabase
                         .from('parceiros')
                         .insert([novoParceiro])
@@ -426,11 +413,13 @@
 
                     console.log('✅ Parceiro cadastrado:', data)
 
-                    // Mostrar sucesso
+                    // CORREÇÃO: Limpar sessão anterior
+                    localStorage.removeItem('parceiro_logado')
+                    sessionStorage.clear()
+
                     document.getElementById('alertSuccess').style.display = 'block'
                     document.getElementById('formRegistro').style.display = 'none'
 
-                    // Redirecionar para login após 3 segundos
                     setTimeout(() => {
                         window.location.href = 'login.html'
                     }, 3000)
