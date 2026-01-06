@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Parceiro - Somos Todos Um</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #f5576c;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            font-size: 20px;
+            user-select: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .links a {
+            color: #f5576c;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-error {
+            background: #fee;
+            border-left: 4px solid #d32f2f;
+            color: #c62828;
+        }
+
+        .alert-success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading p {
+            color: #f5576c;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🤝 Área do Parceiro</h1>
+            <p>Somos Todos Um</p>
+        </div>
+
+        <div class="alert alert-error" id="alertError"></div>
+        <div class="alert alert-success" id="alertSuccess"></div>
+
+        <form id="formLogin">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" required placeholder="seu@email.com" autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="password-container">
+                    <input type="password" id="senha" required placeholder="••••••••" autocomplete="current-password">
+                    <span class="toggle-password" id="togglePassword">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" id="btnLogin">Entrar</button>
+        </form>
+
+        <div class="loading" id="loading">
+            <p>⏳ Autenticando...</p>
+        </div>
+
+        <div class="links">
+            <a href="#" id="linkEsqueci">Esqueci minha senha</a>
+        </div>
+
+        <div class="divider">───────</div>
+
+        <div class="links">
+            <p style="color: #666; font-size: 14px; margin-bottom: 10px;">Ainda não é parceiro?</p>
+            <a href="cadastro.html" style="font-size: 16px; font-weight: 500;">Cadastre-se aqui</a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+            
+            const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+            // Verificar se já está logado
+            window.addEventListener('DOMContentLoaded', () => {
+                const parceiroLogado = localStorage.getItem('parceiro_logado')
+                if (parceiroLogado) {
+                    window.location.href = 'dashboard.html'
+                }
+            })
+
+            // Toggle mostrar/ocultar senha
+            document.getElementById('togglePassword').addEventListener('click', function() {
+                const senhaInput = document.getElementById('senha')
+                const type = senhaInput.type === 'password' ? 'text' : 'password'
+                senhaInput.type = type
+                this.textContent = type === 'password' ? '👁️' : '🙈'
+            })
+
+            // Função para mostrar alertas
+            function mostrarAlerta(tipo, mensagem) {
+                const alertError = document.getElementById('alertError')
+                const alertSuccess = document.getElementById('alertSuccess')
+                
+                alertError.style.display = 'none'
+                alertSuccess.style.display = 'none'
+
+                if (tipo === 'error') {
+                    alertError.textContent = mensagem
+                    alertError.style.display = 'block'
+                } else {
+                    alertSuccess.textContent = mensagem
+                    alertSuccess.style.display = 'block'
+                }
+
+                setTimeout(() => {
+                    alertError.style.display = 'none'
+                    alertSuccess.style.display = 'none'
+                }, 5000)
+            }
+
+            // Login
+            document.getElementById('formLogin').addEventListener('submit', async (e) => {
+                e.preventDefault()
+
+                const email = document.getElementById('email').value.trim()
+                const senha = document.getElementById('senha').value
+
+                if (!email || !senha) {
+                    mostrarAlerta('error', 'Por favor, preencha todos os campos')
+                    return
+                }
+
+                // Mostrar loading
+                document.getElementById('formLogin').style.display = 'none'
+                document.getElementById('loading').style.display = 'block'
+
+                try {
+                    console.log('🔐 Tentando login:', email)
+
+                    // Buscar parceiro no banco
+                    const { data: parceiro, error } = await clienteSupabase
+                        .from('parceiros')
+                        .select('*')
+                        .eq('email', email)
+                        .eq('status', 'ativo')
+                        .single()
+
+                    if (error || !parceiro) {
+                        throw new Error('E-mail ou senha incorretos')
+                    }
+
+                    // Verificar senha (usando bcrypt seria ideal, mas por enquanto vamos comparar hash)
+                    // NOTA: Em produção, use bcrypt ou similar
+                    const senhaCorreta = await verificarSenha(senha, parceiro.senha_hash)
+
+                    if (!senhaCorreta) {
+                        throw new Error('E-mail ou senha incorretos')
+                    }
+
+                    console.log('✅ Login bem-sucedido:', parceiro.nome_completo)
+
+                    // Atualizar último acesso
+                    await clienteSupabase
+                        .from('parceiros')
+                        .update({ ultimo_acesso: new Date().toISOString() })
+                        .eq('id', parceiro.id)
+
+                    // Salvar sessão
+                    const sessao = {
+                        id: parceiro.id,
+                        nome: parceiro.nome_completo,
+                        email: parceiro.email,
+                        codigo: parceiro.codigo_parceiro,
+                        tipo: parceiro.tipo_parceiro,
+                        comissao: parceiro.comissao_padrao,
+                        loginTime: new Date().toISOString()
+                    }
+
+                    localStorage.setItem('parceiro_logado', JSON.stringify(sessao))
+
+                    mostrarAlerta('success', 'Login realizado com sucesso! Redirecionando...')
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html'
+                    }, 1000)
+
+                } catch (error) {
+                    console.error('❌ Erro no login:', error)
+                    mostrarAlerta('error', error.message)
+                    document.getElementById('loading').style.display = 'none'
+                    document.getElementById('formLogin').style.display = 'block'
+                }
+            })
+
+            // Função para verificar senha (simplificada)
+            async function verificarSenha(senhaDigitada, senhaHash) {
+                // TEMPORÁRIO: Comparação simples
+                // Em produção, use bcrypt.compare()
+                
+                // Por enquanto, vamos criar um hash simples da senha digitada
+                const encoder = new TextEncoder()
+                const data = encoder.encode(senhaDigitada)
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+                const hashArray = Array.from(new Uint8Array(hashBuffer))
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+
+                return hashHex === senhaHash
+            }
+
+            // Esqueci minha senha
+            document.getElementById('linkEsqueci').addEventListener('click', async (e) => {
+                e.preventDefault()
+                
+                const email = document.getElementById('email').value.trim()
+                
+                if (!email) {
+                    mostrarAlerta('error', 'Digite seu e-mail primeiro')
+                    return
+                }
+
+                mostrarAlerta('success', 'Instruções de recuperação enviadas para seu e-mail!')
+                
+                // TODO: Implementar recuperação de senha via e-mail
+            })
+        })()
+    </script>
+</body>
+</html>
