@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Parceiro</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Teste de Busca de Parceiro</h1>
+    <div id="resultado"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+        async function testarParceiro() {
+            const resultadoDiv = document.getElementById('resultado')
+            resultadoDiv.innerHTML = '<p>Buscando parceiro HENRIQUE2025...</p>'
+
+            try {
+                const { data: parceiro, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('codigo_parceiro', 'HENRIQUE2025')
+                    .single()
+
+                if (error) {
+                    resultadoDiv.innerHTML = `<p style="color: red;">ERRO: ${error.message}</p>`
+                    console.error('Erro:', error)
+                    return
+                }
+
+                if (!parceiro) {
+                    resultadoDiv.innerHTML = '<p style="color: orange;">Parceiro não encontrado</p>'
+                    return
+                }
+
+                resultadoDiv.innerHTML = `
+                    <h2 style="color: green;">✅ Parceiro Encontrado!</h2>
+                    <pre>${JSON.stringify(parceiro, null, 2)}</pre>
+                `
+
+            } catch (error) {
+                resultadoDiv.innerHTML = `<p style="color: red;">ERRO: ${error.message}</p>`
+                console.error('Erro:', error)
+            }
+        }
+
+        testarParceiro()
+    </script>
+</body>
+</html>
