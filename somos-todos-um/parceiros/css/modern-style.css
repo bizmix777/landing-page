@@ -1,6 +1,7 @@
 /* ============================================
-   MODERN STYLE - BASEADO NA IMAGEM
-   Cores: Azul escuro + Índigo + Branco
+   MODERN STYLE - MONOCROMÁTICO
+   Cores: Preto + Branco + Cinza
+   Design Minimalista e Elegante
    ============================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -12,27 +13,38 @@
 }
 
 :root {
-    /* CORES PRINCIPAIS (da imagem) */
-    --primary: #3b82f6;
-    --primary-dark: #2563eb;
-    --primary-light: #60a5fa;
+    /* PALETA MONOCROMÁTICA */
+    --black: #000000;
+    --gray-900: #111827;
+    --gray-800: #1f2937;
+    --gray-700: #374151;
+    --gray-600: #4b5563;
+    --gray-500: #6b7280;
+    --gray-400: #9ca3af;
+    --gray-300: #d1d5db;
+    --gray-200: #e5e7eb;
+    --gray-100: #f3f4f6;
+    --white: #ffffff;
     
-    --bg-dark: #0f172a;
-    --bg-darker: #020617;
-    --bg-card: #1e293b;
+    /* CORES FUNCIONAIS */
+    --primary: var(--gray-900);
+    --secondary: var(--gray-600);
+    --accent: var(--white);
     
-    --text-white: #ffffff;
-    --text-gray: #cbd5e1;
-    --text-muted: #94a3b8;
-    
-    --accent: #3b82f6;
     --success: #10b981;
     --error: #ef4444;
     --warning: #f59e0b;
     
-    /* GRADIENTES */
-    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    /* BACKGROUNDS */
+    --bg-dark: var(--gray-900);
+    --bg-darker: var(--black);
+    --bg-card: var(--gray-800);
+    --bg-input: var(--gray-700);
+    
+    /* TEXTOS */
+    --text-white: var(--white);
+    --text-light: var(--gray-300);
+    --text-muted: var(--gray-500);
     
     /* BORDAS E SOMBRAS */
     --radius-sm: 8px;
@@ -40,19 +52,17 @@
     --radius-lg: 16px;
     --radius-xl: 24px;
     
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
-    
-    --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.3);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.7);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.8);
     
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-gradient);
+    background: var(--bg-dark);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -71,8 +81,8 @@ body::before {
     width: 100%;
     height: 100%;
     background-image: 
-        linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
     background-size: 50px 50px;
     z-index: 0;
     pointer-events: none;
@@ -101,7 +111,7 @@ body::before {
 }
 
 .logo p {
-    color: var(--text-gray);
+    color: var(--text-light);
     font-size: 16px;
     font-weight: 400;
 }
@@ -112,7 +122,7 @@ body::before {
     border-radius: var(--radius-xl);
     padding: 48px;
     box-shadow: var(--shadow-xl);
-    border: 1px solid rgba(59, 130, 246, 0.1);
+    border: 1px solid var(--gray-700);
     animation: fadeInUp 0.6s ease-out;
 }
 
@@ -126,7 +136,7 @@ body::before {
 }
 
 .card .subtitle {
-    color: var(--text-gray);
+    color: var(--text-light);
     font-size: 15px;
     text-align: center;
     margin-bottom: 32px;
@@ -157,23 +167,23 @@ body::before {
 }
 
 .alert-info {
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    color: #93c5fd;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--gray-600);
+    color: var(--text-light);
 }
 
 /* INFO BOX */
 .info-box {
-    background: rgba(59, 130, 246, 0.05);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-left: 4px solid var(--primary);
+    background: var(--gray-700);
+    border: 1px solid var(--gray-600);
+    border-left: 4px solid var(--white);
     padding: 20px;
     border-radius: var(--radius-md);
     margin-bottom: 32px;
 }
 
 .info-box p {
-    color: var(--text-gray);
+    color: var(--text-light);
     font-size: 14px;
     line-height: 1.6;
     margin-bottom: 12px;
@@ -187,7 +197,7 @@ body::before {
 .info-box ul {
     margin-top: 12px;
     margin-left: 20px;
-    color: var(--text-gray);
+    color: var(--text-light);
     font-size: 14px;
 }
 
@@ -218,21 +228,21 @@ body::before {
 .form-group select {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid var(--gray-600);
     border-radius: var(--radius-md);
     font-size: 15px;
     font-family: 'Inter', sans-serif;
     transition: var(--transition);
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--bg-input);
     color: var(--text-white);
 }
 
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    background: rgba(15, 23, 42, 0.8);
+    border-color: var(--white);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+    background: var(--gray-600);
 }
 
 .form-group input::placeholder {
@@ -258,21 +268,22 @@ body::before {
 .btn {
     width: 100%;
     padding: 16px 24px;
-    background: var(--primary-gradient);
-    color: white;
+    background: var(--white);
+    color: var(--black);
     border: none;
     border-radius: var(--radius-md);
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: var(--transition);
     margin-top: 8px;
-    box-shadow: var(--shadow-glow);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+    background: var(--gray-200);
 }
 
 .btn:active {
@@ -289,8 +300,8 @@ body::before {
 .terms {
     margin-top: 24px;
     padding: 16px;
-    background: rgba(59, 130, 246, 0.03);
-    border: 1px solid rgba(59, 130, 246, 0.1);
+    background: var(--gray-700);
+    border: 1px solid var(--gray-600);
     border-radius: var(--radius-md);
 }
 
@@ -298,7 +309,7 @@ body::before {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-    color: var(--text-gray);
+    color: var(--text-light);
     font-size: 14px;
     cursor: pointer;
     line-height: 1.5;
@@ -309,11 +320,11 @@ body::before {
     cursor: pointer;
     width: 18px;
     height: 18px;
-    accent-color: var(--primary);
+    accent-color: var(--white);
 }
 
 .terms a {
-    color: var(--primary-light);
+    color: var(--white);
     text-decoration: none;
     font-weight: 600;
 }
@@ -326,19 +337,19 @@ body::before {
 .login-link {
     text-align: center;
     margin-top: 24px;
-    color: var(--text-gray);
+    color: var(--text-light);
     font-size: 14px;
 }
 
 .login-link a {
-    color: var(--primary-light);
+    color: var(--white);
     text-decoration: none;
     font-weight: 600;
     transition: var(--transition);
 }
 
 .login-link a:hover {
-    color: var(--primary);
+    color: var(--gray-300);
     text-decoration: underline;
 }
 
