@@ -368,11 +368,15 @@
             // Carregar dados do dashboard
             async function carregarDashboard() {
                 try {
+                    console.log('🔄 Carregando dashboard...')
+                    
                     // Exibir informações básicas
                     document.getElementById('nomeParceiro').textContent = parceiroAtual.nome
                     document.getElementById('codigoParceiro').textContent = parceiroAtual.codigo
                     document.getElementById('tipoParceiro').textContent = parceiroAtual.tipo || 'Parceiro'
                     document.getElementById('taxaComissao').textContent = `${parceiroAtual.comissao || 0}%`
+
+                    console.log('✅ Informações básicas carregadas')
 
                     // Gerar links de indicação
                     const linkCheckout = `https://somos.bizmix.com.br/parceiros/checkout.html?parceiro=${parceiroAtual.codigo}`
@@ -380,6 +384,9 @@
                     
                     document.getElementById('linkCheckout').value = linkCheckout
                     document.getElementById('linkCurto').value = linkCurto
+
+                    console.log('✅ Links gerados')
+                    console.log('🔍 Buscando vendas para parceiro ID:', parceiroAtual.id)
 
                     // Buscar vendas do parceiro
                     const { data: vendas, error } = await clienteSupabase
@@ -393,24 +400,69 @@
                     }
 
                     console.log('📊 Vendas encontradas:', vendas)
+                    console.log('📊 Quantidade de vendas:', vendas ? vendas.length : 0)
 
                     // Calcular estatísticas
-                    const totalVendas = vendas.length
-                    const valorTotal = vendas.reduce((sum, venda) => sum + parseFloat(venda.valor_total || 0), 0)
-                    const comissaoTotal = valorTotal * (parceiroAtual.comissao / 100)
+                    const totalVendas = vendas ? vendas.length : 0
+                    console.log('📊 Total de vendas:', totalVendas)
 
-                    // Atualizar cards
-                    document.getElementById('totalVendas').textContent = totalVendas
-                    document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`
-                    document.getElementById('comissaoTotal').textContent = `R$ ${comissaoTotal.toFixed(2).replace('.', ',')}`
+                    let valorTotal = 0
+                    if (vendas && vendas.length > 0) {
+                        valorTotal = vendas.reduce((sum, venda) => {
+                            const valor = parseFloat(venda.valor_total || 0)
+                            console.log(`  Venda ${venda.nome_comprador}: R$ ${valor}`)
+                            return sum + valor
+                        }, 0)
+                    }
+                    console.log('💵 Valor total:', valorTotal)
+
+                    const comissaoTotal = valorTotal * (parceiroAtual.comissao / 100)
+                    console.log('💰 Comissão total:', comissaoTotal)
+                    console.log('💰 Comissão formatada:', `R$ ${comissaoTotal.toFixed(2).replace('.', ',')}`)
+
+                    // Atualizar cards com logs
+                    console.log('🔄 Atualizando card totalVendas...')
+                    const elemTotalVendas = document.getElementById('totalVendas')
+                    if (elemTotalVendas) {
+                        elemTotalVendas.textContent = totalVendas
+                        console.log('✅ totalVendas atualizado:', totalVendas)
+                    } else {
+                        console.error('❌ Elemento totalVendas não encontrado!')
+                    }
+
+                    console.log('🔄 Atualizando card valorTotal...')
+                    const elemValorTotal = document.getElementById('valorTotal')
+                    if (elemValorTotal) {
+                        elemValorTotal.textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`
+                        console.log('✅ valorTotal atualizado:', `R$ ${valorTotal.toFixed(2).replace('.', ',')}`)
+                    } else {
+                        console.error('❌ Elemento valorTotal não encontrado!')
+                    }
+
+                    console.log('🔄 Atualizando card comissaoTotal...')
+                    const elemComissaoTotal = document.getElementById('comissaoTotal')
+                    if (elemComissaoTotal) {
+                        elemComissaoTotal.textContent = `R$ ${comissaoTotal.toFixed(2).replace('.', ',')}`
+                        console.log('✅ comissaoTotal atualizado:', `R$ ${comissaoTotal.toFixed(2).replace('.', ',')}`)
+                    } else {
+                        console.error('❌ Elemento comissaoTotal não encontrado!')
+                    }
+
+                    console.log('✅ Todos os cards atualizados')
 
                     // Mostrar dashboard
                     document.getElementById('loading').style.display = 'none'
                     document.getElementById('dashboard').style.display = 'block'
 
+                    console.log('✅ Dashboard exibido com sucesso!')
+
                 } catch (error) {
                     console.error('❌ Erro ao carregar dashboard:', error)
-                    alert('Erro ao carregar dashboard. Tente novamente.')
+                    alert('Erro ao carregar dashboard: ' + error.message)
+                    
+                    // Mostrar dashboard mesmo com erro
+                    document.getElementById('loading').style.display = 'none'
+                    document.getElementById('dashboard').style.display = 'block'
                 }
             }
 
