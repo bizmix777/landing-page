@@ -6,6 +6,8 @@
     <title>Meus Dados - Área do Parceiro</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -13,15 +15,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #111827;
             min-height: 100vh;
             padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+            color: white;
         }
 
         .loading {
@@ -31,12 +29,17 @@
             font-size: 18px;
         }
 
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
         .header {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            border: 1px solid #374151;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -45,68 +48,114 @@
         }
 
         .header-info h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 5px;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
         }
 
         .header-info p {
-            color: #666;
+            color: #d1d5db;
             font-size: 14px;
+            margin: 0;
         }
 
         .header-actions {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
         }
 
         .btn {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
+        .btn-secondary {
+            background: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
+            background: white;
+            color: #111827;
         }
 
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
+        .btn-primary:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
         }
 
-        .btn-success {
-            background: #4caf50;
-            color: white;
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
         }
 
         .card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid #374151;
         }
 
         .card h2 {
-            color: #333;
+            color: white;
             font-size: 22px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+        }
+
+        .info-box {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-left: 4px solid white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .info-box p {
+            color: #d1d5db;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .info-box strong {
+            color: white;
         }
 
         .form-group {
@@ -115,93 +164,64 @@
 
         .form-group label {
             display: block;
-            color: #555;
+            color: white;
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 8px;
         }
 
         .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group select {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: border-color 0.3s;
+            padding: 14px 16px;
+            border: 1px solid #4b5563;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            background: #374151;
+            color: white;
         }
 
         .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
+        .form-group select:focus {
             outline: none;
-            border-color: #f5576c;
+            border-color: white;
+            background: #4b5563;
         }
 
         .form-group input:disabled {
-            background: #f5f5f5;
+            background: #1f2937;
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: #1f2937;
+            color: white;
         }
 
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert-success {
-            background: #e8f5e9;
-            border-left: 4px solid #4caf50;
-            color: #2e7d32;
-        }
-
-        .alert-error {
-            background: #fee;
-            border-left: 4px solid #d32f2f;
-            color: #c62828;
-        }
-
-        .alert-info {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            color: #1565c0;
-        }
-
-        .info-box {
-            background: #fff3cd;
-            border-left: 4px solid #ff9800;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .info-box p {
-            color: #856404;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
         .readonly-field {
-            background: #f9f9f9;
-            padding: 12px;
-            border-radius: 8px;
-            border: 2px solid #e0e0e0;
-            color: #666;
-            font-size: 16px;
+            background: #1f2937;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1px solid #374151;
+            color: #d1d5db;
+            font-size: 15px;
         }
 
         .form-actions {
@@ -213,21 +233,17 @@
 
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 16px;
             }
 
             .header {
-                text-align: center;
                 padding: 20px;
-            }
-
-            .header-info h1 {
-                font-size: 22px;
+                text-align: center;
             }
 
             .header-actions {
-                justify-content: center;
                 width: 100%;
+                justify-content: center;
             }
 
             .card {
@@ -435,7 +451,7 @@
         </div>
 
         <div class="form-actions">
-            <button type="button" class="btn btn-success" id="btnSalvar">💾 Salvar Alterações</button>
+            <button type="button" class="btn btn-primary" id="btnSalvar">💾 Salvar Alterações</button>
             <a href="dashboard.html" class="btn btn-secondary">Cancelar</a>
         </div>
     </div>
@@ -473,7 +489,6 @@
 
                     if (error) throw error
 
-                    // Preencher campos
                     document.getElementById('nomeCompleto').value = parceiro.nome_completo || ''
                     document.getElementById('email').value = parceiro.email || ''
                     document.getElementById('codigoParceiro').value = parceiro.codigo_parceiro || ''
@@ -527,11 +542,9 @@
 
                     if (error) throw error
 
-                    // Atualizar localStorage
                     parceiroAtual.nome = dadosAtualizados.nome_completo
                     localStorage.setItem('parceiro_logado', JSON.stringify(parceiroAtual))
 
-                    // Mostrar mensagem de sucesso
                     const alertSuccess = document.getElementById('alertSuccess')
                     alertSuccess.style.display = 'block'
                     window.scrollTo({ top: 0, behavior: 'smooth' })
