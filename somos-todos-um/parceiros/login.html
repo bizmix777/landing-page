@@ -4,179 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Área do Parceiro</title>
+    <link rel="stylesheet" href="css/modern-style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 450px;
-            width: 100%;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            color: white;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .logo p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 16px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .card h2 {
-            color: #333;
-            font-size: 24px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert-error {
-            background: #fee;
-            border-left: 4px solid #d32f2f;
-            color: #c62828;
-        }
-
-        .alert-info {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            color: #1565c0;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #555;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #f5576c;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .register-link a {
-            color: #f5576c;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-
-        .logged-in-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .logged-in-box p {
-            color: #1565c0;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .logged-in-box .btn-group {
-            display: flex;
-            gap: 10px;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 30px 20px;
-            }
-
-            .logo h1 {
-                font-size: 28px;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="container">
@@ -187,6 +16,7 @@
 
         <div class="card">
             <h2>🔐 Login</h2>
+            <p class="subtitle">Entre com suas credenciais para acessar sua área</p>
 
             <div class="logged-in-box" id="loggedInBox">
                 <p>✅ Você já está logado como: <strong id="nomeLogado"></strong></p>
@@ -216,7 +46,7 @@
                 </button>
             </form>
 
-            <div class="register-link">
+            <div class="login-link">
                 Não tem uma conta? <a href="registro.html">Cadastre-se gratuitamente</a>
             </div>
         </div>
@@ -229,7 +59,6 @@
             
             const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-            // Verificar se já está logado
             window.addEventListener('DOMContentLoaded', () => {
                 const parceiroLogado = localStorage.getItem('parceiro_logado')
                 
@@ -240,7 +69,6 @@
                 }
             })
 
-            // Função de login
             document.getElementById('formLogin').addEventListener('submit', async (e) => {
                 e.preventDefault()
                 await realizarLogin()
@@ -255,10 +83,8 @@
                     const email = document.getElementById('email').value.toLowerCase()
                     const senha = document.getElementById('senha').value
 
-                    // Gerar hash da senha
                     const senhaHash = await gerarHashSenha(senha)
 
-                    // Buscar parceiro no banco
                     const { data: parceiro, error } = await clienteSupabase
                         .from('parceiros')
                         .select('*')
@@ -270,18 +96,15 @@
                         throw new Error('E-mail ou senha incorretos')
                     }
 
-                    // Verificar se está ativo
                     if (parceiro.status !== 'ativo') {
                         throw new Error('Sua conta está inativa. Entre em contato com o suporte.')
                     }
 
-                    // Atualizar último acesso
                     await clienteSupabase
                         .from('parceiros')
                         .update({ ultimo_acesso: new Date().toISOString() })
                         .eq('id', parceiro.id)
 
-                    // Salvar no localStorage
                     const dadosLogin = {
                         id: parceiro.id,
                         nome: parceiro.nome_completo,
@@ -295,7 +118,6 @@
 
                     console.log('✅ Login realizado:', dadosLogin)
 
-                    // Redirecionar para dashboard
                     window.location.href = 'dashboard.html'
 
                 } catch (error) {
@@ -324,7 +146,6 @@
                 return hashHex
             }
 
-            // Funções globais
             window.irParaDashboard = function() {
                 window.location.href = 'dashboard.html'
             }
