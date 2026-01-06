@@ -6,6 +6,8 @@
     <title>Comissões - Área do Parceiro</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -13,15 +15,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #111827;
             min-height: 100vh;
             padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            color: white;
         }
 
         .loading {
@@ -31,12 +29,17 @@
             font-size: 18px;
         }
 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
         .header {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            border: 1px solid #374151;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -45,108 +48,161 @@
         }
 
         .header-info h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 5px;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
         }
 
         .header-info p {
-            color: #666;
+            color: #d1d5db;
             font-size: 14px;
+            margin: 0;
         }
 
         .header-actions {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
         }
 
         .btn {
             padding: 12px 24px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
         .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
+            background: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
         }
 
         .card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid #374151;
         }
 
         .card h2 {
-            color: #333;
+            color: white;
             font-size: 22px;
-            margin-bottom: 20px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
         }
 
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
         }
 
         .stat-box {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 10px;
+            background: #374151;
+            padding: 24px;
+            border-radius: 12px;
             text-align: center;
+            border: 1px solid #4b5563;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            border-color: white;
         }
 
         .stat-box.primary {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: white;
+            border-color: white;
         }
 
         .stat-box.primary .label,
         .stat-box.primary .value {
-            color: white;
+            color: #111827;
         }
 
         .stat-box .label {
-            color: #666;
+            color: #9ca3af;
             font-size: 12px;
             text-transform: uppercase;
             margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .stat-box .value {
-            color: #333;
+            color: white;
             font-size: 28px;
-            font-weight: bold;
+            font-weight: 700;
+        }
+
+        .info-box {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-left: 4px solid white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .info-box h3 {
+            color: white;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }
+
+        .info-box p {
+            color: #d1d5db;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 12px 0;
+        }
+
+        .info-box ul {
+            margin: 12px 0 0 20px;
+            padding: 0;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .info-box strong {
+            color: white;
         }
 
         .comissao-item {
-            background: #f9f9f9;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
+            background: #374151;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 20px;
+            border: 1px solid #4b5563;
+            transition: all 0.3s;
+        }
+
+        .comissao-item:hover {
+            border-color: white;
+            transform: translateY(-2px);
         }
 
         .comissao-info {
@@ -155,14 +211,16 @@
         }
 
         .comissao-info h3 {
-            color: #333;
+            color: white;
             font-size: 16px;
-            margin-bottom: 5px;
+            margin: 0 0 8px 0;
+            font-weight: 600;
         }
 
         .comissao-info p {
-            color: #666;
+            color: #d1d5db;
             font-size: 14px;
+            margin: 0 0 8px 0;
         }
 
         .comissao-valor {
@@ -170,20 +228,21 @@
         }
 
         .comissao-valor .valor {
-            color: #333;
+            color: white;
             font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
         }
 
         .comissao-valor .data {
-            color: #999;
+            color: #9ca3af;
             font-size: 12px;
+            margin: 0;
         }
 
         .badge {
             display: inline-block;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
@@ -191,24 +250,27 @@
         }
 
         .badge-success {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
         .badge-warning {
-            background: #fff3cd;
-            color: #856404;
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .badge-info {
-            background: #e3f2fd;
-            color: #1565c0;
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #999;
+            color: #9ca3af;
         }
 
         .empty-state .icon {
@@ -218,64 +280,34 @@
         }
 
         .empty-state h3 {
-            color: #666;
+            color: #d1d5db;
             font-size: 20px;
-            margin-bottom: 10px;
+            margin: 0 0 10px 0;
         }
 
         .empty-state p {
-            color: #999;
+            color: #9ca3af;
             font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .info-box {
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .info-box h3 {
-            color: #1565c0;
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-
-        .info-box p {
-            color: #1976d2;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .info-box ul {
-            margin-top: 10px;
-            margin-left: 20px;
-            color: #1976d2;
-        }
-
-        .info-box li {
-            margin-bottom: 5px;
+            margin: 0 0 20px 0;
         }
 
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 16px;
             }
 
             .header {
-                text-align: center;
                 padding: 20px;
-            }
-
-            .header-info h1 {
-                font-size: 22px;
+                text-align: center;
             }
 
             .header-actions {
-                justify-content: center;
                 width: 100%;
+                justify-content: center;
+            }
+
+            .card {
+                padding: 20px;
             }
 
             .stats-row {
@@ -289,10 +321,6 @@
 
             .comissao-valor {
                 text-align: center;
-            }
-
-            .card {
-                padding: 20px;
             }
         }
     </style>
@@ -353,7 +381,7 @@
                 <div class="icon">💸</div>
                 <h3>Nenhuma comissão registrada</h3>
                 <p>Você ainda não possui comissões. Comece a divulgar seu link de indicação para gerar vendas e receber comissões!</p>
-                <a href="dashboard.html" class="btn btn-primary" style="margin-top: 20px;">Ver Meu Link de Indicação</a>
+                <a href="dashboard.html" class="btn btn-secondary" style="margin-top: 20px;">Ver Meu Link de Indicação</a>
             </div>
         </div>
     </div>
@@ -422,7 +450,6 @@
                     if (venda.status_pagamento === 'pago') {
                         totalReceber += comissao
                     }
-                    // Aqui você pode adicionar lógica para comissões já pagas
                 })
 
                 const totalGeral = totalReceber + totalRecebido
