@@ -736,3 +736,21 @@ body::before {
         grid-template-columns: 1fr;
     }
 }
+
+/* LOGO COM IMAGEM */
+.logo-image {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Ajuste para mobile */
+@media (max-width: 768px) {
+    .logo-image {
+        max-width: 150px;
+    }
+}
+
