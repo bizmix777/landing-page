@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comissões - Área do Parceiro</title>
+    <title>Comissões - Área do Parceiro - Biz Mix</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -47,11 +47,16 @@
             gap: 20px;
         }
 
-        .header-info h1 {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0 0 4px 0;
+        .header-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-info img {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 8px;
         }
 
         .header-info p {
@@ -301,6 +306,10 @@
                 text-align: center;
             }
 
+            .header-info {
+                align-items: center;
+            }
+
             .header-actions {
                 width: 100%;
                 justify-content: center;
@@ -332,14 +341,14 @@
 
     <div class="container" id="conteudo" style="display: none;">
         <div class="header">
-    <div class="header-info">
-        <img src="images/logo_par.png" alt="Biz Mix" style="max-width: 120px; height: auto; margin-bottom: 8px;">
-        <p>Acompanhe suas comissões e pagamentos</p>
-    </div>
-      <div class="header-actions">
-        <a href="dashboard.html" class="btn btn-secondary">← Voltar ao Dashboard</a>
-      </div>
-    </div>
+            <div class="header-info">
+                <img src="images/logo_par.png" alt="Biz Mix">
+                <p>Acompanhe suas comissões e pagamentos</p>
+            </div>
+            <div class="header-actions">
+                <a href="dashboard.html" class="btn btn-secondary">← Voltar ao Dashboard</a>
+            </div>
+        </div>
 
         <div class="card">
             <div class="stats-row">
@@ -396,26 +405,43 @@
             let parceiroAtual = null
 
             window.addEventListener('DOMContentLoaded', async () => {
+                console.log('🔍 Verificando login...')
+                
                 const parceiroLogado = localStorage.getItem('parceiro_logado')
+                console.log('📦 LocalStorage:', parceiroLogado)
                 
                 if (!parceiroLogado) {
+                    console.log('❌ Não logado, redirecionando...')
                     window.location.href = 'login.html'
                     return
                 }
 
-                parceiroAtual = JSON.parse(parceiroLogado)
-                await carregarComissoes()
+                try {
+                    parceiroAtual = JSON.parse(parceiroLogado)
+                    console.log('✅ Parceiro logado:', parceiroAtual)
+                    await carregarComissoes()
+                } catch (error) {
+                    console.error('❌ Erro ao parsear dados:', error)
+                    window.location.href = 'login.html'
+                }
             })
 
             async function carregarComissoes() {
                 try {
+                    console.log('📊 Carregando comissões para parceiro:', parceiroAtual.id)
+
                     const { data: vendas, error } = await clienteSupabase
                         .from('vendas')
                         .select('*')
                         .eq('parceiro_id', parceiroAtual.id)
                         .order('created_at', { ascending: false })
 
-                    if (error) throw error
+                    if (error) {
+                        console.error('❌ Erro Supabase:', error)
+                        throw error
+                    }
+
+                    console.log('📦 Vendas encontradas:', vendas)
 
                     if (!vendas || vendas.length === 0) {
                         document.getElementById('listaComissoes').style.display = 'none'
