@@ -3,132 +3,510 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comissões - TESTE - Biz Mix</title>
+    <title>Comissões - Área do Parceiro - Biz Mix</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #111827;
-            color: white;
-            padding: 40px;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .debug {
-            background: #1f2937;
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #111827;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
+        }
+
+        .header {
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
             border: 1px solid #374151;
         }
-        .debug h3 {
-            color: #10b981;
-            margin-bottom: 10px;
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
-        .debug pre {
-            background: #000;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            color: #6ee7b7;
+
+        .header-left img {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 8px;
         }
-        .btn {
-            padding: 12px 24px;
-            background: white;
-            color: black;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
+
+        .header-left p {
+            color: #d1d5db;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+            border-radius: 12px;
+            font-size: 14px;
             font-weight: 600;
-            margin-right: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-logout:hover {
+            background: #4b5563;
+        }
+
+        .card {
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid #374151;
+        }
+
+        .card h2 {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-box {
+            background: #374151;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #4b5563;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            border-color: white;
+        }
+
+        .stat-box.primary {
+            background: white;
+            border-color: white;
+        }
+
+        .stat-box.primary .label,
+        .stat-box.primary .value {
+            color: #111827;
+        }
+
+        .stat-box .label {
+            color: #9ca3af;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-box .value {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .info-box {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-left: 4px solid white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .info-box h3 {
+            color: white;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }
+
+        .info-box p {
+            color: #d1d5db;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 12px 0;
+        }
+
+        .info-box ul {
+            margin: 12px 0 0 20px;
+            padding: 0;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .info-box strong {
+            color: white;
+        }
+
+        .comissao-item {
+            background: #374151;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            border: 1px solid #4b5563;
+            transition: all 0.3s;
+        }
+
+        .comissao-item:hover {
+            border-color: white;
+            transform: translateY(-2px);
+        }
+
+        .comissao-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .comissao-info h3 {
+            color: white;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }
+
+        .comissao-info p {
+            color: #d1d5db;
+            font-size: 14px;
+            margin: 0 0 8px 0;
+        }
+
+        .comissao-valor {
+            text-align: right;
+        }
+
+        .comissao-valor .valor {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 4px 0;
+        }
+
+        .comissao-valor .data {
+            color: #9ca3af;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: #d1d5db;
+            font-size: 20px;
+            margin: 0 0 10px 0;
+        }
+
+        .empty-state p {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0 0 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-logout {
+                width: 100%;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .comissao-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .comissao-valor {
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>🔍 DIAGNÓSTICO - Comissões</h1>
-    
-    <div class="debug">
-        <h3>1. LocalStorage - parceiro_logado:</h3>
-        <pre id="localStorageData">Carregando...</pre>
+    <div class="loading" id="loading">
+        <p>⏳ Carregando comissões...</p>
     </div>
 
-    <div class="debug">
-        <h3>2. Dados Parseados:</h3>
-        <pre id="parsedData">Carregando...</pre>
-    </div>
+    <div class="container" id="conteudo" style="display: none;">
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <img src="images/logo_par.png" alt="Biz Mix">
+                    <p>Acompanhe suas comissões e pagamentos</p>
+                </div>
+                <div class="header-right">
+                    <a href="dashboard.html" class="btn-logout">← Voltar ao Dashboard</a>
+                </div>
+            </div>
+        </div>
 
-    <div class="debug">
-        <h3>3. Status:</h3>
-        <pre id="status">Carregando...</pre>
-    </div>
+        <div class="card">
+            <div class="stats-row">
+                <div class="stat-box primary">
+                    <div class="label">Total a Receber</div>
+                    <div class="value" id="totalReceber">R$ 0,00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Total Recebido</div>
+                    <div class="value" id="totalRecebido">R$ 0,00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Total Geral</div>
+                    <div class="value" id="totalGeral">R$ 0,00</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Taxa de Comissão</div>
+                    <div class="value" id="taxaComissao">0%</div>
+                </div>
+            </div>
 
-    <div>
-        <button class="btn" onclick="irParaDashboard()">← Voltar ao Dashboard</button>
-        <button class="btn" onclick="irParaLogin()">Ir para Login</button>
-        <button class="btn" onclick="limparStorage()">Limpar Storage</button>
+            <div class="info-box">
+                <h3>ℹ️ Como funciona o pagamento de comissões?</h3>
+                <p>Suas comissões são calculadas automaticamente sobre cada venda realizada através do seu link de indicação.</p>
+                <ul>
+                    <li><strong>Vendas Pagas:</strong> Comissão disponível para saque</li>
+                    <li><strong>Vendas Pendentes:</strong> Aguardando confirmação de pagamento</li>
+                    <li><strong>Pagamento:</strong> Realizado mensalmente via PIX ou transferência bancária</li>
+                </ul>
+            </div>
+
+            <h2>📊 Detalhamento por Venda</h2>
+            
+            <div id="listaComissoes">
+                <!-- Comissões serão inseridas aqui -->
+            </div>
+
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="icon">💸</div>
+                <h3>Nenhuma comissão registrada</h3>
+                <p>Você ainda não possui comissões. Comece a divulgar seu link de indicação para gerar vendas e receber comissões!</p>
+                <a href="dashboard.html" class="btn-logout" style="margin-top: 20px;">Ver Meu Link de Indicação</a>
+            </div>
+        </div>
     </div>
 
     <script>
-        // TESTE 1: Verificar localStorage
-        const parceiroLogado = localStorage.getItem('parceiro_logado')
-        document.getElementById('localStorageData').textContent = parceiroLogado || 'VAZIO - Nenhum dado encontrado'
+        (function() {
+            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+            
+            const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-        // TESTE 2: Tentar parsear
-        let parceiroAtual = null
-        let parseError = null
-        
-        if (parceiroLogado) {
-            try {
+            let parceiroAtual = null
+
+            window.addEventListener('DOMContentLoaded', async () => {
+                const parceiroLogado = localStorage.getItem('parceiro_logado')
+                
+                if (!parceiroLogado) {
+                    window.location.href = 'login.html'
+                    return
+                }
+
                 parceiroAtual = JSON.parse(parceiroLogado)
-                document.getElementById('parsedData').textContent = JSON.stringify(parceiroAtual, null, 2)
-            } catch (error) {
-                parseError = error.message
-                document.getElementById('parsedData').textContent = 'ERRO AO PARSEAR: ' + error.message
+
+                await carregarComissoes()
+            })
+
+            async function carregarComissoes() {
+                try {
+                    const { data: vendas, error } = await clienteSupabase
+                        .from('vendas')
+                        .select('*')
+                        .eq('parceiro_id', parceiroAtual.id)
+                        .order('created_at', { ascending: false })
+
+                    if (error) throw error
+
+                    if (!vendas || vendas.length === 0) {
+                        document.getElementById('listaComissoes').style.display = 'none'
+                        document.getElementById('emptyState').style.display = 'block'
+                        document.getElementById('loading').style.display = 'none'
+                        document.getElementById('conteudo').style.display = 'block'
+                        return
+                    }
+
+                    calcularEstatisticas(vendas)
+                    renderizarComissoes(vendas)
+
+                    document.getElementById('loading').style.display = 'none'
+                    document.getElementById('conteudo').style.display = 'block'
+
+                } catch (error) {
+                    console.error('❌ Erro ao carregar comissões:', error)
+                    alert('Erro ao carregar comissões: ' + error.message)
+                }
             }
-        } else {
-            document.getElementById('parsedData').textContent = 'Não há dados para parsear'
-        }
 
-        // TESTE 3: Status final
-        let statusMsg = ''
-        if (!parceiroLogado) {
-            statusMsg = '❌ PROBLEMA: localStorage está vazio\n'
-            statusMsg += 'AÇÃO: Será redirecionado para login.html\n'
-            statusMsg += 'SOLUÇÃO: Faça login novamente'
-        } else if (parseError) {
-            statusMsg = '❌ PROBLEMA: Erro ao parsear JSON\n'
-            statusMsg += 'ERRO: ' + parseError + '\n'
-            statusMsg += 'SOLUÇÃO: Limpe o storage e faça login novamente'
-        } else if (parceiroAtual) {
-            statusMsg = '✅ SUCESSO: Dados do parceiro carregados corretamente\n'
-            statusMsg += 'ID: ' + parceiroAtual.id + '\n'
-            statusMsg += 'Nome: ' + parceiroAtual.nome + '\n'
-            statusMsg += 'E-mail: ' + parceiroAtual.email + '\n'
-            statusMsg += 'Código: ' + parceiroAtual.codigo + '\n'
-            statusMsg += 'Comissão: ' + parceiroAtual.comissao + '%\n'
-            statusMsg += '\n✅ A página deveria funcionar normalmente'
-        }
+            function calcularEstatisticas(vendas) {
+                const taxaComissao = parceiroAtual.comissao / 100
 
-        document.getElementById('status').textContent = statusMsg
+                let totalReceber = 0
+                let totalRecebido = 0
 
-        // Funções auxiliares
-        function irParaDashboard() {
-            window.location.href = 'dashboard.html'
-        }
+                vendas.forEach(venda => {
+                    const valor = parseFloat(venda.valor_total || 0)
+                    const comissao = valor * taxaComissao
 
-        function irParaLogin() {
-            window.location.href = 'login.html'
-        }
+                    if (venda.status_pagamento === 'pago') {
+                        totalReceber += comissao
+                    }
+                })
 
-        function limparStorage() {
-            localStorage.removeItem('parceiro_logado')
-            sessionStorage.clear()
-            alert('✅ Storage limpo! Faça login novamente.')
-            window.location.href = 'login.html'
-        }
+                const totalGeral = totalReceber + totalRecebido
 
-        // Log no console
-        console.log('=== DIAGNÓSTICO COMISSÕES ===')
-        console.log('localStorage:', parceiroLogado)
-        console.log('Parseado:', parceiroAtual)
-        console.log('Status:', statusMsg)
+                document.getElementById('totalReceber').textContent = `R$ ${totalReceber.toFixed(2).replace('.', ',')}`
+                document.getElementById('totalRecebido').textContent = `R$ ${totalRecebido.toFixed(2).replace('.', ',')}`
+                document.getElementById('totalGeral').textContent = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`
+                document.getElementById('taxaComissao').textContent = `${parceiroAtual.comissao}%`
+            }
+
+            function renderizarComissoes(vendas) {
+                const lista = document.getElementById('listaComissoes')
+                const taxaComissao = parceiroAtual.comissao / 100
+
+                lista.innerHTML = vendas.map(venda => {
+                    const data = new Date(venda.created_at).toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric'
+                    })
+                    const valor = parseFloat(venda.valor_total || 0)
+                    const comissao = valor * taxaComissao
+
+                    let badgeClass = 'badge-warning'
+                    let statusTexto = 'Pendente'
+                    let statusDescricao = 'Aguardando confirmação de pagamento'
+
+                    if (venda.status_pagamento === 'pago') {
+                        badgeClass = 'badge-success'
+                        statusTexto = 'Disponível'
+                        statusDescricao = 'Comissão disponível para saque'
+                    } else if (venda.status_pagamento === 'cancelado') {
+                        badgeClass = 'badge-info'
+                        statusTexto = 'Cancelado'
+                        statusDescricao = 'Venda cancelada - sem comissão'
+                    }
+
+                    return `
+                        <div class="comissao-item">
+                            <div class="comissao-info">
+                                <h3>${venda.nome_comprador}</h3>
+                                <p>Venda: R$ ${valor.toFixed(2).replace('.', ',')} | ${statusDescricao}</p>
+                                <span class="badge ${badgeClass}">${statusTexto}</span>
+                            </div>
+                            <div class="comissao-valor">
+                                <div class="valor">R$ ${comissao.toFixed(2).replace('.', ',')}</div>
+                                <div class="data">${data}</div>
+                            </div>
+                        </div>
+                    `
+                }).join('')
+            }
+        })()
     </script>
 </body>
 </html>
