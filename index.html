@@ -16,7 +16,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="BizMix - Inteligência de Negócios">
     <meta property="og:description" content="Conectamos oportunidades de negócios com segurança jurídica. Advocacia, intermediação e imóveis.">
-    <meta property="og:image" content="https://www.bizmix.com.br/logo_par.png">
+    <meta property="og:image" content="https://www.bizmix.com.br/logo.png">
     <meta property="og:url" content="https://www.bizmix.com.br">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -97,10 +97,24 @@
             background: #2563eb;
         }
         
+        .btn-secondary {
+            background: #475569;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #334155;
+        }
+        
         /* HERO SECTION */
         .hero {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%),
-                        url('/images/builders.jpeg') center/cover;
+                        url('/somos-todos-um/images/builders.jpeg') center/cover;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -386,91 +400,6 @@
             color: #64748b;
         }
         
-        /* PAINEL DE ACESSOS */
-        .admin-section {
-            background: #f1f5f9;
-            border-radius: 20px;
-            padding: 40px;
-            border: 1px solid #e2e8f0;
-            margin-top: 60px;
-        }
-        
-        .admin-section h2 {
-            color: #1e293b;
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 15px;
-        }
-        
-        .admin-section .section-subtitle {
-            text-align: center;
-            color: #475569;
-            margin-bottom: 30px;
-        }
-        
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .project-card {
-            background: white;
-            border-radius: 20px;
-            padding: 40px 30px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        
-        .project-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
-            border-color: #3b82f6;
-        }
-        
-        .project-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 25px;
-            background: linear-gradient(135deg, #1e293b, #334155);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5em;
-            color: white;
-            box-shadow: 0 5px 20px rgba(30, 41, 59, 0.3);
-        }
-        
-        .project-card h3 {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: #1e293b;
-        }
-        
-        .project-card p {
-            color: #475569;
-            font-size: 1em;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-        
-        .project-badge {
-            display: inline-block;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            background: rgba(30, 41, 59, 0.1);
-            color: #1e293b;
-        }
-        
         /* FOOTER / CONTATO */
         .footer {
             background: #1e293b;
@@ -556,11 +485,12 @@
     <nav class="navbar">
         <div class="navbar-content">
             <div class="logo-container">
-                <img src="/images/logo_par.png" alt="BizMix Logo" onerror="this.src='logo.png'">
+                <img src="/somos-todos-um/images/logo_par.png" alt="BizMix Logo" onerror="this.src='logo.png'">
             </div>
             <div class="nav-menu">
                 <a href="#solucoes" class="nav-link">Soluções</a>
                 <a href="#bizmix" class="nav-link">A BizMix</a>
+                <a href="/painel-acesso.html" class="btn-secondary">Administrar</a>
                 <a href="#contato" class="btn-primary">Iniciar Projeto</a>
             </div>
         </div>
@@ -673,25 +603,6 @@
                         <div class="stat-number">Expertise</div>
                         <div class="stat-label">Vendas & Intermediação</div>
                     </div>
-                </div>
-            </div>
-            
-            <!-- PAINEL DE ACESSOS -->
-            <div class="admin-section">
-                <h2><i class="fas fa-tools"></i> Área Administrativa</h2>
-                <p class="section-subtitle">Acesso rápido aos painéis de gerenciamento</p>
-                
-                <div class="projects-grid">
-                    <a href="/painel-acesso.html" class="project-card">
-                        <div class="project-icon">
-                            <i class="fas fa-link"></i>
-                        </div>
-                        <h3>Painel de Acessos</h3>
-                        <p>Todos os links administrativos em um só lugar</p>
-                        <span class="project-badge">
-                            <i class="fas fa-th-large"></i> Central de Links
-                        </span>
-                    </a>
                 </div>
             </div>
         </div>
