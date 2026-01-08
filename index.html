@@ -3,10 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biz Mix - Portal de Projetos</title>
-    <meta name="description" content="Portal central da Biz Mix - Acesse todos os nossos projetos e serviços em um só lugar">
+    <title>Biz Mix - Inteligência de Negócios</title>
+    
+    <!-- SEO META TAGS -->
+    <meta name="description" content="BizMix conecta oportunidades de negócios com segurança jurídica. Advocacia, intermediação de empresas e imóveis com expertise desde 1990.">
+    <meta name="keywords" content="advocacia, negócios, imóveis, intermediação, consultoria jurídica, compra e venda de empresas, due diligence">
+    <meta name="author" content="Dr. Henrique - BizMix">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.bizmix.com.br">
+    
+    <!-- OPEN GRAPH -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="BizMix - Inteligência de Negócios">
+    <meta property="og:description" content="Conectamos oportunidades de negócios com segurança jurídica. Advocacia, intermediação e imóveis.">
+    <meta property="og:image" content="https://www.bizmix.com.br/logo.png">
+    <meta property="og:url" content="https://www.bizmix.com.br">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             margin: 0;
@@ -14,118 +29,389 @@
             box-sizing: border-box;
         }
         
-        :root {
-            --primary: #3b82f6;
-            --secondary: #1e293b;
-            --slate-dark: #334155;
-            --slate-light: #f8fafc;
-            --slate-100: #f1f5f9;
-            --slate-600: #475569;
-            --slate-800: #1e293b;
-            --blue-400: #60a5fa;
-        }
-        
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: var(--slate-light);
+            color: #1e293b;
+            background: #f8fafc;
         }
         
-        /* HEADER */
-        .header {
-            background: rgba(30, 41, 59, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 20px 0;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
+        /* NAVBAR */
+        .navbar {
+            position: absolute;
+            width: 100%;
+            z-index: 50;
             top: 0;
-            z-index: 100;
         }
         
-        .header-content {
+        .navbar-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        
-        .logo-container {
-            display: flex;
-            align-items: center;
+            padding-top: 24px;
+            padding-bottom: 24px;
         }
         
         .logo-container img {
-            width: 150px;
-            height: auto;
+            height: 64px;
+            width: auto;
             image-rendering: crisp-edges;
         }
         
-        .header-badge {
-            background: var(--primary);
+        .nav-menu {
+            display: none;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        @media (min-width: 768px) {
+            .nav-menu {
+                display: flex;
+            }
+        }
+        
+        .nav-link {
             color: white;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 0.9em;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: #60a5fa;
+        }
+        
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
             font-weight: 600;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
         }
         
         /* HERO SECTION */
         .hero {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%),
+                        url('/somos-todos-um/images/builders.jpeg') center/cover;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 80px 20px 60px;
             text-align: center;
-            color: white;
+            padding: 0 20px;
+        }
+        
+        .hero-content {
+            max-width: 1280px;
+            margin-top: 64px;
         }
         
         .hero h1 {
-            font-size: 3.5em;
-            margin-bottom: 20px;
+            font-size: 3rem;
             font-weight: 700;
+            color: white;
+            margin-bottom: 24px;
             line-height: 1.2;
         }
         
-        .hero-subtitle {
-            font-size: 1.3em;
-            margin-bottom: 40px;
-            color: #cbd5e1;
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 3.75rem;
+            }
         }
         
-        /* CONTAINER */
-        .container {
+        .hero h1 .highlight {
+            color: #60a5fa;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #cbd5e1;
+            margin-bottom: 40px;
+            max-width: 768px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: center;
+        }
+        
+        @media (min-width: 768px) {
+            .hero-buttons {
+                flex-direction: row;
+            }
+        }
+        
+        .btn-white {
+            background: white;
+            color: #1e293b;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.125rem;
+            transition: background 0.3s;
+        }
+        
+        .btn-white:hover {
+            background: #f1f5f9;
+        }
+        
+        .btn-blue {
+            background: #3b82f6;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.125rem;
+            transition: background 0.3s;
+        }
+        
+        .btn-blue:hover {
+            background: #2563eb;
+        }
+        
+        /* EMPRESAS PARCEIRAS */
+        .parceiros-section {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 48px 0;
+        }
+        
+        .parceiros-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 80px 20px;
+            padding: 0 20px;
         }
         
-        /* SECTION TITLE */
-        .section-title {
+        .parceiros-title {
             text-align: center;
-            color: var(--secondary);
-            font-size: 2.2em;
-            margin-bottom: 15px;
+            font-size: 1.5rem;
             font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 40px;
         }
         
-        .section-subtitle {
+        .parceiros-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        
+        @media (min-width: 768px) {
+            .parceiros-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .parceiros-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .parceiro-card {
+            background: linear-gradient(to bottom right, #eff6ff, #f8fafc);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .parceiro-card:hover {
+            border-color: #60a5fa;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .parceiro-icon {
+            font-size: 2.25rem;
+            margin-bottom: 16px;
+            transition: transform 0.3s;
+        }
+        
+        .parceiro-card:hover .parceiro-icon {
+            transform: scale(1.1);
+        }
+        
+        .parceiro-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .parceiro-card p {
+            color: #475569;
+            font-size: 0.875rem;
+        }
+        
+        /* COMO POSSO AJUDAR */
+        .solucoes-section {
+            padding: 96px 0;
+            background: #f8fafc;
+        }
+        
+        .solucoes-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: 700;
             text-align: center;
-            color: var(--slate-600);
-            font-size: 1.1em;
-            margin-bottom: 50px;
+            color: #1e293b;
+            margin-bottom: 64px;
         }
         
-        /* PROJECTS GRID */
+        .solucoes-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        
+        @media (min-width: 768px) {
+            .solucoes-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .solucao-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f1f5f9;
+            transition: box-shadow 0.3s;
+        }
+        
+        .solucao-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .solucao-icon {
+            width: 56px;
+            height: 56px;
+            background: #dbeafe;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        
+        .solucao-icon i {
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+        
+        .solucao-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .solucao-card p {
+            color: #475569;
+        }
+        
+        /* SOBRE A BIZMIX */
+        .bizmix-section {
+            padding: 96px 0;
+            background: white;
+        }
+        
+        .bizmix-content {
+            max-width: 896px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        
+        .bizmix-box {
+            background: #f8fafc;
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .bizmix-box p {
+            font-size: 1.125rem;
+            color: #334155;
+            margin-bottom: 24px;
+        }
+        
+        .bizmix-stats {
+            margin-top: 32px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+        
+        @media (min-width: 768px) {
+            .bizmix-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            color: #3b82f6;
+            font-weight: 700;
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+        
+        /* PAINEL DE ACESSOS */
+        .admin-section {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid #e2e8f0;
+            margin-top: 60px;
+        }
+        
+        .admin-section h2 {
+            color: #1e293b;
+            text-align: center;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        
+        .admin-section .section-subtitle {
+            text-align: center;
+            color: #475569;
+            margin-bottom: 30px;
+        }
+        
         .projects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            margin-bottom: 60px;
         }
         
         .project-card {
@@ -145,51 +431,31 @@
         .project-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
-            border-color: var(--primary);
+            border-color: #3b82f6;
         }
         
         .project-icon {
             width: 80px;
             height: 80px;
             margin: 0 auto 25px;
-            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            background: linear-gradient(135deg, #1e293b, #334155);
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5em;
             color: white;
-            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3);
-        }
-        
-        .project-card.somos .project-icon {
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-        }
-        
-        .project-card.direito .project-icon {
-            background: linear-gradient(135deg, #f59e0b, #fbbf24);
-        }
-        
-        .project-card.temu .project-icon {
-            background: linear-gradient(135deg, #ef4444, #f87171);
-        }
-        
-        .project-card.amway .project-icon {
-            background: linear-gradient(135deg, #10b981, #34d399);
-        }
-        
-        .project-card.admin .project-icon {
-            background: linear-gradient(135deg, #1e293b, #334155);
+            box-shadow: 0 5px 20px rgba(30, 41, 59, 0.3);
         }
         
         .project-card h3 {
             font-size: 1.5em;
             margin-bottom: 15px;
-            color: var(--secondary);
+            color: #1e293b;
         }
         
         .project-card p {
-            color: var(--slate-600);
+            color: #475569;
             font-size: 1em;
             line-height: 1.6;
             margin-bottom: 20px;
@@ -201,226 +467,262 @@
             border-radius: 20px;
             font-size: 0.85em;
             font-weight: 600;
-        }
-        
-        .badge-primary {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--primary);
-        }
-        
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: #f59e0b;
-        }
-        
-        .badge-danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-        }
-        
-        .badge-success {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
-        }
-        
-        .badge-info {
             background: rgba(30, 41, 59, 0.1);
-            color: var(--secondary);
+            color: #1e293b;
         }
         
-        /* ADMIN SECTION */
-        .admin-section {
-            background: var(--slate-100);
-            border-radius: 20px;
-            padding: 40px;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .admin-section h2 {
-            color: var(--secondary);
-            text-align: center;
-            font-size: 2em;
-            margin-bottom: 30px;
-        }
-        
-        /* FOOTER */
+        /* FOOTER / CONTATO */
         .footer {
-            background: var(--secondary);
+            background: #1e293b;
             color: white;
-            padding: 40px 20px 20px;
-            text-align: center;
+            padding: 64px 0;
         }
         
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
         }
         
-        .footer p {
-            opacity: 0.9;
-            margin: 10px 0;
+        .footer h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        
+        .footer-subtitle {
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-size: 1.125rem;
+        }
+        
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            background: #10b981;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.125rem;
+            transition: background 0.3s;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #059669;
+        }
+        
+        .btn-whatsapp i {
+            margin-right: 12px;
+            font-size: 1.5rem;
         }
         
         .footer-links {
-            margin: 20px 0;
+            margin-top: 48px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 24px;
+            color: #94a3b8;
         }
         
         .footer-links a {
-            color: white;
+            color: #94a3b8;
             text-decoration: none;
-            margin: 0 15px;
-            opacity: 0.8;
-            transition: opacity 0.3s;
+            transition: color 0.3s;
         }
         
         .footer-links a:hover {
-            opacity: 1;
-            color: var(--blue-400);
+            color: white;
         }
         
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.2em;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.1em;
-            }
-            
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .section-title {
-                font-size: 1.8em;
-            }
+        .footer-links .separator {
+            color: #475569;
+        }
+        
+        .footer-bottom {
+            margin-top: 64px;
+            padding-top: 32px;
+            border-top: 1px solid #334155;
+            font-size: 0.875rem;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-content">
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-content">
             <div class="logo-container">
-                <img src="/somos-todos-um/images/logo_par.png" alt="Biz Mix Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                <div style="display:none; color: white; font-size: 1.5em; font-weight: 700;">
-                    <i class="fas fa-cube"></i> Biz Mix
-                </div>
+                <img src="/somos-todos-um/images/logo_par.png" alt="BizMix Logo" onerror="this.src='logo.png'">
             </div>
-            <div class="header-badge">
-                <i class="fas fa-rocket"></i> Portal de Projetos
+            <div class="nav-menu">
+                <a href="#solucoes" class="nav-link">Soluções</a>
+                <a href="#bizmix" class="nav-link">A BizMix</a>
+                <a href="#contato" class="btn-primary">Iniciar Projeto</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>
+                Conectamos Oportunidades<br>
+                <span class="highlight">Garantimos Resultados</span>
+            </h1>
+            <p class="hero-subtitle">
+                A BizMix une a extremidade comercial das vendas com a segurança jurídica da advocacia. Seja para imóveis, empresas ou tecnologia: nós estruturamos o negócio para você lucrar com segurança.
+            </p>
+            <div class="hero-buttons">
+                <a href="#solucoes" class="btn-white">O Que Fazemos?</a>
+                <a href="#contato" class="btn-blue">Falar com Especialista</a>
             </div>
         </div>
     </header>
     
-    <!-- HERO -->
-    <section class="hero">
-        <div style="max-width: 1000px;">
-            <h1>Bem-vindo à Biz Mix</h1>
-            <p class="hero-subtitle">Escolha o projeto que você deseja acessar</p>
+    <!-- EMPRESAS PARCEIRAS -->
+    <section class="parceiros-section">
+        <div class="parceiros-content">
+            <h3 class="parceiros-title">Empresas Parceiras</h3>
+            
+            <div class="parceiros-grid">
+                <a href="https://somos.bizmix.com.br/somos-todos-um/" target="_blank" class="parceiro-card">
+                    <div class="parceiro-icon">🤝</div>
+                    <h3>Somos Todos Um</h3>
+                    <p>Plataforma de conexão e colaboração</p>
+                </a>
+                
+                <a href="/direito/" class="parceiro-card">
+                    <div class="parceiro-icon">⚖️</div>
+                    <h3>Direito</h3>
+                    <p>Soluções jurídicas especializadas</p>
+                </a>
+                
+                <a href="/temu/" class="parceiro-card">
+                    <div class="parceiro-icon">🛍️</div>
+                    <h3>Temu</h3>
+                    <p>Marketplace e soluções comerciais</p>
+                </a>
+                
+                <a href="/amway/" class="parceiro-card">
+                    <div class="parceiro-icon">💼</div>
+                    <h3>Amway</h3>
+                    <p>Negócios e oportunidades</p>
+                </a>
+            </div>
         </div>
     </section>
     
-    <!-- MAIN CONTAINER -->
-    <div class="container">
-        <!-- PROJETOS PRINCIPAIS -->
-        <h2 class="section-title">📦 Nossos Projetos</h2>
-        <p class="section-subtitle">Clique em qualquer card para acessar o projeto</p>
-        
-        <div class="projects-grid">
-            <!-- SOMOS TODOS UM -->
-            <a href="https://somos.bizmix.com.br/somos-todos-um/" class="project-card somos">
-                <div class="project-icon">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <h3>Somos Todos Um</h3>
-                <p>Livro digital e sistema de vendas para igrejas parceiras</p>
-                <span class="project-badge badge-primary">
-                    <i class="fas fa-church"></i> Projeto Social
-                </span>
-            </a>
-            
-            <!-- DIREITO -->
-            <a href="/direito/" class="project-card direito">
-                <div class="project-icon">
-                    <i class="fas fa-balance-scale"></i>
-                </div>
-                <h3>Direito</h3>
-                <p>Serviços jurídicos e consultoria especializada</p>
-                <span class="project-badge badge-warning">
-                    <i class="fas fa-gavel"></i> Jurídico
-                </span>
-            </a>
-            
-            <!-- TEMU -->
-            <a href="/temu/" class="project-card temu">
-                <div class="project-icon">
-                    <i class="fas fa-shopping-bag"></i>
-                </div>
-                <h3>Temu</h3>
-                <p>Marketplace e vendas online</p>
-                <span class="project-badge badge-danger">
-                    <i class="fas fa-store"></i> E-commerce
-                </span>
-            </a>
-            
-            <!-- AMWAY -->
-            <a href="/amway/" class="project-card amway">
-                <div class="project-icon">
-                    <i class="fas fa-leaf"></i>
-                </div>
-                <h3>Amway</h3>
-                <p>Produtos e oportunidades de negócio</p>
-                <span class="project-badge badge-success">
-                    <i class="fas fa-handshake"></i> Parceria
-                </span>
-            </a>
-        </div>
-        
-        <!-- ÁREA ADMINISTRATIVA -->
-        <div class="admin-section">
-            <h2><i class="fas fa-tools"></i> Área Administrativa</h2>
-            <p class="section-subtitle">
-                Acesso rápido aos painéis de gerenciamento
-            </p>
-            
-            <div class="projects-grid">
-                <!-- PAINEL DE LINKS -->
-                <a href="/painel-acesso.html" class="project-card admin">
-                    <div class="project-icon">
-                        <i class="fas fa-link"></i>
+    <!-- COMO POSSO AJUDAR -->
+    <section id="solucoes" class="solucoes-section">
+        <div class="solucoes-content">
+            <h2 class="section-title">Como Posso Ajudar</h2>
+            <div class="solucoes-grid">
+                <div class="solucao-card">
+                    <div class="solucao-icon">
+                        <i class="fas fa-balance-scale"></i>
                     </div>
-                    <h3>Painel de Acessos</h3>
-                    <p>Todos os links administrativos em um só lugar</p>
-                    <span class="project-badge badge-info">
-                        <i class="fas fa-th-large"></i> Central de Links
-                    </span>
-                </a>
+                    <h3>Advocacia</h3>
+                    <p>Contratos, due diligence, regularização e proteção jurídica para seus negócios e patrimônio.</p>
+                </div>
+                
+                <div class="solucao-card">
+                    <div class="solucao-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Negócios</h3>
+                    <p>Intermediação na compra e venda de empresas, produtos e tecnologias com segurança e estratégia.</p>
+                </div>
+                
+                <div class="solucao-card">
+                    <div class="solucao-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Imóveis</h3>
+                    <p>Corretor de imóveis com visão jurídica: da negociação ao registro, sem surpresas.</p>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
     
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p><strong>Biz Mix</strong> - Soluções Inteligentes para Negócios</p>
-            <div class="footer-links">
-                <a href="mailto:bizmix777@gmail.com">
-                    <i class="fas fa-envelope"></i> Contato
-                </a>
-                <a href="https://wa.me/5562992475080" target="_blank">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </a>
+    <!-- SOBRE A BIZMIX -->
+    <section id="bizmix" class="bizmix-section">
+        <div class="bizmix-content">
+            <h2 class="section-title">Por que a BizMix?</h2>
+            <div class="bizmix-box">
+                <p>
+                    Não somos apenas uma consultoria. Somos uma <strong>aceleradora de resultados</strong> com base sólida.
+                </p>
+                <p>
+                    Nossa fundação combina o pioneirismo tecnológico de 1990 (primeira empresa de laser e internet da região) com a robustez jurídica atual. <strong>O resultado?</strong> Negócios que fecham mais rápido, contratos que protegem de verdade e uma visão comercial que enxerga o que outros não veem.
+                </p>
+                
+                <div class="bizmix-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">Desde 1990</div>
+                        <div class="stat-label">Inovando no Mercado</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">Segurança</div>
+                        <div class="stat-label">Base Jurídica Sólida (OAB)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">Expertise</div>
+                        <div class="stat-label">Vendas & Intermediação</div>
+                    </div>
+                </div>
             </div>
-            <p style="opacity: 0.7; font-size: 0.9em; margin-top: 20px;">
-                © 2025 Biz Mix - Henrique | Todos os direitos reservados
-            </p>
+            
+            <!-- PAINEL DE ACESSOS -->
+            <div class="admin-section">
+                <h2><i class="fas fa-tools"></i> Área Administrativa</h2>
+                <p class="section-subtitle">Acesso rápido aos painéis de gerenciamento</p>
+                
+                <div class="projects-grid">
+                    <a href="/painel-acesso.html" class="project-card">
+                        <div class="project-icon">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <h3>Painel de Acessos</h3>
+                        <p>Todos os links administrativos em um só lugar</p>
+                        <span class="project-badge">
+                            <i class="fas fa-th-large"></i> Central de Links
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- FOOTER / CONTATO -->
+    <footer id="contato" class="footer">
+        <div class="footer-content">
+            <h2>Vamos conversar sobre o seu futuro?</h2>
+            <p class="footer-subtitle">Estou à disposição para entender seu cenário e propor soluções.</p>
+            
+            <a href="https://wa.me/5562992475080" target="_blank" class="btn-whatsapp">
+                <i class="fab fa-whatsapp"></i>
+                Chamar no WhatsApp
+            </a>
+            
+            <div class="footer-links">
+                <a href="#solucoes">Serviços</a>
+                <span class="separator">|</span>
+                <a href="#bizmix">Sobre a BizMix</a>
+                <span class="separator">|</span>
+                <a href="#contato">Contato</a>
+                <span class="separator">|</span>
+                <a href="/amway/">Amway</a>
+                <span class="separator">|</span>
+                <a href="/politica-privacidade.html">Política de Privacidade</a>
+            </div>
+            
+            <div class="footer-bottom">
+                &copy; 2025 BizMix. Todos os direitos reservados.
+            </div>
         </div>
     </footer>
 </body>
