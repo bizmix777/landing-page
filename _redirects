@@ -1,0 +1,15 @@
+# Páginas específicas - DEVEM VIR PRIMEIRO
+/como-funciona.html   /como-funciona.html   200
+/painel-acesso.html   /painel-acesso.html   200
+
+# Subpastas - preservar estrutura
+/somos-todos-um/*     /somos-todos-um/:splat     200
+/amway/*              /amway/:splat              200
+
+# Arquivos estáticos
+/images/*             /images/:splat             200
+/css/*                /css/:splat                200
+/js/*                 /js/:splat                 200
+
+# SPA Fallback - SEMPRE POR ÚLTIMO
+/*                    /index.html                200
