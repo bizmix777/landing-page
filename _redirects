@@ -1,6 +1,10 @@
-/como-funciona            /como-funciona/index.html   200
-/como-funciona/           /como-funciona/index.html   200
-/painel-acesso.html       /painel-acesso.html         200
-/somos-todos-um/*         /somos-todos-um/:splat      200
-/amway/*                  /amway/:splat               200
-/images/*                 /images/:splat              200
+/como-funciona            /como-funciona/index.html          200
+/como-funciona/           /como-funciona/index.html          200
+/painel-acesso            /painel-acesso/index.html          200
+/painel-acesso/           /painel-acesso/index.html          200
+/politica-privacidade     /politica-privacidade/index.html   200
+/politica-privacidade/    /politica-privacidade/index.html   200
+/somos-todos-um/*         /somos-todos-um/:splat             200
+/amway/*                  /amway/:splat                      200
+/images/*                 /images/:splat                     200
+/*                        /index.html                        200
