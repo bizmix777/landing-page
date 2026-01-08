@@ -30,11 +30,29 @@
     <meta name="twitter:description" content="Conectamos oportunidades de negócios com segurança jurídica. Advocacia, intermediação e imóveis.">
     <meta name="twitter:image" content="https://bizmix.com.br/images/logo_par.png">
     
-    <!-- FAVICON (CORRIGIDO) -->
+    <!-- FAVICON E APPLE TOUCH ICONS (OTIMIZADO) -->
     <link rel="icon" type="image/png" sizes="32x32" href="/images/logo_par.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/logo_par.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo_par.png">
     <link rel="shortcut icon" href="/images/logo_par.png">
+    
+    <!-- APPLE TOUCH ICONS (para iOS) -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/images/logo_par.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="/images/logo_par.png">
+    
+    <!-- ANDROID CHROME -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/logo_par.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/images/logo_par.png">
+    
+    <!-- MS TILES (Windows) -->
+    <meta name="msapplication-TileColor" content="#1e293b">
+    <meta name="msapplication-TileImage" content="/images/logo_par.png">
     
     <!-- PRECONNECT (Performance) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -211,6 +229,7 @@
             max-width: 768px;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.8;
         }
         
         .hero-buttons {
@@ -415,6 +434,7 @@
         
         .solucao-card p {
             color: #475569;
+            line-height: 1.8;
         }
         
         /* SOBRE A BIZMIX */
@@ -442,6 +462,7 @@
             font-size: 1.125rem;
             color: #334155;
             margin-bottom: 24px;
+            line-height: 1.8;
         }
         
         .bizmix-stats {
@@ -471,6 +492,204 @@
         .stat-label {
             font-size: 0.875rem;
             color: #64748b;
+        }
+        
+        /* NOSSO PROCESSO */
+        .processo-section {
+            padding: 96px 0;
+            background: #f8fafc;
+        }
+        
+        .processo-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .processo-intro {
+            text-align: center;
+            font-size: 1.125rem;
+            color: #475569;
+            max-width: 800px;
+            margin: 0 auto 64px;
+            line-height: 1.8;
+        }
+        
+        .processo-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+        
+        @media (min-width: 768px) {
+            .processo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .processo-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .processo-step {
+            background: white;
+            padding: 32px 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f1f5f9;
+            text-align: center;
+            transition: box-shadow 0.3s;
+        }
+        
+        .processo-step:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .processo-number {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+        
+        .processo-step h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+        
+        .processo-step p {
+            color: #475569;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+        
+        /* COMPARTILHAR NAS REDES SOCIAIS */
+        .social-share-section {
+            padding: 64px 0;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .social-share-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        
+        .social-share-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .social-share-subtitle {
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+        
+        .social-share-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .social-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .social-btn i {
+            font-size: 1.125rem;
+        }
+        
+        .social-btn.whatsapp {
+            background: #25D366;
+        }
+        
+        .social-btn.whatsapp:hover {
+            background: #1da851;
+        }
+        
+        .social-btn.facebook {
+            background: #1877F2;
+        }
+        
+        .social-btn.facebook:hover {
+            background: #0c63d4;
+        }
+        
+        .social-btn.linkedin {
+            background: #0A66C2;
+        }
+        
+        .social-btn.linkedin:hover {
+            background: #004182;
+        }
+        
+        .social-btn.twitter {
+            background: #1DA1F2;
+        }
+        
+        .social-btn.twitter:hover {
+            background: #0c85d0;
+        }
+        
+        .social-btn.email {
+            background: #6B7280;
+        }
+        
+        .social-btn.email:hover {
+            background: #4B5563;
+        }
+        
+        .social-btn.copy {
+            background: #8B5CF6;
+        }
+        
+        .social-btn.copy:hover {
+            background: #7C3AED;
+        }
+        
+        @media (max-width: 640px) {
+            .social-btn span {
+                display: none;
+            }
+            
+            .social-btn {
+                width: 48px;
+                height: 48px;
+                padding: 0;
+                justify-content: center;
+            }
         }
         
         /* FOOTER / CONTATO */
@@ -570,21 +789,21 @@
     </nav>
     
     <!-- HERO SECTION -->
-<header class="hero">
-    <div class="hero-content">
-        <h1>
-            Conectamos Oportunidades<br>
-            <span class="highlight">Garantimos Resultados</span>
-        </h1>
-        <p class="hero-subtitle">
-            A BizMix une a extremidade comercial das vendas com a segurança jurídica da advocacia. Seja para imóveis, empresas ou tecnologia: nós estruturamos o negócio para você lucrar com segurança. Com mais de 30 anos de experiência no mercado, somos pioneiros em inovação tecnológica e especialistas em intermediação de negócios complexos. Nossa abordagem única combina visão estratégica, proteção legal e execução comercial para transformar oportunidades em resultados concretos.
-        </p>
-        <div class="hero-buttons">
-            <a href="#solucoes" class="btn-white">O Que Fazemos?</a>
-            <a href="#contato" class="btn-blue">Falar com Especialista</a>
+    <header class="hero">
+        <div class="hero-content">
+            <h1>
+                Conectamos Oportunidades<br>
+                <span class="highlight">Garantimos Resultados</span>
+            </h1>
+            <p class="hero-subtitle">
+                A BizMix une a extremidade comercial das vendas com a segurança jurídica da advocacia. Seja para imóveis, empresas ou tecnologia: nós estruturamos o negócio para você lucrar com segurança. Com mais de 30 anos de experiência no mercado, somos pioneiros em inovação tecnológica e especialistas em intermediação de negócios complexos. Nossa abordagem única combina visão estratégica, proteção legal e execução comercial para transformar oportunidades em resultados concretos.
+            </p>
+            <div class="hero-buttons">
+                <a href="#solucoes" class="btn-white">O Que Fazemos?</a>
+                <a href="#contato" class="btn-blue">Falar com Especialista</a>
+            </div>
         </div>
-    </div>
-</header>
+    </header>
     
     <!-- EMPRESAS PARCEIRAS -->
     <section class="parceiros-section">
@@ -628,112 +847,178 @@
     </section>
     
     <!-- COMO POSSO AJUDAR -->
-<section id="solucoes" class="solucoes-section">
-    <div class="solucoes-content">
-        <h2 class="section-title">Como Posso Ajudar Você e Seu Negócio</h2>
-        
-        <div class="solucoes-grid">
-            <article class="solucao-card">
-                <div class="solucao-icon">
-                    <i class="fas fa-balance-scale" aria-hidden="true"></i>
-                </div>
-                <div class="solucao-info">
-                    <h3>Advocacia Empresarial e Patrimonial</h3>
-                    <p>Oferecemos assessoria jurídica completa para proteger seu patrimônio e estruturar seus negócios com segurança. Nossos serviços incluem elaboração e revisão de contratos comerciais, due diligence para compra e venda de empresas, regularização societária e tributária, proteção de marcas e propriedade intelectual, além de consultoria preventiva para evitar litígios. Com registro na OAB e anos de experiência, garantimos que cada decisão empresarial esteja respaldada juridicamente, minimizando riscos e maximizando oportunidades de crescimento sustentável.</p>
-                </div>
-            </article>
+    <section id="solucoes" class="solucoes-section">
+        <div class="solucoes-content">
+            <h2 class="section-title">Como Posso Ajudar Você e Seu Negócio</h2>
             
-            <article class="solucao-card">
-                <div class="solucao-icon">
-                    <i class="fas fa-handshake" aria-hidden="true"></i>
-                </div>
-                <div class="solucao-info">
-                    <h3>Intermediação de Negócios e M&A</h3>
-                    <p>Atuamos como ponte estratégica na compra e venda de empresas, produtos e tecnologias. Nossa metodologia vai além da simples intermediação: realizamos análise de mercado, valuation (avaliação de valor), identificação de compradores ou vendedores qualificados, negociação de termos e condições, estruturação de operações complexas e acompanhamento pós-transação. Seja você um empresário buscando vender seu negócio, um investidor procurando oportunidades ou uma empresa em busca de aquisições estratégicas, oferecemos a expertise e a rede de contatos necessárias para fechar negócios lucrativos e seguros.</p>
-                </div>
-            </article>
-            
-            <article class="solucao-card">
-                <div class="solucao-icon">
-                    <i class="fas fa-building" aria-hidden="true"></i>
-                </div>
-                <div class="solucao-info">
-                    <h3>Consultoria Imobiliária Especializada</h3>
-                    <p>Como corretor de imóveis com formação jurídica, oferecemos um serviço diferenciado que vai muito além da simples intermediação. Realizamos análise completa da documentação do imóvel, verificação de pendências e ônus, avaliação de mercado para precificação justa, negociação estratégica entre as partes, acompanhamento de financiamentos e registros, além de consultoria para investimentos imobiliários. Nossa visão jurídica garante que você não tenha surpresas desagradáveis após a compra ou venda, protegendo seu investimento do início ao fim. Atendemos tanto pessoas físicas quanto investidores institucionais em Goiânia e região.</p>
-                </div>
-            </article>
+            <div class="solucoes-grid">
+                <article class="solucao-card">
+                    <div class="solucao-icon">
+                        <i class="fas fa-balance-scale" aria-hidden="true"></i>
+                    </div>
+                    <div class="solucao-info">
+                        <h3>Advocacia Empresarial e Patrimonial</h3>
+                        <p>Oferecemos assessoria jurídica completa para proteger seu patrimônio e estruturar seus negócios com segurança. Nossos serviços incluem elaboração e revisão de contratos comerciais, due diligence para compra e venda de empresas, regularização societária e tributária, proteção de marcas e propriedade intelectual, além de consultoria preventiva para evitar litígios. Com registro na OAB e anos de experiência, garantimos que cada decisão empresarial esteja respaldada juridicamente, minimizando riscos e maximizando oportunidades de crescimento sustentável.</p>
+                    </div>
+                </article>
+                
+                <article class="solucao-card">
+                    <div class="solucao-icon">
+                        <i class="fas fa-handshake" aria-hidden="true"></i>
+                    </div>
+                    <div class="solucao-info">
+                        <h3>Intermediação de Negócios e M&A</h3>
+                        <p>Atuamos como ponte estratégica na compra e venda de empresas, produtos e tecnologias. Nossa metodologia vai além da simples intermediação: realizamos análise de mercado, valuation (avaliação de valor), identificação de compradores ou vendedores qualificados, negociação de termos e condições, estruturação de operações complexas e acompanhamento pós-transação. Seja você um empresário buscando vender seu negócio, um investidor procurando oportunidades ou uma empresa em busca de aquisições estratégicas, oferecemos a expertise e a rede de contatos necessárias para fechar negócios lucrativos e seguros.</p>
+                    </div>
+                </article>
+                
+                <article class="solucao-card">
+                    <div class="solucao-icon">
+                        <i class="fas fa-building" aria-hidden="true"></i>
+                    </div>
+                    <div class="solucao-info">
+                        <h3>Consultoria Imobiliária Especializada</h3>
+                        <p>Como corretor de imóveis com formação jurídica, oferecemos um serviço diferenciado que vai muito além da simples intermediação. Realizamos análise completa da documentação do imóvel, verificação de pendências e ônus, avaliação de mercado para precificação justa, negociação estratégica entre as partes, acompanhamento de financiamentos e registros, além de consultoria para investimentos imobiliários. Nossa visão jurídica garante que você não tenha surpresas desagradáveis após a compra ou venda, protegendo seu investimento do início ao fim. Atendemos tanto pessoas físicas quanto investidores institucionais em Goiânia e região.</p>
+                    </div>
+                </article>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
     
     <!-- SOBRE A BIZMIX -->
-<section id="bizmix" class="bizmix-section">
-    <div class="bizmix-content">
-        <h2 class="section-title">Por que Escolher a BizMix?</h2>
-        <div class="bizmix-box">
-            <p>
-                Não somos apenas uma consultoria tradicional. Somos uma <strong>aceleradora de resultados</strong> com base sólida e histórico comprovado no mercado.
-            </p>
-            <p>
-                Nossa trajetória começou em 1990, quando fundamos a primeira empresa de impressoras laser em Goiânia, revolucionando o mercado gráfico da região. Em 1996, demos outro passo pioneiro ao criar o primeiro provedor de internet da cidade, conectando centenas de empresas e residências à era digital. Essa visão empreendedora e tecnológica nos ensinou a identificar oportunidades antes do mercado e a executar projetos complexos com excelência.
-            </p>
-            <p>
-                Hoje, combinamos essa experiência de décadas com a robustez jurídica de um advogado inscrito na OAB desde 2014. <strong>O resultado?</strong> Uma consultoria única que oferece visão estratégica de negócios, proteção jurídica especializada e execução comercial eficiente. Nossos clientes não apenas fecham negócios mais rápido – eles fecham negócios mais seguros, lucrativos e sustentáveis. Entendemos tanto a linguagem dos empreendedores quanto a dos advogados, e essa ponte é o nosso maior diferencial competitivo.
-            </p>
-            
-            <div class="bizmix-stats">
-                <div class="stat-item">
-                    <div class="stat-number">Desde 1990</div>
-                    <div class="stat-label">Inovando no Mercado</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">OAB Ativa</div>
-                    <div class="stat-label">Base Jurídica Sólida</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">30+ Anos</div>
-                    <div class="stat-label">Experiência Comprovada</div>
+    <section id="bizmix" class="bizmix-section">
+        <div class="bizmix-content">
+            <h2 class="section-title">Por que Escolher a BizMix?</h2>
+            <div class="bizmix-box">
+                <p>
+                    Não somos apenas uma consultoria tradicional. Somos uma <strong>aceleradora de resultados</strong> com base sólida e histórico comprovado no mercado.
+                </p>
+                <p>
+                    Nossa trajetória começou em 1990, quando fundamos a primeira empresa de impressoras laser em Goiânia, revolucionando o mercado gráfico da região. Em 1996, demos outro passo pioneiro ao criar o primeiro provedor de internet da cidade, conectando centenas de empresas e residências à era digital. Essa visão empreendedora e tecnológica nos ensinou a identificar oportunidades antes do mercado e a executar projetos complexos com excelência.
+                </p>
+                <p>
+                    Hoje, combinamos essa experiência de décadas com a robustez jurídica de um advogado inscrito na OAB desde 2014. <strong>O resultado?</strong> Uma consultoria única que oferece visão estratégica de negócios, proteção jurídica especializada e execução comercial eficiente. Nossos clientes não apenas fecham negócios mais rápido – eles fecham negócios mais seguros, lucrativos e sustentáveis. Entendemos tanto a linguagem dos empreendedores quanto a dos advogados, e essa ponte é o nosso maior diferencial competitivo.
+                </p>
+                
+                <div class="bizmix-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">Desde 1990</div>
+                        <div class="stat-label">Inovando no Mercado</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">OAB Ativa</div>
+                        <div class="stat-label">Base Jurídica Sólida</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">30+ Anos</div>
+                        <div class="stat-label">Experiência Comprovada</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
+    </section>
+    
     <!-- NOSSO PROCESSO -->
-<section class="processo-section">
-    <div class="processo-content">
-        <h2 class="section-title">Como Trabalhamos: Nosso Processo</h2>
-        <p class="processo-intro">
-            Desenvolvemos uma metodologia própria que combina análise estratégica, proteção jurídica e execução comercial. Cada projeto segue um processo estruturado para garantir resultados previsíveis e seguros.
-        </p>
-        
-        <div class="processo-grid">
-            <div class="processo-step">
-                <div class="processo-number">1</div>
-                <h3>Diagnóstico Inicial</h3>
-                <p>Realizamos uma análise profunda do seu cenário atual, identificando oportunidades, riscos e objetivos. Esta fase inclui reuniões estratégicas, levantamento de documentação e mapeamento de stakeholders.</p>
-            </div>
+    <section class="processo-section">
+        <div class="processo-content">
+            <h2 class="section-title">Como Trabalhamos: Nosso Processo</h2>
+            <p class="processo-intro">
+                Desenvolvemos uma metodologia própria que combina análise estratégica, proteção jurídica e execução comercial. Cada projeto segue um processo estruturado para garantir resultados previsíveis e seguros.
+            </p>
             
-            <div class="processo-step">
-                <div class="processo-number">2</div>
-                <h3>Planejamento Estratégico</h3>
-                <p>Desenvolvemos um plano de ação personalizado com cronograma, responsabilidades e métricas de sucesso. Definimos a melhor estrutura jurídica e comercial para atingir seus objetivos com segurança.</p>
-            </div>
-            
-            <div class="processo-step">
-                <div class="processo-number">3</div>
-                <h3>Execução Monitorada</h3>
-                <p>Colocamos o plano em prática com acompanhamento constante. Negociamos contratos, intermediamos reuniões, elaboramos documentos e garantimos que cada etapa seja cumprida dentro dos padrões de qualidade e prazos estabelecidos.</p>
-            </div>
-            
-            <div class="processo-step">
-                <div class="processo-number">4</div>
-                <h3>Entrega e Suporte</h3>
-                <p>Finalizamos o projeto com toda a documentação organizada e transferência de conhecimento. Oferecemos suporte pós-entrega para garantir que você tenha autonomia e segurança para seguir em frente.</p>
+            <div class="processo-grid">
+                <div class="processo-step">
+                    <div class="processo-number">1</div>
+                    <h3>Diagnóstico Inicial</h3>
+                    <p>Realizamos uma análise profunda do seu cenário atual, identificando oportunidades, riscos e objetivos. Esta fase inclui reuniões estratégicas, levantamento de documentação e mapeamento de stakeholders.</p>
+                </div>
+                
+                <div class="processo-step">
+                    <div class="processo-number">2</div>
+                    <h3>Planejamento Estratégico</h3>
+                    <p>Desenvolvemos um plano de ação personalizado com cronograma, responsabilidades e métricas de sucesso. Definimos a melhor estrutura jurídica e comercial para atingir seus objetivos com segurança.</p>
+                </div>
+                
+                <div class="processo-step">
+                    <div class="processo-number">3</div>
+                    <h3>Execução Monitorada</h3>
+                    <p>Colocamos o plano em prática com acompanhamento constante. Negociamos contratos, intermediamos reuniões, elaboramos documentos e garantimos que cada etapa seja cumprida dentro dos padrões de qualidade e prazos estabelecidos.</p>
+                </div>
+                
+                <div class="processo-step">
+                    <div class="processo-number">4</div>
+                    <h3>Entrega e Suporte</h3>
+                    <p>Finalizamos o projeto com toda a documentação organizada e transferência de conhecimento. Oferecemos suporte pós-entrega para garantir que você tenha autonomia e segurança para seguir em frente.</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+    
+    <!-- COMPARTILHAR NAS REDES SOCIAIS -->
+    <section class="social-share-section">
+        <div class="social-share-content">
+            <h3 class="social-share-title">Compartilhe a BizMix</h3>
+            <p class="social-share-subtitle">Ajude outras pessoas a conhecerem nossos serviços</p>
+            
+            <div class="social-share-buttons">
+                <!-- WhatsApp -->
+                <a href="https://api.whatsapp.com/send?text=Conheça%20a%20BizMix%20-%20Inteligência%20de%20Negócios%20https://bizmix.com.br" 
+                   target="_blank" 
+                   rel="noopener" 
+                   class="social-btn whatsapp"
+                   aria-label="Compartilhar no WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+                
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u=https://bizmix.com.br" 
+                   target="_blank" 
+                   rel="noopener" 
+                   class="social-btn facebook"
+                   aria-label="Compartilhar no Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </a>
+                
+                <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://bizmix.com.br" 
+                   target="_blank" 
+                   rel="noopener" 
+                   class="social-btn linkedin"
+                   aria-label="Compartilhar no LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                    <span>LinkedIn</span>
+                </a>
+                
+                <!-- Twitter/X -->
+                <a href="https://twitter.com/intent/tweet?text=Conheça%20a%20BizMix%20-%20Inteligência%20de%20Negócios&url=https://bizmix.com.br" 
+                   target="_blank" 
+                   rel="noopener" 
+                   class="social-btn twitter"
+                   aria-label="Compartilhar no Twitter">
+                    <i class="fab fa-twitter"></i>
+                    <span>Twitter</span>
+                </a>
+                
+                <!-- Email -->
+                <a href="mailto:?subject=Conheça%20a%20BizMix&body=Olá!%20Achei%20que%20você%20poderia%20se%20interessar%20pelos%20serviços%20da%20BizMix%20-%20Inteligência%20de%20Negócios.%20Confira:%20https://bizmix.com.br" 
+                   class="social-btn email"
+                   aria-label="Compartilhar por Email">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email</span>
+                </a>
+                
+                <!-- Copiar Link -->
+                <button onclick="copyToClipboard()" 
+                        class="social-btn copy"
+                        aria-label="Copiar link">
+                    <i class="fas fa-link"></i>
+                    <span>Copiar Link</span>
+                </button>
+            </div>
+        </div>
+    </section>
     
     <!-- FOOTER / CONTATO -->
     <footer id="contato" class="footer">
@@ -763,5 +1048,54 @@
             </div>
         </div>
     </footer>
+    
+    <!-- JAVASCRIPT PARA COPIAR LINK -->
+    <script>
+    function copyToClipboard() {
+        const url = 'https://bizmix.com.br';
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => {
+                // Feedback visual
+                const btn = event.target.closest('.social-btn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i><span>Copiado!</span>';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                alert('Erro ao copiar: ' + err);
+            });
+        } else {
+            // Fallback para navegadores antigos
+            const textarea = document.createElement('textarea');
+            textarea.value = url;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+                document.execCommand('copy');
+                const btn = event.target.closest('.social-btn');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i><span>Copiado!</span>';
+                btn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '';
+                }, 2000);
+            } catch (err) {
+                alert('Erro ao copiar link');
+            }
+            
+            document.body.removeChild(textarea);
+        }
+    }
+    </script>
 </body>
 </html>
