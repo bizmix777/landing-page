@@ -1,7 +1,6 @@
-# Configuração de Build (se necessário)
+# Configuração de Build
 [build]
   publish = "."
-  command = ""
 
 # Headers HTTP
 [[headers]]
@@ -9,57 +8,3 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Cache-Control = "no-cache"
-
-# Redirecionamentos - ORDEM IMPORTA!
-
-# 1. Páginas específicas (DEVEM VIR PRIMEIRO)
-[[redirects]]
-  from = "/como-funciona.html"
-  to = "/como-funciona.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/painel-acesso.html"
-  to = "/painel-acesso.html"
-  status = 200
-  force = true
-
-# 2. Subpasta somos-todos-um (preservar)
-[[redirects]]
-  from = "/somos-todos-um/*"
-  to = "/somos-todos-um/:splat"
-  status = 200
-  force = false
-
-# 3. Pasta amway (preservar)
-[[redirects]]
-  from = "/amway/*"
-  to = "/amway/:splat"
-  status = 200
-  force = false
-
-# 4. Arquivos estáticos (CSS, JS, imagens)
-[[redirects]]
-  from = "/images/*"
-  to = "/images/:splat"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/css/*"
-  to = "/css/:splat"
-  status = 200
-  force = false
-
-[[redirects]]
-  from = "/js/*"
-  to = "/js/:splat"
-  status = 200
-  force = false
-
-# 5. SPA Fallback - SEMPRE POR ÚLTIMO
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
