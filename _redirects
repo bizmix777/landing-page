@@ -1,4 +1,4 @@
-# Redirect www to non-www (SEMPRE NO TOPO)
+# Redirect www to non-www (FORÇA O REDIRECT)
 https://www.bizmix.com.br/*  https://bizmix.com.br/:splat  301!
 
 # Páginas específicas
