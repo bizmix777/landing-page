@@ -6,6 +6,7 @@
     <title>Biz Mix - Portal de Projetos</title>
     <meta name="description" content="Portal central da Biz Mix - Acesse todos os nossos projetos e serviços em um só lugar">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,26 +15,26 @@
         }
         
         :root {
-            --primary: #667eea;
-            --secondary: #764ba2;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --dark: #1f2937;
-            --light: #f9fafb;
+            --primary: #3b82f6;
+            --secondary: #1e293b;
+            --slate-dark: #334155;
+            --slate-light: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-600: #475569;
+            --slate-800: #1e293b;
+            --blue-400: #60a5fa;
         }
         
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            background: var(--slate-light);
         }
         
         /* HEADER */
         .header {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(30, 41, 59, 0.95);
             backdrop-filter: blur(10px);
             padding: 20px 0;
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
@@ -51,17 +52,19 @@
             align-items: center;
         }
         
-        .logo {
-            font-size: 1.8em;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-container img {
+            width: 150px;
+            height: auto;
+            image-rendering: crisp-edges;
         }
         
         .header-badge {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: var(--primary);
             color: white;
             padding: 8px 20px;
             border-radius: 25px;
@@ -71,6 +74,11 @@
         
         /* HERO SECTION */
         .hero {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 80px 20px 60px;
             text-align: center;
             color: white;
@@ -80,26 +88,26 @@
             font-size: 3.5em;
             margin-bottom: 20px;
             font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
         }
         
         .hero-subtitle {
             font-size: 1.3em;
             margin-bottom: 40px;
-            opacity: 0.95;
+            color: #cbd5e1;
         }
         
         /* CONTAINER */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px 80px;
+            padding: 80px 20px;
         }
         
         /* SECTION TITLE */
         .section-title {
             text-align: center;
-            color: white;
+            color: var(--secondary);
             font-size: 2.2em;
             margin-bottom: 15px;
             font-weight: 700;
@@ -107,7 +115,7 @@
         
         .section-subtitle {
             text-align: center;
-            color: rgba(255, 255, 255, 0.9);
+            color: var(--slate-600);
             font-size: 1.1em;
             margin-bottom: 50px;
         }
@@ -125,7 +133,8 @@
             border-radius: 20px;
             padding: 40px 30px;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
             transition: all 0.3s ease;
             cursor: pointer;
             text-decoration: none;
@@ -135,51 +144,52 @@
         
         .project-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15);
+            border-color: var(--primary);
         }
         
         .project-icon {
             width: 80px;
             height: 80px;
             margin: 0 auto 25px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2.5em;
             color: white;
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3);
         }
         
         .project-card.somos .project-icon {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
         }
         
         .project-card.direito .project-icon {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
         }
         
         .project-card.temu .project-icon {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(135deg, #ef4444, #f87171);
         }
         
         .project-card.amway .project-icon {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, #10b981, #34d399);
         }
         
         .project-card.admin .project-icon {
-            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            background: linear-gradient(135deg, #1e293b, #334155);
         }
         
         .project-card h3 {
             font-size: 1.5em;
             margin-bottom: 15px;
-            color: var(--dark);
+            color: var(--secondary);
         }
         
         .project-card p {
-            color: #666;
+            color: var(--slate-600);
             font-size: 1em;
             line-height: 1.6;
             margin-bottom: 20px;
@@ -194,41 +204,40 @@
         }
         
         .badge-primary {
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(59, 130, 246, 0.1);
             color: var(--primary);
         }
         
         .badge-warning {
             background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
+            color: #f59e0b;
         }
         
         .badge-danger {
             background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
+            color: #ef4444;
         }
         
         .badge-success {
             background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
+            color: #10b981;
         }
         
         .badge-info {
-            background: rgba(99, 102, 241, 0.1);
-            color: #6366f1;
+            background: rgba(30, 41, 59, 0.1);
+            color: var(--secondary);
         }
         
         /* ADMIN SECTION */
         .admin-section {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: var(--slate-100);
             border-radius: 20px;
             padding: 40px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid #e2e8f0;
         }
         
         .admin-section h2 {
-            color: white;
+            color: var(--secondary);
             text-align: center;
             font-size: 2em;
             margin-bottom: 30px;
@@ -236,8 +245,7 @@
         
         /* FOOTER */
         .footer {
-            background: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
+            background: var(--secondary);
             color: white;
             padding: 40px 20px 20px;
             text-align: center;
@@ -267,6 +275,7 @@
         
         .footer-links a:hover {
             opacity: 1;
+            color: var(--blue-400);
         }
         
         /* RESPONSIVE */
@@ -298,8 +307,11 @@
     <!-- HEADER -->
     <header class="header">
         <div class="header-content">
-            <div class="logo">
-                <i class="fas fa-cube"></i> Biz Mix
+            <div class="logo-container">
+                <img src="/somos-todos-um/images/logo_par.png" alt="Biz Mix Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display:none; color: white; font-size: 1.5em; font-weight: 700;">
+                    <i class="fas fa-cube"></i> Biz Mix
+                </div>
             </div>
             <div class="header-badge">
                 <i class="fas fa-rocket"></i> Portal de Projetos
@@ -309,8 +321,10 @@
     
     <!-- HERO -->
     <section class="hero">
-        <h1>Bem-vindo à Biz Mix</h1>
-        <p class="hero-subtitle">Escolha o projeto que você deseja acessar</p>
+        <div style="max-width: 1000px;">
+            <h1>Bem-vindo à Biz Mix</h1>
+            <p class="hero-subtitle">Escolha o projeto que você deseja acessar</p>
+        </div>
     </section>
     
     <!-- MAIN CONTAINER -->
@@ -372,7 +386,7 @@
         <!-- ÁREA ADMINISTRATIVA -->
         <div class="admin-section">
             <h2><i class="fas fa-tools"></i> Área Administrativa</h2>
-            <p class="section-subtitle" style="color: rgba(255,255,255,0.9); margin-bottom: 30px;">
+            <p class="section-subtitle">
                 Acesso rápido aos painéis de gerenciamento
             </p>
             
@@ -405,7 +419,7 @@
                 </a>
             </div>
             <p style="opacity: 0.7; font-size: 0.9em; margin-top: 20px;">
-                © 2024 Biz Mix - Henrique | Todos os direitos reservados
+                © 2025 Biz Mix - Henrique | Todos os direitos reservados
             </p>
         </div>
     </footer>
