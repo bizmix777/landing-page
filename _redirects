@@ -1,10 +1,18 @@
+# Redirect www to non-www (SEMPRE NO TOPO)
+https://www.bizmix.com.br/*  https://bizmix.com.br/:splat  301!
+
+# Páginas específicas
 /como-funciona            /como-funciona/index.html          200
 /como-funciona/           /como-funciona/index.html          200
 /painel-acesso            /painel-acesso/index.html          200
 /painel-acesso/           /painel-acesso/index.html          200
 /politica-privacidade     /politica-privacidade/index.html   200
 /politica-privacidade/    /politica-privacidade/index.html   200
+
+# Subpastas
 /somos-todos-um/*         /somos-todos-um/:splat             200
 /amway/*                  /amway/:splat                      200
 /images/*                 /images/:splat                     200
+
+# SPA Fallback
 /*                        /index.html                        200
