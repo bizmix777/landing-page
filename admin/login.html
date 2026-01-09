@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin - Somos Todos Um</title>
+    <meta name="robots" content="noindex, nofollow">
     <style>
         * {
             margin: 0;
@@ -84,7 +85,7 @@
             transition: all 0.3s ease;
         }
 
-        .btn-login:hover {
+        .btn-login:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
@@ -100,6 +101,11 @@
             border-radius: 8px;
             margin-bottom: 20px;
             text-align: center;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
         }
 
         .alert-error {
@@ -112,12 +118,6 @@
             background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
-        }
-
-        .alert-warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
         }
 
         .back-link {
@@ -135,13 +135,12 @@
             text-decoration: underline;
         }
 
-        .debug-info {
-            margin-top: 20px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            color: #666;
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
         }
     </style>
 </head>
@@ -152,17 +151,30 @@
             <p>Acesse o painel administrativo</p>
         </div>
 
-        <div id="alertContainer"></div>
+        <div id="errorMessage" class="alert alert-error"></div>
+        <div id="successMessage" class="alert alert-success"></div>
 
         <form id="loginForm">
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" required placeholder="seu@email.com" value="">
+                <input 
+                    type="email" 
+                    id="email" 
+                    required 
+                    placeholder="seu@email.com"
+                    autocomplete="email"
+                >
             </div>
 
             <div class="form-group">
                 <label for="password">Senha:</label>
-                <input type="password" id="password" required placeholder="••••••••" value="">
+                <input 
+                    type="password" 
+                    id="password" 
+                    required 
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                >
             </div>
 
             <button type="submit" class="btn-login" id="btnLogin">
@@ -170,8 +182,8 @@
             </button>
         </form>
 
-        <div class="debug-info" id="debugInfo">
-            Verificando sistema...
+        <div id="loadingMessage" class="loading">
+            Autenticando...
         </div>
 
         <div class="back-link">
@@ -179,219 +191,140 @@
         </div>
     </div>
 
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
-        console.log('🔐 Página de Login Carregada');
+        console.log('🔐 Página de Login Admin Carregada');
 
-        // SISTEMA DE STORAGE COM FALLBACK
-        var StorageManager = {
-            isLocalStorageAvailable: false,
-            isSessionStorageAvailable: false,
+        // ========================================
+        // CONFIGURAÇÃO DO SUPABASE
+        // ========================================
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        // Inicializar Supabase
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        console.log('✅ Supabase inicializado');
 
-            init: function() {
-                try {
-                    localStorage.setItem('__test__', 'test');
-                    localStorage.removeItem('__test__');
-                    this.isLocalStorageAvailable = true;
-                    console.log('✅ localStorage disponível');
-                } catch (e) {
-                    console.warn('⚠️ localStorage NÃO disponível:', e.message);
-                    this.isLocalStorageAvailable = false;
-                }
-
-                try {
-                    sessionStorage.setItem('__test__', 'test');
-                    sessionStorage.removeItem('__test__');
-                    this.isSessionStorageAvailable = true;
-                    console.log('✅ sessionStorage disponível');
-                } catch (e) {
-                    console.warn('⚠️ sessionStorage NÃO disponível:', e.message);
-                    this.isSessionStorageAvailable = false;
-                }
-
-                this.updateDebugInfo();
-            },
-
-            setItem: function(key, value) {
-                if (this.isLocalStorageAvailable) {
-                    try {
-                        localStorage.setItem(key, value);
-                        console.log('💾 Salvo em localStorage:', key);
-                        return true;
-                    } catch (e) {
-                        console.error('❌ Erro ao salvar em localStorage:', e);
-                    }
-                }
-
-                if (this.isSessionStorageAvailable) {
-                    try {
-                        sessionStorage.setItem(key, value);
-                        console.log('💾 Salvo em sessionStorage:', key);
-                        return true;
-                    } catch (e) {
-                        console.error('❌ Erro ao salvar em sessionStorage:', e);
-                    }
-                }
-
-                console.error('❌ Nenhum storage disponível!');
-                return false;
-            },
-
-            getItem: function(key) {
-                if (this.isLocalStorageAvailable) {
-                    try {
-                        var value = localStorage.getItem(key);
-                        if (value) {
-                            console.log('📥 Recuperado de localStorage:', key);
-                            return value;
-                        }
-                    } catch (e) {
-                        console.error('❌ Erro ao ler localStorage:', e);
-                    }
-                }
-
-                if (this.isSessionStorageAvailable) {
-                    try {
-                        var value = sessionStorage.getItem(key);
-                        if (value) {
-                            console.log('📥 Recuperado de sessionStorage:', key);
-                            return value;
-                        }
-                    } catch (e) {
-                        console.error('❌ Erro ao ler sessionStorage:', e);
-                    }
-                }
-
-                return null;
-            },
-
-            removeItem: function(key) {
-                if (this.isLocalStorageAvailable) {
-                    try {
-                        localStorage.removeItem(key);
-                    } catch (e) {}
-                }
-
-                if (this.isSessionStorageAvailable) {
-                    try {
-                        sessionStorage.removeItem(key);
-                    } catch (e) {}
-                }
-            },
-
-            updateDebugInfo: function() {
-                var info = '🔧 Status: ';
-                if (this.isLocalStorageAvailable) {
-                    info += 'localStorage ✅ | ';
-                } else {
-                    info += 'localStorage ❌ | ';
-                }
-
-                if (this.isSessionStorageAvailable) {
-                    info += 'sessionStorage ✅';
-                } else {
-                    info += 'sessionStorage ❌';
-                }
-
-                document.getElementById('debugInfo').textContent = info;
-            }
-        };
-
-        StorageManager.init();
-
-        function verificarSeJaEstaLogado() {
-            var session = StorageManager.getItem('adminSession');
-            
+        // ========================================
+        // ELEMENTOS DO DOM
+        // ========================================
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('btnLogin');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        // ========================================
+        // FUNÇÕES AUXILIARES
+        // ========================================
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            successMessage.classList.remove('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+            errorMessage.classList.remove('show');
+        }
+        
+        function setLoading(isLoading) {
+            loginBtn.disabled = isLoading;
+            loginBtn.textContent = isLoading ? '⏳ Verificando...' : 'Entrar';
+            loadingMessage.style.display = isLoading ? 'block' : 'none';
+        }
+        
+        // ========================================
+        // VERIFICAR SE JÁ ESTÁ LOGADO
+        // ========================================
+        async function checkAuth() {
+            console.log('🔍 Verificando autenticação...');
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
-                try {
-                    var sessionData = JSON.parse(session);
-                    var now = new Date().getTime();
-                    
-                    if (now < sessionData.expires) {
-                        console.log('✅ Sessão válida - redirecionando para dashboard');
-                        window.location.replace('index.html');
-                        return true;
-                    } else {
-                        console.log('⏰ Sessão expirada - removendo');
-                        StorageManager.removeItem('adminSession');
-                    }
-                } catch (e) {
-                    console.error('❌ Erro ao verificar sessão:', e);
-                    StorageManager.removeItem('adminSession');
-                }
+                console.log('✅ Usuário já está logado - redirecionando');
+                window.location.href = '/admin/index.html';
+            } else {
+                console.log('ℹ️ Usuário não está logado');
             }
-            return false;
         }
-
-        if (!verificarSeJaEstaLogado()) {
-            console.log('✅ Pronto para fazer login');
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        
+        // ========================================
+        // FUNÇÃO DE LOGIN
+        // ========================================
+        async function handleLogin(e) {
             e.preventDefault();
-
-            var email = document.getElementById('email').value;
-            var password = document.getElementById('password').value;
-
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
             console.log('🔐 Tentando login com:', email);
-
-            var btnLogin = document.getElementById('btnLogin');
-            btnLogin.disabled = true;
-            btnLogin.textContent = '⏳ Verificando...';
-
-            var ADMIN_EMAIL = 'admin@somostodosum.com';
-            var ADMIN_PASSWORD = 'admin123';
-
-            setTimeout(function() {
-                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                    console.log('✅ Credenciais corretas');
-
-                    var sessionData = {
-                        email: email,
-                        loginTime: new Date().getTime(),
-                        expires: new Date().getTime() + (24 * 60 * 60 * 1000)
-                    };
-
-                    console.log('💾 Salvando sessão:', sessionData);
-                    var salvou = StorageManager.setItem('adminSession', JSON.stringify(sessionData));
-
-                    if (salvou) {
-                        var verificacao = StorageManager.getItem('adminSession');
-                        console.log('🔍 Verificando se salvou:', verificacao);
-
-                        if (verificacao) {
-                            console.log('✅ Sessão salva com sucesso!');
-                            showAlert('✅ Login realizado com sucesso!', 'success');
-
-                            setTimeout(function() {
-                                console.log('🔄 Redirecionando para dashboard...');
-                                window.location.replace('index.html');
-                            }, 500);
-                        } else {
-                            console.error('❌ ERRO: Sessão não foi recuperada!');
-                            showAlert('❌ Erro ao verificar sessão. Verifique as configurações do navegador.', 'error');
-                            btnLogin.disabled = false;
-                            btnLogin.textContent = 'Entrar';
-                        }
-                    } else {
-                        console.error('❌ ERRO: Não foi possível salvar a sessão!');
-                        showAlert('⚠️ AVISO: Storage bloqueado. Desative o modo anônimo ou extensões de privacidade.', 'warning');
-                        btnLogin.disabled = false;
-                        btnLogin.textContent = 'Entrar';
-                    }
-
-                } else {
-                    console.log('❌ Credenciais incorretas');
-                    showAlert('❌ Email ou senha incorretos!', 'error');
-                    btnLogin.disabled = false;
-                    btnLogin.textContent = 'Entrar';
+            
+            // Validação básica
+            if (!email || !password) {
+                showError('❌ Por favor, preencha todos os campos.');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                // Tentar fazer login com Supabase
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+                
+                if (error) {
+                    throw error;
                 }
-            }, 500);
-        });
-
-        function showAlert(message, type) {
-            document.getElementById('alertContainer').innerHTML = 
-                '<div class="alert alert-' + type + '">' + message + '</div>';
+                
+                if (data.session) {
+                    console.log('✅ Login realizado com sucesso!');
+                    showSuccess('✅ Login realizado com sucesso! Redirecionando...');
+                    
+                    // Redirecionar após 1 segundo
+                    setTimeout(() => {
+                        console.log('🔄 Redirecionando para dashboard...');
+                        window.location.href = '/admin/index.html';
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro no login:', error);
+                
+                // Mensagens de erro amigáveis
+                let errorMsg = '❌ Erro ao fazer login. Tente novamente.';
+                
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMsg = '❌ Email ou senha incorretos.';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMsg = '❌ Email não confirmado. Verifique sua caixa de entrada.';
+                } else if (error.message.includes('Network')) {
+                    errorMsg = '❌ Erro de conexão. Verifique sua internet.';
+                }
+                
+                showError(errorMsg);
+                setLoading(false);
+            }
         }
+        
+        // ========================================
+        // EVENT LISTENERS
+        // ========================================
+        loginForm.addEventListener('submit', handleLogin);
+        
+        // Verificar autenticação ao carregar a página
+        checkAuth();
     </script>
 </body>
 </html>
