@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Somos Todos Um</title>
+    <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -297,7 +298,7 @@
 <body>
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <div class="loading-message">Carregando dashboard...</div>
+        <div class="loading-message">Verificando autenticação...</div>
     </div>
 
     <div class="sidebar">
@@ -383,118 +384,96 @@
         </div>
     </div>
 
+    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
         console.log('🚀 DASHBOARD - SCRIPT INICIADO');
 
+        // ========================================
+        // CONFIGURAÇÃO DO SUPABASE
+        // ========================================
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
 
-        var supabaseClient = null;
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        var StorageManager = {
-            getItem: function(key) {
-                try {
-                    var value = localStorage.getItem(key);
-                    if (value) return value;
-                } catch (e) {
-                    console.error('Erro localStorage:', e);
-                }
+        console.log('✅ Supabase inicializado');
 
-                try {
-                    var value = sessionStorage.getItem(key);
-                    if (value) return value;
-                } catch (e) {
-                    console.error('Erro sessionStorage:', e);
-                }
-
-                return null;
-            },
-
-            removeItem: function(key) {
-                try { localStorage.removeItem(key); } catch (e) {}
-                try { sessionStorage.removeItem(key); } catch (e) {}
-            }
-        };
-
-        function checkSession() {
-            console.log('🔍 VERIFICANDO SESSÃO...');
+        // ========================================
+        // VERIFICAÇÃO DE AUTENTICAÇÃO
+        // ========================================
+        async function checkAuth() {
+            console.log('🔍 Verificando autenticação...');
             
-            var session = StorageManager.getItem('adminSession');
-            console.log('📦 Sessão recuperada:', session);
-
-            if (!session) {
-                console.log('❌ Nenhuma sessão encontrada - redirecionando');
-                window.location.replace('login.html');
-                return false;
-            }
-
             try {
-                var sessionData = JSON.parse(session);
-                var now = new Date().getTime();
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
                 
-                console.log('📊 Dados da sessão:', sessionData);
-                console.log('⏰ Tempo restante:', Math.round((sessionData.expires - now) / 1000 / 60), 'minutos');
-                
-                if (now > sessionData.expires) {
-                    console.log('⏰ Sessão expirada - removendo');
-                    StorageManager.removeItem('adminSession');
-                    alert('Sessão expirada. Faça login novamente.');
-                    window.location.replace('login.html');
+                if (error) {
+                    console.error('❌ Erro ao verificar sessão:', error);
+                    redirectToLogin();
                     return false;
                 }
-
-                document.getElementById('userEmail').textContent = sessionData.email;
-                console.log('✅ Sessão válida para:', sessionData.email);
+                
+                if (!session) {
+                    console.log('❌ Nenhuma sessão ativa - redirecionando para login');
+                    redirectToLogin();
+                    return false;
+                }
+                
+                console.log('✅ Sessão válida:', session.user.email);
+                document.getElementById('userEmail').textContent = session.user.email;
+                
                 return true;
-
-            } catch (e) {
-                console.error('❌ Erro ao processar sessão:', e);
-                StorageManager.removeItem('adminSession');
-                window.location.replace('login.html');
+                
+            } catch (error) {
+                console.error('❌ Erro na verificação:', error);
+                redirectToLogin();
                 return false;
             }
         }
 
-        function logout() {
+        function redirectToLogin() {
+            window.location.href = '/admin/login.html';
+        }
+
+        // ========================================
+        // FUNÇÃO DE LOGOUT
+        // ========================================
+        async function logout() {
             console.log('🚪 Fazendo logout...');
-            StorageManager.removeItem('adminSession');
-            window.location.replace('login.html');
+            
+            try {
+                const { error } = await supabaseClient.auth.signOut();
+                
+                if (error) {
+                    console.error('❌ Erro ao fazer logout:', error);
+                }
+                
+                console.log('✅ Logout realizado');
+                window.location.href = '/admin/login.html';
+                
+            } catch (error) {
+                console.error('❌ Erro no logout:', error);
+                window.location.href = '/admin/login.html';
+            }
         }
 
-        function iniciar() {
-            console.log('📥 Iniciando dashboard...');
-
-            if (!checkSession()) {
-                console.log('⛔ Sessão inválida - parando execução');
-                return;
-            }
-
-            if (typeof window.supabase === 'undefined') {
-                console.error('❌ Supabase não carregou');
-                alert('Erro ao carregar sistema');
-                return;
-            }
-
-            const { createClient } = window.supabase;
-            supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('✅ Supabase criado');
-
-            carregarDados();
-        }
-
-        function carregarDados() {
+        // ========================================
+        // CARREGAR DADOS DO DASHBOARD
+        // ========================================
+        async function carregarDados() {
             console.log('📥 Carregando dados do dashboard...');
+            
+            document.getElementById('loadingOverlay').querySelector('.loading-message').textContent = 'Carregando dados...';
 
-            Promise.all([
-                supabaseClient.from('vendas').select('*').order('created_at', { ascending: false }).limit(10),
-                supabaseClient.from('vendas').select('valor_total, valor_comissao, igreja_id'),
-                supabaseClient.from('igrejas').select('id')
-            ])
-            .then(function(results) {
-                const vendasRecentesResult = results[0];
-                const todasVendasResult = results[1];
-                const igrejasResult = results[2];
+            try {
+                const [vendasRecentesResult, todasVendasResult, igrejasResult] = await Promise.all([
+                    supabaseClient.from('vendas').select('*').order('created_at', { ascending: false }).limit(10),
+                    supabaseClient.from('vendas').select('valor_total, valor_comissao, igreja_id'),
+                    supabaseClient.from('igrejas').select('id')
+                ]);
 
                 console.log('📊 Vendas Recentes:', vendasRecentesResult);
                 console.log('📊 Todas Vendas:', todasVendasResult);
@@ -508,12 +487,13 @@
                 const todasVendas = todasVendasResult.data || [];
                 const igrejas = igrejasResult.data || [];
 
+                // Calcular estatísticas
                 let totalVendas = 0;
                 let vendasDiretas = 0;
                 let vendasComIgreja = 0;
                 let totalComissoes = 0;
 
-                todasVendas.forEach(function(venda) {
+                todasVendas.forEach(venda => {
                     const valor = parseFloat(venda.valor_total || 0);
                     const comissao = parseFloat(venda.valor_comissao || 0);
                     
@@ -527,6 +507,7 @@
                     }
                 });
 
+                // Atualizar cards de estatísticas
                 document.getElementById('totalVendas').textContent = 'R$ ' + totalVendas.toFixed(2);
                 document.getElementById('vendasDiretas').textContent = 'R$ ' + vendasDiretas.toFixed(2);
                 document.getElementById('vendasIgreja').textContent = 'R$ ' + vendasComIgreja.toFixed(2);
@@ -535,18 +516,23 @@
 
                 document.querySelector('.status').textContent = todasVendas.length + ' vendas';
 
+                // Renderizar tabela de vendas
                 renderizarVendas(vendasRecentes);
 
+                // Esconder loading
                 document.getElementById('loadingOverlay').classList.add('hidden');
                 console.log('✅ Carregamento completo');
-            })
-            .catch(function(error) {
-                console.error('❌ Erro:', error);
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
                 alert('Erro ao carregar dados: ' + error.message);
                 document.getElementById('loadingOverlay').classList.add('hidden');
-            });
+            }
         }
 
+        // ========================================
+        // RENDERIZAR TABELA DE VENDAS
+        // ========================================
         function renderizarVendas(vendas) {
             const tbody = document.getElementById('vendasTableBody');
             tbody.innerHTML = '';
@@ -556,7 +542,7 @@
                 return;
             }
 
-            vendas.forEach(function(venda) {
+            vendas.forEach(venda => {
                 const row = document.createElement('tr');
                 
                 const data = new Date(venda.created_at);
@@ -585,10 +571,21 @@
             console.log('✅ Renderizadas', vendas.length, 'vendas');
         }
 
-        setTimeout(function() {
-            console.log('⏰ Iniciando verificação após delay...');
-            iniciar();
-        }, 500);
+        // ========================================
+        // INICIALIZAÇÃO
+        // ========================================
+        async function iniciar() {
+            console.log('🚀 Iniciando dashboard...');
+            
+            const autenticado = await checkAuth();
+            
+            if (autenticado) {
+                await carregarDados();
+            }
+        }
+
+        // Iniciar quando a página carregar
+        iniciar();
     </script>
 </body>
 </html>
