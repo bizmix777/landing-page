@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - BizMix</title>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-email {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .btn-logout {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 40px;
+        }
+        
+        .welcome-card {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .welcome-card h2 {
+            color: #1e293b;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .welcome-card p {
+            color: #64748b;
+            font-size: 16px;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .card-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+        
+        .card h3 {
+            color: #1e293b;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🏢 BizMix - Painel Administrativo</h1>
+            <div class="user-info">
+                <span class="user-email" id="userEmail">Carregando...</span>
+                <button class="btn-logout" id="btnLogout">Sair</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="welcome-card">
+            <h2>Bem-vindo ao Painel Administrativo!</h2>
+            <p>Gerencie todas as funcionalidades do BizMix em um só lugar.</p>
+        </div>
+        
+        <div class="cards-grid">
+            <a href="/admin/" class="card">
+                <div class="card-icon">📊</div>
+                <h3>Dashboard</h3>
+                <p>Visualize estatísticas e métricas do sistema</p>
+            </a>
+            
+            <a href="/admin/venda.html" class="card">
+                <div class="card-icon">💰</div>
+                <h3>Vendas</h3>
+                <p>Gerencie vendas e comissões</p>
+            </a>
+            
+            <a href="/admin/igrejas.html" class="card">
+                <div class="card-icon">⛪</div>
+                <h3>Igrejas</h3>
+                <p>Cadastro e gestão de igrejas parceiras</p>
+            </a>
+            
+            <a href="/cadastro/" class="card">
+                <div class="card-icon">👥</div>
+                <h3>Cadastros</h3>
+                <p>Gerenciar cadastros de usuários</p>
+            </a>
+            
+            <a href="/admin/dashboard-comissoes.html" class="card">
+                <div class="card-icon">📈</div>
+                <h3>Comissões</h3>
+                <p>Acompanhe comissões e pagamentos</p>
+            </a>
+            
+            <a href="/" class="card">
+                <div class="card-icon">🏠</div>
+                <h3>Site Principal</h3>
+                <p>Voltar para o site BizMix</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // Mesmas credenciais do painel-acesso
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const userEmailEl = document.getElementById('userEmail');
+        const btnLogout = document.getElementById('btnLogout');
+        
+        // Verificar autenticação
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            if (!session) {
+                // Não está logado, redirecionar para login
+                window.location.href = '/painel-acesso/';
+                return;
+            }
+            
+            // Mostrar email do usuário
+            userEmailEl.textContent = session.user.email;
+        }
+        
+        // Logout
+        async function handleLogout() {
+            const { error } = await supabaseClient.auth.signOut();
+            
+            if (error) {
+                console.error('Erro ao sair:', error);
+                alert('Erro ao sair. Tente novamente.');
+                return;
+            }
+            
+            window.location.href = '/';
+        }
+        
+        // Event listeners
+        btnLogout.addEventListener('click', handleLogout);
+        
+        // Verificar auth ao carregar
+        checkAuth();
+        
+        console.log('✓ Painel carregado');
+    </script>
+</body>
+</html>
