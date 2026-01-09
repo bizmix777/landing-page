@@ -10,7 +10,9 @@
 /ig_parceiras.html       /ig_parceiras.html       200
 /index.html              /index.html              200
 
-# Pasta admin
+# Pasta admin (DEVE VIR ANTES DO /*)
+/admin                               /admin/index.html                    200
+/admin/                              /admin/index.html                    200
 /admin/login.html                    /admin/login.html                    200
 /admin/index.html                    /admin/index.html                    200
 /admin/admin.html                    /admin/admin.html                    200
@@ -30,7 +32,12 @@
 /painel-acesso/          /painel-acesso/index.html     200
 /painel-acesso/*         /painel-acesso/:splat         200
 
-# Pasta cadastro (ADICIONAR APÓS MOVER A PASTA)
+# Pasta painel
+/painel                  /painel/index.html            200
+/painel/                 /painel/index.html            200
+/painel/*                /painel/:splat                200
+
+# Pasta cadastro
 /cadastro                /cadastro/index.html          200
 /cadastro/               /cadastro/index.html          200
 /cadastro/*              /cadastro/:splat              200
@@ -39,11 +46,6 @@
 /somos-todos-um          /somos-todos-um/index.html    200
 /somos-todos-um/         /somos-todos-um/index.html    200
 /somos-todos-um/*        /somos-todos-um/:splat        200
-
-# Pasta painel
-/painel                  /painel/index.html       200
-/painel/                 /painel/index.html       200
-/painel/*                /painel/:splat           200
 
 # Arquivos estáticos (CSS, JS, imagens)
 /js/*                    /js/:splat               200
@@ -55,5 +57,5 @@
 /favicon.ico             /favicon.ico             200
 /robots.txt              /robots.txt              200
 
-# SPA fallback - ÚLTIMA regra
+# SPA fallback - ÚLTIMA regra (SEMPRE NO FINAL)
 /*                       /index.html              200
