@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Acesso - Biz Mix</title>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Painel de Acesso - BizMix</title>
+    <meta name="robots" content="noindex, nofollow">
     
     <style>
         * {
@@ -16,8 +14,8 @@
         }
         
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -27,9 +25,9 @@
         
         .login-container {
             background: white;
-            padding: 40px;
             border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
             width: 100%;
             max-width: 400px;
         }
@@ -39,101 +37,277 @@
             margin-bottom: 30px;
         }
         
-        .logo img {
-            height: 60px;
-            width: auto;
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            font-weight: 700;
         }
         
-        h1 {
-            font-size: 1.5rem;
-            color: #1e293b;
-            text-align: center;
-            margin-bottom: 30px;
+        .logo p {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
         }
         
         .form-group {
             margin-bottom: 20px;
         }
         
-        label {
+        .form-group label {
             display: block;
+            color: #333;
             font-weight: 600;
-            color: #475569;
             margin-bottom: 8px;
+            font-size: 14px;
         }
         
-        input {
+        .form-group input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.3s;
+            font-size: 16px;
+            transition: all 0.3s;
         }
         
-        input:focus {
+        .form-group input:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         .btn-login {
             width: 100%;
-            background: #3b82f6;
-            color: white;
             padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
         }
         
-        .btn-login:hover {
-            background: #2563eb;
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
         
-        .btn-back {
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .error-message.show {
             display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #64748b;
-            text-decoration: none;
-            transition: color 0.3s;
         }
         
-        .btn-back:hover {
-            color: #3b82f6;
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 14px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="logo">
-            <img src="/images/logo_par.png" alt="BizMix Logo" onerror="this.src='/logo.png'">
+            <h1>BizMix</h1>
+            <p>Painel Administrativo</p>
         </div>
         
-        <h1>Painel de Acesso</h1>
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
         
-        <form>
+        <form id="loginForm">
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" placeholder="seu@email.com" required>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required 
+                    autocomplete="email"
+                    placeholder="seu@email.com"
+                >
             </div>
             
             <div class="form-group">
-                <label for="senha">Senha</label>
-                <input type="password" id="senha" placeholder="••••••••" required>
+                <label for="password">Senha</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    autocomplete="current-password"
+                    placeholder="Digite sua senha"
+                >
             </div>
             
-            <button type="submit" class="btn-login">
-                <i class="fas fa-sign-in-alt"></i> Entrar
+            <button type="submit" class="btn-login" id="loginBtn">
+                Entrar
             </button>
         </form>
         
-        <a href="/" class="btn-back">
-            <i class="fas fa-arrow-left"></i> Voltar para o site
-        </a>
+        <div id="loadingMessage" class="loading" style="display: none;">
+            Autenticando...
+        </div>
     </div>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        // ========================================
+        // CONFIGURAÇÃO DO SUPABASE
+        // ========================================
+        // SUBSTITUA ESTAS CREDENCIAIS PELAS SUAS!
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'; // Exemplo: 'https://abcdefgh.supabase.co'
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'; // Exemplo: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        
+        // Inicializar Supabase
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // ========================================
+        // ELEMENTOS DO DOM
+        // ========================================
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const loadingMessage = document.getElementById('loadingMessage');
+        
+        // ========================================
+        // FUNÇÕES AUXILIARES
+        // ========================================
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            successMessage.classList.remove('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+        
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.classList.add('show');
+            errorMessage.classList.remove('show');
+        }
+        
+        function setLoading(isLoading) {
+            loginBtn.disabled = isLoading;
+            loginBtn.textContent = isLoading ? 'Entrando...' : 'Entrar';
+            loadingMessage.style.display = isLoading ? 'block' : 'none';
+        }
+        
+        // ========================================
+        // VERIFICAR SE JÁ ESTÁ LOGADO
+        // ========================================
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                // Usuário já está logado, redirecionar
+                window.location.href = '/painel/'; // Ajuste para a URL do seu painel
+            }
+        }
+        
+        // ========================================
+        // FUNÇÃO DE LOGIN
+        // ========================================
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            // Validação básica
+            if (!email || !password) {
+                showError('Por favor, preencha todos os campos.');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                // Tentar fazer login
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+                
+                if (error) {
+                    throw error;
+                }
+                
+                if (data.session) {
+                    showSuccess('Login realizado com sucesso! Redirecionando...');
+                    
+                    // Redirecionar após 1 segundo
+                    setTimeout(() => {
+                        window.location.href = '/painel/'; // Ajuste para a URL do seu painel
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                
+                // Mensagens de erro amigáveis
+                let errorMsg = 'Erro ao fazer login. Tente novamente.';
+                
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMsg = 'E-mail ou senha incorretos.';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMsg = 'E-mail não confirmado. Verifique sua caixa de entrada.';
+                } else if (error.message.includes('Network')) {
+                    errorMsg = 'Erro de conexão. Verifique sua internet.';
+                }
+                
+                showError(errorMsg);
+                setLoading(false);
+            }
+        }
+        
+        // ========================================
+        // EVENT LISTENERS
+        // ========================================
+        loginForm.addEventListener('submit', handleLogin);
+        
+        // Verificar autenticação ao carregar a página
+        checkAuth();
+        
+        // Log para debug (remover em produção)
+        console.log('Supabase inicializado:', typeof supabaseClient);
+    </script>
 </body>
 </html>
