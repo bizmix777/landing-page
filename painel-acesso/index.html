@@ -15,7 +15,7 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -38,13 +38,13 @@
         }
         
         .logo h1 {
-            color: #667eea;
+            color: #2563eb;
             font-size: 32px;
             font-weight: 700;
         }
         
         .logo p {
-            color: #666;
+            color: #64748b;
             font-size: 14px;
             margin-top: 5px;
         }
@@ -55,7 +55,7 @@
         
         .form-group label {
             display: block;
-            color: #333;
+            color: #1e293b;
             font-weight: 600;
             margin-bottom: 8px;
             font-size: 14px;
@@ -64,22 +64,23 @@
         .form-group input {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e2e8f0;
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s;
+            color: #1e293b;
         }
         
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
         
         .btn-login {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -92,7 +93,7 @@
         
         .btn-login:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
         }
         
         .btn-login:disabled {
@@ -101,13 +102,14 @@
         }
         
         .error-message {
-            background: #fee;
-            color: #c33;
+            background: #fee2e2;
+            color: #dc2626;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
             display: none;
+            border-left: 4px solid #dc2626;
         }
         
         .error-message.show {
@@ -115,13 +117,14 @@
         }
         
         .success-message {
-            background: #efe;
-            color: #3c3;
+            background: #d1fae5;
+            color: #059669;
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
             display: none;
+            border-left: 4px solid #059669;
         }
         
         .success-message.show {
@@ -130,9 +133,26 @@
         
         .loading {
             text-align: center;
-            color: #667eea;
+            color: #2563eb;
             font-size: 14px;
             margin-top: 10px;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .back-link a:hover {
+            color: #1e40af;
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -179,6 +199,10 @@
         <div id="loadingMessage" class="loading" style="display: none;">
             Autenticando...
         </div>
+        
+        <div class="back-link">
+            <a href="/">← Voltar para o site</a>
+        </div>
     </div>
 
     <!-- Supabase JS -->
@@ -188,9 +212,9 @@
         // ========================================
         // CONFIGURAÇÃO DO SUPABASE
         // ========================================
-        // SUBSTITUA ESTAS CREDENCIAIS PELAS SUAS!
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'; // Exemplo: 'https://abcdefgh.supabase.co'
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'; // Exemplo: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+        // MANTENHA AS CREDENCIAIS QUE VOCÊ JÁ CONFIGUROU!
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'; // Cole a URL que você já tem
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'; // Cole a key que você já tem
         
         // Inicializar Supabase
         const { createClient } = supabase;
@@ -238,7 +262,7 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 // Usuário já está logado, redirecionar
-                window.location.href = '/painel/'; // Ajuste para a URL do seu painel
+                window.location.href = '/painel/';
             }
         }
         
@@ -271,11 +295,11 @@
                 }
                 
                 if (data.session) {
-                    showSuccess('Login realizado com sucesso! Redirecionando...');
+                    showSuccess('✓ Login realizado com sucesso! Redirecionando...');
                     
                     // Redirecionar após 1 segundo
                     setTimeout(() => {
-                        window.location.href = '/painel/'; // Ajuste para a URL do seu painel
+                        window.location.href = '/painel/';
                     }, 1000);
                 }
                 
@@ -286,11 +310,11 @@
                 let errorMsg = 'Erro ao fazer login. Tente novamente.';
                 
                 if (error.message.includes('Invalid login credentials')) {
-                    errorMsg = 'E-mail ou senha incorretos.';
+                    errorMsg = '✗ E-mail ou senha incorretos.';
                 } else if (error.message.includes('Email not confirmed')) {
-                    errorMsg = 'E-mail não confirmado. Verifique sua caixa de entrada.';
+                    errorMsg = '✗ E-mail não confirmado. Verifique sua caixa de entrada.';
                 } else if (error.message.includes('Network')) {
-                    errorMsg = 'Erro de conexão. Verifique sua internet.';
+                    errorMsg = '✗ Erro de conexão. Verifique sua internet.';
                 }
                 
                 showError(errorMsg);
@@ -306,8 +330,8 @@
         // Verificar autenticação ao carregar a página
         checkAuth();
         
-        // Log para debug (remover em produção)
-        console.log('Supabase inicializado:', typeof supabaseClient);
+        // Log para debug
+        console.log('✓ Supabase inicializado');
     </script>
 </body>
 </html>
