@@ -40,6 +40,11 @@
 /somos-todos-um/         /somos-todos-um/index.html    200
 /somos-todos-um/*        /somos-todos-um/:splat        200
 
+# Pasta painel
+/painel                  /painel/index.html       200
+/painel/                 /painel/index.html       200
+/painel/*                /painel/:splat           200
+
 # Arquivos estáticos (CSS, JS, imagens)
 /js/*                    /js/:splat               200
 /css/*                   /css/:splat              200
