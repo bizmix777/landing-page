@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Somos Todos Um</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .debug-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔐 Login Admin</h1>
+            <p>Acesse o painel administrativo</p>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required placeholder="seu@email.com" value="admin@somostodosum.com">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha:</label>
+                <input type="password" id="password" required placeholder="••••••••" value="admin123">
+            </div>
+
+            <button type="submit" class="btn-login" id="btnLogin">
+                Entrar
+            </button>
+        </form>
+
+        <div class="debug-info" id="debugInfo">
+            Verificando sistema...
+        </div>
+
+        <div class="back-link">
+            <a href="/">← Voltar para o site</a>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔐 Página de Login Carregada');
+
+        // SISTEMA DE STORAGE COM FALLBACK
+        var StorageManager = {
+            isLocalStorageAvailable: false,
+            isSessionStorageAvailable: false,
+
+            init: function() {
+                try {
+                    localStorage.setItem('__test__', 'test');
+                    localStorage.removeItem('__test__');
+                    this.isLocalStorageAvailable = true;
+                    console.log('✅ localStorage disponível');
+                } catch (e) {
+                    console.warn('⚠️ localStorage NÃO disponível:', e.message);
+                    this.isLocalStorageAvailable = false;
+                }
+
+                try {
+                    sessionStorage.setItem('__test__', 'test');
+                    sessionStorage.removeItem('__test__');
+                    this.isSessionStorageAvailable = true;
+                    console.log('✅ sessionStorage disponível');
+                } catch (e) {
+                    console.warn('⚠️ sessionStorage NÃO disponível:', e.message);
+                    this.isSessionStorageAvailable = false;
+                }
+
+                this.updateDebugInfo();
+            },
+
+            setItem: function(key, value) {
+                if (this.isLocalStorageAvailable) {
+                    try {
+                        localStorage.setItem(key, value);
+                        console.log('💾 Salvo em localStorage:', key);
+                        return true;
+                    } catch (e) {
+                        console.error('❌ Erro ao salvar em localStorage:', e);
+                    }
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    try {
+                        sessionStorage.setItem(key, value);
+                        console.log('💾 Salvo em sessionStorage:', key);
+                        return true;
+                    } catch (e) {
+                        console.error('❌ Erro ao salvar em sessionStorage:', e);
+                    }
+                }
+
+                console.error('❌ Nenhum storage disponível!');
+                return false;
+            },
+
+            getItem: function(key) {
+                if (this.isLocalStorageAvailable) {
+                    try {
+                        var value = localStorage.getItem(key);
+                        if (value) {
+                            console.log('📥 Recuperado de localStorage:', key);
+                            return value;
+                        }
+                    } catch (e) {
+                        console.error('❌ Erro ao ler localStorage:', e);
+                    }
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    try {
+                        var value = sessionStorage.getItem(key);
+                        if (value) {
+                            console.log('📥 Recuperado de sessionStorage:', key);
+                            return value;
+                        }
+                    } catch (e) {
+                        console.error('❌ Erro ao ler sessionStorage:', e);
+                    }
+                }
+
+                return null;
+            },
+
+            removeItem: function(key) {
+                if (this.isLocalStorageAvailable) {
+                    try {
+                        localStorage.removeItem(key);
+                    } catch (e) {}
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    try {
+                        sessionStorage.removeItem(key);
+                    } catch (e) {}
+                }
+            },
+
+            updateDebugInfo: function() {
+                var info = '🔧 Status: ';
+                if (this.isLocalStorageAvailable) {
+                    info += 'localStorage ✅ | ';
+                } else {
+                    info += 'localStorage ❌ | ';
+                }
+
+                if (this.isSessionStorageAvailable) {
+                    info += 'sessionStorage ✅';
+                } else {
+                    info += 'sessionStorage ❌';
+                }
+
+                document.getElementById('debugInfo').textContent = info;
+            }
+        };
+
+        StorageManager.init();
+
+        function verificarSeJaEstaLogado() {
+            var session = StorageManager.getItem('adminSession');
+            
+            if (session) {
+                try {
+                    var sessionData = JSON.parse(session);
+                    var now = new Date().getTime();
+                    
+                    if (now < sessionData.expires) {
+                        console.log('✅ Sessão válida - redirecionando para dashboard');
+                        window.location.replace('index.html');
+                        return true;
+                    } else {
+                        console.log('⏰ Sessão expirada - removendo');
+                        StorageManager.removeItem('adminSession');
+                    }
+                } catch (e) {
+                    console.error('❌ Erro ao verificar sessão:', e);
+                    StorageManager.removeItem('adminSession');
+                }
+            }
+            return false;
+        }
+
+        if (!verificarSeJaEstaLogado()) {
+            console.log('✅ Pronto para fazer login');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            console.log('🔐 Tentando login com:', email);
+
+            var btnLogin = document.getElementById('btnLogin');
+            btnLogin.disabled = true;
+            btnLogin.textContent = '⏳ Verificando...';
+
+            var ADMIN_EMAIL = 'admin@somostodosum.com';
+            var ADMIN_PASSWORD = 'admin123';
+
+            setTimeout(function() {
+                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                    console.log('✅ Credenciais corretas');
+
+                    var sessionData = {
+                        email: email,
+                        loginTime: new Date().getTime(),
+                        expires: new Date().getTime() + (24 * 60 * 60 * 1000)
+                    };
+
+                    console.log('💾 Salvando sessão:', sessionData);
+                    var salvou = StorageManager.setItem('adminSession', JSON.stringify(sessionData));
+
+                    if (salvou) {
+                        var verificacao = StorageManager.getItem('adminSession');
+                        console.log('🔍 Verificando se salvou:', verificacao);
+
+                        if (verificacao) {
+                            console.log('✅ Sessão salva com sucesso!');
+                            showAlert('✅ Login realizado com sucesso!', 'success');
+
+                            setTimeout(function() {
+                                console.log('🔄 Redirecionando para dashboard...');
+                                window.location.replace('index.html');
+                            }, 500);
+                        } else {
+                            console.error('❌ ERRO: Sessão não foi recuperada!');
+                            showAlert('❌ Erro ao verificar sessão. Verifique as configurações do navegador.', 'error');
+                            btnLogin.disabled = false;
+                            btnLogin.textContent = 'Entrar';
+                        }
+                    } else {
+                        console.error('❌ ERRO: Não foi possível salvar a sessão!');
+                        showAlert('⚠️ AVISO: Storage bloqueado. Desative o modo anônimo ou extensões de privacidade.', 'warning');
+                        btnLogin.disabled = false;
+                        btnLogin.textContent = 'Entrar';
+                    }
+
+                } else {
+                    console.log('❌ Credenciais incorretas');
+                    showAlert('❌ Email ou senha incorretos!', 'error');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Entrar';
+                }
+            }, 500);
+        });
+
+        function showAlert(message, type) {
+            document.getElementById('alertContainer').innerHTML = 
+                '<div class="alert alert-' + type + '">' + message + '</div>';
+        }
+    </script>
+</body>
+</html>
