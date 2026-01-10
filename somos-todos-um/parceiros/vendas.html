@@ -4,22 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas Vendas - Área do Parceiro</title>
+    <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #111827;
             min-height: 100vh;
-            padding: 20px;
-            color: white;
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         .loading {
@@ -27,11 +20,16 @@
             padding: 40px;
             color: white;
             font-size: 18px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         .header {
@@ -44,62 +42,31 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 16px;
         }
 
-        .header-info h1 {
+        .header h1 {
             color: white;
             font-size: 24px;
             font-weight: 700;
-            margin: 0 0 4px 0;
-        }
-
-        .header-info p {
-            color: #d1d5db;
-            font-size: 14px;
             margin: 0;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary {
+        .btn-back {
+            padding: 10px 20px;
             background: #374151;
             color: white;
             border: 1px solid #4b5563;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
         }
 
-        .btn-secondary:hover {
+        .btn-back:hover {
             background: #4b5563;
-        }
-
-        .card {
-            background: #1f2937;
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
-            border: 1px solid #374151;
-        }
-
-        .card h2 {
-            color: white;
-            font-size: 22px;
-            font-weight: 700;
-            margin: 0 0 20px 0;
         }
 
         .stats-row {
@@ -109,76 +76,48 @@
             margin-bottom: 24px;
         }
 
-        .stat-box {
-            background: #374151;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #4b5563;
-        }
-
-        .stat-box .label {
-            color: #9ca3af;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .stat-box .value {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .filters {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-group label {
-            display: block;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .filter-group input,
-        .filter-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #4b5563;
-            border-radius: 12px;
-            font-size: 14px;
-            background: #374151;
-            color: white;
-        }
-
-        .filter-group input:focus,
-        .filter-group select:focus {
-            outline: none;
-            border-color: white;
-        }
-
-        .filter-group select option {
+        .stat-card {
             background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
         }
 
-        .table-container {
+        .stat-card h3 {
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin: 0 0 8px 0;
+        }
+
+        .stat-card .value {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .card {
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #374151;
             overflow-x: auto;
+        }
+
+        .card h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 20px 0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         thead {
@@ -190,18 +129,16 @@
             text-align: left;
             font-weight: 600;
             color: white;
-            white-space: nowrap;
-            border-bottom: 1px solid #4b5563;
+            font-size: 13px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #4b5563;
         }
 
         td {
             padding: 16px;
-            border-bottom: 1px solid #374151;
             color: #d1d5db;
-        }
-
-        tbody tr {
-            transition: all 0.2s;
+            font-size: 14px;
+            border-bottom: 1px solid #374151;
         }
 
         tbody tr:hover {
@@ -210,29 +147,25 @@
 
         .badge {
             display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
-            white-space: nowrap;
         }
 
-        .badge-success {
-            background: rgba(16, 185, 129, 0.2);
-            color: #6ee7b7;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+        .badge.success {
+            background: #10b981;
+            color: white;
         }
 
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+        .badge.warning {
+            background: #f59e0b;
+            color: white;
         }
 
-        .badge-danger {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .badge.danger {
+            background: #ef4444;
+            color: white;
         }
 
         .empty-state {
@@ -241,56 +174,40 @@
             color: #9ca3af;
         }
 
-        .empty-state .icon {
+        .empty-state-icon {
             font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.5;
+            margin-bottom: 16px;
         }
 
         .empty-state h3 {
-            color: #d1d5db;
+            color: white;
             font-size: 20px;
-            margin-bottom: 10px;
+            margin: 0 0 8px 0;
         }
 
         .empty-state p {
-            color: #9ca3af;
             font-size: 14px;
+            margin: 0;
         }
 
         @media (max-width: 768px) {
-            body {
+            .container {
                 padding: 16px;
             }
 
             .header {
                 padding: 20px;
-                text-align: center;
-            }
-
-            .header-actions {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .filters {
                 flex-direction: column;
+                align-items: flex-start;
             }
 
-            .filter-group {
-                min-width: 100%;
+            .btn-back {
+                width: 100%;
+                text-align: center;
             }
 
             .card {
                 padding: 20px;
-            }
-
-            table {
-                font-size: 14px;
-            }
-
-            th, td {
-                padding: 10px;
             }
         }
     </style>
@@ -301,198 +218,226 @@
     </div>
 
     <div class="container" id="conteudo" style="display: none;">
-      <div class="header">
-    <div class="header-info">
-        <img src="images/logo_par.png" alt="Biz Mix" style="max-width: 120px; height: auto; margin-bottom: 8px;">
-        <p>Acompanhe todas as suas vendas realizadas</p>
-    </div>
-    <div class="header-actions">
-        <a href="dashboard.html" class="btn btn-secondary">← Voltar ao Dashboard</a>
-    </div>
-    </div>
+        <div class="header">
+            <h1>📋 Minhas Vendas</h1>
+            <a href="dashboard.html" class="btn-back">← Voltar ao Dashboard</a>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <h3>Total de Vendas</h3>
+                <p class="value" id="totalVendas">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Valor Total</h3>
+                <p class="value" id="valorTotal">R$ 0,00</p>
+            </div>
+            <div class="stat-card">
+                <h3>Comissão Total</h3>
+                <p class="value" id="comissaoTotal">R$ 0,00</p>
+            </div>
+        </div>
 
         <div class="card">
-            <div class="stats-row">
-                <div class="stat-box">
-                    <div class="label">Total de Vendas</div>
-                    <div class="value" id="totalVendas">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="label">Valor Total</div>
-                    <div class="value" id="valorTotal">R$ 0,00</div>
-                </div>
-                <div class="stat-box">
-                    <div class="label">Comissão Total</div>
-                    <div class="value" id="comissaoTotal">R$ 0,00</div>
-                </div>
-            </div>
+            <h2>Histórico de Vendas</h2>
+            <div id="tabelaContainer"></div>
+        </div>
+    </div>
 
-            <div class="filters">
-                <div class="filter-group">
-                    <label>🔍 Buscar por nome:</label>
-                    <input type="text" id="filtroNome" placeholder="Digite o nome do comprador...">
-                </div>
-                <div class="filter-group">
-                    <label>📊 Status do pagamento:</label>
-                    <select id="filtroStatus">
-                        <option value="">Todos</option>
-                        <option value="pago">Pago</option>
-                        <option value="pendente">Pendente</option>
-                        <option value="cancelado">Cancelado</option>
-                    </select>
-                </div>
-            </div>
+    <script>
+        console.log('🚀 Página de Vendas - Iniciada');
 
-            <div class="table-container">
-                <table id="tabelaVendas">
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let usuarioAtual = null;
+        let parceiroAtual = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarAutenticacao();
+        });
+
+        async function verificarAutenticacao() {
+            console.log('🔍 Verificando autenticação...');
+            
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error || !session) {
+                    console.log('❌ Sessão inválida - redirecionando');
+                    window.location.href = '/painel-acesso/';
+                    return;
+                }
+                
+                console.log('✅ Sessão válida:', session.user.email);
+                usuarioAtual = session.user;
+                
+                await buscarDadosParceiro();
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                window.location.href = '/painel-acesso/';
+            }
+        }
+
+        async function buscarDadosParceiro() {
+            console.log('📥 Buscando dados do parceiro...');
+            
+            try {
+                // Buscar em igrejas
+                let { data: igreja, error: erroIgreja } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (igreja) {
+                    parceiroAtual = {
+                        id: igreja.id,
+                        nome: igreja.nome,
+                        email: igreja.email,
+                        tipo: 'igreja'
+                    };
+                    await carregarVendas();
+                    return;
+                }
+                
+                // Buscar em parceiros
+                let { data: parceiro, error: erroParceiro } = await supabaseClient
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (parceiro) {
+                    parceiroAtual = {
+                        id: parceiro.id,
+                        nome: parceiro.nome,
+                        email: parceiro.email,
+                        tipo: 'parceiro'
+                    };
+                    await carregarVendas();
+                    return;
+                }
+                
+                console.warn('⚠️ Parceiro não encontrado');
+                alert('Cadastro não encontrado.');
+                window.location.href = '/painel-acesso/';
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar dados: ' + error.message);
+                window.location.href = '/painel-acesso/';
+            }
+        }
+
+        async function carregarVendas() {
+            console.log('📊 Carregando vendas...');
+            
+            try {
+                const { data: vendas, error } = await supabaseClient
+                    .from('vendas')
+                    .select('*')
+                    .or(`parceiro_id.eq.${parceiroAtual.id},igreja_id.eq.${parceiroAtual.id}`)
+                    .order('created_at', { ascending: false });
+                
+                if (error) {
+                    console.error('❌ Erro ao buscar vendas:', error);
+                    throw error;
+                }
+                
+                console.log('📊 Vendas encontradas:', vendas);
+                
+                // Calcular estatísticas
+                const totalVendas = vendas ? vendas.length : 0;
+                const valorTotal = vendas ? vendas.reduce((sum, v) => sum + parseFloat(v.valor_total || 0), 0) : 0;
+                const comissaoTotal = vendas ? vendas.reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0) : 0;
+                
+                // Atualizar estatísticas
+                document.getElementById('totalVendas').textContent = totalVendas;
+                document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
+                document.getElementById('comissaoTotal').textContent = `R$ ${comissaoTotal.toFixed(2).replace('.', ',')}`;
+                
+                // Renderizar tabela
+                renderizarTabela(vendas);
+                
+                // Mostrar conteúdo
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('conteudo').style.display = 'block';
+                
+                console.log('✅ Vendas carregadas');
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar vendas: ' + error.message);
+            }
+        }
+
+        function renderizarTabela(vendas) {
+            const container = document.getElementById('tabelaContainer');
+            
+            if (!vendas || vendas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>Nenhuma venda ainda</h3>
+                        <p>Suas vendas aparecerão aqui quando forem realizadas</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table>
                     <thead>
                         <tr>
                             <th>Data</th>
-                            <th>Comprador</th>
-                            <th>E-mail</th>
+                            <th>Cliente</th>
+                            <th>Produto</th>
                             <th>Valor</th>
                             <th>Comissão</th>
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody id="corpoTabela">
-                        <!-- Vendas serão inseridas aqui -->
+                    <tbody>
+            `;
+            
+            vendas.forEach(venda => {
+                const data = new Date(venda.created_at);
+                const dataFormatada = data.toLocaleDateString('pt-BR');
+                
+                let statusBadge = '';
+                if (venda.status_pagamento === 'aprovado') {
+                    statusBadge = '<span class="badge success">✓ Aprovado</span>';
+                } else if (venda.status_pagamento === 'pendente') {
+                    statusBadge = '<span class="badge warning">⏳ Pendente</span>';
+                } else {
+                    statusBadge = '<span class="badge danger">✗ Cancelado</span>';
+                }
+                
+                html += `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td><strong>${venda.nome_comprador || 'N/A'}</strong><br><small>${venda.email_comprador || ''}</small></td>
+                        <td>${venda.produto || 'Produto'}</td>
+                        <td><strong>R$ ${parseFloat(venda.valor_total || 0).toFixed(2).replace('.', ',')}</strong></td>
+                        <td><strong style="color: #10b981;">R$ ${parseFloat(venda.valor_comissao || 0).toFixed(2).replace('.', ',')}</strong></td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
                     </tbody>
                 </table>
-            </div>
-
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <div class="icon">📭</div>
-                <h3>Nenhuma venda encontrada</h3>
-                <p>Você ainda não possui vendas registradas ou nenhuma venda corresponde aos filtros aplicados.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        (function() {
-            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+            `;
             
-            const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-            let parceiroAtual = null
-            let vendasCompletas = []
-
-            window.addEventListener('DOMContentLoaded', async () => {
-                const parceiroLogado = localStorage.getItem('parceiro_logado')
-                
-                if (!parceiroLogado) {
-                    window.location.href = 'login.html'
-                    return
-                }
-
-                parceiroAtual = JSON.parse(parceiroLogado)
-                await carregarVendas()
-
-                document.getElementById('filtroNome').addEventListener('input', aplicarFiltros)
-                document.getElementById('filtroStatus').addEventListener('change', aplicarFiltros)
-            })
-
-            async function carregarVendas() {
-                try {
-                    const { data: vendas, error } = await clienteSupabase
-                        .from('vendas')
-                        .select('*')
-                        .eq('parceiro_id', parceiroAtual.id)
-                        .order('created_at', { ascending: false })
-
-                    if (error) throw error
-
-                    vendasCompletas = vendas || []
-                    
-                    calcularEstatisticas(vendasCompletas)
-                    renderizarVendas(vendasCompletas)
-
-                    document.getElementById('loading').style.display = 'none'
-                    document.getElementById('conteudo').style.display = 'block'
-
-                } catch (error) {
-                    console.error('❌ Erro ao carregar vendas:', error)
-                    alert('Erro ao carregar vendas: ' + error.message)
-                }
-            }
-
-            function calcularEstatisticas(vendas) {
-                const total = vendas.length
-                const valorTotal = vendas.reduce((sum, v) => sum + parseFloat(v.valor_total || 0), 0)
-                const comissaoTotal = valorTotal * (parceiroAtual.comissao / 100)
-
-                document.getElementById('totalVendas').textContent = total
-                document.getElementById('valorTotal').textContent = `R$ ${valorTotal.toFixed(2).replace('.', ',')}`
-                document.getElementById('comissaoTotal').textContent = `R$ ${comissaoTotal.toFixed(2).replace('.', ',')}`
-            }
-
-            function renderizarVendas(vendas) {
-                const corpoTabela = document.getElementById('corpoTabela')
-                const emptyState = document.getElementById('emptyState')
-                const tabela = document.getElementById('tabelaVendas')
-
-                if (vendas.length === 0) {
-                    tabela.style.display = 'none'
-                    emptyState.style.display = 'block'
-                    return
-                }
-
-                tabela.style.display = 'table'
-                emptyState.style.display = 'none'
-
-                corpoTabela.innerHTML = vendas.map(venda => {
-                    const data = new Date(venda.created_at).toLocaleDateString('pt-BR')
-                    const valor = parseFloat(venda.valor_total || 0)
-                    const comissao = valor * (parceiroAtual.comissao / 100)
-                    
-                    let badgeClass = 'badge-warning'
-                    let statusTexto = 'Pendente'
-                    
-                    if (venda.status_pagamento === 'pago') {
-                        badgeClass = 'badge-success'
-                        statusTexto = 'Pago'
-                    } else if (venda.status_pagamento === 'cancelado') {
-                        badgeClass = 'badge-danger'
-                        statusTexto = 'Cancelado'
-                    }
-
-                    return `
-                        <tr>
-                            <td>${data}</td>
-                            <td>${venda.nome_comprador}</td>
-                            <td>${venda.email_comprador}</td>
-                            <td>R$ ${valor.toFixed(2).replace('.', ',')}</td>
-                            <td>R$ ${comissao.toFixed(2).replace('.', ',')}</td>
-                            <td><span class="badge ${badgeClass}">${statusTexto}</span></td>
-                        </tr>
-                    `
-                }).join('')
-            }
-
-            function aplicarFiltros() {
-                const filtroNome = document.getElementById('filtroNome').value.toLowerCase()
-                const filtroStatus = document.getElementById('filtroStatus').value
-
-                let vendasFiltradas = vendasCompletas
-
-                if (filtroNome) {
-                    vendasFiltradas = vendasFiltradas.filter(v => 
-                        v.nome_comprador.toLowerCase().includes(filtroNome) ||
-                        v.email_comprador.toLowerCase().includes(filtroNome)
-                    )
-                }
-
-                if (filtroStatus) {
-                    vendasFiltradas = vendasFiltradas.filter(v => 
-                        v.status_pagamento === filtroStatus
-                    )
-                }
-
-                renderizarVendas(vendasFiltradas)
-            }
-        })()
+            container.innerHTML = html;
+        }
     </script>
 </body>
 </html>
