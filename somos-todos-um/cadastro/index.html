@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Igreja Parceira - Somos Todos Um</title>
+    <meta name="description" content="Cadastre sua igreja como parceira e ganhe comissões">
+    <meta name="robots" content="index, follow">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .alert {
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
+        .success-box {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .success-box.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .success-box h2 {
+            color: #065f46;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .success-box p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .codigo-box {
+            background: #f3f4f6;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .codigo-box label {
+            display: block;
+            color: #374151;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .codigo-display {
+            display: flex;
+            gap: 10px;
+        }
+
+        .codigo-display input {
+            flex: 1;
+            padding: 12px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .btn-copy-codigo {
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-copy-codigo:hover {
+            background: #5568d3;
+        }
+
+        .btn-dashboard {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #6b7280;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .info-box {
+            background: #f3f4f6;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            color: #374151;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0 0 8px 0;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box strong {
+            color: #1f2937;
+        }
+
+        .info-box ul {
+            margin: 8px 0 0 20px;
+            padding: 0;
+            color: #374151;
+            font-size: 13px;
+        }
+
+        .info-box li {
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .codigo-display {
+                flex-direction: column;
+            }
+
+            .btn-copy-codigo {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <div id="formContainer">
+            <div class="logo">
+                <h1>🙏</h1>
+            </div>
+
+            <h1>🙏 Cadastro de Igreja Parceira</h1>
+            <p class="subtitle">Cadastre sua igreja e ganhe comissões sobre as vendas</p>
+
+            <div class="info-box">
+                <p><strong>💡 Benefícios:</strong></p>
+                <ul>
+                    <li>Receba comissões sobre vendas vinculadas</li>
+                    <li>Código exclusivo de indicação</li>
+                    <li>Painel para acompanhar vendas e comissões</li>
+                    <li>Materiais de divulgação gratuitos</li>
+                </ul>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <form id="formCadastro">
+                <div class="form-group">
+                    <label for="nomeIgreja">Nome da Igreja <span class="required">*</span></label>
+                    <input type="text" id="nomeIgreja" required placeholder="Ex: Igreja Batista Central">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail <span class="required">*</span></label>
+                    <input type="email" id="email" required placeholder="contato@igreja.com">
+                    <small>Será usado para login no painel</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone / WhatsApp <span class="required">*</span></label>
+                    <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="responsavel">Nome do Responsável <span class="required">*</span></label>
+                    <input type="text" id="responsavel" required placeholder="Pastor ou líder responsável">
+                </div>
+
+                <div class="form-group">
+                    <label for="senha">Senha <span class="required">*</span></label>
+                    <input type="password" id="senha" required placeholder="Mínimo 6 caracteres" minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="senhaConfirm">Confirmar Senha <span class="required">*</span></label>
+                    <input type="password" id="senhaConfirm" required placeholder="Digite a senha novamente" minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="endereco">Endereço Completo</label>
+                    <input type="text" id="endereco" placeholder="Rua, número, bairro">
+                </div>
+
+                <div class="form-group">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" id="cidade" placeholder="Sua cidade">
+                </div>
+
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <select id="estado">
+                        <option value="">Selecione</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="cnpj">CNPJ da Igreja</label>
+                    <input type="text" id="cnpj" placeholder="00.000.000/0000-00">
+                    <small>Opcional - pode preencher depois</small>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnCadastrar">
+                    ⛪ Cadastrar Igreja
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <div class="login-link">
+                <p>Já tem uma conta? <a href="/painel-acesso/">Fazer login</a></p>
+            </div>
+        </div>
+
+        <!-- TELA DE SUCESSO -->
+        <div id="successContainer" class="success-box">
+            <div class="success-icon">✅</div>
+            <h2>Igreja Cadastrada com Sucesso!</h2>
+            <p>Sua igreja foi cadastrada e já pode começar a indicar e ganhar comissões!</p>
+
+            <div class="codigo-box">
+                <label>Seu código de indicação é:</label>
+                <div class="codigo-display">
+                    <input type="text" id="codigoGerado" readonly>
+                    <button class="btn-copy-codigo" onclick="copiarCodigo()">📋 Copiar</button>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <p><strong>📌 Próximos passos:</strong></p>
+                <p>1. Compartilhe seu código com os membros da igreja</p>
+                <p>2. Acesse o painel para ver vendas e comissões</p>
+                <p>3. Baixe materiais de divulgação</p>
+            </div>
+
+            <a href="/painel-acesso/" class="btn-dashboard">
+                🚀 Acessar Meu Painel
+            </a>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Página de Cadastro de Igreja - Iniciada');
+
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Formulário de cadastro
+        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btnCadastrar = document.getElementById('btnCadastrar');
+            btnCadastrar.disabled = true;
+            btnCadastrar.textContent = '⏳ Cadastrando...';
+            
+            try {
+                // Validar dados
+                const nomeIgreja = document.getElementById('nomeIgreja').value.trim();
+                const email = document.getElementById('email').value.trim().toLowerCase();
+                const telefone = document.getElementById('telefone').value.trim();
+                const responsavel = document.getElementById('responsavel').value.trim();
+                const senha = document.getElementById('senha').value;
+                const senhaConfirm = document.getElementById('senhaConfirm').value;
+                const endereco = document.getElementById('endereco').value.trim();
+                const cidade = document.getElementById('cidade').value.trim();
+                const estado = document.getElementById('estado').value;
+                const cnpj = document.getElementById('cnpj').value.trim();
+                
+                // Validações
+                if (!nomeIgreja || !email || !telefone || !responsavel || !senha) {
+                    throw new Error('Por favor, preencha todos os campos obrigatórios');
+                }
+                
+                if (senha !== senhaConfirm) {
+                    throw new Error('As senhas não coincidem');
+                }
+                
+                if (senha.length < 6) {
+                    throw new Error('A senha deve ter no mínimo 6 caracteres');
+                }
+                
+                console.log('📝 Criando usuário na autenticação...');
+                
+                // 1. Criar usuário no Supabase Auth
+                const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: senha,
+                    options: {
+                        data: {
+                            nome: nomeIgreja,
+                            telefone: telefone,
+                            tipo: 'igreja'
+                        }
+                    }
+                });
+                
+                if (authError) {
+                    console.error('❌ Erro na autenticação:', authError);
+                    throw authError;
+                }
+                
+                console.log('✅ Usuário criado na autenticação:', authData);
+                
+                // 2. Gerar código único para a igreja
+                const codigo = gerarCodigoIgreja(nomeIgreja);
+                
+                console.log('📝 Criando registro na tabela igrejas...');
+                
+                // 3. Criar registro na tabela 'igrejas'
+                const { data: igrejaData, error: igrejaError } = await supabaseClient
+                    .from('igrejas')
+                    .insert([{
+                        nome: nomeIgreja,
+                        email: email,
+                        telefone: telefone,
+                        responsavel: responsavel,
+                        endereco: endereco || null,
+                        cidade: cidade || null,
+                        estado: estado || null,
+                        cnpj: cnpj || null,
+                        codigo: codigo,
+                        comissao: 10, // Comissão padrão de 10%
+                        created_at: new Date().toISOString()
+                    }])
+                    .select();
+                
+                if (igrejaError) {
+                    console.error('❌ Erro ao criar igreja:', igrejaError);
+                    throw igrejaError;
+                }
+                
+                console.log('✅ Igreja criada:', igrejaData);
+                
+                // Sucesso! Mostrar tela de sucesso
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('successContainer').classList.add('show');
+                document.getElementById('codigoGerado').value = codigo;
+                
+                console.log('✅ Cadastro concluído com sucesso!');
+                
+            } catch (error) {
+                console.error('❌ Erro no cadastro:', error);
+                
+                let mensagemErro = 'Erro ao cadastrar igreja: ' + error.message;
+                
+                // Mensagens de erro personalizadas
+                if (error.message.includes('already registered')) {
+                    mensagemErro = '❌ Este e-mail já está cadastrado. Tente fazer login.';
+                } else if (error.message.includes('Invalid email')) {
+                    mensagemErro = '❌ E-mail inválido. Verifique e tente novamente.';
+                } else if (error.message.includes('Password')) {
+                    mensagemErro = '❌ Senha muito fraca. Use no mínimo 6 caracteres.';
+                }
+                
+                mostrarAlerta(mensagemErro, 'error');
+                
+                btnCadastrar.disabled = false;
+                btnCadastrar.textContent = '⛪ Cadastrar Igreja';
+            }
+        });
+
+        // Função para gerar código único da igreja
+        function gerarCodigoIgreja(nome) {
+            // Remove acentos e caracteres especiais
+            const nomeLimpo = nome
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .replace(/[^a-z0-9\s]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/^igreja-/i, ''); // Remove "igreja" do início se existir
+            
+            // Adiciona timestamp para garantir unicidade
+            const timestamp = Date.now().toString().slice(-4);
+            
+            return `igreja-${nomeLimpo}-${timestamp}`;
+        }
+
+        // Função para copiar código
+        function copiarCodigo() {
+            const input = document.getElementById('codigoGerado');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                alert('✅ Código copiado para a área de transferência!');
+            } catch (err) {
+                console.error('❌ Erro ao copiar:', err);
+                alert('❌ Erro ao copiar código. Tente selecionar e copiar manualmente.');
+            }
+        }
+
+        // Função para mostrar alertas
+        function mostrarAlerta(mensagem, tipo) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert ${tipo} show">${mensagem}</div>`;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Máscara para telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            } else {
+                value = value.replace(/^(\d*)/, '($1');
+            }
+            
+            e.target.value = value;
+        });
+
+        // Máscara para CNPJ
+        document.getElementById('cnpj').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.slice(0, 14);
+            
+            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            
+            e.target.value = value;
+        });
+
+        console.log('✅ Sistema de cadastro de igrejas pronto');
+    </script>
+</body>
+</html>
