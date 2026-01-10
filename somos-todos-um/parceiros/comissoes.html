@@ -3,23 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comissões - Área do Parceiro - Biz Mix</title>
+    <title>Minhas Comissões - Área do Parceiro</title>
+    <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #111827;
             min-height: 100vh;
             padding: 0;
             margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         .loading {
@@ -45,29 +38,21 @@
             padding: 24px 32px;
             margin-bottom: 24px;
             border: 1px solid #374151;
-        }
-
-        .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 16px;
         }
 
-        .header-left img {
-            max-width: 120px;
-            height: auto;
-            margin-bottom: 8px;
-        }
-
-        .header-left p {
-            color: #d1d5db;
-            font-size: 14px;
+        .header h1 {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
             margin: 0;
         }
 
-        .btn-logout {
+        .btn-back {
             padding: 10px 20px;
             background: #374151;
             color: white;
@@ -75,90 +60,86 @@
             border-radius: 12px;
             font-size: 14px;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
             text-decoration: none;
+            transition: all 0.3s;
             display: inline-block;
         }
 
-        .btn-logout:hover {
+        .btn-back:hover {
             background: #4b5563;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin: 0 0 8px 0;
+        }
+
+        .stat-card .value {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stat-card.highlight {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: #10b981;
+        }
+
+        .stat-card.highlight h3 {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .stat-card.highlight .value {
+            color: white;
         }
 
         .card {
             background: #1f2937;
             border-radius: 16px;
             padding: 32px;
-            margin-bottom: 24px;
             border: 1px solid #374151;
+            margin-bottom: 24px;
         }
 
         .card h2 {
             color: white;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            margin: 0 0 20px 0;
+            margin: 0 0 8px 0;
         }
 
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .stat-box {
-            background: #374151;
-            padding: 24px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #4b5563;
-            transition: all 0.3s;
-        }
-
-        .stat-box:hover {
-            transform: translateY(-2px);
-            border-color: white;
-        }
-
-        .stat-box.primary {
-            background: white;
-            border-color: white;
-        }
-
-        .stat-box.primary .label,
-        .stat-box.primary .value {
-            color: #111827;
-        }
-
-        .stat-box .label {
+        .card .subtitle {
             color: #9ca3af;
-            font-size: 12px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .stat-box .value {
-            color: white;
-            font-size: 28px;
-            font-weight: 700;
+            font-size: 14px;
+            margin: 0 0 24px 0;
         }
 
         .info-box {
             background: #374151;
             border: 1px solid #4b5563;
-            border-left: 4px solid white;
+            border-left: 4px solid #10b981;
             padding: 20px;
             border-radius: 12px;
-            margin-bottom: 32px;
-        }
-
-        .info-box h3 {
-            color: white;
-            font-size: 16px;
-            margin: 0 0 12px 0;
-            font-weight: 600;
+            margin-bottom: 24px;
         }
 
         .info-box p {
@@ -168,101 +149,82 @@
             margin: 0 0 12px 0;
         }
 
-        .info-box ul {
-            margin: 12px 0 0 20px;
-            padding: 0;
-            color: #d1d5db;
-            font-size: 14px;
-        }
-
-        .info-box li {
-            margin-bottom: 8px;
-            line-height: 1.5;
+        .info-box p:last-child {
+            margin-bottom: 0;
         }
 
         .info-box strong {
             color: white;
         }
 
-        .comissao-item {
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
+        }
+
+        thead {
             background: #374151;
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            border: 1px solid #4b5563;
-            transition: all 0.3s;
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
 
-        .comissao-item:hover {
-            border-color: white;
-            transform: translateY(-2px);
+        tbody {
+            display: block;
+            max-height: 500px;
+            overflow-y: auto;
         }
 
-        .comissao-info {
-            flex: 1;
-            min-width: 200px;
+        tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
 
-        .comissao-info h3 {
-            color: white;
-            font-size: 16px;
-            margin: 0 0 8px 0;
+        th {
+            padding: 16px;
+            text-align: left;
             font-weight: 600;
+            color: white;
+            font-size: 13px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #4b5563;
         }
 
-        .comissao-info p {
+        td {
+            padding: 16px;
             color: #d1d5db;
             font-size: 14px;
-            margin: 0 0 8px 0;
+            border-bottom: 1px solid #374151;
         }
 
-        .comissao-valor {
-            text-align: right;
-        }
-
-        .comissao-valor .valor {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 0 0 4px 0;
-        }
-
-        .comissao-valor .data {
-            color: #9ca3af;
-            font-size: 12px;
-            margin: 0;
+        tbody tr:hover {
+            background: #374151;
         }
 
         .badge {
             display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 12px;
             font-weight: 600;
-            white-space: nowrap;
         }
 
-        .badge-success {
-            background: rgba(16, 185, 129, 0.2);
-            color: #6ee7b7;
-            border: 1px solid rgba(16, 185, 129, 0.3);
+        .badge.success {
+            background: #10b981;
+            color: white;
         }
 
-        .badge-warning {
-            background: rgba(245, 158, 11, 0.2);
-            color: #fbbf24;
-            border: 1px solid rgba(245, 158, 11, 0.3);
+        .badge.warning {
+            background: #f59e0b;
+            color: white;
         }
 
-        .badge-info {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93c5fd;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+        .badge.info {
+            background: #3b82f6;
+            color: white;
         }
 
         .empty-state {
@@ -271,22 +233,82 @@
             color: #9ca3af;
         }
 
-        .empty-state .icon {
+        .empty-state-icon {
             font-size: 64px;
-            margin-bottom: 20px;
-            opacity: 0.5;
+            margin-bottom: 16px;
         }
 
         .empty-state h3 {
-            color: #d1d5db;
+            color: white;
             font-size: 20px;
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
         }
 
         .empty-state p {
-            color: #9ca3af;
             font-size: 14px;
-            margin: 0 0 20px 0;
+            margin: 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 8px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #10b981;
+            border: 3px solid #1f2937;
+        }
+
+        .timeline-item:after {
+            content: '';
+            position: absolute;
+            left: -18px;
+            top: 20px;
+            width: 2px;
+            height: calc(100% - 12px);
+            background: #374151;
+        }
+
+        .timeline-item:last-child:after {
+            display: none;
+        }
+
+        .timeline-content {
+            background: #374151;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid #4b5563;
+        }
+
+        .timeline-date {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .timeline-desc {
+            color: #d1d5db;
+            font-size: 14px;
+            margin: 0;
         }
 
         @media (max-width: 768px) {
@@ -296,32 +318,21 @@
 
             .header {
                 padding: 20px;
-            }
-
-            .header-content {
                 flex-direction: column;
                 align-items: flex-start;
             }
 
-            .btn-logout {
+            .btn-back {
                 width: 100%;
+                text-align: center;
             }
 
             .card {
                 padding: 20px;
             }
 
-            .stats-row {
-                grid-template-columns: 1fr;
-            }
-
-            .comissao-item {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .comissao-valor {
-                text-align: center;
+            .stat-card .value {
+                font-size: 24px;
             }
         }
     </style>
@@ -333,180 +344,304 @@
 
     <div class="container" id="conteudo" style="display: none;">
         <div class="header">
-            <div class="header-content">
-                <div class="header-left">
-                    <img src="images/logo_par.png" alt="Biz Mix">
-                    <p>Acompanhe suas comissões e pagamentos</p>
-                </div>
-                <div class="header-right">
-                    <a href="dashboard.html" class="btn-logout">← Voltar ao Dashboard</a>
-                </div>
+            <h1>💰 Minhas Comissões</h1>
+            <a href="dashboard.html" class="btn-back">← Voltar ao Dashboard</a>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card highlight">
+                <h3>💸 Total Acumulado</h3>
+                <p class="value" id="totalAcumulado">R$ 0,00</p>
+            </div>
+            <div class="stat-card">
+                <h3>✅ Comissões Pagas</h3>
+                <p class="value" id="comissoesPagas">R$ 0,00</p>
+            </div>
+            <div class="stat-card">
+                <h3>⏳ A Receber</h3>
+                <p class="value" id="aReceber">R$ 0,00</p>
+            </div>
+            <div class="stat-card">
+                <h3>📊 Taxa Atual</h3>
+                <p class="value" id="taxaAtual">0%</p>
             </div>
         </div>
 
         <div class="card">
-            <div class="stats-row">
-                <div class="stat-box primary">
-                    <div class="label">Total a Receber</div>
-                    <div class="value" id="totalReceber">R$ 0,00</div>
-                </div>
-                <div class="stat-box">
-                    <div class="label">Total Recebido</div>
-                    <div class="value" id="totalRecebido">R$ 0,00</div>
-                </div>
-                <div class="stat-box">
-                    <div class="label">Total Geral</div>
-                    <div class="value" id="totalGeral">R$ 0,00</div>
-                </div>
-                <div class="stat-box">
-                    <div class="label">Taxa de Comissão</div>
-                    <div class="value" id="taxaComissao">0%</div>
-                </div>
-            </div>
-
-            <div class="info-box">
-                <h3>ℹ️ Como funciona o pagamento de comissões?</h3>
-                <p>Suas comissões são calculadas automaticamente sobre cada venda realizada através do seu link de indicação.</p>
-                <ul>
-                    <li><strong>Vendas Pagas:</strong> Comissão disponível para saque</li>
-                    <li><strong>Vendas Pendentes:</strong> Aguardando confirmação de pagamento</li>
-                    <li><strong>Pagamento:</strong> Realizado mensalmente via PIX ou transferência bancária</li>
-                </ul>
-            </div>
-
-            <h2>📊 Detalhamento por Venda</h2>
+            <h2>ℹ️ Como Funciona</h2>
+            <p class="subtitle">Entenda o sistema de comissões</p>
             
-            <div id="listaComissoes">
-                <!-- Comissões serão inseridas aqui -->
+            <div class="info-box">
+                <p><strong>💡 Sistema de Comissões:</strong></p>
+                <p>Você recebe comissão sobre cada venda realizada através do seu link de indicação.</p>
+                <p><strong>Quando recebo?</strong> As comissões são pagas mensalmente, até o dia 10 do mês seguinte.</p>
+                <p><strong>Como recebo?</strong> Via PIX ou transferência bancária, conforme cadastrado em seus dados.</p>
             </div>
+        </div>
 
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <div class="icon">💸</div>
-                <h3>Nenhuma comissão registrada</h3>
-                <p>Você ainda não possui comissões. Comece a divulgar seu link de indicação para gerar vendas e receber comissões!</p>
-                <a href="dashboard.html" class="btn-logout" style="margin-top: 20px;">Ver Meu Link de Indicação</a>
-            </div>
+        <div class="card">
+            <h2>📋 Histórico de Comissões</h2>
+            <p class="subtitle">Todas as suas comissões detalhadas</p>
+            <div id="tabelaContainer"></div>
+        </div>
+
+        <div class="card">
+            <h2>📅 Linha do Tempo</h2>
+            <p class="subtitle">Acompanhe seus pagamentos</p>
+            <div id="timelineContainer"></div>
         </div>
     </div>
 
     <script>
-        (function() {
-            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+        console.log('🚀 Página de Comissões - Iniciada');
+
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let usuarioAtual = null;
+        let parceiroAtual = null;
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarAutenticacao();
+        });
+
+        async function verificarAutenticacao() {
+            console.log('🔍 Verificando autenticação...');
             
-            const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-            let parceiroAtual = null
-
-            window.addEventListener('DOMContentLoaded', async () => {
-                const parceiroLogado = localStorage.getItem('parceiro_logado')
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
                 
-                if (!parceiroLogado) {
-                    window.location.href = 'login.html'
-                    return
+                if (error || !session) {
+                    console.log('❌ Sessão inválida - redirecionando');
+                    window.location.href = '/painel-acesso/';
+                    return;
                 }
+                
+                console.log('✅ Sessão válida:', session.user.email);
+                usuarioAtual = session.user;
+                
+                await buscarDadosParceiro();
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                window.location.href = '/painel-acesso/';
+            }
+        }
 
-                parceiroAtual = JSON.parse(parceiroLogado)
-
-                await carregarComissoes()
-            })
-
-            async function carregarComissoes() {
-                try {
-                    const { data: vendas, error } = await clienteSupabase
-                        .from('vendas')
-                        .select('*')
-                        .eq('parceiro_id', parceiroAtual.id)
-                        .order('created_at', { ascending: false })
-
-                    if (error) throw error
-
-                    if (!vendas || vendas.length === 0) {
-                        document.getElementById('listaComissoes').style.display = 'none'
-                        document.getElementById('emptyState').style.display = 'block'
-                        document.getElementById('loading').style.display = 'none'
-                        document.getElementById('conteudo').style.display = 'block'
-                        return
-                    }
-
-                    calcularEstatisticas(vendas)
-                    renderizarComissoes(vendas)
-
-                    document.getElementById('loading').style.display = 'none'
-                    document.getElementById('conteudo').style.display = 'block'
-
-                } catch (error) {
-                    console.error('❌ Erro ao carregar comissões:', error)
-                    alert('Erro ao carregar comissões: ' + error.message)
+        async function buscarDadosParceiro() {
+            console.log('📥 Buscando dados do parceiro...');
+            
+            try {
+                // Buscar em igrejas
+                let { data: igreja, error: erroIgreja } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (igreja) {
+                    parceiroAtual = {
+                        id: igreja.id,
+                        nome: igreja.nome,
+                        email: igreja.email,
+                        comissao: igreja.comissao || 10,
+                        tipo: 'igreja'
+                    };
+                    await carregarComissoes();
+                    return;
                 }
+                
+                // Buscar em parceiros
+                let { data: parceiro, error: erroParceiro } = await supabaseClient
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (parceiro) {
+                    parceiroAtual = {
+                        id: parceiro.id,
+                        nome: parceiro.nome,
+                        email: parceiro.email,
+                        comissao: parceiro.comissao || 10,
+                        tipo: 'parceiro'
+                    };
+                    await carregarComissoes();
+                    return;
+                }
+                
+                console.warn('⚠️ Parceiro não encontrado');
+                alert('Cadastro não encontrado.');
+                window.location.href = '/painel-acesso/';
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar dados: ' + error.message);
+                window.location.href = '/painel-acesso/';
             }
+        }
 
-            function calcularEstatisticas(vendas) {
-                const taxaComissao = parceiroAtual.comissao / 100
-
-                let totalReceber = 0
-                let totalRecebido = 0
-
-                vendas.forEach(venda => {
-                    const valor = parseFloat(venda.valor_total || 0)
-                    const comissao = valor * taxaComissao
-
-                    if (venda.status_pagamento === 'pago') {
-                        totalReceber += comissao
-                    }
-                })
-
-                const totalGeral = totalReceber + totalRecebido
-
-                document.getElementById('totalReceber').textContent = `R$ ${totalReceber.toFixed(2).replace('.', ',')}`
-                document.getElementById('totalRecebido').textContent = `R$ ${totalRecebido.toFixed(2).replace('.', ',')}`
-                document.getElementById('totalGeral').textContent = `R$ ${totalGeral.toFixed(2).replace('.', ',')}`
-                document.getElementById('taxaComissao').textContent = `${parceiroAtual.comissao}%`
+        async function carregarComissoes() {
+            console.log('📊 Carregando comissões...');
+            
+            try {
+                const { data: vendas, error } = await supabaseClient
+                    .from('vendas')
+                    .select('*')
+                    .or(`parceiro_id.eq.${parceiroAtual.id},igreja_id.eq.${parceiroAtual.id}`)
+                    .order('created_at', { ascending: false });
+                
+                if (error) {
+                    console.error('❌ Erro ao buscar vendas:', error);
+                    throw error;
+                }
+                
+                console.log('📊 Vendas encontradas:', vendas);
+                
+                // Calcular estatísticas
+                const totalAcumulado = vendas ? vendas.reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0) : 0;
+                const comissoesPagas = vendas ? vendas.filter(v => v.status_pagamento === 'aprovado').reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0) : 0;
+                const aReceber = vendas ? vendas.filter(v => v.status_pagamento === 'pendente').reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0) : 0;
+                
+                // Atualizar estatísticas
+                document.getElementById('totalAcumulado').textContent = `R$ ${totalAcumulado.toFixed(2).replace('.', ',')}`;
+                document.getElementById('comissoesPagas').textContent = `R$ ${comissoesPagas.toFixed(2).replace('.', ',')}`;
+                document.getElementById('aReceber').textContent = `R$ ${aReceber.toFixed(2).replace('.', ',')}`;
+                document.getElementById('taxaAtual').textContent = `${parceiroAtual.comissao}%`;
+                
+                // Renderizar tabela
+                renderizarTabela(vendas);
+                
+                // Renderizar timeline
+                renderizarTimeline(vendas);
+                
+                // Mostrar conteúdo
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('conteudo').style.display = 'block';
+                
+                console.log('✅ Comissões carregadas');
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar comissões: ' + error.message);
             }
+        }
 
-            function renderizarComissoes(vendas) {
-                const lista = document.getElementById('listaComissoes')
-                const taxaComissao = parceiroAtual.comissao / 100
+        function renderizarTabela(vendas) {
+            const container = document.getElementById('tabelaContainer');
+            
+            if (!vendas || vendas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💸</div>
+                        <h3>Nenhuma comissão ainda</h3>
+                        <p>Suas comissões aparecerão aqui quando as vendas forem realizadas</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Cliente</th>
+                            <th>Valor Venda</th>
+                            <th>Comissão</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            vendas.forEach(venda => {
+                const data = new Date(venda.created_at);
+                const dataFormatada = data.toLocaleDateString('pt-BR');
+                
+                let statusBadge = '';
+                if (venda.status_pagamento === 'aprovado') {
+                    statusBadge = '<span class="badge success">✓ Pago</span>';
+                } else if (venda.status_pagamento === 'pendente') {
+                    statusBadge = '<span class="badge warning">⏳ A Receber</span>';
+                } else {
+                    statusBadge = '<span class="badge info">📋 Processando</span>';
+                }
+                
+                html += `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td><strong>${venda.nome_comprador || 'N/A'}</strong></td>
+                        <td>R$ ${parseFloat(venda.valor_total || 0).toFixed(2).replace('.', ',')}</td>
+                        <td><strong style="color: #10b981;">R$ ${parseFloat(venda.valor_comissao || 0).toFixed(2).replace('.', ',')}</strong></td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = html;
+        }
 
-                lista.innerHTML = vendas.map(venda => {
-                    const data = new Date(venda.created_at).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric'
-                    })
-                    const valor = parseFloat(venda.valor_total || 0)
-                    const comissao = valor * taxaComissao
-
-                    let badgeClass = 'badge-warning'
-                    let statusTexto = 'Pendente'
-                    let statusDescricao = 'Aguardando confirmação de pagamento'
-
-                    if (venda.status_pagamento === 'pago') {
-                        badgeClass = 'badge-success'
-                        statusTexto = 'Disponível'
-                        statusDescricao = 'Comissão disponível para saque'
-                    } else if (venda.status_pagamento === 'cancelado') {
-                        badgeClass = 'badge-info'
-                        statusTexto = 'Cancelado'
-                        statusDescricao = 'Venda cancelada - sem comissão'
-                    }
-
-                    return `
-                        <div class="comissao-item">
-                            <div class="comissao-info">
-                                <h3>${venda.nome_comprador}</h3>
-                                <p>Venda: R$ ${valor.toFixed(2).replace('.', ',')} | ${statusDescricao}</p>
-                                <span class="badge ${badgeClass}">${statusTexto}</span>
-                            </div>
-                            <div class="comissao-valor">
-                                <div class="valor">R$ ${comissao.toFixed(2).replace('.', ',')}</div>
-                                <div class="data">${data}</div>
-                            </div>
+        function renderizarTimeline(vendas) {
+            const container = document.getElementById('timelineContainer');
+            
+            if (!vendas || vendas.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <h3>Nenhum histórico ainda</h3>
+                        <p>Suas transações aparecerão aqui</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Agrupar por mês
+            const porMes = {};
+            vendas.forEach(venda => {
+                const data = new Date(venda.created_at);
+                const mesAno = `${data.getMonth() + 1}/${data.getFullYear()}`;
+                
+                if (!porMes[mesAno]) {
+                    porMes[mesAno] = {
+                        total: 0,
+                        quantidade: 0,
+                        mes: data.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+                    };
+                }
+                
+                porMes[mesAno].total += parseFloat(venda.valor_comissao || 0);
+                porMes[mesAno].quantidade += 1;
+            });
+            
+            let html = '<div class="timeline">';
+            
+            Object.keys(porMes).reverse().forEach(key => {
+                const item = porMes[key];
+                html += `
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">${item.mes}</div>
+                            <h3 class="timeline-title">R$ ${item.total.toFixed(2).replace('.', ',')}</h3>
+                            <p class="timeline-desc">${item.quantidade} venda(s) realizada(s)</p>
                         </div>
-                    `
-                }).join('')
-            }
-        })()
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            container.innerHTML = html;
+        }
     </script>
 </body>
 </html>
