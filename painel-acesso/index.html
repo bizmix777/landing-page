@@ -1,337 +1,375 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Acesso - BizMix</title>
-    <meta name="robots" content="noindex, nofollow">
-    
+    <title>Login - Área do Parceiro | Biz Mix</title>
+    <meta name="description" content="Acesse sua área de parceiro e acompanhe suas comissões">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
         }
-        
-        .login-container {
+
+        .container {
             background: white;
-            border-radius: 16px;
+            border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
+            max-width: 450px;
             width: 100%;
-            max-width: 400px;
+            padding: 40px;
         }
-        
+
         .logo {
             text-align: center;
             margin-bottom: 30px;
         }
-        
-        .logo h1 {
-            color: #2563eb;
-            font-size: 32px;
+
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
             font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
         }
-        
-        .logo p {
-            color: #64748b;
+
+        .subtitle {
+            color: #6b7280;
             font-size: 14px;
-            margin-top: 5px;
+            text-align: center;
+            margin-bottom: 30px;
         }
-        
+
+        .alert {
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #3b82f6;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-group label {
             display: block;
-            color: #1e293b;
+            color: #374151;
+            font-size: 14px;
             font-weight: 600;
             margin-bottom: 8px;
-            font-size: 14px;
         }
-        
+
         .form-group input {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
             transition: all 0.3s;
-            color: #1e293b;
         }
-        
+
         .form-group input:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #667eea;
         }
-        
-        .btn-login {
+
+        .btn-submit {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s;
             margin-top: 10px;
         }
-        
-        .btn-login:hover:not(:disabled) {
+
+        .btn-submit:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
-        
-        .btn-login:disabled {
+
+        .btn-submit:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
-        .error-message {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: none;
-            border-left: 4px solid #dc2626;
-        }
-        
-        .error-message.show {
-            display: block;
-        }
-        
-        .success-message {
-            background: #d1fae5;
-            color: #059669;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: none;
-            border-left: 4px solid #059669;
-        }
-        
-        .success-message.show {
-            display: block;
-        }
-        
-        .loading {
+
+        .divider {
             text-align: center;
-            color: #2563eb;
-            font-size: 14px;
-            margin-top: 10px;
+            margin: 30px 0;
+            position: relative;
         }
-        
-        .back-link {
+
+        .divider:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #6b7280;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .register-link {
             text-align: center;
             margin-top: 20px;
         }
-        
-        .back-link a {
-            color: #2563eb;
+
+        .register-link a {
+            color: #667eea;
             text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s;
+            font-weight: 600;
         }
-        
-        .back-link a:hover {
-            color: #1e40af;
+
+        .register-link a:hover {
             text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="container">
         <div class="logo">
-            <h1>BizMix</h1>
-            <p>Painel Administrativo</p>
+            <img src="/somos-todos-um/images/logo_par.png" alt="Biz Mix" onerror="this.style.display='none'">
         </div>
-        
-        <div id="errorMessage" class="error-message"></div>
-        <div id="successMessage" class="success-message"></div>
-        
-        <form id="loginForm">
+
+        <h1>🔐 Área do Parceiro</h1>
+        <p class="subtitle">Faça login para acessar seu painel</p>
+
+        <div id="alertContainer"></div>
+
+        <form id="formLogin">
             <div class="form-group">
                 <label for="email">E-mail</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    required 
-                    autocomplete="email"
-                    placeholder="seu@email.com"
-                >
+                <input type="email" id="email" required placeholder="seu@email.com" autocomplete="email">
             </div>
-            
+
             <div class="form-group">
-                <label for="password">Senha</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    required 
-                    autocomplete="current-password"
-                    placeholder="Digite sua senha"
-                >
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" required placeholder="Digite sua senha" autocomplete="current-password">
             </div>
-            
-            <button type="submit" class="btn-login" id="loginBtn">
-                Entrar
+
+            <div class="forgot-password">
+                <a href="#" onclick="alert('Entre em contato com o suporte para recuperar sua senha'); return false;">Esqueci minha senha</a>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnEntrar">
+                🚀 Entrar
             </button>
         </form>
-        
-        <div id="loadingMessage" class="loading" style="display: none;">
-            Autenticando...
+
+        <div class="divider">
+            <span>ou</span>
         </div>
-        
-        <div class="back-link">
-            <a href="/">← Voltar para o site</a>
+
+        <div class="register-link">
+            <p>Ainda não tem uma conta? <a href="/somos-todos-um/parceiros/registro.html">Cadastre-se gratuitamente</a></p>
         </div>
     </div>
 
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script>
-        // ========================================
-        // CONFIGURAÇÃO DO SUPABASE
-        // ========================================
-        // MANTENHA AS CREDENCIAIS QUE VOCÊ JÁ CONFIGUROU!
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'; // Cole a URL que você já tem
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'; // Cole a key que você já tem
+        console.log('🚀 Página de Login - Iniciada');
+
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
-        // Inicializar Supabase
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // ========================================
-        // ELEMENTOS DO DOM
-        // ========================================
-        const loginForm = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const loginBtn = document.getElementById('loginBtn');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const loadingMessage = document.getElementById('loadingMessage');
-        
-        // ========================================
-        // FUNÇÕES AUXILIARES
-        // ========================================
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
-            successMessage.classList.remove('show');
-            setTimeout(() => {
-                errorMessage.classList.remove('show');
-            }, 5000);
-        }
-        
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.classList.add('show');
-            errorMessage.classList.remove('show');
-        }
-        
-        function setLoading(isLoading) {
-            loginBtn.disabled = isLoading;
-            loginBtn.textContent = isLoading ? 'Entrando...' : 'Entrar';
-            loadingMessage.style.display = isLoading ? 'block' : 'none';
-        }
-        
-        // ========================================
-        // VERIFICAR SE JÁ ESTÁ LOGADO
-        // ========================================
-        async function checkAuth() {
+
+        // Verificar se já está logado ao carregar a página
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🔍 Verificando sessão existente...');
+            
             const { data: { session } } = await supabaseClient.auth.getSession();
+            
             if (session) {
-                // Usuário já está logado, redirecionar
-                window.location.href = '/painel/';
+                console.log('✅ Sessão ativa encontrada, redirecionando...');
+                window.location.href = '/somos-todos-um/parceiros/dashboard.html';
+            } else {
+                console.log('ℹ️ Nenhuma sessão ativa, aguardando login');
             }
-        }
-        
-        // ========================================
-        // FUNÇÃO DE LOGIN
-        // ========================================
-        async function handleLogin(e) {
+        });
+
+        // Formulário de login
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            
-            // Validação básica
-            if (!email || !password) {
-                showError('Por favor, preencha todos os campos.');
-                return;
-            }
-            
-            setLoading(true);
+            const btnEntrar = document.getElementById('btnEntrar');
+            btnEntrar.disabled = true;
+            btnEntrar.textContent = '⏳ Entrando...';
             
             try {
-                // Tentar fazer login
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                const email = document.getElementById('email').value.trim().toLowerCase();
+                const senha = document.getElementById('senha').value;
+                
+                console.log('📝 Tentando fazer login com:', email);
+                
+                // 1. Fazer login no Supabase Auth
+                const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
                     email: email,
-                    password: password,
+                    password: senha
                 });
                 
-                if (error) {
-                    throw error;
+                if (authError) {
+                    console.error('❌ Erro na autenticação:', authError);
+                    throw authError;
                 }
                 
-                if (data.session) {
-                    showSuccess('✓ Login realizado com sucesso! Redirecionando...');
+                console.log('✅ Login bem-sucedido:', authData);
+                
+                // 2. Verificar se o parceiro existe na tabela
+                console.log('🔍 Buscando dados do parceiro...');
+                
+                const { data: parceiroData, error: parceiroError } = await supabaseClient
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', email)
+                    .single();
+                
+                if (parceiroError || !parceiroData) {
+                    console.error('❌ Parceiro não encontrado na tabela:', parceiroError);
                     
-                    // Redirecionar após 1 segundo
-                    setTimeout(() => {
-                        window.location.href = '/painel/';
-                    }, 1000);
+                    // Fazer logout se não encontrar o parceiro
+                    await supabaseClient.auth.signOut();
+                    
+                    throw new Error('Cadastro não encontrado. Entre em contato com o suporte.');
                 }
+                
+                console.log('✅ Dados do parceiro encontrados:', parceiroData);
+                
+                // 3. Verificar se o parceiro está ativo
+                if (parceiroData.status !== 'ativo') {
+                    await supabaseClient.auth.signOut();
+                    throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
+                }
+                
+                // 4. Atualizar último acesso
+                await supabaseClient
+                    .from('parceiros')
+                    .update({ ultimo_acesso: new Date().toISOString() })
+                    .eq('id', parceiroData.id);
+                
+                // Sucesso!
+                mostrarAlerta('✅ Login realizado com sucesso! Redirecionando...', 'success');
+                
+                // Redirecionar para o dashboard após 1 segundo
+                setTimeout(() => {
+                    window.location.href = '/somos-todos-um/parceiros/dashboard.html';
+                }, 1000);
                 
             } catch (error) {
-                console.error('Erro no login:', error);
+                console.error('❌ Erro no login:', error);
                 
-                // Mensagens de erro amigáveis
-                let errorMsg = 'Erro ao fazer login. Tente novamente.';
+                let mensagemErro = 'Erro ao fazer login: ' + error.message;
                 
+                // Mensagens de erro personalizadas
                 if (error.message.includes('Invalid login credentials')) {
-                    errorMsg = '✗ E-mail ou senha incorretos.';
+                    mensagemErro = '❌ Email ou senha incorretos. Verifique e tente novamente.';
                 } else if (error.message.includes('Email not confirmed')) {
-                    errorMsg = '✗ E-mail não confirmado. Verifique sua caixa de entrada.';
-                } else if (error.message.includes('Network')) {
-                    errorMsg = '✗ Erro de conexão. Verifique sua internet.';
+                    mensagemErro = '❌ Email não confirmado. Verifique sua caixa de entrada.';
+                } else if (error.message.includes('Cadastro não encontrado')) {
+                    mensagemErro = '❌ ' + error.message;
+                } else if (error.message.includes('conta está inativa')) {
+                    mensagemErro = '❌ ' + error.message;
                 }
                 
-                showError(errorMsg);
-                setLoading(false);
+                mostrarAlerta(mensagemErro, 'error');
+                
+                btnEntrar.disabled = false;
+                btnEntrar.textContent = '🚀 Entrar';
+            }
+        });
+
+        // Função para mostrar alertas
+        function mostrarAlerta(mensagem, tipo) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert ${tipo} show">${mensagem}</div>`;
+            
+            // Auto-remover após 5 segundos (exceto para sucesso)
+            if (tipo !== 'success') {
+                setTimeout(() => {
+                    container.innerHTML = '';
+                }, 5000);
             }
         }
-        
-        // ========================================
-        // EVENT LISTENERS
-        // ========================================
-        loginForm.addEventListener('submit', handleLogin);
-        
-        // Verificar autenticação ao carregar a página
-        checkAuth();
-        
-        // Log para debug
-        console.log('✓ Supabase inicializado');
+
+        console.log('✅ Sistema de login pronto');
     </script>
 </body>
 </html>
