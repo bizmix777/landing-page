@@ -4,22 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Dados - Área do Parceiro</title>
+    <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #111827;
             min-height: 100vh;
-            padding: 20px;
-            color: white;
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         .loading {
@@ -27,11 +20,16 @@
             padding: 40px;
             color: white;
             font-size: 18px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         .header {
@@ -44,105 +42,167 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 16px;
         }
 
-        .header-info h1 {
+        .header h1 {
             color: white;
             font-size: 24px;
             font-weight: 700;
-            margin: 0 0 4px 0;
-        }
-
-        .header-info p {
-            color: #d1d5db;
-            font-size: 14px;
             margin: 0;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary {
+        .btn-back {
+            padding: 10px 20px;
             background: #374151;
             color: white;
             border: 1px solid #4b5563;
-        }
-
-        .btn-secondary:hover {
-            background: #4b5563;
-        }
-
-        .btn-primary {
-            background: white;
-            color: #111827;
-        }
-
-        .btn-primary:hover {
-            background: #e5e7eb;
-            transform: translateY(-2px);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .alert {
-            padding: 16px 20px;
             border-radius: 12px;
-            margin-bottom: 24px;
-            display: none;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
         }
 
-        .alert-success {
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: #6ee7b7;
-        }
-
-        .alert-error {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #fca5a5;
+        .btn-back:hover {
+            background: #4b5563;
         }
 
         .card {
             background: #1f2937;
             border-radius: 16px;
             padding: 32px;
-            margin-bottom: 24px;
             border: 1px solid #374151;
+            margin-bottom: 24px;
         }
 
         .card h2 {
             color: white;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            margin: 0 0 20px 0;
+            margin: 0 0 8px 0;
+        }
+
+        .card .subtitle {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0 0 24px 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            color: #d1d5db;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: white;
+            background: #4b5563;
+        }
+
+        .form-group input:disabled,
+        .form-group select:disabled,
+        .form-group textarea:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-group small {
+            display: block;
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 14px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .alert.error {
+            background: #ef4444;
+            color: white;
         }
 
         .info-box {
             background: #374151;
             border: 1px solid #4b5563;
-            border-left: 4px solid white;
-            padding: 16px 20px;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
             border-radius: 12px;
             margin-bottom: 24px;
         }
@@ -151,115 +211,73 @@
             color: #d1d5db;
             font-size: 14px;
             line-height: 1.6;
-            margin: 0;
+            margin: 0 0 12px 0;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
         }
 
         .info-box strong {
             color: white;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 14px 16px;
+        .info-item {
+            background: #374151;
             border: 1px solid #4b5563;
             border-radius: 12px;
-            font-size: 15px;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s;
-            background: #374151;
-            color: white;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: white;
-            background: #4b5563;
-        }
-
-        .form-group input:disabled {
-            background: #1f2937;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .form-group input::placeholder {
-            color: #9ca3af;
-        }
-
-        .form-group select {
-            cursor: pointer;
-        }
-
-        .form-group select option {
-            background: #1f2937;
-            color: white;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .readonly-field {
-            background: #1f2937;
-            padding: 14px 16px;
-            border-radius: 12px;
-            border: 1px solid #374151;
-            color: #d1d5db;
-            font-size: 15px;
-        }
-
-        .form-actions {
+            padding: 16px;
+            margin-bottom: 12px;
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item-label {
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-item-value {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
         }
 
         @media (max-width: 768px) {
-            body {
+            .container {
                 padding: 16px;
             }
 
             .header {
                 padding: 20px;
-                text-align: center;
+                flex-direction: column;
+                align-items: flex-start;
             }
 
-            .header-actions {
+            .btn-back {
                 width: 100%;
-                justify-content: center;
+                text-align: center;
             }
 
             .card {
                 padding: 20px;
             }
 
-            .form-row {
+            .form-grid {
                 grid-template-columns: 1fr;
             }
 
-            .form-actions {
+            .info-item {
                 flex-direction: column;
-            }
-
-            .form-actions .btn {
-                width: 100%;
+                align-items: flex-start;
+                gap: 8px;
             }
         }
     </style>
@@ -270,89 +288,73 @@
     </div>
 
     <div class="container" id="conteudo" style="display: none;">
-       <div class="header">
-    <div class="header-info">
-        <img src="images/logo_par.png" alt="Biz Mix" style="max-width: 120px; height: auto; margin-bottom: 8px;">
-        <p>Gerencie suas informações cadastrais</p>
-    </div>
-    <div class="header-actions">
-        <a href="dashboard.html" class="btn btn-secondary">← Voltar ao Dashboard</a>
-    </div>
-    </div>
-
-        <div class="alert alert-success" id="alertSuccess">
-            ✅ Dados atualizados com sucesso!
+        <div class="header">
+            <h1>👤 Meus Dados</h1>
+            <a href="dashboard.html" class="btn-back">← Voltar ao Dashboard</a>
         </div>
 
-        <div class="alert alert-error" id="alertError">
-            ❌ Erro ao atualizar dados. Tente novamente.
-        </div>
-
+        <!-- INFORMAÇÕES DA CONTA -->
         <div class="card">
-            <h2>📋 Informações Básicas</h2>
-            
-            <div class="info-box">
-                <p><strong>⚠️ Atenção:</strong> Alguns campos não podem ser alterados por segurança. Para alterações de e-mail ou código de parceiro, entre em contato com o suporte.</p>
+            <h2>🔐 Informações da Conta</h2>
+            <p class="subtitle">Dados de acesso e identificação</p>
+
+            <div class="info-item">
+                <span class="info-item-label">Email de Acesso</span>
+                <span class="info-item-value" id="emailConta">carregando...</span>
             </div>
 
-            <form id="formDados">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nome Completo *</label>
-                        <input type="text" id="nomeCompleto" required>
-                    </div>
+            <div class="info-item">
+                <span class="info-item-label">Código de Parceiro</span>
+                <span class="info-item-value" id="codigoParceiro">carregando...</span>
+            </div>
 
-                    <div class="form-group">
-                        <label>E-mail (não editável)</label>
-                        <input type="email" id="email" disabled>
-                    </div>
-                </div>
+            <div class="info-item">
+                <span class="info-item-label">Tipo de Conta</span>
+                <span class="info-item-value" id="tipoConta">carregando...</span>
+            </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Código de Parceiro (não editável)</label>
-                        <input type="text" id="codigoParceiro" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tipo de Parceiro</label>
-                        <div class="readonly-field" id="tipoParceiro"></div>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>CPF/CNPJ</label>
-                        <input type="text" id="cpfCnpj" placeholder="000.000.000-00">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Telefone/WhatsApp *</label>
-                        <input type="tel" id="telefone" placeholder="(00) 00000-0000" required>
-                    </div>
-                </div>
-            </form>
+            <div class="info-item">
+                <span class="info-item-label">Taxa de Comissão</span>
+                <span class="info-item-value" id="taxaComissao">carregando...</span>
+            </div>
         </div>
 
+        <!-- DADOS CADASTRAIS -->
         <div class="card">
-            <h2>📍 Endereço</h2>
-            
-            <form id="formEndereco">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>CEP</label>
-                        <input type="text" id="cep" placeholder="00000-000">
+            <h2>📝 Dados Cadastrais</h2>
+            <p class="subtitle">Mantenha suas informações atualizadas</p>
+
+            <div id="alertContainer"></div>
+
+            <form id="formDados">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="nome">Nome / Razão Social *</label>
+                        <input type="text" id="nome" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Cidade</label>
-                        <input type="text" id="cidade" placeholder="Sua cidade">
+                        <label for="telefone">Telefone / WhatsApp *</label>
+                        <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
                     </div>
-                </div>
 
-                <div class="form-row">
                     <div class="form-group">
-                        <label>Estado</label>
+                        <label for="documento">CPF / CNPJ</label>
+                        <input type="text" id="documento" placeholder="000.000.000-00">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="endereco">Endereço Completo</label>
+                        <input type="text" id="endereco" placeholder="Rua, número, complemento">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cidade">Cidade</label>
+                        <input type="text" id="cidade">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
                         <select id="estado">
                             <option value="">Selecione</option>
                             <option value="AC">Acre</option>
@@ -384,32 +386,29 @@
                             <option value="TO">Tocantins</option>
                         </select>
                     </div>
-
-                    <div class="form-group">
-                        <label>País</label>
-                        <input type="text" id="pais" value="Brasil" disabled>
-                    </div>
                 </div>
+
+                <button type="submit" class="btn-save" id="btnSalvar">
+                    💾 Salvar Alterações
+                </button>
             </form>
         </div>
 
+        <!-- DADOS BANCÁRIOS -->
         <div class="card">
-            <h2>💳 Dados Bancários</h2>
-            
+            <h2>🏦 Dados Bancários</h2>
+            <p class="subtitle">Para recebimento de comissões</p>
+
             <div class="info-box">
-                <p><strong>💡 Dica:</strong> Preencha seus dados bancários para receber suas comissões via PIX ou transferência bancária.</p>
+                <p><strong>💡 Importante:</strong></p>
+                <p>Preencha seus dados bancários para receber as comissões. Aceitamos PIX (CPF/CNPJ) ou transferência bancária.</p>
             </div>
 
             <form id="formBancario">
-                <div class="form-row">
+                <div class="form-grid">
                     <div class="form-group">
-                        <label>Chave PIX</label>
-                        <input type="text" id="chavePix" placeholder="CPF, e-mail, telefone ou chave aleatória">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tipo de Chave PIX</label>
-                        <select id="tipoChavePix">
+                        <label for="tipoPix">Tipo de Chave PIX</label>
+                        <select id="tipoPix">
                             <option value="">Selecione</option>
                             <option value="cpf">CPF</option>
                             <option value="cnpj">CNPJ</option>
@@ -418,28 +417,29 @@
                             <option value="aleatoria">Chave Aleatória</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="form-row">
                     <div class="form-group">
-                        <label>Banco</label>
+                        <label for="chavePix">Chave PIX</label>
+                        <input type="text" id="chavePix" placeholder="Digite sua chave PIX">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="banco">Banco</label>
                         <input type="text" id="banco" placeholder="Nome do banco">
                     </div>
 
                     <div class="form-group">
-                        <label>Agência</label>
+                        <label for="agencia">Agência</label>
                         <input type="text" id="agencia" placeholder="0000">
                     </div>
-                </div>
 
-                <div class="form-row">
                     <div class="form-group">
-                        <label>Conta</label>
+                        <label for="conta">Conta</label>
                         <input type="text" id="conta" placeholder="00000-0">
                     </div>
 
                     <div class="form-group">
-                        <label>Tipo de Conta</label>
+                        <label for="tipoConta">Tipo de Conta</label>
                         <select id="tipoConta">
                             <option value="">Selecione</option>
                             <option value="corrente">Conta Corrente</option>
@@ -447,133 +447,212 @@
                         </select>
                     </div>
                 </div>
-            </form>
-        </div>
 
-        <div class="form-actions">
-            <button type="button" class="btn btn-primary" id="btnSalvar">💾 Salvar Alterações</button>
-            <a href="dashboard.html" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn-save" id="btnSalvarBancario">
+                    💾 Salvar Dados Bancários
+                </button>
+            </form>
         </div>
     </div>
 
     <script>
-        (function() {
-            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+        console.log('🚀 Página de Dados - Iniciada');
+
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let usuarioAtual = null;
+        let parceiroAtual = null;
+        let tabelaParceiro = '';
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarAutenticacao();
+        });
+
+        async function verificarAutenticacao() {
+            console.log('🔍 Verificando autenticação...');
             
-            const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-            let parceiroAtual = null
-
-            window.addEventListener('DOMContentLoaded', async () => {
-                const parceiroLogado = localStorage.getItem('parceiro_logado')
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
                 
-                if (!parceiroLogado) {
-                    window.location.href = 'login.html'
-                    return
+                if (error || !session) {
+                    console.log('❌ Sessão inválida - redirecionando');
+                    window.location.href = '/painel-acesso/';
+                    return;
                 }
-
-                parceiroAtual = JSON.parse(parceiroLogado)
-                await carregarDados()
-
-                document.getElementById('btnSalvar').addEventListener('click', salvarDados)
-            })
-
-            async function carregarDados() {
-                try {
-                    const { data: parceiro, error } = await clienteSupabase
-                        .from('parceiros')
-                        .select('*')
-                        .eq('id', parceiroAtual.id)
-                        .single()
-
-                    if (error) throw error
-
-                    document.getElementById('nomeCompleto').value = parceiro.nome_completo || ''
-                    document.getElementById('email').value = parceiro.email || ''
-                    document.getElementById('codigoParceiro').value = parceiro.codigo_parceiro || ''
-                    document.getElementById('tipoParceiro').textContent = parceiro.tipo_parceiro || 'Afiliado'
-                    document.getElementById('cpfCnpj').value = parceiro.cpf_cnpj || ''
-                    document.getElementById('telefone').value = parceiro.telefone || ''
-                    document.getElementById('cep').value = parceiro.cep || ''
-                    document.getElementById('cidade').value = parceiro.cidade || ''
-                    document.getElementById('estado').value = parceiro.estado || ''
-                    document.getElementById('chavePix').value = parceiro.chave_pix || ''
-                    document.getElementById('tipoChavePix').value = parceiro.tipo_chave_pix || ''
-                    document.getElementById('banco').value = parceiro.banco || ''
-                    document.getElementById('agencia').value = parceiro.agencia || ''
-                    document.getElementById('conta').value = parceiro.conta || ''
-                    document.getElementById('tipoConta').value = parceiro.tipo_conta || ''
-
-                    document.getElementById('loading').style.display = 'none'
-                    document.getElementById('conteudo').style.display = 'block'
-
-                } catch (error) {
-                    console.error('❌ Erro ao carregar dados:', error)
-                    alert('Erro ao carregar dados: ' + error.message)
-                }
+                
+                console.log('✅ Sessão válida:', session.user.email);
+                usuarioAtual = session.user;
+                
+                await buscarDadosParceiro();
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                window.location.href = '/painel-acesso/';
             }
+        }
 
-            async function salvarDados() {
-                try {
-                    const btnSalvar = document.getElementById('btnSalvar')
-                    btnSalvar.disabled = true
-                    btnSalvar.textContent = '⏳ Salvando...'
-
-                    const dadosAtualizados = {
-                        nome_completo: document.getElementById('nomeCompleto').value,
-                        cpf_cnpj: document.getElementById('cpfCnpj').value,
-                        telefone: document.getElementById('telefone').value,
-                        cep: document.getElementById('cep').value,
-                        cidade: document.getElementById('cidade').value,
-                        estado: document.getElementById('estado').value,
-                        chave_pix: document.getElementById('chavePix').value,
-                        tipo_chave_pix: document.getElementById('tipoChavePix').value,
-                        banco: document.getElementById('banco').value,
-                        agencia: document.getElementById('agencia').value,
-                        conta: document.getElementById('conta').value,
-                        tipo_conta: document.getElementById('tipoConta').value
-                    }
-
-                    const { error } = await clienteSupabase
-                        .from('parceiros')
-                        .update(dadosAtualizados)
-                        .eq('id', parceiroAtual.id)
-
-                    if (error) throw error
-
-                    parceiroAtual.nome = dadosAtualizados.nome_completo
-                    localStorage.setItem('parceiro_logado', JSON.stringify(parceiroAtual))
-
-                    const alertSuccess = document.getElementById('alertSuccess')
-                    alertSuccess.style.display = 'block'
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
-
-                    setTimeout(() => {
-                        alertSuccess.style.display = 'none'
-                    }, 5000)
-
-                    btnSalvar.disabled = false
-                    btnSalvar.textContent = '💾 Salvar Alterações'
-
-                } catch (error) {
-                    console.error('❌ Erro ao salvar dados:', error)
-                    
-                    const alertError = document.getElementById('alertError')
-                    alertError.style.display = 'block'
-                    alertError.textContent = '❌ Erro ao salvar: ' + error.message
-                    window.scrollTo({ top: 0, behavior: 'smooth' })
-
-                    setTimeout(() => {
-                        alertError.style.display = 'none'
-                    }, 5000)
-
-                    const btnSalvar = document.getElementById('btnSalvar')
-                    btnSalvar.disabled = false
-                    btnSalvar.textContent = '💾 Salvar Alterações'
+        async function buscarDadosParceiro() {
+            console.log('📥 Buscando dados do parceiro...');
+            
+            try {
+                // Buscar em igrejas
+                let { data: igreja, error: erroIgreja } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (igreja) {
+                    parceiroAtual = igreja;
+                    tabelaParceiro = 'igrejas';
+                    preencherFormulario();
+                    return;
                 }
+                
+                // Buscar em parceiros
+                let { data: parceiro, error: erroParceiro } = await supabaseClient
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (parceiro) {
+                    parceiroAtual = parceiro;
+                    tabelaParceiro = 'parceiros';
+                    preencherFormulario();
+                    return;
+                }
+                
+                console.warn('⚠️ Parceiro não encontrado');
+                alert('Cadastro não encontrado.');
+                window.location.href = '/painel-acesso/';
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar dados: ' + error.message);
+                window.location.href = '/painel-acesso/';
             }
-        })()
+        }
+
+        function preencherFormulario() {
+            console.log('📝 Preenchendo formulário...');
+            
+            // Informações da conta
+            document.getElementById('emailConta').textContent = parceiroAtual.email || 'N/A';
+            document.getElementById('codigoParceiro').textContent = parceiroAtual.codigo || parceiroAtual.id || 'N/A';
+            document.getElementById('tipoConta').textContent = tabelaParceiro === 'igrejas' ? 'Igreja Parceira' : 'Parceiro Afiliado';
+            document.getElementById('taxaComissao').textContent = (parceiroAtual.comissao || 10) + '%';
+            
+            // Dados cadastrais
+            document.getElementById('nome').value = parceiroAtual.nome || '';
+            document.getElementById('telefone').value = parceiroAtual.telefone || '';
+            document.getElementById('documento').value = parceiroAtual.documento || parceiroAtual.cpf || parceiroAtual.cnpj || '';
+            document.getElementById('endereco').value = parceiroAtual.endereco || '';
+            document.getElementById('cidade').value = parceiroAtual.cidade || '';
+            document.getElementById('estado').value = parceiroAtual.estado || '';
+            
+            // Dados bancários
+            document.getElementById('tipoPix').value = parceiroAtual.tipo_pix || '';
+            document.getElementById('chavePix').value = parceiroAtual.chave_pix || '';
+            document.getElementById('banco').value = parceiroAtual.banco || '';
+            document.getElementById('agencia').value = parceiroAtual.agencia || '';
+            document.getElementById('conta').value = parceiroAtual.conta || '';
+            document.getElementById('tipoConta').value = parceiroAtual.tipo_conta || '';
+            
+            // Mostrar conteúdo
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('conteudo').style.display = 'block';
+            
+            console.log('✅ Formulário preenchido');
+        }
+
+        // Salvar dados cadastrais
+        document.getElementById('formDados').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btnSalvar = document.getElementById('btnSalvar');
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = '⏳ Salvando...';
+            
+            try {
+                const dadosAtualizados = {
+                    nome: document.getElementById('nome').value,
+                    telefone: document.getElementById('telefone').value,
+                    documento: document.getElementById('documento').value,
+                    endereco: document.getElementById('endereco').value,
+                    cidade: document.getElementById('cidade').value,
+                    estado: document.getElementById('estado').value,
+                };
+                
+                const { data, error } = await supabaseClient
+                    .from(tabelaParceiro)
+                    .update(dadosAtualizados)
+                    .eq('id', parceiroAtual.id);
+                
+                if (error) throw error;
+                
+                mostrarAlerta('✅ Dados salvos com sucesso!', 'success');
+                console.log('✅ Dados atualizados');
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar:', error);
+                mostrarAlerta('❌ Erro ao salvar dados: ' + error.message, 'error');
+            } finally {
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = '💾 Salvar Alterações';
+            }
+        });
+
+        // Salvar dados bancários
+        document.getElementById('formBancario').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btnSalvar = document.getElementById('btnSalvarBancario');
+            btnSalvar.disabled = true;
+            btnSalvar.textContent = '⏳ Salvando...';
+            
+            try {
+                const dadosBancarios = {
+                    tipo_pix: document.getElementById('tipoPix').value,
+                    chave_pix: document.getElementById('chavePix').value,
+                    banco: document.getElementById('banco').value,
+                    agencia: document.getElementById('agencia').value,
+                    conta: document.getElementById('conta').value,
+                    tipo_conta: document.getElementById('tipoConta').value,
+                };
+                
+                const { data, error } = await supabaseClient
+                    .from(tabelaParceiro)
+                    .update(dadosBancarios)
+                    .eq('id', parceiroAtual.id);
+                
+                if (error) throw error;
+                
+                mostrarAlerta('✅ Dados bancários salvos com sucesso!', 'success');
+                console.log('✅ Dados bancários atualizados');
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar:', error);
+                mostrarAlerta('❌ Erro ao salvar dados bancários: ' + error.message, 'error');
+            } finally {
+                btnSalvar.disabled = false;
+                btnSalvar.textContent = '💾 Salvar Dados Bancários';
+            }
+        });
+
+        function mostrarAlerta(mensagem, tipo) {
+            const container = document.getElementById('alertContainer');
+            container.innerHTML = `<div class="alert ${tipo} show">${mensagem}</div>`;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
     </script>
 </body>
 </html>
