@@ -540,79 +540,88 @@
         }
 
         async function fazerDownload() {
-            const btnDownload = document.getElementById('btnDownloadPDF');
-            
-            // Desabilitar botão
-            btnDownload.disabled = true;
-            btnDownload.innerHTML = '⏳ Gerando seu PDF personalizado...';
+    const btnDownload = document.getElementById('btnDownloadPDF');
+    
+    // Desabilitar botão
+    btnDownload.disabled = true;
+    btnDownload.innerHTML = '⏳ Preparando seu download...';
 
-            console.log('📥 Iniciando download...');
+    console.log('📥 Iniciando download...');
 
-            try {
-                // Chamar Edge Function para gerar PDF personalizado
-                const { data, error } = await supabaseClient.functions.invoke('personalizar-pdf', {
-                    body: {
-                        vendaId: vendaAtual.id,
-                        nomeComprador: vendaAtual.nome_comprador,
-                        emailComprador: vendaAtual.email_comprador
-                    }
-                });
+    try {
+        // SOLUÇÃO ALTERNATIVA: Baixar PDF do bucket 'pdfs'
+        // Assumindo que o PDF está em: pdfs/somos-todos-um.pdf
+        
+        const { data: pdfData, error: downloadError } = await supabaseClient.storage
+            .from('pdfs')
+            .download('somos-todos-um.pdf');
 
-                if (error) throw error;
-
-                console.log('✅ PDF gerado com sucesso');
-
-                // Incrementar contador de downloads
-                const novoTotal = (vendaAtual.downloads || 0) + 1;
-                
-                const { error: updateError } = await supabaseClient
-                    .from('vendas')
-                    .update({
-                        downloads: novoTotal,
-                        ultimo_download: new Date().toISOString()
-                    })
-                    .eq('id', vendaAtual.id);
-
-                if (updateError) {
-                    console.error('⚠️ Erro ao atualizar contador:', updateError);
-                }
-
-                console.log(`✅ Download concluído! Total: ${novoTotal}`);
-
-                // Fazer download do arquivo
-                const link = document.createElement('a');
-                link.href = data.pdfUrl;
-                link.download = `Somos-Todos-Um-${vendaAtual.nome_comprador.replace(/\s+/g, '-')}.pdf`;
-                link.click();
-
-                // Atualizar interface
-                btnDownload.innerHTML = '✅ Download Concluído!';
-                btnDownload.style.background = '#10b981';
-
-                // Mostrar mensagem de sucesso
-                const successDiv = document.createElement('div');
-                successDiv.className = 'success-message';
-                successDiv.innerHTML = `
-                    ✅ <strong>Download iniciado com sucesso!</strong><br>
-                    Seu PDF personalizado está sendo baixado.<br>
-                    Downloads realizados: ${novoTotal} de 5
-                `;
-                btnDownload.insertAdjacentElement('afterend', successDiv);
-
-                // Recarregar página após 3 segundos para atualizar contador
-                setTimeout(() => {
-                    window.location.reload();
-                }, 3000);
-
-            } catch (erro) {
-                console.error('❌ Erro no download:', erro);
-                
-                alert(`❌ Erro ao gerar PDF: ${erro.message}\n\nTente novamente. Se o problema persistir, entre em contato conosco.`);
-                
-                btnDownload.disabled = false;
-                btnDownload.innerHTML = '📥 Baixar Livro Digital (PDF)';
-            }
+        if (downloadError) {
+            console.error('❌ Erro ao baixar PDF:', downloadError);
+            throw new Error('Erro ao baixar o arquivo PDF');
         }
+
+        console.log('✅ PDF baixado com sucesso');
+
+        // Incrementar contador de downloads
+        const novoTotal = (vendaAtual.downloads || 0) + 1;
+        
+        const { error: updateError } = await supabaseClient
+            .from('vendas')
+            .update({
+                downloads: novoTotal,
+                ultimo_download: new Date().toISOString()
+            })
+            .eq('id', vendaAtual.id);
+
+        if (updateError) {
+            console.error('⚠️ Erro ao atualizar contador:', updateError);
+        }
+
+        console.log(`✅ Contador atualizado! Total: ${novoTotal}`);
+
+        // Criar blob e fazer download
+        const blob = new Blob([pdfData], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Somos-Todos-Um-${vendaAtual.nome_comprador.replace(/\s+/g, '-')}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Limpar URL temporária
+        window.URL.revokeObjectURL(url);
+
+        // Atualizar interface
+        btnDownload.innerHTML = '✅ Download Concluído!';
+        btnDownload.style.background = '#10b981';
+
+        // Mostrar mensagem de sucesso
+        const successDiv = document.createElement('div');
+        successDiv.className = 'success-message';
+        successDiv.innerHTML = `
+            ✅ <strong>Download iniciado com sucesso!</strong><br>
+            Seu PDF está sendo baixado.<br>
+            Downloads realizados: ${novoTotal} de 5
+        `;
+        btnDownload.insertAdjacentElement('afterend', successDiv);
+
+        // Recarregar página após 3 segundos para atualizar contador
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
+
+    } catch (erro) {
+        console.error('❌ Erro no download:', erro);
+        
+        alert(`❌ Erro ao baixar PDF: ${erro.message}\n\nTente novamente. Se o problema persistir, entre em contato conosco.`);
+        
+        btnDownload.disabled = false;
+        btnDownload.innerHTML = '📥 Baixar Livro Digital (PDF)';
+    }
+}
 
         console.log('✅ Sistema de download pronto');
     </script>
