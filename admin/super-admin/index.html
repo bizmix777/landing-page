@@ -684,34 +684,34 @@
             await verificarAutenticacao();
         });
 
-        async function verificarAutenticacao() {
-            console.log('🔍 Verificando autenticação...');
-            
-            try {
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
-                
-                if (error || !session) {
-                    console.log('❌ Acesso negado - redirecionando');
-                    window.location.href = '../../painel-acesso/login.html';
-                    return;
-                }
-                
-                if (session.user.email !== 'henrique65@gmail.com') {
-                    alert('❌ Acesso negado! Esta área é restrita.');
-                    window.location.href = '../index.html';
-                    return;
-                }
-                
-                console.log('✅ Admin autenticado:', session.user.email);
-                usuarioAtual = session.user;
-                
-                await carregarDashboard();
-                
-            } catch (error) {
-                console.error('❌ Erro:', error);
-                window.location.href = '../../painel-acesso/login.html';
-            }
+async function verificarAutenticacao() {
+    console.log('🔍 Verificando autenticação...');
+    
+    try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        
+        if (error || !session) {
+            console.log('❌ Acesso negado - redirecionando para login');
+            window.location.href = '../../painel-acesso/?redirect=/admin/super-admin/';
+            return;
         }
+        
+        if (session.user.email !== 'henrique65@gmail.com') {
+            alert('❌ Acesso negado! Esta área é restrita.');
+            window.location.href = '../index.html';
+            return;
+        }
+        
+        console.log('✅ Admin autenticado:', session.user.email);
+        usuarioAtual = session.user;
+        
+        await carregarDashboard();
+        
+    } catch (error) {
+        console.error('❌ Erro:', error);
+        window.location.href = '../../painel-acesso/?redirect=/admin/super-admin/';
+    }
+}
 
         async function carregarDashboard() {
             console.log('📊 Carregando dashboard...');
