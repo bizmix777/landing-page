@@ -1,18 +1,16 @@
 // 
-// MÓDULO DE GERENCIAMENTO DE COMPROVANTES
+// MÓDULO DE COMPROVANTES DE COMISSÃO (SUPER ADMIN → PARCEIROS)
 // 
 
-console.log('📄 Módulo de comprovantes carregando...');
+console.log('📄 Módulo de comprovantes de comissão carregando...');
 
-// Inicializa o módulo de comprovantes
 async function initComprovantes() {
-    console.log('🔄 Iniciando módulo de comprovantes...');
+    console.log('🔄 Iniciando módulo de comprovantes de comissão...');
     await loadPartnersForComprovantes();
     await loadComprovantesLista();
     setupComprovanteUploadButton();
 }
 
-// Carrega a lista de parceiros ativos do Supabase
 async function loadPartnersForComprovantes() {
     try {
         console.log('📥 Carregando lista de parceiros para comprovantes...');
@@ -48,7 +46,6 @@ async function loadPartnersForComprovantes() {
     }
 }
 
-// Configura o botão de upload de comprovante
 function setupComprovanteUploadButton() {
     const uploadBtn = document.getElementById('upload-comprovante-btn');
     if (!uploadBtn) {
@@ -64,7 +61,6 @@ function setupComprovanteUploadButton() {
         const fileInput = document.getElementById('comprovante-file-input');
         const file = fileInput.files[0];
         
-        // Validações
         if (!selectedPartnerCode) {
             mostrarAlertaComprovante('❌ Selecione um parceiro.', 'error');
             return;
@@ -90,18 +86,15 @@ function setupComprovanteUploadButton() {
             return;
         }
         
-        // Gerar nome do arquivo
         const monthStr = month.toString().padStart(2, '0');
-        const fileName = `comprovante-${selectedPartnerCode}-${monthStr}-${year}.pdf`;
+        const fileName = `comissao_${selectedPartnerCode}_${monthStr}_${year}.pdf`;
         
-        console.log(`📤 Enviando comprovante: ${fileName}`);
+        console.log(`📤 Enviando comprovante de comissão: ${fileName}`);
         
-        // Desabilitar botão durante upload
         uploadBtn.disabled = true;
         uploadBtn.textContent = '⏳ Enviando...';
         
         try {
-            // Upload para o bucket 'comprovantes'
             const { data, error } = await supabaseClient.storage
                 .from('comprovantes')
                 .upload(fileName, file, {
@@ -111,16 +104,14 @@ function setupComprovanteUploadButton() {
             
             if (error) throw error;
             
-            console.log('✅ Comprovante enviado:', data);
+            console.log('✅ Comprovante de comissão enviado:', data);
             mostrarAlertaComprovante(`✅ Comprovante enviado com sucesso: ${fileName}`, 'success');
             
-            // Limpar formulário
             fileInput.value = '';
             document.getElementById('month-input-comprovante').value = '';
             document.getElementById('year-input-comprovante').value = '';
             partnerSelect.value = '';
             
-            // Recarregar lista
             await loadComprovantesLista();
             
         } catch (err) {
@@ -133,10 +124,9 @@ function setupComprovanteUploadButton() {
     });
 }
 
-// Carrega e exibe a lista de comprovantes existentes
 async function loadComprovantesLista() {
     try {
-        console.log('📥 Carregando lista de comprovantes...');
+        console.log('📥 Carregando lista de comprovantes de comissão...');
         
         const { data, error } = await supabaseClient.storage
             .from('comprovantes')
@@ -161,8 +151,15 @@ async function loadComprovantesLista() {
             return;
         }
         
-        data.forEach(file => {
-            const parts = file.name.match(/comprovante-(.+)-(\d{2})-(\d{4})\.pdf/);
+        const comprovantesComissao = data.filter(file => file.name.startsWith('comissao_'));
+        
+        if (comprovantesComissao.length === 0) {
+            ul.innerHTML = '<p style="text-align: center; color: #94a3b8; padding: 20px;">Nenhum comprovante de comissão enviado ainda.</p>';
+            return;
+        }
+        
+        comprovantesComissao.forEach(file => {
+            const parts = file.name.match(/comissao_(.+)_(\d{2})_(\d{4})\.pdf/);
             const codigoParceiro = parts ? parts[1] : 'N/A';
             const mes = parts ? parts[2] : 'N/A';
             const ano = parts ? parts[3] : 'N/A';
@@ -190,14 +187,13 @@ async function loadComprovantesLista() {
             ul.appendChild(div);
         });
         
-        console.log(`✅ ${data.length} comprovantes listados`);
+        console.log(`✅ ${comprovantesComissao.length} comprovantes de comissão listados`);
     } catch (err) {
         console.error('❌ Erro ao carregar comprovantes:', err);
         mostrarAlertaComprovante('Erro ao carregar lista de comprovantes.', 'error');
     }
 }
 
-// Deleta um comprovante do bucket
 async function deleteComprovanteFile(fileName) {
     if (!confirm(`⚠️ Tem certeza que deseja deletar:\n\n${fileName}\n\nEsta ação não pode ser desfeita!`)) {
         return;
@@ -223,7 +219,6 @@ async function deleteComprovanteFile(fileName) {
     }
 }
 
-// Mostra alerta específico para comprovantes
 function mostrarAlertaComprovante(mensagem, tipo) {
     const container = document.getElementById('alertComprovantesUpload');
     if (!container) return;
@@ -235,4 +230,4 @@ function mostrarAlertaComprovante(mensagem, tipo) {
     }, 5000);
 }
 
-console.log('✅ Módulo de comprovantes carregado');
+console.log('✅ Módulo de comprovantes de comissão carregado');
