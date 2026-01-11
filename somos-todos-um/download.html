@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Download - Somos Todos Um</title>
+    <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -11,100 +12,31 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            padding: 20px;
         }
+
         .container {
-            max-width: 600px;
-            width: 100%;
             background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            text-align: center;
         }
-        .logo {
-            font-size: 80px;
-            margin-bottom: 20px;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 28px;
-        }
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        .btn-download {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 18px 40px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            margin: 20px 0;
-            transition: transform 0.3s, box-shadow 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            border: none;
-            cursor: pointer;
-        }
-        .btn-download:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-        .btn-download:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .info-box {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 30px;
-            text-align: left;
-            border-left: 4px solid #667eea;
-        }
-        .info-box h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-        .info-box ul {
-            list-style: none;
-            padding: 0;
-        }
-        .info-box li {
-            color: #555;
-            margin-bottom: 10px;
-            padding-left: 25px;
-            position: relative;
-            line-height: 1.6;
-        }
-        .info-box li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-            font-weight: bold;
-        }
+
         .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
+            text-align: center;
+            padding: 40px 20px;
         }
+
         .spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #667eea;
@@ -112,59 +44,249 @@
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .erro {
-            background: #f8d7da;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #dc3545;
-            color: #721c24;
-        }
-        .cliente-info {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
+
+        .logo {
+            font-size: 64px;
+            text-align: center;
             margin-bottom: 20px;
         }
-        .cliente-info p {
-            color: #1976d2;
-            margin: 5px 0;
-            font-size: 14px;
+
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
         }
-        .downloads-info {
-            background: #fff3cd;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .cliente-info {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #374151;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item strong {
+            min-width: 140px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .downloads-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 13px;
-            color: #856404;
+            font-weight: 600;
+            margin-left: 10px;
         }
-        .downloads-info strong {
-            color: #664d03;
+
+        .downloads-badge.warning {
+            background: #f59e0b;
+        }
+
+        .downloads-badge.danger {
+            background: #ef4444;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-download:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-box {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            color: #1f2937;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .erro {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .erro p {
+            color: #991b1b;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .erro ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .erro li {
+            color: #991b1b;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .erro li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #065f46;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #1e40af;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .logo {
+                font-size: 48px;
+            }
+
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .info-item strong {
+                margin-bottom: 5px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- ESTADO 1: CARREGANDO -->
         <div id="loading" class="loading">
             <div class="spinner"></div>
-            <h1>Verificando acesso...</h1>
+            <h1>🔄 Verificando acesso...</h1>
             <p class="subtitle">Aguarde enquanto validamos seu pagamento.</p>
         </div>
 
+        <!-- ESTADO 2: ACESSO LIBERADO -->
         <div id="conteudo" style="display: none;">
             <div class="logo">📖</div>
             <h1>Seu Livro Digital Está Pronto!</h1>
-            <p class="subtitle">
-                Parabéns pela aquisição!<br>
-                Clique no botão abaixo para fazer o download do seu PDF personalizado.
-            </p>
+            <p class="subtitle">Parabéns pela aquisição!<br>Clique no botão abaixo para fazer o download do seu PDF personalizado.</p>
 
-            <div class="cliente-info" id="clienteInfo"></div>
+            <div class="cliente-info" id="clienteInfo">
+                <!-- Preenchido dinamicamente -->
+            </div>
 
             <button id="btnDownloadPDF" class="btn-download">
                 📥 Baixar Livro Digital (PDF)
@@ -181,7 +303,7 @@
                 </ul>
             </div>
 
-            <div class="info-box" style="margin-top: 20px;">
+            <div class="info-box">
                 <h3>🔐 Proteção e Segurança</h3>
                 <ul>
                     <li>PDF personalizado exclusivamente para você</li>
@@ -191,7 +313,7 @@
                 </ul>
             </div>
 
-            <div class="info-box" style="margin-top: 20px;">
+            <div class="info-box">
                 <h3>💡 Dicas de Leitura</h3>
                 <ul>
                     <li>Use Adobe Reader ou navegador para melhor experiência</li>
@@ -202,19 +324,15 @@
             </div>
         </div>
 
+        <!-- ESTADO 3: ACESSO NEGADO -->
         <div id="erro" style="display: none;">
             <div class="logo">❌</div>
-            <h1>Acesso Negado</h1>
+            <h1 id="tituloErro">Acesso Negado</h1>
             <div class="erro">
                 <p><strong>Não foi possível validar seu acesso.</strong></p>
-                <p style="margin-top: 10px;" id="mensagemErro">Possíveis motivos:</p>
-                <ul style="margin-top: 10px; text-align: left;" id="listaErros">
-                    <li>Pagamento ainda não confirmado</li>
-                    <li>Link inválido ou expirado</li>
-                    <li>Venda não encontrada</li>
-                    <li>Limite de downloads atingido</li>
-                </ul>
-                <p style="margin-top: 15px;">
+                <p id="mensagemErro"></p>
+                <ul id="listaErros"></ul>
+                <p style="margin-top: 20px; font-size: 13px;">
                     Se você já pagou, aguarde alguns minutos e tente novamente.<br>
                     Caso o problema persista, entre em contato conosco.
                 </p>
@@ -223,202 +341,280 @@
     </div>
 
     <script>
-        const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        console.log('📄 Página de Download - Iniciada');
 
-        function getUrlParameter(name) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(name);
-        }
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let vendaAtual = null;
+
+        // Verificar acesso ao carregar a página
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarAcesso();
+        });
 
         async function verificarAcesso() {
-            const vendaId = getUrlParameter('venda');
-            
-            if (!vendaId) {
-                mostrarErro('Link inválido. Parâmetro "venda" não encontrado.');
-                return;
-            }
-
-            console.log('🔍 Verificando venda:', vendaId);
+            console.log('🔍 Verificando acesso...');
 
             try {
-                // Buscar informações da venda
-                const { data: venda, error: vendaError } = await supabaseClient
+                // CORREÇÃO: Aceita tanto ?id= quanto ?venda=
+                const urlParams = new URLSearchParams(window.location.search);
+                const vendaId = urlParams.get('id') || urlParams.get('venda');
+
+                console.log('📋 Parâmetro recebido:', vendaId);
+
+                // VALIDAÇÃO 1: Verificar se o ID existe
+                if (!vendaId) {
+                    throw new Error('LINK_INVALIDO');
+                }
+
+                // VALIDAÇÃO 2: Buscar venda no banco
+                const { data: venda, error } = await supabaseClient
                     .from('vendas')
                     .select('*')
                     .eq('id', vendaId)
                     .single();
 
-                if (vendaError || !venda) {
-                    console.error('❌ Erro ao buscar venda:', vendaError);
-                    mostrarErro('Venda não encontrada.');
-                    return;
+                if (error || !venda) {
+                    console.error('❌ Erro ao buscar venda:', error);
+                    throw new Error('VENDA_NAO_ENCONTRADA');
                 }
 
-                console.log('📦 Venda encontrada:', venda);
-                console.log('📋 Todos os campos da venda:', Object.keys(venda));
+                console.log('✅ Venda encontrada:', venda);
+                vendaAtual = venda;
 
-                // Verificar se pagamento foi confirmado
+                // VALIDAÇÃO 3: Verificar status do pagamento
                 if (venda.status_pagamento !== 'pago') {
-                    console.log('⚠️ Pagamento não confirmado:', venda.status_pagamento);
-                    mostrarErro('Pagamento ainda não foi confirmado. Aguarde alguns minutos e tente novamente.');
-                    return;
+                    throw new Error('PAGAMENTO_PENDENTE');
                 }
 
-                // Mostrar informações do cliente
-                const nomeCliente = venda.nome_comprador || venda.nome || 'Cliente';
-                const emailCliente = venda.email_comprador || venda.email || 'email@exemplo.com';
-
-                // Tentar múltiplos campos possíveis para a data
-                const dataCriacaoRaw = venda.criado_em || venda.created_at || venda.data_criacao || venda.timestamp || venda.data_compra;
-
-                console.log('📅 Campo de data encontrado:', dataCriacaoRaw);
-
-                let dataCompra = 'Data não disponível';
-                if (dataCriacaoRaw) {
-                    try {
-                        const dataObj = new Date(dataCriacaoRaw);
-                        if (!isNaN(dataObj.getTime())) {
-                            dataCompra = dataObj.toLocaleDateString('pt-BR', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-                        } else {
-                            console.error('❌ Data inválida:', dataCriacaoRaw);
-                        }
-                    } catch (e) {
-                        console.error('❌ Erro ao formatar data:', e);
-                    }
-                } else {
-                    console.error('❌ Nenhum campo de data encontrado');
-                }
-
-                // Calcular downloads
+                // VALIDAÇÃO 4: Verificar limite de downloads
                 const downloadsRealizados = venda.downloads || 0;
-                const downloadsRestantes = 5 - downloadsRealizados;
-
-                document.getElementById('clienteInfo').innerHTML = `
-                    <p><strong>Cliente:</strong> ${nomeCliente}</p>
-                    <p><strong>Email:</strong> ${emailCliente}</p>
-                    <p><strong>Data da compra:</strong> ${dataCompra}</p>
-                    <div class="downloads-info">
-                        <strong>Downloads:</strong> ${downloadsRealizados} de 5 realizados 
-                        ${downloadsRestantes > 0 ? `(${downloadsRestantes} restantes)` : '(limite atingido)'}
-                    </div>
-                `;
-
-                // Verificar se atingiu limite de downloads
                 if (downloadsRealizados >= 5) {
-                    document.getElementById('btnDownloadPDF').disabled = true;
-                    document.getElementById('btnDownloadPDF').textContent = '❌ Limite de Downloads Atingido';
-                    document.getElementById('btnDownloadPDF').style.background = '#dc3545';
+                    throw new Error('LIMITE_ATINGIDO');
                 }
 
-                mostrarConteudo();
+                // ✅ TODAS VALIDAÇÕES OK - Mostrar conteúdo
+                mostrarConteudo(venda);
 
-            } catch (err) {
-                console.error('❌ Erro:', err);
-                mostrarErro('Erro ao processar requisição: ' + err.message);
+            } catch (erro) {
+                console.error('❌ Erro na verificação:', erro);
+                mostrarErro(erro.message);
             }
         }
 
-        // Botão de download
-        document.getElementById('btnDownloadPDF').addEventListener('click', async function() {
-            const vendaId = getUrlParameter('venda');
-            
-            if (!vendaId) {
-                alert('Erro: ID da venda não encontrado');
-                return;
+        function mostrarConteudo(venda) {
+            console.log('✅ Acesso liberado!');
+
+            const downloadsRealizados = venda.downloads || 0;
+            const downloadsRestantes = 5 - downloadsRealizados;
+
+            // Definir classe do badge baseado nos downloads
+            let badgeClass = '';
+            if (downloadsRealizados >= 4) {
+                badgeClass = 'danger';
+            } else if (downloadsRealizados >= 3) {
+                badgeClass = 'warning';
             }
 
-            const btn = this;
-            btn.disabled = true;
-            btn.textContent = '⏳ Personalizando seu PDF...';
+            // Preencher informações do cliente
+            document.getElementById('clienteInfo').innerHTML = `
+                <div class="info-item">
+                    <strong>👤 Cliente:</strong>
+                    <span>${venda.nome_comprador}</span>
+                </div>
+                <div class="info-item">
+                    <strong>📧 Email:</strong>
+                    <span>${venda.email_comprador}</span>
+                </div>
+                <div class="info-item">
+                    <strong>📅 Data da Compra:</strong>
+                    <span>${new Date(venda.data_venda).toLocaleDateString('pt-BR')}</span>
+                </div>
+                <div class="info-item">
+                    <strong>📥 Downloads:</strong>
+                    <span>
+                        ${downloadsRealizados} de 5 utilizados
+                        <span class="downloads-badge ${badgeClass}">${downloadsRestantes} restantes</span>
+                    </span>
+                </div>
+            `;
 
-            try {
-                console.log('📥 Solicitando PDF personalizado');
-
-                // Chamar Edge Function para gerar PDF personalizado
-                const response = await fetch(`${supabaseUrl}/functions/v1/personalizar-pdf`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${supabaseKey}`
-                    },
-                    body: JSON.stringify({ vendaId: vendaId })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Erro ao gerar PDF');
-                }
-
-                console.log('✅ PDF personalizado recebido');
-
-                // Converter resposta em blob
-                const blob = await response.blob();
-
-                // Criar URL temporária para download
-                const url = window.URL.createObjectURL(blob);
-
-                // Criar link temporário e clicar
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'somos-todos-um.pdf';
-                document.body.appendChild(a);
-                a.click();
-
-                // Limpar
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-
-                console.log('✅ Download iniciado');
-
-                btn.disabled = false;
-                btn.textContent = '✅ Download Concluído! Clique novamente se necessário';
-
-                // Recarregar informações (para atualizar contador de downloads)
-                setTimeout(() => {
-                    location.reload();
-                }, 3000);
-
-            } catch (err) {
-                console.error('❌ Erro ao baixar:', err);
-                
-                if (err.message.includes('Limite de downloads')) {
-                    alert('Você atingiu o limite de 5 downloads para esta compra. Entre em contato conosco se precisar de mais downloads.');
-                    btn.disabled = true;
-                    btn.textContent = '❌ Limite de Downloads Atingido';
-                    btn.style.background = '#dc3545';
-                } else {
-                    alert('Erro ao gerar PDF: ' + err.message);
-                    btn.disabled = false;
-                    btn.textContent = '📥 Baixar Livro Digital (PDF)';
-                }
+            // Mostrar aviso se estiver perto do limite
+            if (downloadsRealizados >= 3) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert-info';
+                alertDiv.innerHTML = `
+                    <strong>⚠️ Atenção:</strong> Você tem apenas ${downloadsRestantes} download(s) restante(s).
+                    Use com cuidado!
+                `;
+                document.getElementById('btnDownloadPDF').insertAdjacentElement('beforebegin', alertDiv);
             }
-        });
 
-        function mostrarConteudo() {
+            // Configurar botão de download
+            document.getElementById('btnDownloadPDF').addEventListener('click', fazerDownload);
+
+            // Esconder loading e mostrar conteúdo
             document.getElementById('loading').style.display = 'none';
             document.getElementById('conteudo').style.display = 'block';
         }
 
-        function mostrarErro(mensagem) {
+        function mostrarErro(tipoErro) {
+            console.log('❌ Mostrando erro:', tipoErro);
+
+            let titulo = 'Acesso Negado';
+            let mensagem = '';
+            let listaErros = [];
+
+            switch (tipoErro) {
+                case 'LINK_INVALIDO':
+                    titulo = '❌ Link Inválido';
+                    mensagem = 'O link de acesso está incompleto ou incorreto.';
+                    listaErros = [
+                        'Verifique se você copiou o link completo do email',
+                        'Use o link fornecido no email de confirmação',
+                        'Não tente digitar o link manualmente'
+                    ];
+                    break;
+
+                case 'VENDA_NAO_ENCONTRADA':
+                    titulo = '❌ Acesso Não Encontrado';
+                    mensagem = 'Não conseguimos localizar sua compra em nosso sistema.';
+                    listaErros = [
+                        'Verifique o email de confirmação que você recebeu',
+                        'Use o link fornecido no email (não digite manualmente)',
+                        'Se não recebeu o email, verifique a pasta de spam',
+                        'Entre em contato conosco se o problema persistir'
+                    ];
+                    break;
+
+                case 'PAGAMENTO_PENDENTE':
+                    titulo = '⏳ Pagamento Ainda Não Confirmado';
+                    mensagem = 'Seu pagamento está sendo processado.';
+                    listaErros = [
+                        'Aguarde alguns minutos (processamento pode levar até 10 minutos)',
+                        'Verifique seu email para confirmação do pagamento',
+                        'Se já pagou, recarregue esta página em alguns minutos',
+                        'Se o problema persistir após 1 hora, entre em contato'
+                    ];
+                    break;
+
+                case 'LIMITE_ATINGIDO':
+                    titulo = '❌ Limite de Downloads Atingido';
+                    mensagem = 'Você já utilizou os 5 downloads permitidos para esta compra.';
+                    listaErros = [
+                        `Downloads realizados: 5 de 5`,
+                        'Salve o arquivo em local seguro para não perder',
+                        'Se precisar de mais downloads, entre em contato conosco explicando o motivo'
+                    ];
+                    break;
+
+                default:
+                    mensagem = 'Ocorreu um erro inesperado ao validar seu acesso.';
+                    listaErros = [
+                        'Tente recarregar a página',
+                        'Verifique sua conexão com a internet',
+                        'Entre em contato conosco se o problema persistir'
+                    ];
+            }
+
+            // Preencher elementos de erro
+            document.getElementById('tituloErro').textContent = titulo;
+            document.getElementById('mensagemErro').textContent = mensagem;
+            
+            const listaErrosElement = document.getElementById('listaErros');
+            listaErrosElement.innerHTML = '';
+            listaErros.forEach(erro => {
+                const li = document.createElement('li');
+                li.textContent = erro;
+                listaErrosElement.appendChild(li);
+            });
+
+            // Esconder loading e mostrar erro
             document.getElementById('loading').style.display = 'none';
             document.getElementById('erro').style.display = 'block';
+        }
+
+        async function fazerDownload() {
+            const btnDownload = document.getElementById('btnDownloadPDF');
             
-            if (mensagem) {
-                document.getElementById('mensagemErro').textContent = mensagem;
-                document.getElementById('listaErros').style.display = 'none';
+            // Desabilitar botão
+            btnDownload.disabled = true;
+            btnDownload.innerHTML = '⏳ Gerando seu PDF personalizado...';
+
+            console.log('📥 Iniciando download...');
+
+            try {
+                // Chamar Edge Function para gerar PDF personalizado
+                const { data, error } = await supabaseClient.functions.invoke('personalizar-pdf', {
+                    body: {
+                        vendaId: vendaAtual.id,
+                        nomeComprador: vendaAtual.nome_comprador,
+                        emailComprador: vendaAtual.email_comprador
+                    }
+                });
+
+                if (error) throw error;
+
+                console.log('✅ PDF gerado com sucesso');
+
+                // Incrementar contador de downloads
+                const novoTotal = (vendaAtual.downloads || 0) + 1;
+                
+                const { error: updateError } = await supabaseClient
+                    .from('vendas')
+                    .update({
+                        downloads: novoTotal,
+                        ultimo_download: new Date().toISOString()
+                    })
+                    .eq('id', vendaAtual.id);
+
+                if (updateError) {
+                    console.error('⚠️ Erro ao atualizar contador:', updateError);
+                }
+
+                console.log(`✅ Download concluído! Total: ${novoTotal}`);
+
+                // Fazer download do arquivo
+                const link = document.createElement('a');
+                link.href = data.pdfUrl;
+                link.download = `Somos-Todos-Um-${vendaAtual.nome_comprador.replace(/\s+/g, '-')}.pdf`;
+                link.click();
+
+                // Atualizar interface
+                btnDownload.innerHTML = '✅ Download Concluído!';
+                btnDownload.style.background = '#10b981';
+
+                // Mostrar mensagem de sucesso
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success-message';
+                successDiv.innerHTML = `
+                    ✅ <strong>Download iniciado com sucesso!</strong><br>
+                    Seu PDF personalizado está sendo baixado.<br>
+                    Downloads realizados: ${novoTotal} de 5
+                `;
+                btnDownload.insertAdjacentElement('afterend', successDiv);
+
+                // Recarregar página após 3 segundos para atualizar contador
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+
+            } catch (erro) {
+                console.error('❌ Erro no download:', erro);
+                
+                alert(`❌ Erro ao gerar PDF: ${erro.message}\n\nTente novamente. Se o problema persistir, entre em contato conosco.`);
+                
+                btnDownload.disabled = false;
+                btnDownload.innerHTML = '📥 Baixar Livro Digital (PDF)';
             }
         }
 
-        // Verificar ao carregar
-        verificarAcesso();
+        console.log('✅ Sistema de download pronto');
     </script>
 </body>
 </html>
