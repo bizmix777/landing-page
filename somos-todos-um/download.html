@@ -119,6 +119,106 @@
             background: #ef4444;
         }
 
+        .personalizacao-box {
+            background: #f0f9ff;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .personalizacao-box h3 {
+            color: #1e40af;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .personalizacao-box > p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .opcoes-rodape {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .opcao-rodape {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .opcao-rodape:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .opcao-rodape.selected {
+            border-color: #3b82f6;
+            background: #dbeafe;
+        }
+
+        .opcao-rodape input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .opcao-info {
+            flex: 1;
+        }
+
+        .opcao-label {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 15px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .opcao-exemplo {
+            font-size: 13px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .preview-rodape {
+            background: white;
+            border: 2px dashed #3b82f6;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .preview-rodape strong {
+            display: block;
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .preview-texto {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+
         .btn-download {
             width: 100%;
             padding: 18px;
@@ -282,10 +382,25 @@
         <div id="conteudo" style="display: none;">
             <div class="logo">📖</div>
             <h1>Seu Livro Digital Está Pronto!</h1>
-            <p class="subtitle">Parabéns pela aquisição!<br>Clique no botão abaixo para fazer o download do seu PDF.</p>
+            <p class="subtitle">Parabéns pela aquisição!<br>Personalize o rodapé e clique no botão para fazer o download.</p>
 
             <div class="cliente-info" id="clienteInfo">
                 <!-- Preenchido dinamicamente -->
+            </div>
+
+            <!-- PERSONALIZAÇÃO DO RODAPÉ -->
+            <div class="personalizacao-box" id="personalizacaoBox">
+                <h3>🎨 Personalização do Rodapé</h3>
+                <p>Escolha as informações que aparecerão no rodapé de cada página do PDF:</p>
+                
+                <div class="opcoes-rodape" id="opcoesRodape">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+                
+                <div class="preview-rodape" id="previewRodape">
+                    <strong>📄 Prévia do rodapé:</strong>
+                    <div class="preview-texto" id="previewTexto"></div>
+                </div>
             </div>
 
             <button id="btnDownloadPDF" class="btn-download">
@@ -296,6 +411,7 @@
                 <h3>📚 Sobre o Livro</h3>
                 <ul>
                     <li>Formato: PDF de alta qualidade</li>
+                    <li>Personalizado com as informações que você escolher</li>
                     <li>Compatível com todos os dispositivos</li>
                     <li>Pode ser lido offline</li>
                     <li>Acesso ilimitado e vitalício</li>
@@ -305,8 +421,9 @@
             <div class="info-box">
                 <h3>🔐 Proteção e Segurança</h3>
                 <ul>
+                    <li>PDF personalizado exclusivamente para você</li>
+                    <li>Rodapé discreto conforme sua escolha</li>
                     <li>Limite de 5 downloads por compra</li>
-                    <li>Arquivo protegido contra exclusão acidental</li>
                     <li>Sistema de backup automático ativo</li>
                 </ul>
             </div>
@@ -348,10 +465,41 @@
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Nome do arquivo PDF no bucket (AJUSTE AQUI SE NECESSÁRIO)
-        const NOME_PDF = 'somos-todos-um.pdf';  // ou 'vendas.pdf' para testes
-
         let vendaAtual = null;
+        let preferenciaRodapeAtual = 'nome_email';
+
+        // Opções de rodapé disponíveis
+        const OPCOES_RODAPE = [
+            {
+                id: 'nome_email',
+                label: '👤 Nome + Email',
+                getTexto: (venda) => `${venda.nome_comprador} - ${venda.email_comprador}`
+            },
+            {
+                id: 'igreja_nome_data',
+                label: '⛪ Igreja + Nome + Data',
+                getTexto: (venda) => {
+                    const igreja = venda.igreja_id ? 'Igreja [Nome]' : 'Comprador';
+                    const data = new Date(venda.data_venda).toLocaleDateString('pt-BR');
+                    return `${igreja} - ${venda.nome_comprador} - ${data}`;
+                }
+            },
+            {
+                id: 'nome_telefone',
+                label: '📱 Nome + Telefone',
+                getTexto: (venda) => `${venda.nome_comprador} - ${venda.telefone_comprador || 'Sem telefone'}`
+            },
+            {
+                id: 'apenas_nome',
+                label: '👤 Apenas Nome',
+                getTexto: (venda) => venda.nome_comprador
+            },
+            {
+                id: 'sem_rodape',
+                label: '🚫 Sem Rodapé',
+                getTexto: () => 'Nenhuma informação será exibida'
+            }
+        ];
 
         // Verificar acesso ao carregar a página
         window.addEventListener('DOMContentLoaded', async () => {
@@ -362,7 +510,7 @@
             console.log('🔍 Verificando acesso...');
 
             try {
-                // CORREÇÃO: Aceita tanto ?id= quanto ?venda=
+                // Aceita tanto ?id= quanto ?venda=
                 const urlParams = new URLSearchParams(window.location.search);
                 const vendaId = urlParams.get('id') || urlParams.get('venda');
 
@@ -414,7 +562,6 @@
             const downloadsRealizados = venda.downloads || 0;
             const downloadsRestantes = 5 - downloadsRealizados;
 
-            // Definir classe do badge baseado nos downloads
             let badgeClass = '';
             if (downloadsRealizados >= 4) {
                 badgeClass = 'danger';
@@ -456,12 +603,63 @@
                 document.getElementById('btnDownloadPDF').insertAdjacentElement('beforebegin', alertDiv);
             }
 
+            // Mostrar opções de personalização
+            mostrarOpcoesRodape(venda);
+
             // Configurar botão de download
             document.getElementById('btnDownloadPDF').addEventListener('click', fazerDownload);
 
             // Esconder loading e mostrar conteúdo
             document.getElementById('loading').style.display = 'none';
             document.getElementById('conteudo').style.display = 'block';
+        }
+
+        function mostrarOpcoesRodape(venda) {
+            const container = document.getElementById('opcoesRodape');
+            
+            // Usar preferência salva ou padrão
+            preferenciaRodapeAtual = venda.preferencia_rodape || 'nome_email';
+            
+            let html = '';
+            OPCOES_RODAPE.forEach(opcao => {
+                const exemplo = opcao.getTexto(venda);
+                const checked = opcao.id === preferenciaRodapeAtual ? 'checked' : '';
+                const selected = opcao.id === preferenciaRodapeAtual ? 'selected' : '';
+                
+                html += `
+                    <label class="opcao-rodape ${selected}" data-opcao="${opcao.id}">
+                        <input type="radio" name="rodape" value="${opcao.id}" ${checked} onchange="atualizarPreviewRodape('${opcao.id}')">
+                        <div class="opcao-info">
+                            <span class="opcao-label">${opcao.label}</span>
+                            <span class="opcao-exemplo">${exemplo}</span>
+                        </div>
+                    </label>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Atualizar preview inicial
+            atualizarPreviewRodape(preferenciaRodapeAtual);
+        }
+
+        function atualizarPreviewRodape(opcaoId) {
+            preferenciaRodapeAtual = opcaoId;
+            
+            // Atualizar seleção visual
+            document.querySelectorAll('.opcao-rodape').forEach(el => {
+                if (el.dataset.opcao === opcaoId) {
+                    el.classList.add('selected');
+                } else {
+                    el.classList.remove('selected');
+                }
+            });
+            
+            // Atualizar preview
+            const opcao = OPCOES_RODAPE.find(o => o.id === opcaoId);
+            const textoPreview = opcao.getTexto(vendaAtual);
+            
+            document.getElementById('previewTexto').textContent = textoPreview;
         }
 
         function mostrarErro(tipoErro) {
@@ -541,94 +739,106 @@
         }
 
         async function fazerDownload() {
-    const btnDownload = document.getElementById('btnDownloadPDF');
-    
-    // Desabilitar botão
-    btnDownload.disabled = true;
-    btnDownload.innerHTML = '⏳ Gerando seu PDF personalizado...';
+            const btnDownload = document.getElementById('btnDownloadPDF');
+            
+            // Desabilitar botão
+            btnDownload.disabled = true;
+            btnDownload.innerHTML = '⏳ Gerando seu PDF personalizado...';
 
-    console.log('📥 Iniciando geração do PDF personalizado...');
+            console.log('📥 Iniciando geração do PDF personalizado...');
+            console.log('🎨 Preferência de rodapé:', preferenciaRodapeAtual);
 
-    try {
-        // Chamar Edge Function para personalizar PDF
-        const { data, error } = await supabaseClient.functions.invoke('personalizar-pdf', {
-            body: {
-                vendaId: vendaAtual.id,
-                nomeComprador: vendaAtual.nome_comprador,
-                emailComprador: vendaAtual.email_comprador
+            try {
+                // Salvar preferência no banco
+                const { error: updatePrefError } = await supabaseClient
+                    .from('vendas')
+                    .update({ preferencia_rodape: preferenciaRodapeAtual })
+                    .eq('id', vendaAtual.id);
+
+                if (updatePrefError) {
+                    console.error('⚠️ Erro ao salvar preferência:', updatePrefError);
+                }
+
+                // Obter texto do rodapé baseado na preferência
+                const opcao = OPCOES_RODAPE.find(o => o.id === preferenciaRodapeAtual);
+                const textoRodape = opcao.getTexto(vendaAtual);
+                const semRodape = preferenciaRodapeAtual === 'sem_rodape';
+
+                console.log('📝 Texto do rodapé:', textoRodape);
+                console.log('🚫 Sem rodapé:', semRodape);
+
+                // Chamar Edge Function
+                const { data, error } = await supabaseClient.functions.invoke('personalizar-pdf', {
+                    body: {
+                        vendaId: vendaAtual.id,
+                        textoRodape: textoRodape,
+                        semRodape: semRodape
+                    },
+                    responseType: 'blob'
+                });
+
+                if (error) {
+                    console.error('❌ Erro na Edge Function:', error);
+                    throw new Error(error.message || 'Erro ao personalizar PDF');
+                }
+
+                console.log('✅ PDF personalizado gerado com sucesso');
+
+                // Criar blob e fazer download
+                const blob = new Blob([data], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Somos-Todos-Um-${vendaAtual.nome_comprador.replace(/\s+/g, '-')}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Limpar URL temporária
+                window.URL.revokeObjectURL(url);
+
+                console.log('✅ Download iniciado com sucesso!');
+
+                // Atualizar interface
+                btnDownload.innerHTML = '✅ Download Concluído!';
+                btnDownload.style.background = '#10b981';
+
+                // Obter novo total de downloads
+                const { data: vendaAtualizada } = await supabaseClient
+                    .from('vendas')
+                    .select('downloads')
+                    .eq('id', vendaAtual.id)
+                    .single();
+
+                const novoTotal = vendaAtualizada?.downloads || (vendaAtual.downloads || 0) + 1;
+
+                // Mostrar mensagem de sucesso
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success-message';
+                successDiv.innerHTML = `
+                    ✅ <strong>Download iniciado com sucesso!</strong><br>
+                    Seu PDF personalizado está sendo baixado.<br>
+                    Rodapé: ${textoRodape}<br>
+                    Downloads realizados: ${novoTotal} de 5
+                `;
+                btnDownload.insertAdjacentElement('afterend', successDiv);
+
+                // Recarregar página após 3 segundos
+                setTimeout(() => {
+                    console.log('🔄 Recarregando página...');
+                    window.location.reload();
+                }, 3000);
+
+            } catch (erro) {
+                console.error('❌ Erro no download:', erro);
+                
+                alert(`❌ Erro ao gerar PDF personalizado:\n\n${erro.message}\n\nTente novamente. Se o problema persistir, entre em contato conosco.`);
+                
+                btnDownload.disabled = false;
+                btnDownload.innerHTML = '📥 Baixar Livro Digital (PDF)';
             }
-        });
-
-        if (error) {
-            console.error('❌ Erro na Edge Function:', error);
-            throw new Error(error.message || 'Erro ao personalizar PDF');
         }
-
-        if (!data.success) {
-            throw new Error(data.error || 'Erro desconhecido ao personalizar PDF');
-        }
-
-        console.log('✅ PDF personalizado gerado:', data.nomeArquivo);
-
-        // Incrementar contador de downloads
-        const novoTotal = (vendaAtual.downloads || 0) + 1;
-        
-        console.log(`📊 Atualizando contador: ${vendaAtual.downloads || 0} → ${novoTotal}`);
-        
-        const { error: updateError } = await supabaseClient
-            .from('vendas')
-            .update({
-                downloads: novoTotal,
-                ultimo_download: new Date().toISOString()
-            })
-            .eq('id', vendaAtual.id);
-
-        if (updateError) {
-            console.error('⚠️ Erro ao atualizar contador:', updateError);
-        }
-
-        console.log(`✅ Contador atualizado! Total: ${novoTotal}`);
-
-        // Fazer download do PDF personalizado
-        const link = document.createElement('a');
-        link.href = data.pdfUrl;
-        link.download = `Somos-Todos-Um-${vendaAtual.nome_comprador.replace(/\s+/g, '-')}.pdf`;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        console.log('✅ Download iniciado com sucesso!');
-
-        // Atualizar interface
-        btnDownload.innerHTML = '✅ Download Concluído!';
-        btnDownload.style.background = '#10b981';
-
-        // Mostrar mensagem de sucesso
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.innerHTML = `
-            ✅ <strong>Download iniciado com sucesso!</strong><br>
-            Seu PDF personalizado com seu nome e email no rodapé está sendo baixado.<br>
-            Downloads realizados: ${novoTotal} de 5
-        `;
-        btnDownload.insertAdjacentElement('afterend', successDiv);
-
-        // Recarregar página após 3 segundos
-        setTimeout(() => {
-            console.log('🔄 Recarregando página...');
-            window.location.reload();
-        }, 3000);
-
-    } catch (erro) {
-        console.error('❌ Erro no download:', erro);
-        
-        alert(`❌ Erro ao gerar PDF personalizado:\n\n${erro.message}\n\nTente novamente. Se o problema persistir, entre em contato conosco.`);
-        
-        btnDownload.disabled = false;
-        btnDownload.innerHTML = '📥 Baixar Livro Digital (PDF)';
-    }
-}
 
         console.log('✅ Sistema de download pronto');
     </script>
