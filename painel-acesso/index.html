@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -252,6 +252,12 @@
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // Ler parâmetro de redirecionamento da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectUrl = urlParams.get('redirect');
+
+        console.log('🔗 Parâmetro redirect:', redirectUrl);
+
         // Verificar se já está logado ao carregar a página
         window.addEventListener('DOMContentLoaded', async () => {
             console.log('🔍 Verificando sessão existente...');
@@ -259,8 +265,16 @@
             const { data: { session } } = await supabaseClient.auth.getSession();
             
             if (session) {
-                console.log('✅ Sessão ativa encontrada, redirecionando...');
-                window.location.href = '/somos-todos-um/parceiros/dashboard.html';
+                console.log('✅ Sessão ativa encontrada');
+                
+                // Se veio de super-admin, redirecionar para lá
+                if (redirectUrl) {
+                    console.log('↩️ Redirecionando de volta para:', redirectUrl);
+                    window.location.href = redirectUrl;
+                } else {
+                    console.log('↩️ Redirecionando para dashboard padrão');
+                    window.location.href = '/somos-todos-um/parceiros/dashboard.html';
+                }
             } else {
                 console.log('ℹ️ Nenhuma sessão ativa, aguardando login');
             }
@@ -293,7 +307,26 @@
                 
                 console.log('✅ Login bem-sucedido:', authData);
                 
-                // 2. Verificar se o parceiro existe na tabela
+                // 2. Verificar se é o super admin
+                if (email === 'henrique65@gmail.com') {
+                    console.log('🔐 Super Admin detectado!');
+                    
+                    mostrarAlerta('✅ Login realizado com sucesso! Redirecionando...', 'success');
+                    
+                    setTimeout(() => {
+                        if (redirectUrl) {
+                            console.log('↩️ Redirecionando super admin para:', redirectUrl);
+                            window.location.href = redirectUrl;
+                        } else {
+                            console.log('↩️ Redirecionando super admin para /admin/super-admin/');
+                            window.location.href = '/admin/super-admin/';
+                        }
+                    }, 1000);
+                    
+                    return;
+                }
+                
+                // 3. Verificar se o parceiro existe na tabela
                 console.log('🔍 Buscando dados do parceiro...');
                 
                 const { data: parceiroData, error: parceiroError } = await supabaseClient
@@ -313,13 +346,13 @@
                 
                 console.log('✅ Dados do parceiro encontrados:', parceiroData);
                 
-                // 3. Verificar se o parceiro está ativo
+                // 4. Verificar se o parceiro está ativo
                 if (parceiroData.status !== 'ativo') {
                     await supabaseClient.auth.signOut();
                     throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
                 }
                 
-                // 4. Atualizar último acesso
+                // 5. Atualizar último acesso
                 await supabaseClient
                     .from('parceiros')
                     .update({ ultimo_acesso: new Date().toISOString() })
@@ -330,7 +363,13 @@
                 
                 // Redirecionar para o dashboard após 1 segundo
                 setTimeout(() => {
-                    window.location.href = '/somos-todos-um/parceiros/dashboard.html';
+                    if (redirectUrl) {
+                        console.log('↩️ Redirecionando parceiro para:', redirectUrl);
+                        window.location.href = redirectUrl;
+                    } else {
+                        console.log('↩️ Redirecionando parceiro para dashboard');
+                        window.location.href = '/somos-todos-um/parceiros/dashboard.html';
+                    }
                 }, 1000);
                 
             } catch (error) {
