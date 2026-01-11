@@ -609,29 +609,45 @@
             </div>
         </div>
 
-        <!-- SECTION: COMPROVANTES -->
+        <!-- SECTION: COMPROVANTES (NOVA FUNCIONALIDADE) -->
         <div id="section-comprovantes" class="section">
-            <div class="card">
-                <h2>📄 Gerenciar Comprovantes</h2>
-                <p style="color: #94a3b8; margin-bottom: 20px;">Comprovantes de pagamento de comissões</p>
+            <!-- Card de Upload de Comprovantes -->
+            <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 1px solid rgba(255, 255, 255, 0.18);">
+                <h2 style="margin-top: 0; margin-bottom: 20px; font-size: 1.5em;">💳 Enviar Comprovante de Pagamento</h2>
                 
-                <div id="alertComprovantes"></div>
+                <div id="alertComprovantesUpload"></div>
 
-                <div class="upload-area" onclick="document.getElementById('comprovanteInput').click()">
-                    <div class="upload-icon">📄</div>
-                    <h3>Upload de Comprovante</h3>
-                    <p style="color: #94a3b8; margin-top: 8px;">PDF, JPG ou PNG</p>
-                    <input type="file" id="comprovanteInput" accept=".pdf,.jpg,.jpeg,.png" multiple>
+                <div class="form-group">
+                    <label for="partner-select-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold;">Selecionar Parceiro:</label>
+                    <select id="partner-select-comprovante" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
+                        <option value="">Escolha um parceiro...</option>
+                    </select>
                 </div>
-
-                <button class="btn btn-primary" onclick="uploadComprovante()" style="width: 100%; margin-top: 16px;">
+                
+                <div class="form-group">
+                    <label for="month-input-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold;">Mês (1-12):</label>
+                    <input type="number" id="month-input-comprovante" min="1" max="12" placeholder="Ex: 1 para Janeiro" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="year-input-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold;">Ano (2024-2030):</label>
+                    <input type="number" id="year-input-comprovante" min="2024" max="2030" placeholder="Ex: 2026" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
+                </div>
+                
+                <div class="form-group">
+                    <label for="comprovante-file-input" style="display: block; margin-bottom: 5px; font-weight: bold;">Selecionar PDF:</label>
+                    <input type="file" id="comprovante-file-input" accept=".pdf" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
+                </div>
+                
+                <button id="upload-comprovante-btn" class="btn btn-success" style="width: 100%; background: #4CAF50; color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s ease;">
                     📤 Enviar Comprovante
                 </button>
             </div>
 
+            <!-- Card de Lista de Comprovantes -->
             <div class="card">
-                <h2>📋 Lista de Comprovantes</h2>
-                <div id="comprovantesList" class="file-list"></div>
+                <h2>📋 Comprovantes Enviados</h2>
+                <div id="comprovantes-list-ul" class="file-list"></div>
             </div>
         </div>
 
@@ -675,6 +691,9 @@
         </div>
     </div>
 
+    <!-- IMPORTAR MÓDULO DE COMPROVANTES -->
+    <script src="comprovantes.js"></script>
+    
     <script>
         console.log('🔐 Super Admin - Iniciado');
 
@@ -702,7 +721,7 @@
                 
                 if (error || !session) {
                     console.log('❌ Acesso negado - redirecionando');
-                    window.location.href = 'login.html';
+                    window.location.href = '../painel-acesso/login.html';
                     return;
                 }
                 
@@ -720,7 +739,7 @@
                 
             } catch (error) {
                 console.error('❌ Erro:', error);
-                window.location.href = 'login.html';
+                window.location.href = '../painel-acesso/login.html';
             }
         }
 
@@ -741,8 +760,8 @@
                 // Carregar vendas
                 await carregarVendas();
                 
-                // Carregar comprovantes
-                await listarComprovantes();
+                // Carregar comprovantes (nova funcionalidade)
+                await initComprovantes();
                 
                 // Mostrar container
                 document.getElementById('loading').style.display = 'none';
@@ -1035,79 +1054,6 @@
             }
         }
 
-        // Upload comprovante
-        async function uploadComprovante() {
-            const input = document.getElementById('comprovanteInput');
-            if (!input.files || input.files.length === 0) {
-                mostrarAlerta('alertComprovantes', 'Selecione um arquivo', 'error');
-                return;
-            }
-            
-            try {
-                mostrarAlerta('alertComprovantes', '⏳ Enviando comprovante...', 'success');
-                
-                for (const file of input.files) {
-                    const { data, error } = await supabaseClient.storage
-                        .from('comprovantes')
-                        .upload(file.name, file, {
-                            cacheControl: '3600',
-                            upsert: true
-                        });
-                    
-                    if (error) throw error;
-                }
-                
-                mostrarAlerta('alertComprovantes', '✅ Comprovante enviado com sucesso!', 'success');
-                input.value = '';
-                await listarComprovantes();
-                
-            } catch (error) {
-                console.error('❌ Erro:', error);
-                mostrarAlerta('alertComprovantes', '❌ Erro: ' + error.message, 'error');
-            }
-        }
-
-        // Listar comprovantes
-        async function listarComprovantes() {
-            try {
-                const { data: comprovantes } = await supabaseClient.storage
-                    .from('comprovantes')
-                    .list();
-                
-                const list = document.getElementById('comprovantesList');
-                
-                if (!comprovantes || comprovantes.length === 0) {
-                    list.innerHTML = '<p style="text-align: center; color: #94a3b8;">Nenhum comprovante encontrado</p>';
-                    return;
-                }
-                
-                let html = '';
-                comprovantes.forEach(file => {
-                    const sizeKB = (file.metadata?.size / 1024).toFixed(2);
-                    html += `
-                        <div class="file-item">
-                            <div class="file-icon">📄</div>
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-size">${sizeKB} KB</div>
-                            <div class="file-actions">
-                                <button class="btn btn-sm btn-primary" onclick="downloadArquivo('comprovantes', '${file.name}')">
-                                    ⬇️
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="deletarArquivo('comprovantes', '${file.name}')">
-                                    🗑️
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                list.innerHTML = html;
-                
-            } catch (error) {
-                console.error('❌ Erro:', error);
-            }
-        }
-
         // Funções auxiliares
         function editarUsuario(tabela, id) {
             alert('Função de edição em desenvolvimento');
@@ -1155,10 +1101,10 @@
             
             try {
                 await supabaseClient.auth.signOut();
-                window.location.href = 'login.html';
+                window.location.href = '../painel-acesso/login.html';
             } catch (error) {
                 console.error('❌ Erro no logout:', error);
-                window.location.href = 'login.html';
+                window.location.href = '../painel-acesso/login.html';
             }
         }
 
