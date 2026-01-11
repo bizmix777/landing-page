@@ -7,7 +7,6 @@
     <meta name="robots" content="noindex, nofollow">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* BASE STYLES */
         * {
             margin: 0;
             padding: 0;
@@ -16,37 +15,32 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #0f172a; /* Dark background */
+            background: #0f172a;
             color: white;
             min-height: 100vh;
-            line-height: 1.6;
         }
 
-        /* LOADING STATE */
         .loading {
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             font-size: 18px;
-            color: #94a3b8;
         }
 
-        /* MAIN CONTAINER */
         .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
-            display: none; /* Hidden by default, shown by JS */
+            display: none;
         }
 
         .container.show {
             display: block;
         }
 
-        /* HEADER */
         .header {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); /* Red gradient */
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             border-radius: 16px;
             padding: 24px 32px;
             margin-bottom: 24px;
@@ -71,18 +65,16 @@
             gap: 12px;
         }
 
-        /* BUTTONS */
         .btn {
             padding: 10px 20px;
             border-radius: 10px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             border: none;
             text-decoration: none;
             display: inline-block;
-            text-align: center;
         }
 
         .btn-secondary {
@@ -103,40 +95,6 @@
             background: #b91c1c;
         }
 
-        .btn-primary {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #2563eb;
-        }
-
-        .btn-success {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #059669;
-        }
-
-        .btn-warning {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .btn-warning:hover {
-            background: #d97706;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 6px;
-        }
-
-        /* STATS GRID */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -145,11 +103,11 @@
         }
 
         .stat-card {
-            background: #1e293b; /* Darker card background */
+            background: #1e293b;
             border-radius: 16px;
             padding: 24px;
             border: 1px solid #334155;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
         .stat-card:hover {
@@ -169,7 +127,7 @@
         }
 
         .stat-label {
-            color: #94a3b8; /* Gray text */
+            color: #94a3b8;
             font-size: 13px;
             font-weight: 500;
             text-transform: uppercase;
@@ -181,12 +139,11 @@
             color: white;
         }
 
-        /* TABS */
         .tabs {
             display: flex;
             gap: 8px;
             margin-bottom: 24px;
-            overflow-x: auto; /* Scrollable tabs */
+            overflow-x: auto;
             padding-bottom: 8px;
         }
 
@@ -196,7 +153,7 @@
             border: 1px solid #334155;
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             white-space: nowrap;
             font-weight: 600;
             font-size: 14px;
@@ -209,12 +166,10 @@
         .tab.active {
             background: #ef4444;
             border-color: #ef4444;
-            color: white;
         }
 
-        /* CONTENT SECTIONS */
         .section {
-            display: none; /* Hidden by default */
+            display: none;
         }
 
         .section.active {
@@ -227,7 +182,6 @@
             padding: 24px;
             border: 1px solid #334155;
             margin-bottom: 24px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .card h2 {
@@ -238,14 +192,13 @@
             gap: 10px;
         }
 
-        /* UPLOAD AREA */
         .upload-area {
             border: 2px dashed #334155;
             border-radius: 12px;
             padding: 40px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             margin-bottom: 20px;
         }
 
@@ -268,11 +221,9 @@
             display: none;
         }
 
-        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         thead {
@@ -298,7 +249,6 @@
             background: #334155;
         }
 
-        /* BADGES */
         .badge {
             display: inline-block;
             padding: 4px 10px;
@@ -327,13 +277,35 @@
             color: white;
         }
 
-        /* ACTION BUTTONS */
         .action-btns {
             display: flex;
             gap: 8px;
         }
 
-        /* FORM ELEMENTS */
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -350,7 +322,7 @@
         .form-group textarea {
             width: 100%;
             padding: 12px;
-            background: #0f172a; /* Dark input background */
+            background: #0f172a;
             border: 1px solid #334155;
             border-radius: 8px;
             color: white;
@@ -362,10 +334,8 @@
         .form-group textarea:focus {
             outline: none;
             border-color: #ef4444;
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
         }
 
-        /* ALERTS */
         .alert {
             padding: 14px;
             border-radius: 10px;
@@ -390,7 +360,6 @@
             color: #ef4444;
         }
 
-        /* FILE LIST */
         .file-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -402,7 +371,7 @@
             border-radius: 12px;
             padding: 16px;
             text-align: center;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
         .file-item:hover {
@@ -433,7 +402,6 @@
             justify-content: center;
         }
 
-        /* RESPONSIVE DESIGN */
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -464,7 +432,6 @@
     </div>
 
     <div class="container" id="container">
-        <!-- HEADER -->
         <div class="header">
             <h1>
                 <span>🔐</span>
@@ -476,7 +443,6 @@
             </div>
         </div>
 
-        <!-- STATS -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-header">
@@ -511,21 +477,19 @@
             </div>
         </div>
 
-        <!-- TABS -->
         <div class="tabs">
-            <div class="tab active" onclick="mudarTab(event, 'upload')">📤 Upload de Arquivos</div>
-            <div class="tab" onclick="mudarTab(event, 'usuarios')">👥 Gerenciar Usuários</div>
-            <div class="tab" onclick="mudarTab(event, 'vendas')">💳 Gerenciar Vendas</div>
-            <div class="tab" onclick="mudarTab(event, 'comprovantes')">📄 Comprovantes</div>
-            <div class="tab" onclick="mudarTab(event, 'config')">⚙️ Configurações</div>
+            <div class="tab active" onclick="mudarTab('upload')">📤 Upload de Arquivos</div>
+            <div class="tab" onclick="mudarTab('usuarios')">👥 Gerenciar Usuários</div>
+            <div class="tab" onclick="mudarTab('vendas')">💳 Gerenciar Vendas</div>
+            <div class="tab" onclick="mudarTab('comprovantes')">📄 Comprovantes</div>
+            <div class="tab" onclick="mudarTab('config')">⚙️ Configurações</div>
         </div>
 
-        <!-- SECTION: UPLOAD -->
         <div id="section-upload" class="section active">
             <div class="card">
                 <h2>📤 Upload de Arquivos PDF</h2>
                 
-                <div id="alertUpload" class="alert"></div>
+                <div id="alertUpload"></div>
 
                 <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                     <div class="upload-icon">📁</div>
@@ -535,7 +499,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="bucketSelect">Bucket de destino:</label>
+                    <label>Bucket de destino:</label>
                     <select id="bucketSelect">
                         <option value="pdfs">pdfs (Livros e materiais)</option>
                         <option value="comprovantes">comprovantes (Comprovantes de pagamento)</option>
@@ -553,7 +517,6 @@
             </div>
         </div>
 
-        <!-- SECTION: USUÁRIOS -->
         <div id="section-usuarios" class="section">
             <div class="card">
                 <h2>👥 Gerenciar Usuários</h2>
@@ -587,7 +550,6 @@
             </div>
         </div>
 
-        <!-- SECTION: VENDAS -->
         <div id="section-vendas" class="section">
             <div class="card">
                 <h2>💳 Gerenciar Vendas</h2>
@@ -621,33 +583,31 @@
             </div>
         </div>
 
-        <!-- SECTION: COMPROVANTES (NOVA FUNCIONALIDADE) -->
         <div id="section-comprovantes" class="section">
-            <!-- Card de Upload de Comprovantes -->
             <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 1px solid rgba(255, 255, 255, 0.18);">
                 <h2 style="margin-top: 0; margin-bottom: 20px; font-size: 1.5em;">💳 Enviar Comprovante de Pagamento</h2>
                 
-                <div id="alertComprovantesUpload" class="alert"></div>
+                <div id="alertComprovantesUpload"></div>
 
                 <div class="form-group">
-                    <label for="partner-select-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold;">Selecionar Parceiro:</label>
+                    <label for="partner-select-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold; color: white;">Selecionar Parceiro:</label>
                     <select id="partner-select-comprovante" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
                         <option value="">Escolha um parceiro...</option>
                     </select>
                 </div>
                 
                 <div class="form-group">
-                    <label for="month-input-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold;">Mês (1-12):</label>
+                    <label for="month-input-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold; color: white;">Mês (1-12):</label>
                     <input type="number" id="month-input-comprovante" min="1" max="12" placeholder="Ex: 1 para Janeiro" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
                 </div>
                 
                 <div class="form-group">
-                    <label for="year-input-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold;">Ano (2024-2030):</label>
+                    <label for="year-input-comprovante" style="display: block; margin-bottom: 5px; font-weight: bold; color: white;">Ano (2024-2030):</label>
                     <input type="number" id="year-input-comprovante" min="2024" max="2030" placeholder="Ex: 2026" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
                 </div>
                 
                 <div class="form-group">
-                    <label for="comprovante-file-input" style="display: block; margin-bottom: 5px; font-weight: bold;">Selecionar PDF:</label>
+                    <label for="comprovante-file-input" style="display: block; margin-bottom: 5px; font-weight: bold; color: white;">Selecionar PDF:</label>
                     <input type="file" id="comprovante-file-input" accept=".pdf" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.9); color: #333; font-size: 1em;">
                 </div>
                 
@@ -656,30 +616,28 @@
                 </button>
             </div>
 
-            <!-- Card de Lista de Comprovantes -->
             <div class="card">
                 <h2>📋 Comprovantes Enviados</h2>
                 <div id="comprovantes-list-ul" class="file-list"></div>
             </div>
         </div>
 
-        <!-- SECTION: CONFIG -->
         <div id="section-config" class="section">
             <div class="card">
                 <h2>⚙️ Configurações do Sistema</h2>
                 
                 <div class="form-group">
-                    <label for="comissaoPadrao">Taxa de Comissão Padrão (%):</label>
+                    <label>Taxa de Comissão Padrão (%):</label>
                     <input type="number" id="comissaoPadrao" value="10" min="0" max="100">
                 </div>
 
                 <div class="form-group">
-                    <label for="valorLivro">Valor do Livro (R$):</label>
+                    <label>Valor do Livro (R$):</label>
                     <input type="number" id="valorLivro" value="97.00" step="0.01">
                 </div>
 
                 <div class="form-group">
-                    <label for="emailNotificacoes">Email de Notificações:</label>
+                    <label>Email de Notificações:</label>
                     <input type="email" id="emailNotificacoes" value="henrique65@gmail.com">
                 </div>
 
@@ -703,13 +661,11 @@
         </div>
     </div>
 
-    <!-- IMPORTAR MÓDULO DE COMPROVANTES -->
     <script src="comprovantes.js"></script>
     
     <script>
         console.log('🔐 Super Admin - Iniciado');
 
-        // Configuração do Supabase
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
@@ -719,12 +675,10 @@
         let usuarioAtual = null;
         let arquivosSelecionados = [];
 
-        // Inicializar
         window.addEventListener('DOMContentLoaded', async () => {
             await verificarAutenticacao();
         });
 
-        // Verificar autenticação
         async function verificarAutenticacao() {
             console.log('🔍 Verificando autenticação...');
             
@@ -732,16 +686,14 @@
                 const { data: { session }, error } = await supabaseClient.auth.getSession();
                 
                 if (error || !session) {
-                    console.log('❌ Acesso negado - redirecionando para login');
-                    window.location.href = '../login.html'; // Assumindo login.html está em /admin/
+                    console.log('❌ Acesso negado - redirecionando');
+                    window.location.href = '../../painel-acesso/login.html';
                     return;
                 }
                 
-                // Verificar se é admin (email específico)
                 if (session.user.email !== 'henrique65@gmail.com') {
                     alert('❌ Acesso negado! Esta área é restrita.');
-                    console.log('❌ Acesso negado - redirecionando para dashboard normal');
-                    window.location.href = '../index.html'; // Assumindo index.html está em /admin/
+                    window.location.href = '../index.html';
                     return;
                 }
                 
@@ -751,32 +703,21 @@
                 await carregarDashboard();
                 
             } catch (error) {
-                console.error('❌ Erro na verificação de autenticação:', error);
-                window.location.href = '../login.html';
+                console.error('❌ Erro:', error);
+                window.location.href = '../../painel-acesso/login.html';
             }
         }
 
-        // Carregar dashboard
         async function carregarDashboard() {
             console.log('📊 Carregando dashboard...');
             
             try {
-                // Carregar estatísticas
                 await carregarEstatisticas();
-                
-                // Carregar arquivos
                 await listarArquivos();
-                
-                // Carregar usuários
                 await carregarUsuarios();
-                
-                // Carregar vendas
                 await carregarVendas();
-                
-                // Carregar comprovantes (chamada do módulo externo)
                 await initComprovantes();
                 
-                // Mostrar container
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('container').classList.add('show');
                 
@@ -788,10 +729,8 @@
             }
         }
 
-        // Carregar estatísticas
         async function carregarEstatisticas() {
             try {
-                // Total de vendas
                 const { data: vendas, error: erroVendas } = await supabaseClient
                     .from('vendas')
                     .select('*');
@@ -800,13 +739,11 @@
                     document.getElementById('totalVendas').textContent = vendas.length;
                 }
                 
-                // Total de usuários (igrejas + parceiros)
                 const { data: igrejas } = await supabaseClient.from('igrejas').select('*');
                 const { data: parceiros } = await supabaseClient.from('parceiros').select('*');
                 const totalUsuarios = (igrejas?.length || 0) + (parceiros?.length || 0);
                 document.getElementById('totalUsuarios').textContent = totalUsuarios;
                 
-                // Comissões pendentes
                 const comissoesPendentes = vendas?.filter(v => v.status_pagamento === 'pendente')
                     .reduce((sum, v) => sum + parseFloat(v.valor_comissao || 0), 0) || 0;
                 document.getElementById('comissoesPendentes').textContent = 
@@ -817,42 +754,36 @@
             }
         }
 
-        // Mudar tab
-        function mudarTab(event, tabName) {
-            // Remover active de todas as tabs
-            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+        function mudarTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             
-            // Ativar tab clicada
             event.target.classList.add('active');
             document.getElementById('section-' + tabName).classList.add('active');
         }
 
-        // Upload de arquivos
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
 
-        if (uploadArea && fileInput) {
-            uploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadArea.classList.add('dragover');
-            });
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
 
-            uploadArea.addEventListener('dragleave', () => {
-                uploadArea.classList.remove('dragover');
-            });
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
 
-            uploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadArea.classList.remove('dragover');
-                fileInput.files = e.dataTransfer.files;
-            });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+        });
 
-            fileInput.addEventListener('change', (e) => {
-                arquivosSelecionados = Array.from(e.target.files);
-                console.log('📁 Arquivos selecionados:', arquivosSelecionados);
-            });
-        }
+        fileInput.addEventListener('change', (e) => {
+            arquivosSelecionados = Array.from(e.target.files);
+            console.log('📁 Arquivos selecionados:', arquivosSelecionados);
+        });
 
         async function fazerUpload() {
             if (!fileInput.files || fileInput.files.length === 0) {
@@ -866,7 +797,7 @@
                 mostrarAlerta('alertUpload', '⏳ Fazendo upload...', 'success');
                 
                 for (const file of fileInput.files) {
-                    console.log(`📤 Uploading ${file.name} to bucket ${bucket}...`);
+                    console.log(`📤 Uploading ${file.name}...`);
                     
                     const { data, error } = await supabaseClient.storage
                         .from(bucket)
@@ -877,7 +808,7 @@
                     
                     if (error) throw error;
                     
-                    console.log(`✅ ${file.name} enviado com sucesso para ${bucket}`);
+                    console.log(`✅ ${file.name} enviado com sucesso`);
                 }
                 
                 mostrarAlerta('alertUpload', '✅ Arquivos enviados com sucesso!', 'success');
@@ -890,7 +821,6 @@
             }
         }
 
-        // Listar arquivos
         async function listarArquivos() {
             try {
                 const { data: pdfs, error: erroPdfs } = await supabaseClient.storage
@@ -902,8 +832,6 @@
                 document.getElementById('totalArquivos').textContent = pdfs?.length || 0;
                 
                 const fileList = document.getElementById('fileList');
-                
-                if (!fileList) return; // Ensure element exists
                 
                 if (!pdfs || pdfs.length === 0) {
                     fileList.innerHTML = '<p style="text-align: center; color: #94a3b8;">Nenhum arquivo encontrado</p>';
@@ -937,7 +865,6 @@
             }
         }
 
-        // Download arquivo
         async function downloadArquivo(bucket, fileName) {
             try {
                 const { data, error } = await supabaseClient.storage
@@ -959,7 +886,6 @@
             }
         }
 
-        // Deletar arquivo
         async function deletarArquivo(bucket, fileName) {
             if (!confirm(`Tem certeza que deseja deletar "${fileName}"?`)) return;
             
@@ -971,7 +897,7 @@
                 if (error) throw error;
                 
                 alert('✅ Arquivo deletado com sucesso!');
-                await listarArquivos(); // Refresh the list of files
+                await listarArquivos();
                 
             } catch (error) {
                 console.error('❌ Erro ao deletar:', error);
@@ -979,25 +905,21 @@
             }
         }
 
-        // Carregar usuários
         async function carregarUsuarios() {
             try {
                 const { data: igrejas } = await supabaseClient.from('igrejas').select('*');
                 const { data: parceiros } = await supabaseClient.from('parceiros').select('*');
                 
                 const tbody = document.getElementById('usuariosBody');
-                if (!tbody) return;
-                
                 let html = '';
                 
-                // Igrejas
                 igrejas?.forEach(igreja => {
                     html += `
                         <tr>
                             <td><span class="badge badge-info">Igreja</span></td>
-                            <td>${igreja.nome || 'N/A'}</td>
-                            <td>${igreja.email || 'N/A'}</td>
-                            <td>${igreja.codigo || igreja.id || 'N/A'}</td>
+                            <td>${igreja.nome}</td>
+                            <td>${igreja.email}</td>
+                            <td>${igreja.codigo || igreja.id}</td>
                             <td>${igreja.comissao || 10}%</td>
                             <td><span class="badge badge-success">Ativo</span></td>
                             <td class="action-btns">
@@ -1008,14 +930,13 @@
                     `;
                 });
                 
-                // Parceiros
                 parceiros?.forEach(parceiro => {
                     html += `
                         <tr>
                             <td><span class="badge badge-warning">Parceiro</span></td>
-                            <td>${parceiro.nome_completo || 'N/A'}</td>
-                            <td>${parceiro.email || 'N/A'}</td>
-                            <td>${parceiro.codigo_parceiro || parceiro.id || 'N/A'}</td>
+                            <td>${parceiro.nome_completo}</td>
+                            <td>${parceiro.email}</td>
+                            <td>${parceiro.codigo_parceiro || parceiro.id}</td>
                             <td>${parceiro.comissao || 10}%</td>
                             <td><span class="badge badge-success">Ativo</span></td>
                             <td class="action-btns">
@@ -1033,7 +954,6 @@
             }
         }
 
-        // Carregar vendas
         async function carregarVendas() {
             try {
                 const { data: vendas } = await supabaseClient
@@ -1042,8 +962,6 @@
                     .order('created_at', { ascending: false });
                 
                 const tbody = document.getElementById('vendasBody');
-                if (!tbody) return;
-                
                 let html = '';
                 
                 vendas?.forEach(venda => {
@@ -1055,10 +973,10 @@
                     html += `
                         <tr>
                             <td>${data}</td>
-                            <td>${venda.nome_comprador || 'N/A'}<br><small style="color: #94a3b8;">${venda.email_comprador || 'N/A'}</small></td>
-                            <td>R$ ${parseFloat(venda.valor_total || 0).toFixed(2).replace('.', ',')}</td>
+                            <td>${venda.nome_comprador}<br><small style="color: #94a3b8;">${venda.email_comprador}</small></td>
+                            <td>R$ ${parseFloat(venda.valor_total || 0).toFixed(2)}</td>
                             <td>${venda.parceiro_id || venda.igreja_id || 'N/A'}</td>
-                            <td>R$ ${parseFloat(venda.valor_comissao || 0).toFixed(2).replace('.', ',')}</td>
+                            <td>R$ ${parseFloat(venda.valor_comissao || 0).toFixed(2)}</td>
                             <td>${statusBadge}</td>
                             <td class="action-btns">
                                 <button class="btn btn-sm btn-primary" onclick="editarVenda('${venda.id}')">✏️</button>
@@ -1075,23 +993,22 @@
             }
         }
 
-        // Funções auxiliares
         function editarUsuario(tabela, id) {
-            alert('Função de edição de usuário em desenvolvimento');
+            alert('Função de edição em desenvolvimento');
         }
 
         function deletarUsuario(tabela, id) {
             if (!confirm('Tem certeza que deseja deletar este usuário?')) return;
-            alert('Função de exclusão de usuário em desenvolvimento');
+            alert('Função de exclusão em desenvolvimento');
         }
 
         function editarVenda(id) {
-            alert('Função de edição de venda em desenvolvimento');
+            alert('Função de edição em desenvolvimento');
         }
 
         function deletarVenda(id) {
             if (!confirm('Tem certeza que deseja deletar esta venda?')) return;
-            alert('Função de exclusão de venda em desenvolvimento');
+            alert('Função de exclusão em desenvolvimento');
         }
 
         function salvarConfiguracoes() {
@@ -1110,7 +1027,6 @@
 
         function mostrarAlerta(containerId, mensagem, tipo) {
             const container = document.getElementById(containerId);
-            if (!container) return;
             container.innerHTML = `<div class="alert alert-${tipo} show">${mensagem}</div>`;
             
             setTimeout(() => {
@@ -1123,10 +1039,10 @@
             
             try {
                 await supabaseClient.auth.signOut();
-                window.location.href = '../login.html'; // Redireciona para o login na pasta /admin/
+                window.location.href = '../../painel-acesso/login.html';
             } catch (error) {
                 console.error('❌ Erro no logout:', error);
-                window.location.href = '../login.html';
+                window.location.href = '../../painel-acesso/login.html';
             }
         }
 
