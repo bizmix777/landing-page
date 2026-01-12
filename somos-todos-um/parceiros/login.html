@@ -5,309 +5,369 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Portal do Parceiro</title>
     <link rel="stylesheet" href="css/modern-style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Basic Reset & Body Styling */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Gradient background */
-            display: flex;
-            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-        }
-
-        /* Login Container for Centering */
-        .login-container {
-            flex-grow: 1;
             display: flex;
-            align-items: center;
             justify-content: center;
-            width: 100%;
+            align-items: center;
             padding: 20px;
-            box-sizing: border-box;
         }
 
-        /* Login Card Styling */
-        .login-card {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
             width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
             text-align: center;
-            box-sizing: border-box;
+            color: white;
         }
 
-        /* Logo Styling */
-        .logo {
-            max-width: 150px;
-            margin-bottom: 30px;
+        .login-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
         }
 
-        /* Heading Styling */
-        h2 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 24px;
-            font-weight: 600;
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
         }
 
-        /* Input Group Styling */
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
+        .login-body {
+            padding: 40px 30px;
         }
 
-        .input-group label {
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: #555;
+            color: #333;
+            font-weight: 600;
             font-size: 14px;
-            font-weight: 500;
         }
 
-        .input-group input {
+        .form-group input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
+            font-size: 15px;
+            transition: all 0.3s;
         }
 
-        .input-group input:focus {
-            border-color: #667eea;
+        .form-group input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        /* Button Styling */
-        .primary-button {
+        .btn-login {
+            width: 100%;
+            padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #ffffff;
-            padding: 14px 20px;
+            color: white;
             border: none;
             border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            margin-top: 20px;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .primary-button:hover {
-            opacity: 0.9;
+        .btn-login:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        /* Error Message Styling */
-        .error-message {
-            color: #dc3545;
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 10px 15px;
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 15px;
             border-radius: 8px;
-            margin-top: 20px;
-            display: none; /* Hidden by default */
+            margin-bottom: 20px;
             font-size: 14px;
-            text-align: left;
         }
 
-        /* Links Group Styling */
-        .links-group {
-            margin-top: 25px;
+        .alert-error {
+            background-color: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
         }
 
-        .secondary-link {
+        .alert-success {
+            background-color: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .login-footer a {
             color: #667eea;
             text-decoration: none;
-            font-size: 14px;
-            margin: 10px 0;
-            display: block;
-            transition: color 0.3s ease;
+            font-weight: 600;
         }
 
-        .secondary-link:hover {
-            color: #764ba2;
+        .login-footer a:hover {
             text-decoration: underline;
         }
 
-        /* Footer Styling */
-        footer {
-            margin-top: auto; /* Pushes footer to the bottom */
-            padding: 20px;
-            color: #ffffff;
+        .loading {
+            display: none;
             text-align: center;
-            font-size: 13px;
-            opacity: 0.8;
-            width: 100%;
-            box-sizing: border-box;
+            margin-top: 10px;
         }
 
-        /* Responsive Adjustments */
-        @media (max-width: 600px) {
-            .login-card {
-                padding: 30px 20px;
-                margin: 0 15px;
-            }
-            h2 {
-                font-size: 22px;
-            }
-            .primary-button {
-                font-size: 16px;
-                padding: 12px 15px;
-            }
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-card">
-            <img src="images/logo_par.png" alt="Logo BizMix" class="logo">
-            <h2>Login de Parceiro</h2>
-            <form id="login-form">
-                <div class="input-group">
+        <div class="login-header">
+            <h1>🔐 Portal do Parceiro</h1>
+            <p>Faça login para acessar sua área</p>
+        </div>
+
+        <div class="login-body">
+            <div id="alertContainer"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" id="email" placeholder="seu.email@exemplo.com" required>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="seu@email.com"
+                        required
+                        autocomplete="email"
+                    >
                 </div>
-                <div class="input-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" placeholder="********" required>
+
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input 
+                        type="password" 
+                        id="senha" 
+                        name="senha" 
+                        placeholder="••••••••"
+                        required
+                        autocomplete="current-password"
+                    >
                 </div>
-                <div id="error-message" class="error-message"></div>
-                <button type="submit" class="primary-button">Entrar</button>
+
+                <button type="submit" class="btn-login" id="btnLogin">
+                    Entrar
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #666;">Autenticando...</p>
+                </div>
             </form>
-            <div class="links-group">
-                <a href="esqueci-senha.html" class="secondary-link">Esqueci minha senha</a>
-                <a href="registro.html" class="secondary-link">Cadastrar-se</a>
-            </div>
+        </div>
+
+        <div class="login-footer">
+            <p>Ainda não é parceiro? <a href="registro.html">Cadastre-se aqui</a></p>
         </div>
     </div>
-    <footer>
-        <p>&copy; 2026 BizMix - Somos Todos Um. Todos os direitos reservados.</p>
-    </footer>
 
-    <script>
-        // Supabase configuration
+    <!-- Supabase Client -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        // Configuração do Supabase
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.dCjZSX2ridOVxJTaIG3lLXLnhWMQPZjxT-vYgBBHjOw';
-        
-        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // Check if already logged in
-        async function checkAuth() {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
-                    // If a session exists, redirect to the dashboard
-                    window.location.href = 'dashboard.html';
-                }
-            } catch (error) {
-                console.error('Erro ao verificar sessão:', error);
-                // Optionally show a message, but don't block login
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.ygSsuRLNrBXE_pzP5_OwT5Ux6qnLw2nI2xPZCYOsF5Q';
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        console.log('✅ Supabase Client inicializado');
+
+        // Elementos do DOM
+        const loginForm = document.getElementById('loginForm');
+        const btnLogin = document.getElementById('btnLogin');
+        const loading = document.getElementById('loading');
+        const alertContainer = document.getElementById('alertContainer');
+
+        // Função para mostrar alertas
+        function mostrarAlerta(mensagem, tipo = 'error') {
+            alertContainer.innerHTML = `
+                <div class="alert alert-${tipo}">
+                    ${mensagem}
+                </div>
+            `;
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Verificar se já está logado
+        async function verificarSessao() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                console.log('✅ Sessão ativa encontrada, redirecionando...');
+                window.location.href = 'dashboard.html';
             }
         }
-        
-        // Call checkAuth on page load
-        document.addEventListener('DOMContentLoaded', checkAuth);
-        
-        // Login function
-        async function handleLogin(event) {
-            event.preventDefault(); // Prevent default form submission
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Clear previous errors
-            showError(''); 
+
+        verificarSessao();
+
+        // Handler do formulário de login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            console.log('🔐 Tentando fazer login com:', email);
+
+            // Validações básicas
+            if (!email || !senha) {
+                mostrarAlerta('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+
+            // Desabilitar botão e mostrar loading
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Entrando...';
+            loading.classList.add('active');
 
             try {
-                // 1. Sign in with Supabase Auth
-                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                // Tentar autenticar com Supabase Auth
+                console.log('📡 Autenticando via Supabase Auth...');
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
-                    password: password
+                    password: senha,
                 });
-                
-                if (authError) {
-                    // Map common Supabase Auth errors to user-friendly messages
-                    if (authError.message.includes('Invalid login credentials')) {
-                        throw new Error('Email ou senha inválidos. Por favor, tente novamente.');
-                    }
-                    throw authError; // Re-throw other auth errors
+
+                if (error) {
+                    console.error('❌ Erro na autenticação:', error);
+                    throw new Error(error.message);
                 }
 
-                // Ensure user data is available after successful login
-                if (!authData || !authData.user) {
-                    throw new Error('Falha ao obter dados do usuário após o login.');
-                }
+                console.log('✅ Autenticação bem-sucedida!');
+                console.log('👤 Usuário:', data.user);
 
-                const userId = authData.user.id;
+                // Buscar dados do parceiro
+                console.log('📊 Buscando dados do parceiro...');
                 
-                // 2. Get parceiro data from 'parceiros' table using the authenticated user's ID
                 const { data: parceiro, error: parceiroError } = await supabase
                     .from('parceiros')
-                    .select('id, nome_completo, email, codigo_parceiro, tipo_parceiro, comissao_padrao, status')
-                    .eq('auth_user_id', userId) // Assuming auth_user_id links to auth.users.id
+                    .select('*')
+                    .eq('auth_user_id', data.user.id)
                     .single();
-                
+
                 if (parceiroError) {
-                    // If parceiro not found, it might mean the user exists in auth.users but not in 'parceiros'
-                    // Or RLS is blocking access.
-                    console.error('Erro ao buscar dados do parceiro:', parceiroError);
-                    // To prevent orphaned auth.users, you might want to sign out here
-                    await supabase.auth.signOut();
-                    throw new Error('Não foi possível encontrar seu perfil de parceiro. Entre em contato com o suporte.');
+                    console.error('❌ Erro ao buscar parceiro:', parceiroError);
+                    throw new Error('Parceiro não encontrado no sistema.');
                 }
-                
-                // 3. Check if parceiro is active
+
+                console.log('✅ Dados do parceiro carregados:', parceiro);
+
+                // Verificar se o parceiro está ativo
                 if (parceiro.status !== 'ativo') {
-                    // If not active, sign out the user from Supabase Auth
-                    await supabase.auth.signOut();
-                    throw new Error('Sua conta ainda não foi aprovada ou está inativa. Entre em contato com o suporte.');
+                    throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
                 }
-                
-                // 4. Update last access in 'parceiros' table
-                const { error: updateError } = await supabase
+
+                // Atualizar último acesso
+                await supabase
                     .from('parceiros')
                     .update({ ultimo_acesso: new Date().toISOString() })
-                    .eq('id', parceiro.id); // Update using the parceiro's ID
-                
-                if (updateError) {
-                    console.warn('Aviso: Falha ao atualizar último acesso do parceiro:', updateError.message);
-                    // This is a non-critical error, so we don't block login
-                }
-                
-                // 5. Redirect to dashboard
-                window.location.href = 'dashboard.html';
-                
-            } catch (error) {
-                console.error('Erro no login:', error);
-                showError(error.message || 'Ocorreu um erro inesperado. Tente novamente.');
-            }
-        }
-        
-        // Function to display error messages
-        function showError(message) {
-            const errorDiv = document.getElementById('error-message');
-            if (message) {
-                errorDiv.textContent = message;
-                errorDiv.style.display = 'block';
-            } else {
-                errorDiv.textContent = '';
-                errorDiv.style.display = 'none';
-            }
-        }
+                    .eq('id', parceiro.id);
 
-        // Attach event listener to the form
-        document.getElementById('login-form').addEventListener('submit', handleLogin);
+                // Salvar dados no localStorage (para compatibilidade)
+                localStorage.setItem('parceiro', JSON.stringify({
+                    id: parceiro.id,
+                    nome: parceiro.nome_completo,
+                    email: parceiro.email,
+                    codigo: parceiro.codigo_parceiro,
+                    tipo: parceiro.tipo_parceiro,
+                    comissao: parceiro.comissao_percentual || 30
+                }));
+
+                console.log('✅ Dados salvos no localStorage');
+
+                // Mostrar sucesso
+                mostrarAlerta('Login realizado com sucesso! Redirecionando...', 'success');
+
+                // Redirecionar para o dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+
+            } catch (error) {
+                console.error('❌ Erro no login:', error);
+                
+                let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
+                
+                if (error.message.includes('Invalid login credentials')) {
+                    mensagemErro = 'Email ou senha incorretos.';
+                } else if (error.message.includes('Email not confirmed')) {
+                    mensagemErro = 'Por favor, confirme seu email antes de fazer login.';
+                } else if (error.message.includes('Parceiro não encontrado')) {
+                    mensagemErro = 'Usuário não cadastrado como parceiro.';
+                } else if (error.message.includes('inativa')) {
+                    mensagemErro = error.message;
+                }
+
+                mostrarAlerta(mensagemErro, 'error');
+
+                // Reabilitar botão
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Entrar';
+                loading.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>
