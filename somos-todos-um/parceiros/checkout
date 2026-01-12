@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="refresh" content="0;url=checkout.html">
+    <script>
+        window.location.href = 'checkout.html' + window.location.search;
+    </script>
+</head>
+<body>
+    Redirecionando...
+</body>
+</html>
