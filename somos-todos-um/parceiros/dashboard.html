@@ -3,27 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard do Parceiro - BizMix</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Dashboard - Portal do Parceiro</title>
+    <link rel="stylesheet" href="css/modern-style.css">
     <style>
-        /* Reset e Base */
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --text-color: #333;
-            --light-text-color: #666;
-            --bg-light: #f4f7f6;
-            --bg-dark: #e0e4e8;
-            --card-bg: #ffffff;
-            --border-color: #e0e0e0;
-            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.05);
-            --shadow-medium: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --success-color: #28a745;
-            --info-color: #17a2b8;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -32,243 +14,67 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-color);
-            line-height: 1.6;
-            display: flex;
+            background-color: #f5f7fa;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        a {
-            text-decoration: none;
-            color: var(--primary-color);
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        /* Loading Overlay */
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid var(--primary-color);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
-            color: #ffffff;
-            padding: 20px;
-            box-shadow: var(--shadow-medium);
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            transition: transform 0.3s ease-in-out;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar.hidden {
-            transform: translateX(-100%);
-        }
-
-        .sidebar .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sidebar .logo img {
-            max-width: 150px;
-            height: auto;
-        }
-
-        .sidebar nav ul {
-            list-style: none;
-        }
-
-        .sidebar nav ul li {
-            margin-bottom: 10px;
-        }
-
-        .sidebar nav ul li a {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            color: #ffffff;
-            font-size: 16px;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        .sidebar nav ul li a i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-
-        .sidebar nav ul li a:hover,
-        .sidebar nav ul li a.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            text-decoration: none;
-        }
-
-        .sidebar .logout-btn {
-            margin-top: auto; /* Push to bottom */
-            background-color: var(--danger-color);
-            color: #ffffff;
-            padding: 12px 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            text-align: center;
-        }
-
-        .sidebar .logout-btn:hover {
-            background-color: #c82333;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-light);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .header h1 {
-            font-size: 28px;
-            color: var(--primary-color);
-            margin: 0;
+        .navbar h1 {
+            font-size: 24px;
         }
 
-        .header .user-info {
+        .navbar-user {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        .header .user-info span {
-            font-weight: 600;
-            color: var(--text-color);
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
         }
 
-        .header .user-info .profile-pic {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #ffffff;
-            font-weight: bold;
-            font-size: 18px;
+        .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
         }
 
         .welcome-section {
-            background-color: var(--card-bg);
+            background: white;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-light);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 30px;
-            text-align: center;
         }
 
         .welcome-section h2 {
-            font-size: 24px;
-            color: var(--primary-color);
+            color: #333;
             margin-bottom: 10px;
         }
 
         .welcome-section p {
+            color: #666;
             font-size: 16px;
-            color: var(--light-text-color);
-            margin-bottom: 20px;
-        }
-
-        .affiliate-link-box {
-            background-color: var(--bg-dark);
-            padding: 20px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .affiliate-link-box label {
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .affiliate-link-box .link-input-group {
-            display: flex;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .affiliate-link-box input[type="text"] {
-            flex-grow: 1;
-            padding: 10px 15px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px 0 0 5px;
-            font-size: 15px;
-            background-color: #ffffff;
-        }
-
-        .affiliate-link-box button {
-            padding: 10px 15px;
-            background-color: var(--primary-color);
-            color: #ffffff;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            font-size: 15px;
-            transition: background-color 0.3s ease;
-        }
-
-        .affiliate-link-box button:hover {
-            background-color: var(--secondary-color);
         }
 
         .stats-grid {
@@ -279,450 +85,393 @@
         }
 
         .stat-card {
-            background-color: var(--card-bg);
+            background: white;
             padding: 25px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-light);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: transform 0.2s ease;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-card .icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-            color: var(--primary-color);
-        }
-
-        .stat-card.sales .icon { color: var(--info-color); }
-        .stat-card.revenue .icon { color: var(--success-color); }
-        .stat-card.commission .icon { color: var(--secondary-color); }
-        .stat-card.rate .icon { color: var(--warning-color); }
-
-        .stat-card .label {
-            font-size: 15px;
-            color: var(--light-text-color);
-            margin-bottom: 5px;
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
         }
 
         .stat-card .value {
+            color: #667eea;
             font-size: 32px;
             font-weight: 700;
-            color: var(--text-color);
+            margin-bottom: 5px;
         }
 
-        .recent-sales-section {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-light);
-        }
-
-        .recent-sales-section h2 {
-            font-size: 24px;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        .sales-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .sales-table th,
-        .sales-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .sales-table th {
-            background-color: var(--bg-dark);
-            color: var(--text-color);
-            font-weight: 600;
-            text-transform: uppercase;
+        .stat-card .label {
+            color: #999;
             font-size: 13px;
         }
 
-        .sales-table tbody tr:nth-child(even) {
-            background-color: var(--bg-light);
+        .link-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
         }
 
-        .sales-table tbody tr:hover {
-            background-color: var(--bg-dark);
+        .link-section h3 {
+            color: #333;
+            margin-bottom: 15px;
         }
 
-        .sales-table .status-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
-        .status-badge.pago { background-color: var(--success-color); }
-        .status-badge.pendente { background-color: var(--warning-color); }
-        .status-badge.cancelado { background-color: var(--danger-color); }
-
-        /* Error Message */
-        #error-message {
-            background-color: var(--danger-color);
-            color: #ffffff;
+        .link-box {
+            background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
-            margin-top: 20px;
-            display: none;
-            text-align: center;
+            border: 2px dashed #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
         }
 
-        /* Font Awesome Icons */
-        @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
+        .link-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: monospace;
+        }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
+        .btn-copy {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background 0.3s;
+        }
 
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                transform: translateX(0);
-                box-shadow: none;
-                padding-bottom: 0;
-            }
+        .btn-copy:hover {
+            background: #5568d3;
+        }
 
-            .sidebar.hidden {
-                transform: translateX(0);
-            }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
 
-            .sidebar nav ul {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 5px;
-                margin-bottom: 20px;
-            }
+        .menu-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
 
-            .sidebar nav ul li {
-                margin-bottom: 0;
-            }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            color: #667eea;
+        }
 
-            .sidebar nav ul li a {
-                padding: 8px 12px;
-                font-size: 14px;
-            }
+        .menu-card .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
 
-            .sidebar .logout-btn {
-                margin-top: 20px;
-                width: calc(100% - 40px);
-                margin-left: 20px;
-                margin-right: 20px;
-            }
+        .menu-card h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
 
-            .main-content {
-                padding: 20px;
-            }
+        .menu-card p {
+            font-size: 13px;
+            color: #999;
+        }
 
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
 
-            .header h1 {
-                font-size: 24px;
-            }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
 
-            .header .user-info {
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <p>Carregando dashboard...</p>
-    </div>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo">
-            <img src="images/logo_par.png" alt="BizMix Logo">
+    <nav class="navbar">
+        <h1>🎯 Portal do Parceiro</h1>
+        <div class="navbar-user">
+            <span id="nomeUsuario">Carregando...</span>
+            <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
-        <nav>
-            <ul>
-                <li><a href="dashboard.html" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li><a href="vendas.html"><i class="fas fa-shopping-cart"></i> Vendas</a></li>
-                <li><a href="comissoes.html"><i class="fas fa-hand-holding-usd"></i> Comissões</a></li>
-                <li><a href="comprovantes.html"><i class="fas fa-receipt"></i> Comprovantes</a></li>
-                <li><a href="dados.html"><i class="fas fa-user-cog"></i> Dados Cadastrais</a></li>
-                <li><a href="materiais.html"><i class="fas fa-file-alt"></i> Materiais de Divulgação</a></li>
-            </ul>
-        </nav>
-        <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</button>
-    </aside>
+    </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <header class="header">
-            <h1>Dashboard</h1>
-            <div class="user-info">
-                <span id="parceiro-nome-header"></span>
-                <div class="profile-pic" id="parceiro-initials"></div>
+    <div class="container">
+        <div id="loadingContainer" class="loading">
+            <div class="spinner"></div>
+            <p>Carregando seus dados...</p>
+        </div>
+
+        <div id="dashboardContent" style="display: none;">
+            <div class="welcome-section">
+                <h2 id="welcomeMessage">Bem-vindo!</h2>
+                <p>Acompanhe suas vendas e comissões em tempo real</p>
             </div>
-        </header>
 
-        <section class="welcome-section">
-            <h2 id="welcome-message">Olá, Parceiro!</h2>
-            <p>Bem-vindo ao seu painel. Aqui você pode acompanhar suas vendas, comissões e gerenciar suas informações.</p>
-            <div class="affiliate-link-box">
-                <label for="affiliate-link">Seu Link de Indicação:</label>
-                <div class="link-input-group">
-                    <input type="text" id="affiliate-link" readonly>
-                    <button id="copy-link-btn"><i class="fas fa-copy"></i> Copiar</button>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total de Vendas</h3>
+                    <div class="value" id="totalVendas">0</div>
+                    <div class="label">vendas realizadas</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Valor Total</h3>
+                    <div class="value" id="valorTotal">R$ 0,00</div>
+                    <div class="label">em vendas</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Comissão Total</h3>
+                    <div class="value" id="comissaoTotal">R$ 0,00</div>
+                    <div class="label">acumulado</div>
+                </div>
+
+                <div class="stat-card">
+                    <h3>Taxa de Comissão</h3>
+                    <div class="value" id="taxaComissao">0%</div>
+                    <div class="label">percentual</div>
                 </div>
             </div>
-        </section>
 
-        <section class="stats-grid">
-            <div class="stat-card sales">
-                <i class="fas fa-shopping-bag icon"></i>
-                <span class="label">Total de Vendas</span>
-                <span class="value" id="total-vendas">0</span>
+            <div class="link-section">
+                <h3>🔗 Seu Link de Indicação</h3>
+                <p style="color: #666; margin-bottom: 15px;">Compartilhe este link para receber comissões</p>
+                <div class="link-box">
+                    <input type="text" id="linkIndicacao" readonly>
+                    <button class="btn-copy" onclick="copiarLink()">📋 Copiar</button>
+                </div>
             </div>
-            <div class="stat-card revenue">
-                <i class="fas fa-dollar-sign icon"></i>
-                <span class="label">Valor Total Vendido</span>
-                <span class="value" id="valor-total-vendido">R$ 0,00</span>
-            </div>
-            <div class="stat-card commission">
-                <i class="fas fa-money-check-alt icon"></i>
-                <span class="label">Comissão Total</span>
-                <span class="value" id="comissao-total">R$ 0,00</span>
-            </div>
-            <div class="stat-card rate">
-                <i class="fas fa-percentage icon"></i>
-                <span class="label">Sua Taxa de Comissão</span>
-                <span class="value" id="taxa-comissao">0%</span>
-            </div>
-        </section>
 
-        <section class="recent-sales-section">
-            <h2>Últimas Vendas</h2>
-            <div class="table-responsive">
-                <table class="sales-table">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Comprador</th>
-                            <th>Produto</th>
-                            <th>Valor Venda</th>
-                            <th>Sua Comissão</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recent-sales-body">
-                        <!-- Vendas serão carregadas aqui -->
-                        <tr><td colspan="6" style="text-align: center;">Nenhuma venda recente ainda.</td></tr>
-                    </tbody>
-                </table>
+            <div class="menu-grid">
+                <a href="vendas.html" class="menu-card">
+                    <div class="icon">📊</div>
+                    <h4>Minhas Vendas</h4>
+                    <p>Visualizar todas as vendas</p>
+                </a>
+
+                <a href="comissoes.html" class="menu-card">
+                    <div class="icon">💰</div>
+                    <h4>Comissões</h4>
+                    <p>Acompanhar pagamentos</p>
+                </a>
+
+                <a href="materiais.html" class="menu-card">
+                    <div class="icon">📁</div>
+                    <h4>Materiais</h4>
+                    <p>Downloads e recursos</p>
+                </a>
+
+                <a href="dados.html" class="menu-card">
+                    <div class="icon">⚙️</div>
+                    <h4>Meus Dados</h4>
+                    <p>Editar informações</p>
+                </a>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <div id="error-message" style="display: none;"></div>
-    </main>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-    <script>
-        // Supabase Client Initialization
+        // Configuração do Supabase
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDQ5OTY2MDAsImV4cCI6MjAyMDY2OTgwMH0.Jh7U7trvwHEsfXRmn1Ktt-4Anc9LTdNxUR1-ocvFUNg'; // Substitua pela sua chave anon
-        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.ygSsuRLNrBXE_pzP5_OwT5Ux6qnLw2nI2xPZCYOsF5Q';
 
-        // DOM Elements
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const errorMessageDiv = document.getElementById('error-message');
-        const parceiroNomeHeader = document.getElementById('parceiro-nome-header');
-        const parceiroInitials = document.getElementById('parceiro-initials');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const affiliateLinkInput = document.getElementById('affiliate-link');
-        const copyLinkBtn = document.getElementById('copy-link-btn');
-        const totalVendasSpan = document.getElementById('total-vendas');
-        const valorTotalVendidoSpan = document.getElementById('valor-total-vendido');
-        const comissaoTotalSpan = document.getElementById('comissao-total');
-        const taxaComissaoSpan = document.getElementById('taxa-comissao');
-        const recentSalesBody = document.getElementById('recent-sales-body');
-        const logoutBtn = document.getElementById('logout-btn');
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Helper Functions
-        function showLoading() {
-            loadingOverlay.style.display = 'flex';
+        console.log('✅ Supabase Client inicializado no dashboard');
+
+        // Elementos do DOM
+        const loadingContainer = document.getElementById('loadingContainer');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const nomeUsuario = document.getElementById('nomeUsuario');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const totalVendas = document.getElementById('totalVendas');
+        const valorTotal = document.getElementById('valorTotal');
+        const comissaoTotal = document.getElementById('comissaoTotal');
+        const taxaComissao = document.getElementById('taxaComissao');
+        const linkIndicacao = document.getElementById('linkIndicacao');
+
+        // Função para verificar autenticação
+        async function verificarAutenticacao() {
+            console.log('🔐 Verificando autenticação...');
+
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                console.log('❌ Não autenticado, redirecionando para login...');
+                window.location.href = 'login.html';
+                return null;
+            }
+
+            console.log('✅ Usuário autenticado:', session.user.email);
+            return session.user;
         }
 
-        function hideLoading() {
-            loadingOverlay.style.display = 'none';
+        // Função para buscar dados do parceiro
+        async function buscarDadosParceiro(userId) {
+            console.log('📊 Buscando dados do parceiro...');
+
+            const { data: parceiro, error } = await supabase
+                .from('parceiros')
+                .select('*')
+                .eq('auth_user_id', userId)
+                .single();
+
+            if (error) {
+                console.error('❌ Erro ao buscar parceiro:', error);
+                alert('Erro ao carregar dados do parceiro.');
+                return null;
+            }
+
+            console.log('✅ Dados do parceiro:', parceiro);
+            return parceiro;
         }
 
-        function showError(message) {
-            errorMessageDiv.textContent = message;
-            errorMessageDiv.style.display = 'block';
-            hideLoading();
+        // Função para buscar vendas do parceiro
+        async function buscarVendas(parceiroId) {
+            console.log('📈 Buscando vendas do parceiro...');
+
+            const { data: vendas, error } = await supabase
+                .from('vendas')
+                .select('*')
+                .eq('parceiro_id', parceiroId)
+                .eq('status_pagamento', 'pago')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('❌ Erro ao buscar vendas:', error);
+                return [];
+            }
+
+            console.log('✅ Vendas encontradas:', vendas.length);
+            return vendas || [];
         }
 
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        // Função para calcular estatísticas
+        function calcularEstatisticas(vendas, parceiro) {
+            const total = vendas.length;
+            const valorTotalVendas = vendas.reduce((sum, v) => sum + parseFloat(v.valor_total || 0), 0);
+            const comissaoTotalVendas = vendas.reduce((sum, v) => sum + parseFloat(v.comissao_valor || 0), 0);
+            const taxa = parceiro.comissao_percentual || 30;
+
+            console.log('📊 Estatísticas calculadas:', {
+                total,
+                valorTotalVendas,
+                comissaoTotalVendas,
+                taxa
+            });
+
+            return {
+                total,
+                valorTotalVendas,
+                comissaoTotalVendas,
+                taxa
+            };
         }
 
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-            return new Date(dateString).toLocaleDateString('pt-BR', options);
+        // Função para formatar moeda
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
         }
 
-        // Main Dashboard Load Function
-        async function loadDashboard() {
-            showLoading();
-            errorMessageDiv.style.display = 'none'; // Hide previous errors
+        // Função para atualizar interface
+        function atualizarInterface(parceiro, stats) {
+            nomeUsuario.textContent = parceiro.nome_completo;
+            welcomeMessage.textContent = `Olá, ${parceiro.nome_completo.split(' ')[0]}! 👋`;
+            
+            totalVendas.textContent = stats.total;
+            valorTotal.textContent = formatarMoeda(stats.valorTotalVendas);
+            comissaoTotal.textContent = formatarMoeda(stats.comissaoTotalVendas);
+            taxaComissao.textContent = `${stats.taxa}%`;
 
+            const link = `https://bizmix.com.br/somos-todos-um/cadastro/checkout.html?ref=${parceiro.codigo_parceiro}`;
+            linkIndicacao.value = link;
+
+            loadingContainer.style.display = 'none';
+            dashboardContent.style.display = 'block';
+        }
+
+        // Função para copiar link
+        window.copiarLink = function() {
+            linkIndicacao.select();
+            document.execCommand('copy');
+            alert('Link copiado para a área de transferência!');
+        };
+
+        // Função de logout
+        window.logout = async function() {
+            console.log('🚪 Fazendo logout...');
+            await supabase.auth.signOut();
+            localStorage.removeItem('parceiro');
+            window.location.href = 'login.html';
+        };
+
+        // Inicializar dashboard
+        async function inicializarDashboard() {
             try {
-                // 1. Check authentication
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                if (sessionError) throw sessionError;
+                const user = await verificarAutenticacao();
+                if (!user) return;
 
-                if (!session) {
-                    window.location.href = 'login.html';
-                    return;
-                }
+                const parceiro = await buscarDadosParceiro(user.id);
+                if (!parceiro) return;
 
-                const userId = session.user.id;
+                const vendas = await buscarVendas(parceiro.id);
+                const stats = calcularEstatisticas(vendas, parceiro);
 
-                // 2. Fetch parceiro data
-                const { data: parceiro, error: parceiroError } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('auth_user_id', userId)
-                    .single();
-
-                if (parceiroError) throw parceiroError;
-
-                if (!parceiro || parceiro.status !== 'ativo') {
-                    await supabase.auth.signOut();
-                    window.location.href = 'login.html?error=parceiro_inativo_ou_nao_encontrado';
-                    return;
-                }
-
-                // Update UI with parceiro info
-                const firstName = parceiro.nome_completo.split(' ')[0];
-                parceiroNomeHeader.textContent = parceiro.nome_completo;
-                parceiroInitials.textContent = parceiro.nome_completo.charAt(0).toUpperCase();
-                welcomeMessage.textContent = `Olá, ${firstName}!`;
-                affiliateLinkInput.value = `https://bizmix.com.br/somos-todos-um/checkout.html?ref=${parceiro.codigo_parceiro}`;
-                taxaComissaoSpan.textContent = `${parceiro.comissao_padrao || 0}%`;
-
-                // 3. Fetch vendas data with product info
-                const { data: vendas, error: vendasError } = await supabase
-                    .from('vendas')
-                    .select(`
-                        id,
-                        data_venda,
-                        nome_comprador,
-                        valor_total,
-                        comissao_valor,
-                        status_pagamento,
-                        produtos (
-                            nome
-                        )
-                    `)
-                    .eq('parceiro_id', parceiro.id)
-                    .order('data_venda', { ascending: false });
-
-                if (vendasError) throw vendasError;
-
-                // 4. Calculate statistics
-                const totalVendas = vendas.length;
-                const valorTotalVendido = vendas.reduce((sum, v) => sum + parseFloat(v.valor_total || 0), 0);
-                const comissaoTotal = vendas.reduce((sum, v) => sum + parseFloat(v.comissao_valor || 0), 0);
-
-                totalVendasSpan.textContent = totalVendas;
-                valorTotalVendidoSpan.textContent = formatCurrency(valorTotalVendido);
-                comissaoTotalSpan.textContent = formatCurrency(comissaoTotal);
-
-                // 5. Populate recent sales table
-                recentSalesBody.innerHTML = ''; // Clear existing rows
-                if (vendas.length === 0) {
-                    recentSalesBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">Nenhuma venda recente ainda.</td></tr>';
-                } else {
-                    vendas.slice(0, 5).forEach(venda => { // Show only last 5
-                        const row = recentSalesBody.insertRow();
-                        row.innerHTML = `
-                            <td>${formatDate(venda.data_venda)}</td>
-                            <td>${venda.nome_comprador}</td>
-                            <td>${venda.produtos ? venda.produtos.nome : 'N/A'}</td>
-                            <td>${formatCurrency(venda.valor_total)}</td>
-                            <td>${formatCurrency(venda.comissao_valor)}</td>
-                            <td><span class="status-badge ${venda.status_pagamento}">${venda.status_pagamento.charAt(0).toUpperCase() + venda.status_pagamento.slice(1)}</span></td>
-                        `;
-                    });
-                }
+                atualizarInterface(parceiro, stats);
 
             } catch (error) {
-                console.error('Erro ao carregar dashboard:', error);
-                showError('Erro ao carregar o dashboard. Por favor, tente novamente. ' + error.message);
-                // Redirect to login if it's an auth-related error
-                if (error.message.includes('Auth session missing') || error.message.includes('invalid_grant')) {
-                    await supabase.auth.signOut();
-                    window.location.href = 'login.html';
-                }
-            } finally {
-                hideLoading();
+                console.error('❌ Erro ao inicializar dashboard:', error);
+                alert('Erro ao carregar dashboard. Tente novamente.');
             }
         }
 
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', loadDashboard);
-
-        logoutBtn.addEventListener('click', async () => {
-            showLoading();
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                console.error('Erro ao fazer logout:', error);
-                showError('Erro ao fazer logout. Por favor, tente novamente.');
-            } else {
-                // Clear any custom local storage data if present from old login system
-                localStorage.removeItem('parceiroInfo');
-                window.location.href = 'login.html';
-            }
-            hideLoading();
-        });
-
-        copyLinkBtn.addEventListener('click', () => {
-            affiliateLinkInput.select();
-            affiliateLinkInput.setSelectionRange(0, 99999); // For mobile devices
-            document.execCommand('copy');
-            copyLinkBtn.textContent = 'Copiado!';
-            setTimeout(() => {
-                copyLinkBtn.innerHTML = '<i class="fas fa-copy"></i> Copiar';
-            }, 2000);
-        });
+        // Iniciar quando a página carregar
+        inicializarDashboard();
     </script>
 </body>
 </html>
