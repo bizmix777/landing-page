@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Aprovado! - Livro Somos Todos Um</title>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"></script>
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header - Success Message */
+        .header-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 40px 20px;
+            border-bottom: 5px solid #1B5E20;
+        }
+
+        .checkmark-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .checkmark-icon {
+            width: 50px;
+            height: 50px;
+            stroke-width: 4;
+            stroke: #4CAF50;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transform: rotate(0deg);
+            animation: drawCheckmark 0.6s ease-out forwards;
+        }
+
+        @keyframes drawCheckmark {
+            0% {
+                stroke-dasharray: 100;
+                stroke-dashoffset: 100;
+                transform: rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+                transform: rotate(0deg) scale(1.1);
+            }
+            100% {
+                stroke-dashoffset: 0;
+                transform: rotate(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .header-success h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header-success p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        /* Content Sections */
+        .content-section {
+            padding: 30px;
+            text-align: left;
+        }
+
+        .content-section h2 {
+            font-size: 1.8em;
+            color: #2E7D32;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed #eee;
+            font-size: 1.05em;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-item strong {
+            color: #555;
+        }
+
+        .detail-item span {
+            color: #2E7D32;
+            font-weight: 600;
+        }
+
+        .partner-info {
+            background: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+
+        .partner-info p {
+            margin: 5px 0;
+        }
+
+        .partner-info strong {
+            color: #2E7D32;
+        }
+
+        /* Buttons */
+        .button-group {
+            padding: 20px 30px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.6);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #555;
+            border: 1px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        /* Loading and Error States */
+        .loading-state, .error-state {
+            padding: 50px;
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-state p {
+            color: #D32F2F;
+            font-weight: 500;
+        }
+
+        /* Next Steps */
+        .next-steps {
+            background: #f9f9f9;
+            padding: 30px;
+            border-top: 1px solid #eee;
+            text-align: left;
+        }
+
+        .next-steps h3 {
+            font-size: 1.4em;
+            color: #2E7D32;
+            margin-bottom: 15px;
+        }
+
+        .next-steps ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .next-steps li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .next-steps li strong {
+            color: #333;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f0f0f0;
+            padding: 20px;
+            font-size: 0.9em;
+            color: #777;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header-success h1 {
+                font-size: 2em;
+            }
+            .header-success p {
+                font-size: 1em;
+            }
+            .content-section h2 {
+                font-size: 1.5em;
+            }
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .detail-item span {
+                margin-top: 5px;
+            }
+            .button-group {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-success">
+            <div class="checkmark-circle">
+                <svg class="checkmark-icon" viewBox="0 0 52 52">
+                    <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <h1>Pagamento Aprovado!</h1>
+            <p>Sua compra foi realizada com sucesso.</p>
+        </div>
+
+        <div id="loadingState" class="loading-state">
+            <div class="spinner"></div>
+            <p>Carregando detalhes da sua compra...</p>
+        </div>
+
+        <div id="errorState" class="error-state" style="display: none;">
+            <p>❌ Ocorreu um erro ao carregar os detalhes da compra.</p>
+            <p>Por favor, tente novamente ou entre em contato com o suporte.</p>
+            <a href="/" class="btn btn-secondary" style="margin-top: 20px;">Voltar para Home</a>
+        </div>
+
+        <div id="successContent" style="display: none;">
+            <div class="content-section">
+                <h2>Detalhes da Compra</h2>
+                <div class="detail-item">
+                    <strong>Comprador:</strong> <span id="buyerName"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Email:</strong> <span id="buyerEmail"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Valor Total:</strong> <span id="totalValue"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Data do Pagamento:</strong> <span id="paymentDate"></span>
+                </div>
+
+                <div id="partnerDetails" class="partner-info" style="display: none;">
+                    <p>Sua compra foi indicada por <strong><span id="partnerName"></span></strong>.</p>
+                    <p>Este parceiro receberá <strong><span id="partnerCommission"></span></strong> de comissão.</p>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="#" id="downloadButton" class="btn btn-primary">Baixar Livro Digital</a>
+                <a href="/" class="btn btn-secondary">Voltar para Home</a>
+            </div>
+
+            <div class="next-steps">
+                <h3>O que acontece agora?</h3>
+                <ul>
+                    <li><strong>Acesso Imediato:</strong> Clique no botão "Baixar Livro Digital" para fazer o download do seu e-book.</li>
+                    <li><strong>Confirmação por Email:</strong> Você receberá um email de confirmação com o link para download e detalhes da compra.</li>
+                    <li><strong>Suporte:</strong> Se tiver qualquer dúvida ou problema, entre em contato conosco.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Precisa de ajuda? Entre em contato: suporte@bizmix.com.br</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // DOM Elements
+        const loadingState = document.getElementById('loadingState');
+        const errorState = document.getElementById('errorState');
+        const successContent = document.getElementById('successContent');
+        const buyerName = document.getElementById('buyerName');
+        const buyerEmail = document.getElementById('buyerEmail');
+        const totalValue = document.getElementById('totalValue');
+        const paymentDate = document.getElementById('paymentDate');
+        const partnerDetails = document.getElementById('partnerDetails');
+        const partnerName = document.getElementById('partnerName');
+        const partnerCommission = document.getElementById('partnerCommission');
+        const downloadButton = document.getElementById('downloadButton');
+
+        // Function to format currency
+        const formatCurrency = (value) => {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        };
+
+        // Function to format date
+        const formatDate = (isoString) => {
+            if (!isoString) return 'N/A';
+            const date = new Date(isoString);
+            return date.toLocaleDateString('pt-BR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        };
+
+        // Fetch sale details
+        async function fetchSaleDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const venda_id = urlParams.get('venda_id');
+
+            if (!venda_id) {
+                loadingState.style.display = 'none';
+                errorState.style.display = 'block';
+                errorState.querySelector('p').textContent = '❌ ID da venda não encontrado na URL.';
+                return;
+            }
+
+            try {
+                const { data: venda, error } = await supabase
+                    .from('vendas')
+                    .select(`
+                        id,
+                        nome_comprador,
+                        email_comprador,
+                        valor_total,
+                        data_pagamento,
+                        comissao_valor,
+                        parceiros (
+                            nome_completo,
+                            codigo_parceiro
+                        )
+                    `)
+                    .eq('id', venda_id)
+                    .single();
+
+                if (error || !venda) {
+                    console.error('Erro ao buscar detalhes da venda:', error);
+                    loadingState.style.display = 'none';
+                    errorState.style.display = 'block';
+                    errorState.querySelector('p').textContent = '❌ Não foi possível encontrar os detalhes da sua compra.';
+                    return;
+                }
+
+                // Display data
+                buyerName.textContent = venda.nome_comprador;
+                buyerEmail.textContent = venda.email_comprador;
+                totalValue.textContent = formatCurrency(venda.valor_total);
+                paymentDate.textContent = formatDate(venda.data_pagamento);
+
+                if (venda.parceiros) {
+                    partnerName.textContent = venda.parceiros.nome_completo;
+                    partnerCommission.textContent = formatCurrency(venda.comissao_valor);
+                    partnerDetails.style.display = 'block';
+                }
+
+                // Placeholder for download link (replace with actual product link)
+                downloadButton.href = '#'; // Replace with actual download URL
+                downloadButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('Seu download do Livro Digital começará em breve! (Link de download real será configurado aqui)');
+                    // window.location.href = 'URL_DO_SEU_LIVRO_DIGITAL';
+                });
+
+                loadingState.style.display = 'none';
+                successContent.style.display = 'block';
+
+            } catch (error) {
+                console.error('Erro inesperado:', error);
+                loadingState.style.display = 'none';
+                errorState.style.display = 'block';
+                errorState.querySelector('p').textContent = '❌ Ocorreu um erro inesperado. Por favor, tente novamente.';
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', fetchSaleDetails);
+    </script>
+</body>
+</html>
