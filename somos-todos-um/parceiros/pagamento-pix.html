@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento PIX - BizMix</title>
-    <!-- CDN para geração de QR Code -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
-    <!-- CDN do Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Script local para geração de PIX -->
     <script src="js/pix-generator.js"></script>
     <style>
-        /* Estilos CSS (inalterados do original) */
         * {
             margin: 0;
             padding: 0;
@@ -226,6 +222,27 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .email-status {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .email-status.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .email-status.error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -243,7 +260,11 @@
 
             <div class="valor">
                 <div class="valor-label">Valor a pagar:</div>
-                <div class="valor-amount">R$ 47,00</div>
+                <div class="valor-amount" id="valorDisplay">R$ 47,00</div>
+            </div>
+
+            <div id="emailStatus" class="email-status" style="display: none;">
+                <p id="emailStatusText"></p>
             </div>
 
             <div class="success-message" id="successMessage">
@@ -290,55 +311,67 @@
     </div>
 
     <script>
-        // --- CONFIGURAÇÕES ---
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4';
-        const ENVIAR_EMAIL_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email';
-        const PRODUCT_PRICE = 47.00; // Valor do produto
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4'
+        const ENVIAR_EMAIL_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email'
+        const PRODUCT_PRICE = 47.00
 
-        // --- SUPABASE CLIENT ---
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
-        let vendaId = null;
-        let pixCode = null;
-        let pixLink = null;
-        let timerInterval = null;
-        let compradorNome = ''; // Variável para armazenar o nome do comprador
-        let compradorEmail = ''; // Variável para armazenar o email do comprador
+        let vendaId = null
+        let pixCode = null
+        let pixLink = null
+        let timerInterval = null
+        let compradorNome = ''
+        let compradorEmail = ''
 
-        // Inicializa a página de pagamento PIX
+        // Inicializar página
         async function init() {
-            // Pega o ID da venda da URL
-            const urlParams = new URLSearchParams(window.location.search);
-            vendaId = urlParams.get('venda_id');
+            console.log('🚀 Iniciando página PIX...')
+            
+            // Pegar ID da venda da URL
+            const urlParams = new URLSearchParams(window.location.search)
+            vendaId = urlParams.get('venda_id')
 
             if (!vendaId) {
-                alert('ID da venda não encontrado!');
-                return;
+                alert('ID da venda não encontrado!')
+                return
             }
 
-            // Busca os dados da venda para obter nome e email do comprador
-            const { data: venda, error: fetchError } = await supabase
+            console.log('📊 Venda ID:', vendaId)
+
+            // Buscar dados da venda no Supabase
+            const { data: venda, error: vendaError } = await supabase
                 .from('vendas')
-                .select('nome_comprador, email_comprador')
+                .select('nome_comprador, email_comprador, valor_total')
                 .eq('id', vendaId)
-                .single();
+                .single()
 
-            if (fetchError || !venda) {
-                console.error('Erro ao buscar dados da venda:', fetchError);
-                alert('Erro ao carregar dados da venda. Tente novamente.');
-                return;
+            if (vendaError) {
+                console.error('❌ Erro ao buscar venda:', vendaError)
+                alert('Erro ao carregar dados da venda!')
+                return
             }
 
-            compradorNome = venda.nome_comprador;
-            compradorEmail = venda.email_comprador;
+            console.log('✅ Venda encontrada:', venda)
 
-            // Gera o código PIX usando a função do pix-generator.js
-            const pixData = gerarPixParaVenda(vendaId, PRODUCT_PRICE);
-            pixCode = pixData.pixCode;
-            pixLink = pixData.pixLink;
+            compradorNome = venda.nome_comprador
+            compradorEmail = venda.email_comprador
+            const valorVenda = venda.valor_total || PRODUCT_PRICE
 
-            // Gera o QR Code visual
+            // Atualizar display do valor
+            document.getElementById('valorDisplay').textContent = `R$ ${Number(valorVenda).toFixed(2)}`
+
+            // Gerar código PIX
+            console.log('🔐 Gerando código PIX...')
+            const pixData = gerarPixParaVenda(vendaId, valorVenda)
+            pixCode = pixData.pixCode
+            pixLink = pixData.pixLink
+
+            console.log('✅ Código PIX gerado')
+
+            // Gerar QR Code visual
             QRCode.toCanvas(
                 document.getElementById('qrcode'),
                 pixCode,
@@ -351,135 +384,174 @@
                     }
                 },
                 function (error) {
-                    if (error) console.error(error);
+                    if (error) console.error('❌ Erro ao gerar QR Code:', error)
+                    else console.log('✅ QR Code gerado')
                 }
-            );
+            )
 
-            // Exibe o código PIX para copiar e colar
-            document.getElementById('pixCode').textContent = pixCode;
+            // Exibir código PIX
+            document.getElementById('pixCode').textContent = pixCode
 
-            // Atualiza a venda no Supabase com os dados do PIX (se ainda não estiverem lá)
-            await atualizarVendaComPix();
+            // Atualizar venda com dados PIX
+            await atualizarVendaComPix()
 
-            // --- NOVA INTEGRAÇÃO: ENVIA EMAIL COM O CÓDIGO PIX ---
-            console.log('📧 Enviando email com código PIX para:', compradorEmail);
-            await fetch(ENVIAR_EMAIL_FUNCTION_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    tipo: 'pix_gerado', // Tipo de email para o serviço de envio
-                    dados: {
-                        nome: compradorNome,
-                        email: compradorEmail,
-                        valor: PRODUCT_PRICE,
-                        pixCode: pixCode,
-                        linkPagamento: window.location.href // Link para esta própria página PIX
-                    }
-                })
-            });
-            console.log('✅ Requisição de envio de email PIX enviada.');
+            // ENVIAR EMAIL COM CÓDIGO PIX
+            await enviarEmailPix()
 
-            // Mostra o conteúdo da página e inicia o timer
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('content').style.display = 'block';
-            iniciarTimer(15 * 60); // 15 minutos
+            // Mostrar conteúdo
+            document.getElementById('loading').style.display = 'none'
+            document.getElementById('content').style.display = 'block'
+
+            // Iniciar timer
+            iniciarTimer(15 * 60) // 15 minutos
         }
 
-        // Atualiza a venda no Supabase com os dados do PIX
+        // Atualizar venda com dados PIX
         async function atualizarVendaComPix() {
+            console.log('💾 Atualizando venda com código PIX...')
+            
             const { error } = await supabase
                 .from('vendas')
                 .update({
                     qr_code_pix: pixCode,
                     forma_pagamento: 'pix',
-                    status_pagamento: 'pending', // Garante que o status é 'pending'
+                    status_pagamento: 'pending',
                     updated_at: new Date().toISOString()
                 })
-                .eq('id', vendaId);
+                .eq('id', vendaId)
 
             if (error) {
-                console.error('Erro ao atualizar venda com dados PIX:', error);
+                console.error('❌ Erro ao atualizar venda:', error)
+            } else {
+                console.log('✅ Venda atualizada com código PIX')
             }
         }
 
-        // Copia o código PIX para a área de transferência
+        // ENVIAR EMAIL COM CÓDIGO PIX
+        async function enviarEmailPix() {
+            console.log('📧 Enviando email com código PIX...')
+            console.log('📧 Para:', compradorEmail)
+            console.log('📧 Nome:', compradorNome)
+
+            const emailStatus = document.getElementById('emailStatus')
+            const emailStatusText = document.getElementById('emailStatusText')
+
+            try {
+                const response = await fetch(ENVIAR_EMAIL_FUNCTION_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tipo: 'pix_gerado',
+                        dados: {
+                            nome: compradorNome,
+                            email: compradorEmail,
+                            valor: PRODUCT_PRICE,
+                            pixCode: pixCode,
+                            linkPagamento: window.location.href
+                        }
+                    })
+                })
+
+                const result = await response.json()
+                console.log('📧 Resposta do envio:', result)
+
+                if (result.success) {
+                    console.log('✅ Email enviado com sucesso!')
+                    emailStatus.className = 'email-status success'
+                    emailStatusText.textContent = '✅ Email enviado! Verifique sua caixa de entrada.'
+                    emailStatus.style.display = 'block'
+                } else {
+                    throw new Error(result.error || 'Erro desconhecido')
+                }
+
+            } catch (error) {
+                console.error('❌ Erro ao enviar email:', error)
+                emailStatus.className = 'email-status error'
+                emailStatusText.textContent = '⚠️ Não foi possível enviar o email. O código PIX está disponível nesta página.'
+                emailStatus.style.display = 'block'
+            }
+        }
+
+        // Copiar código PIX
         function copiarCodigo() {
             navigator.clipboard.writeText(pixCode).then(() => {
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = '✅ Código Copiado!';
-                btn.style.background = '#28a745';
+                const btn = event.target
+                const originalText = btn.textContent
+                btn.textContent = '✅ Código Copiado!'
+                btn.style.background = '#28a745'
                 
                 setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = '#667eea';
-                }, 2000);
-            });
+                    btn.textContent = originalText
+                    btn.style.background = '#667eea'
+                }, 2000)
+            })
         }
 
-        // Abre o aplicativo do banco com o link PIX
+        // Abrir no app do banco
         function abrirAppBanco() {
-            window.location.href = pixLink;
+            window.location.href = pixLink
         }
 
-        // Verifica o status do pagamento no Supabase
+        // Verificar pagamento
         async function verificarPagamento() {
-            const btn = event.target;
-            btn.disabled = true;
-            btn.textContent = '🔄 Verificando...';
+            const btn = event.target
+            btn.disabled = true
+            btn.textContent = '🔄 Verificando...'
 
+            // Buscar venda no banco
             const { data, error } = await supabase
                 .from('vendas')
                 .select('status_pagamento')
                 .eq('id', vendaId)
-                .single();
+                .single()
 
-            btn.disabled = false;
-            btn.textContent = '🔄 Verificar Pagamento';
+            btn.disabled = false
+            btn.textContent = '🔄 Verificar Pagamento'
 
             if (error) {
-                alert('Erro ao verificar pagamento. Tente novamente.');
-                return;
+                alert('Erro ao verificar pagamento. Tente novamente.')
+                return
             }
 
             if (data.status_pagamento === 'approved') {
-                // Pagamento confirmado, redireciona para a página de sucesso
-                clearInterval(timerInterval);
-                document.getElementById('successMessage').classList.add('show');
-                document.getElementById('timer').style.display = 'none';
+                // Pagamento confirmado!
+                clearInterval(timerInterval)
+                document.getElementById('successMessage').classList.add('show')
+                document.getElementById('timer').style.display = 'none'
                 
                 setTimeout(() => {
-                    window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`;
-                }, 3000);
+                    window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`
+                }, 3000)
             } else {
-                alert('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.');
+                alert('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.')
             }
         }
 
-        // Inicia o contador regressivo para o PIX
+        // Timer de 15 minutos
         function iniciarTimer(segundos) {
-            let tempo = segundos;
+            let tempo = segundos
 
             timerInterval = setInterval(() => {
-                tempo--;
+                tempo--
                 
-                const minutos = Math.floor(tempo / 60);
-                const segs = tempo % 60;
+                const minutos = Math.floor(tempo / 60)
+                const segs = tempo % 60
                 
                 document.getElementById('timerValue').textContent = 
-                    `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`;
+                    `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`
 
                 if (tempo <= 0) {
-                    clearInterval(timerInterval);
-                    alert('Tempo expirado! Gere um novo código PIX.');
-                    // Redireciona para o checkout para gerar uma nova venda/PIX
-                    window.location.href = 'checkout.html'; 
+                    clearInterval(timerInterval)
+                    alert('Tempo expirado! Gere um novo código PIX.')
+                    window.location.href = 'checkout.html'
                 }
-            }, 1000);
+            }, 1000)
         }
 
-        // Inicializa a função 'init' quando a página é carregada
-        window.onload = init;
+        // Inicializar ao carregar página
+        window.onload = init
     </script>
 </body>
 </html>
