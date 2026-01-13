@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erro no Pagamento - Livro Somos Todos Um</title>
+    
+    <!-- Supabase SDK (optional, for context if needed) -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            padding-bottom: 30px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+            color: white;
+            padding: 40px 30px;
+            position: relative;
+        }
+
+        .error-icon {
+            font-size: 80px;
+            line-height: 1;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .content-section {
+            padding: 30px;
+            color: #333;
+        }
+
+        .content-section h2 {
+            font-size: 28px;
+            color: #ee5253;
+            margin-bottom: 20px;
+        }
+
+        .content-section p {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .reasons-list {
+            text-align: left;
+            margin: 20px auto;
+            max-width: 500px;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .reasons-list li {
+            background: #ffebee;
+            border-left: 4px solid #ef9a9a;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #c62828;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .btn-retry {
+            background: linear-gradient(135deg, #ee5253 0%, #c44569 100%);
+            color: white;
+        }
+
+        .btn-retry:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(238, 82, 83, 0.3);
+        }
+
+        .btn-home, .btn-support {
+            background: #f0f0f0;
+            color: #555;
+            border: 1px solid #ddd;
+        }
+
+        .btn-home:hover, .btn-support:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .support-info {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f8f8f8;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .support-info p {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 28px;
+            }
+            .content-section h2 {
+                font-size: 24px;
+            }
+            .actions {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="error-icon">❌</div>
+            <h1>Ops! Algo deu errado com seu pagamento.</h1>
+        </div>
+
+        <div class="content-section">
+            <h2>Não foi possível processar sua compra.</h2>
+            <p>Lamentamos, mas não conseguimos finalizar seu pedido neste momento. Por favor, verifique as informações e tente novamente.</p>
+
+            <h3>Possíveis motivos para o erro:</h3>
+            <ul class="reasons-list">
+                <li><strong>Dados incorretos:</strong> Verifique se o número do cartão, validade, CVV e CPF estão corretos.</li>
+                <li><strong>Saldo insuficiente:</strong> Certifique-se de que há limite ou saldo disponível no seu cartão.</li>
+                <li><strong>Cartão bloqueado:</strong> Seu banco pode ter bloqueado a transação por segurança. Entre em contato com eles.</li>
+                <li><strong>Problemas de conexão:</strong> Uma falha temporária na internet pode ter interrompido a transação.</li>
+            </ul>
+
+            <h3>O que fazer agora?</h3>
+            <p>Você pode tentar novamente com os mesmos dados ou usar outro método de pagamento.</p>
+
+            <div class="actions">
+                <a href="#" id="btnRetry" class="btn btn-retry">Tentar Novamente</a>
+                <a href="/" class="btn btn-home">Voltar para Home</a>
+                <a href="https://wa.me/5562999999999?text=Ol%C3%A1%2C%20tive%20um%20problema%20no%20pagamento%20do%20Livro%20Digital%20Somos%20Todos%20Um.%20Poderiam%20me%20ajudar%3F" target="_blank" class="btn btn-support">Falar com Suporte</a>
+            </div>
+        </div>
+
+        <div class="support-info">
+            <p>Se o problema persistir, entre em contato com nosso suporte.</p>
+            <p>Email: suporte@bizmix.com.br | Telefone: (62) 99999-9999</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const vendaId = urlParams.get('venda_id');
+            const refParam = urlParams.get('ref'); // Get ref parameter if exists
+
+            const btnRetry = document.getElementById('btnRetry');
+            let checkoutUrl = '/somos-todos-um/parceiros/checkout.html';
+
+            // If ref parameter exists, append it to the checkout URL
+            if (refParam) {
+                checkoutUrl += `?ref=${refParam}`;
+            }
+
+            btnRetry.href = checkoutUrl;
+
+            // Optional: Log error details if available
+            const errorDetails = urlParams.get('error');
+            if (errorDetails) {
+                console.error('Detalhes do erro de pagamento:', errorDetails);
+                // You could display this on the page if desired
+            }
+        });
+    </script>
+</body>
+</html>
