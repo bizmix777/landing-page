@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento PIX - BizMix</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="pix-generator.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .valor {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .valor-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .valor-amount {
+            color: #667eea;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .qrcode-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #qrcode {
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .pix-code-container {
+            margin-bottom: 20px;
+        }
+
+        .pix-code-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .pix-code-box {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            color: #333;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .timer {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .timer-value {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .instrucoes {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .instrucoes h3 {
+            color: #856404;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .instrucoes ol {
+            color: #856404;
+            font-size: 14px;
+            padding-left: 20px;
+        }
+
+        .instrucoes li {
+            margin-bottom: 5px;
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Gerando código PIX...</p>
+        </div>
+
+        <div id="content" style="display: none;">
+            <div class="header">
+                <h1>💰 Pagamento via PIX</h1>
+                <p>Livro Digital - Somos Todos Um</p>
+            </div>
+
+            <div class="valor">
+                <div class="valor-label">Valor a pagar:</div>
+                <div class="valor-amount">R$ 47,00</div>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <h3>✅ Pagamento Confirmado!</h3>
+                <p>Seu pagamento foi recebido com sucesso.</p>
+            </div>
+
+            <div class="timer" id="timer">
+                Tempo restante: <span class="timer-value" id="timerValue">15:00</span>
+            </div>
+
+            <div class="qrcode-container">
+                <div id="qrcode"></div>
+            </div>
+
+            <div class="pix-code-container">
+                <div class="pix-code-label">Código PIX (Copia e Cola):</div>
+                <div class="pix-code-box" id="pixCode"></div>
+            </div>
+
+            <button class="btn btn-primary" onclick="copiarCodigo()">
+                📋 Copiar Código PIX
+            </button>
+
+            <button class="btn btn-secondary" onclick="abrirAppBanco()">
+                📱 Abrir no App do Banco
+            </button>
+
+            <button class="btn btn-outline" onclick="verificarPagamento()">
+                🔄 Verificar Pagamento
+            </button>
+
+            <div class="instrucoes">
+                <h3>📱 Como pagar:</h3>
+                <ol>
+                    <li>Abra o app do seu banco</li>
+                    <li>Escolha "Pagar com PIX"</li>
+                    <li>Escaneie o QR Code ou cole o código</li>
+                    <li>Confirme o pagamento</li>
+                    <li>Clique em "Verificar Pagamento"</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4'
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+        let vendaId = null
+        let pixCode = null
+        let pixLink = null
+        let timerInterval = null
+
+        // Inicializar página
+        async function init() {
+            // Pegar ID da venda da URL
+            const urlParams = new URLSearchParams(window.location.search)
+            vendaId = urlParams.get('venda_id')
+
+            if (!vendaId) {
+                alert('ID da venda não encontrado!')
+                return
+            }
+
+            // Gerar código PIX
+            const pixData = gerarPixParaVenda(vendaId, 47.00)
+            pixCode = pixData.pixCode
+            pixLink = pixData.pixLink
+
+            // Gerar QR Code visual
+            QRCode.toCanvas(
+                document.getElementById('qrcode'),
+                pixCode,
+                {
+                    width: 250,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#ffffff'
+                    }
+                },
+                function (error) {
+                    if (error) console.error(error)
+                }
+            )
+
+            // Exibir código PIX
+            document.getElementById('pixCode').textContent = pixCode
+
+            // Atualizar venda com dados PIX
+            await atualizarVendaComPix()
+
+            // Mostrar conteúdo
+            document.getElementById('loading').style.display = 'none'
+            document.getElementById('content').style.display = 'block'
+
+            // Iniciar timer
+            iniciarTimer(15 * 60) // 15 minutos
+        }
+
+        // Atualizar venda com dados PIX
+        async function atualizarVendaComPix() {
+            const { error } = await supabase
+                .from('vendas')
+                .update({
+                    qr_code_pix: pixCode,
+                    forma_pagamento: 'pix',
+                    status_pagamento: 'pending',
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', vendaId)
+
+            if (error) {
+                console.error('Erro ao atualizar venda:', error)
+            }
+        }
+
+        // Copiar código PIX
+        function copiarCodigo() {
+            navigator.clipboard.writeText(pixCode).then(() => {
+                const btn = event.target
+                const originalText = btn.textContent
+                btn.textContent = '✅ Código Copiado!'
+                btn.style.background = '#28a745'
+                
+                setTimeout(() => {
+                    btn.textContent = originalText
+                    btn.style.background = '#667eea'
+                }, 2000)
+            })
+        }
+
+        // Abrir no app do banco
+        function abrirAppBanco() {
+            window.location.href = pixLink
+        }
+
+        // Verificar pagamento
+        async function verificarPagamento() {
+            const btn = event.target
+            btn.disabled = true
+            btn.textContent = '🔄 Verificando...'
+
+            // Buscar venda no banco
+            const { data, error } = await supabase
+                .from('vendas')
+                .select('status_pagamento')
+                .eq('id', vendaId)
+                .single()
+
+            btn.disabled = false
+            btn.textContent = '🔄 Verificar Pagamento'
+
+            if (error) {
+                alert('Erro ao verificar pagamento. Tente novamente.')
+                return
+            }
+
+            if (data.status_pagamento === 'approved') {
+                // Pagamento confirmado!
+                clearInterval(timerInterval)
+                document.getElementById('successMessage').classList.add('show')
+                document.getElementById('timer').style.display = 'none'
+                
+                setTimeout(() => {
+                    window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`
+                }, 3000)
+            } else {
+                alert('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.')
+            }
+        }
+
+        // Timer de 15 minutos
+        function iniciarTimer(segundos) {
+            let tempo = segundos
+
+            timerInterval = setInterval(() => {
+                tempo--
+                
+                const minutos = Math.floor(tempo / 60)
+                const segs = tempo % 60
+                
+                document.getElementById('timerValue').textContent = 
+                    `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`
+
+                if (tempo <= 0) {
+                    clearInterval(timerInterval)
+                    alert('Tempo expirado! Gere um novo código PIX.')
+                    window.location.href = 'checkout.html'
+                }
+            }, 1000)
+        }
+
+        // Inicializar ao carregar página
+        window.onload = init
+    </script>
+</body>
+</html>
