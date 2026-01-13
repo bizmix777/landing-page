@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard do Parceiro - BizMix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico" type="image/x-icon">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        :root {
+            --primary-blue: #2563eb;
+            --secondary-green: #10b981;
+            --light-gray: #f3f4f6;
+            --dark-gray: #1f2937;
+            --text-color: #374151;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --pending-color: #f59e0b;
+            --rejected-color: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right bottom, #e0f2fe, #d1e5f8); /* Light blue gradient */
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Utility Classes */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .gap-4 { gap: 1rem; }
+        .p-4 { padding: 1rem; }
+        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+        .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .rounded-lg { border-radius: 0.5rem; }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .bg-white { background-color: #fff; }
+        .text-center { text-align: center; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .text-gray-700 { color: #374151; }
+        .text-gray-500 { color: #6b7280; }
+        .text-primary-blue { color: var(--primary-blue); }
+        .text-secondary-green { color: var(--secondary-green); }
+        .border { border: 1px solid var(--border-color); }
+        .border-gray-300 { border-color: #d1d5db; }
+        .w-full { width: 100%; }
+        .max-w-md { max-width: 28rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mt-4 { margin-top: 1rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mr-2 { margin-right: 0.5rem; }
+        .cursor-pointer { cursor: pointer; }
+        .hidden { display: none; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+        }
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+        .btn-secondary {
+            background-color: var(--secondary-green);
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background-color: #059669;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+        }
+        .btn-outline:hover {
+            background-color: var(--primary-blue);
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-color);
+            background-color: #fff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        .error-message {
+            color: var(--rejected-color);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Login Screen */
+        #login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to right top, #e0f2fe, #d1e5f8);
+        }
+        .login-card {
+            background-color: #fff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-card h2 {
+            color: var(--primary-blue);
+            margin-bottom: 1.5rem;
+            font-size: 1.75rem;
+        }
+        .login-card .logo {
+            margin-bottom: 2rem;
+        }
+        .login-card .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+
+        /* Dashboard Layout */
+        #dashboard-screen {
+            display: flex;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: var(--dark-gray);
+            color: #fff;
+            padding: 1.5rem 1rem;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, width 0.3s ease;
+            position: fixed;
+            height: 100%;
+            z-index: 1000;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+            width: 0;
+            padding: 0;
+        }
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .sidebar-header .logo {
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+        .sidebar-header h3 {
+            color: #fff;
+            font-size: 1.25rem;
+            margin: 0;
+        }
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar-nav li {
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: #e0e7ff;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background-color: var(--primary-blue);
+            color: #fff;
+        }
+        .sidebar-nav a i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .main-content-wrapper {
+            flex-grow: 1;
+            margin-left: 250px; /* Adjust based on sidebar width */
+            transition: margin-left 0.3s ease;
+            padding: 1.5rem;
+        }
+        .main-content-wrapper.sidebar-collapsed {
+            margin-left: 0;
+        }
+
+        .dashboard-header {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--primary-blue);
+        }
+        .dashboard-header .date-display {
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+        .dashboard-header .partner-badge {
+            background-color: var(--secondary-green);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .dashboard-header .logout-btn {
+            background-color: #ef4444;
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+        .dashboard-header .logout-btn:hover {
+            background-color: #dc2626;
+        }
+
+        /* Hamburger menu for mobile */
+        .hamburger-menu {
+            display: none; /* Hidden on desktop */
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background-color: var(--primary-blue);
+            color: #fff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+        }
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-blue);
+        }
+        .stat-card .title {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+        }
+        .stat-card.bg-blue .icon { color: #60a5fa; }
+        .stat-card.bg-green .icon { color: #4ade80; }
+        .stat-card.bg-yellow .icon { color: #fcd34d; }
+        .stat-card.bg-red .icon { color: #f87171; }
+
+        /* Affiliate Link Section */
+        .affiliate-link-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        .affiliate-link-card h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+            font-size: 1.4rem;
+        }
+        .affiliate-link-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            cursor: text;
+        }
+        .copy-success-message {
+            color: var(--secondary-green);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* Sales Table */
+        .sales-table-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        .sales-table-card h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+            font-size: 1.4rem;
+        }
+        .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        .sales-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .sales-table th, .sales-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .sales-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+            color: var(--dark-gray);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        .sales-table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        .status-approved { background-color: #d1fae5; color: var(--success-color); }
+        .status-pending { background-color: #fef3c7; color: var(--pending-color); }
+        .status-rejected { background-color: #fee2e2; color: var(--rejected-color); }
+        .comissao-paga-yes { background-color: #d1fae5; color: var(--success-color); }
+        .comissao-paga-no { background-color: #fee2e2; color: var(--rejected-color); }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .pagination-controls button {
+            background-color: var(--primary-blue);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .pagination-controls button:hover:not(:disabled) {
+            background-color: #1d4ed8;
+        }
+        .pagination-controls button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        .pagination-controls span {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-500);
+            font-style: italic;
+        }
+
+        /* Withdrawal Section */
+        .withdrawal-card {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+        .withdrawal-card h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: var(--primary-blue);
+            font-size: 1.4rem;
+        }
+        .withdrawal-card .balance {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-green);
+            margin-bottom: 1rem;
+        }
+        .withdrawal-card .min-withdrawal {
+            font-size: 0.9rem;
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+        }
+        .withdrawal-form {
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+        .withdrawal-form select, .withdrawal-form input {
+            margin-bottom: 1rem;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-blue);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+            display: block;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .toast {
+            background-color: #333;
+            color: #fff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transform: translateY(-20px);
+            animation: fadeInOut 3s forwards;
+        }
+        .toast.success { background-color: var(--success-color); }
+        .toast.error { background-color: var(--rejected-color); }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 0;
+                padding: 0;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+                width: 250px;
+            }
+            .main-content-wrapper {
+                margin-left: 0;
+            }
+            .hamburger-menu {
+                display: block;
+            }
+            .main-content-wrapper.sidebar-active {
+                margin-left: 250px; /* Push content when sidebar is open */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .dashboard-header .logout-btn {
+                width: 100%;
+                margin-top: 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .sales-table th, .sales-table td {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            .sidebar {
+                width: 100%; /* Full width on small screens */
+                max-width: 250px; /* Max width even if full screen */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen" class="flex-col">
+        <div class="login-card">
+            <div class="logo">
+                <img src="https://bizmix.com.br/somos-todos-um/assets/img/logo-bizmix.png" alt="BizMix Logo">
+            </div>
+            <h2>Acessar Dashboard do Parceiro</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="partner-code" class="form-label">Código de Parceiro</label>
+                    <input type="text" id="partner-code" class="form-input" placeholder="Ex: HENRIQUE2025" required>
+                    <p id="login-error" class="error-message hidden">Código de parceiro inválido.</p>
+                </div>
+                <button type="submit" class="btn btn-primary w-full">Acessar Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="hidden">
+        <button class="hamburger-menu" id="hamburger-menu"><i class="fas fa-bars"></i></button>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="https://bizmix.com.br/somos-todos-um/assets/img/logo-bizmix.png" alt="BizMix Logo" class="logo">
+                <h3>Dashboard</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" id="nav-dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" id="nav-sales"><i class="fas fa-chart-line"></i> Minhas Vendas</a></li>
+                    <li><a href="#" id="nav-commissions"><i class="fas fa-money-bill-wave"></i> Comissões</a></li>
+                    <li><a href="#" id="nav-link"><i class="fas fa-link"></i> Meu Link</a></li>
+                    <li><a href="#" id="nav-settings"><i class="fas fa-cog"></i> Configurações</a></li>
+                    <li><a href="#" id="nav-logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content-wrapper" id="main-content-wrapper">
+            <div class="dashboard-header">
+                <div>
+                    <h1 id="welcome-message">Olá, Parceiro!</h1>
+                    <span class="date-display" id="current-date"></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="partner-badge" id="partner-code-badge"></span>
+                    <button class="logout-btn" id="logout-button"><i class="fas fa-sign-out-alt mr-2"></i> Sair</button>
+                </div>
+            </div>
+
+            <div id="dashboard-content">
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card bg-blue">
+                        <i class="fas fa-shopping-cart icon"></i>
+                        <div class="title">Total de Vendas</div>
+                        <div class="value" id="total-sales">0</div>
+                    </div>
+                    <div class="stat-card bg-green">
+                        <i class="fas fa-dollar-sign icon"></i>
+                        <div class="title">Valor Total Vendido</div>
+                        <div class="value" id="total-value">R$ 0,00</div>
+                    </div>
+                    <div class="stat-card bg-yellow">
+                        <i class="fas fa-hand-holding-usd icon"></i>
+                        <div class="title">Comissão Total</div>
+                        <div class="value" id="total-commission">R$ 0,00</div>
+                    </div>
+                    <div class="stat-card bg-red">
+                        <i class="fas fa-money-check-alt icon"></i>
+                        <div class="title">Comissão Paga</div>
+                        <div class="value" id="paid-commission">R$ 0,00</div>
+                    </div>
+                    <div class="stat-card bg-blue">
+                        <i class="fas fa-wallet icon"></i>
+                        <div class="title">Comissão Pendente</div>
+                        <div class="value" id="pending-commission">R$ 0,00</div>
+                    </div>
+                </div>
+
+                <!-- Affiliate Link Section -->
+                <div class="affiliate-link-card">
+                    <h3>Seu Link de Afiliado</h3>
+                    <input type="text" id="affiliate-link-input" class="affiliate-link-input" readonly>
+                    <button class="btn btn-secondary" id="copy-link-btn"><i class="fas fa-copy mr-2"></i> Copiar Link</button>
+                    <span class="copy-success-message" id="copy-success-message">Copiado!</span>
+                </div>
+
+                <!-- Sales Table -->
+                <div class="sales-table-card">
+                    <h3>Minhas Vendas</h3>
+                    <div class="table-responsive">
+                        <table class="sales-table">
+                            <thead>
+                                <tr>
+                                    <th>Data da Venda</th>
+                                    <th>Nome do Comprador</th>
+                                    <th>Valor da Venda</th>
+                                    <th>Comissão</th>
+                                    <th>Status Pagamento</th>
+                                    <th>Comissão Paga</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-table-body">
+                                <!-- Sales rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="sales-empty-state" class="empty-state hidden">Nenhuma venda encontrada.</div>
+                    <div class="pagination-controls">
+                        <button id="prev-page-btn" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+                        <span id="page-info">Página 1 de 1</span>
+                        <button id="next-page-btn" disabled>Próxima <i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Commission Withdrawal Section -->
+                <div class="withdrawal-card">
+                    <h3>Solicitar Saque de Comissão</h3>
+                    <p class="min-withdrawal">Saldo disponível para saque: <span class="balance" id="available-balance">R$ 0,00</span></p>
+                    <p class="min-withdrawal">Valor mínimo para saque: R$ 50,00</p>
+
+                    <form id="withdrawal-form" class="withdrawal-form">
+                        <div class="form-group">
+                            <label for="withdrawal-amount" class="form-label">Valor do Saque (R$)</label>
+                            <input type="number" id="withdrawal-amount" class="form-input" min="50.00" step="0.01" required>
+                            <p id="withdrawal-amount-error" class="error-message hidden"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="payment-method" class="form-label">Método de Pagamento</label>
+                            <select id="payment-method" class="form-input" required>
+                                <option value="">Selecione</option>
+                                <option value="PIX">PIX</option>
+                                <option value="Bank Transfer">Transferência Bancária</option>
+                            </select>
+                            <p id="payment-method-error" class="error-message hidden"></p>
+                        </div>
+                        <div class="form-group" id="pix-details-group" style="display: none;">
+                            <label for="pix-key" class="form-label">Chave PIX</label>
+                            <input type="text" id="pix-key" class="form-input" placeholder="CPF, CNPJ, Email, Telefone ou Chave Aleatória">
+                        </div>
+                        <div class="form-group" id="bank-details-group" style="display: none;">
+                            <label for="bank-name" class="form-label">Nome do Banco</label>
+                            <input type="text" id="bank-name" class="form-input" placeholder="Ex: Banco do Brasil">
+                            <label for="bank-agency" class="form-label">Agência</label>
+                            <input type="text" id="bank-agency" class="form-input" placeholder="Ex: 0001">
+                            <label for="bank-account" class="form-label">Conta</label>
+                            <input type="text" id="bank-account" class="form-input" placeholder="Ex: 12345-6">
+                            <label for="bank-account-type" class="form-label">Tipo de Conta</label>
+                            <select id="bank-account-type" class="form-input">
+                                <option value="">Selecione</option>
+                                <option value="Corrente">Corrente</option>
+                                <option value="Poupança">Poupança</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full" id="request-withdrawal-btn">Solicitar Saque</button>
+                        <p id="withdrawal-success-message" class="copy-success-message hidden">Solicitação de saque enviada com sucesso!</p>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // Supabase Client Initialization
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQzNzM5OTIsImV4cCI6MjA0OTk0OTk5Mn0.ts1gZRoZn_c1lH5IkqXoLfRa_yXbKJ-0MJxnhKEH2Ew';
+        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const dashboardScreen = document.getElementById('dashboard-screen');
+        const loginForm = document.getElementById('login-form');
+        const partnerCodeInput = document.getElementById('partner-code');
+        const loginError = document.getElementById('login-error');
+        const welcomeMessage = document.getElementById('welcome-message');
+        const currentDateDisplay = document.getElementById('current-date');
+        const partnerCodeBadge = document.getElementById('partner-code-badge');
+        const logoutButton = document.getElementById('logout-button');
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const sidebar = document.getElementById('sidebar');
+        const mainContentWrapper = document.getElementById('main-content-wrapper');
+
+        // Stats Cards
+        const totalSalesEl = document.getElementById('total-sales');
+        const totalValueEl = document.getElementById('total-value');
+        const totalCommissionEl = document.getElementById('total-commission');
+        const paidCommissionEl = document.getElementById('paid-commission');
+        const pendingCommissionEl = document.getElementById('pending-commission');
+
+        // Affiliate Link
+        const affiliateLinkInput = document.getElementById('affiliate-link-input');
+        const copyLinkBtn = document.getElementById('copy-link-btn');
+        const copySuccessMessage = document.getElementById('copy-success-message');
+
+        // Sales Table
+        const salesTableBody = document.getElementById('sales-table-body');
+        const salesEmptyState = document.getElementById('sales-empty-state');
+        const prevPageBtn = document.getElementById('prev-page-btn');
+        const nextPageBtn = document.getElementById('next-page-btn');
+        const pageInfo = document.getElementById('page-info');
+
+        // Withdrawal Form
+        const withdrawalForm = document.getElementById('withdrawal-form');
+        const availableBalanceEl = document.getElementById('available-balance');
+        const withdrawalAmountInput = document.getElementById('withdrawal-amount');
+        const paymentMethodSelect = document.getElementById('payment-method');
+        const pixDetailsGroup = document.getElementById('pix-details-group');
+        const bankDetailsGroup = document.getElementById('bank-details-group');
+        const pixKeyInput = document.getElementById('pix-key');
+        const bankNameInput = document.getElementById('bank-name');
+        const bankAgencyInput = document.getElementById('bank-agency');
+        const bankAccountInput = document.getElementById('bank-account');
+        const bankAccountTypeSelect = document.getElementById('bank-account-type');
+        const requestWithdrawalBtn = document.getElementById('request-withdrawal-btn');
+        const withdrawalSuccessMessage = document.getElementById('withdrawal-success-message');
+        const withdrawalAmountError = document.getElementById('withdrawal-amount-error');
+        const paymentMethodError = document.getElementById('payment-method-error');
+
+        // Global Variables
+        let currentPartner = null;
+        let allSales = [];
+        let currentPage = 1;
+        const salesPerPage = 10;
+
+        // --- Utility Functions ---
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        }
+
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('pt-BR', options);
+        }
+
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function showLoading(element) {
+            element.innerHTML = '<div class="spinner"></div>';
+        }
+
+        function hideLoading(element) {
+            // Placeholder for actual content rendering
+        }
+
+        // --- Authentication ---
+        async function login(partnerCode) {
+            loginError.classList.add('hidden');
+            try {
+                const { data, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('codigo_parceiro', partnerCode)
+                    .single();
+
+                if (error || !data) {
+                    loginError.textContent = 'Código de parceiro inválido.';
+                    loginError.classList.remove('hidden');
+                    return false;
+                }
+
+                currentPartner = data;
+                localStorage.setItem('partnerCode', partnerCode);
+                localStorage.setItem('partnerData', JSON.stringify(data));
+                showDashboard();
+                return true;
+
+            } catch (err) {
+                console.error('Erro ao fazer login:', err);
+                loginError.textContent = 'Ocorreu um erro ao tentar fazer login.';
+                loginError.classList.remove('hidden');
+                return false;
+            }
+        }
+
+        function logout() {
+            currentPartner = null;
+            localStorage.removeItem('partnerCode');
+            localStorage.removeItem('partnerData');
+            showLogin();
+            showToast('Você foi desconectado.', 'info');
+        }
+
+        function checkSession() {
+            const storedPartnerCode = localStorage.getItem('partnerCode');
+            const storedPartnerData = localStorage.getItem('partnerData');
+
+            if (storedPartnerCode && storedPartnerData) {
+                try {
+                    currentPartner = JSON.parse(storedPartnerData);
+                    showDashboard();
+                } catch (e) {
+                    console.error("Erro ao parsear dados do parceiro do localStorage", e);
+                    showLogin();
+                }
+            } else {
+                showLogin();
+            }
+        }
+
+        function showLogin() {
+            loginScreen.classList.remove('hidden');
+            dashboardScreen.classList.add('hidden');
+            partnerCodeInput.value = '';
+            loginError.classList.add('hidden');
+        }
+
+        async function showDashboard() {
+            loginScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            updateDashboardHeader();
+            await loadDashboardData();
+        }
+
+        function updateDashboardHeader() {
+            if (currentPartner) {
+                welcomeMessage.textContent = `Olá, ${currentPartner.nome_completo.split(' ')[0]}!`;
+                partnerCodeBadge.textContent = currentPartner.codigo_parceiro;
+                currentDateDisplay.textContent = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            }
+        }
+
+        // --- Data Loading and Rendering ---
+        async function loadDashboardData() {
+            if (!currentPartner) return;
+
+            showLoading(totalSalesEl.parentNode); // Show spinner for stats
+            showLoading(salesTableBody.parentNode); // Show spinner for table
+
+            try {
+                const { data: salesData, error } = await supabase
+                    .from('vendas')
+                    .select('*')
+                    .eq('parceiro_id', currentPartner.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allSales = salesData || [];
+                renderStats();
+                renderSalesTable();
+                updateAffiliateLink();
+                updateAvailableBalance();
+
+            } catch (err) {
+                console.error('Erro ao carregar dados do dashboard:', err);
+                showToast('Erro ao carregar dados do dashboard.', 'error');
+            } finally {
+                // Hide spinners (content will replace them)
+            }
+        }
+
+        function renderStats() {
+            const totalSales = allSales.length;
+            const totalValue = allSales.reduce((sum, sale) => sum + (parseFloat(sale.valor_total) || 0), 0);
+            const totalCommission = allSales.reduce((sum, sale) => sum + (parseFloat(sale.comissao_valor) || 0), 0);
+            const paidCommission = allSales.reduce((sum, sale) => sum + (sale.comissao_paga ? (parseFloat(sale.comissao_valor) || 0) : 0), 0);
+            const pendingCommission = totalCommission - paidCommission;
+
+            totalSalesEl.textContent = totalSales;
+            totalValueEl.textContent = formatCurrency(totalValue);
+            totalCommissionEl.textContent = formatCurrency(totalCommission);
+            paidCommissionEl.textContent = formatCurrency(paidCommission);
+            pendingCommissionEl.textContent = formatCurrency(pendingCommission);
+        }
+
+        function renderSalesTable() {
+            salesTableBody.innerHTML = '';
+            salesEmptyState.classList.add('hidden');
+
+            if (allSales.length === 0) {
+                salesEmptyState.classList.remove('hidden');
+                pageInfo.textContent = 'Página 0 de 0';
+                prevPageBtn.disabled = true;
+                nextPageBtn.disabled = true;
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * salesPerPage;
+            const endIndex = startIndex + salesPerPage;
+            const paginatedSales = allSales.slice(startIndex, endIndex);
+
+            paginatedSales.forEach(sale => {
+                const row = salesTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${formatDate(sale.created_at)}</td>
+                    <td>${sale.nome_comprador}</td>
+                    <td>${formatCurrency(sale.valor_total)}</td>
+                    <td>${formatCurrency(sale.comissao_valor)}</td>
+                    <td><span class="status-badge status-${sale.status_pagamento}">${sale.status_pagamento}</span></td>
+                    <td><span class="status-badge ${sale.comissao_paga ? 'comissao-paga-yes' : 'comissao-paga-no'}">${sale.comissao_paga ? 'Sim' : 'Não'}</span></td>
+                `;
+            });
+
+            const totalPages = Math.ceil(allSales.length / salesPerPage);
+            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+        }
+
+        function updateAffiliateLink() {
+            if (currentPartner) {
+                affiliateLinkInput.value = `https://bizmix.com.br/somos-todos-um/parceiros/checkout.html?ref=${currentPartner.codigo_parceiro}`;
+            }
+        }
+
+        function updateAvailableBalance() {
+            const totalCommission = allSales.reduce((sum, sale) => sum + (parseFloat(sale.comissao_valor) || 0), 0);
+            const paidCommission = allSales.reduce((sum, sale) => sum + (sale.comissao_paga ? (parseFloat(sale.comissao_valor) || 0) : 0), 0);
+            const availableBalance = totalCommission - paidCommission;
+            availableBalanceEl.textContent = formatCurrency(availableBalance);
+        }
+
+        // --- Event Listeners ---
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const partnerCode = partnerCodeInput.value.trim();
+            if (partnerCode) {
+                await login(partnerCode);
+            }
+        });
+
+        logoutButton.addEventListener('click', logout);
+        document.getElementById('nav-logout').addEventListener('click', logout);
+
+        copyLinkBtn.addEventListener('click', () => {
+            affiliateLinkInput.select();
+            navigator.clipboard.writeText(affiliateLinkInput.value)
+                .then(() => {
+                    copySuccessMessage.classList.remove('hidden');
+                    setTimeout(() => copySuccessMessage.classList.add('hidden'), 2000);
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar link:', err);
+                    showToast('Erro ao copiar link.', 'error');
+                });
+        });
+
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderSalesTable();
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(allSales.length / salesPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderSalesTable();
+            }
+        });
+
+        paymentMethodSelect.addEventListener('change', () => {
+            pixDetailsGroup.style.display = 'none';
+            bankDetailsGroup.style.display = 'none';
+            if (paymentMethodSelect.value === 'PIX') {
+                pixDetailsGroup.style.display = 'block';
+            } else if (paymentMethodSelect.value === 'Bank Transfer') {
+                bankDetailsGroup.style.display = 'block';
+            }
+        });
+
+        withdrawalForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            withdrawalSuccessMessage.classList.add('hidden');
+            withdrawalAmountError.classList.add('hidden');
+            paymentMethodError.classList.add('hidden');
+
+            const amount = parseFloat(withdrawalAmountInput.value);
+            const method = paymentMethodSelect.value;
+            const availableBalance = parseFloat(availableBalanceEl.textContent.replace('R$', '').replace('.', '').replace(',', '.'));
+
+            if (isNaN(amount) || amount <= 0) {
+                withdrawalAmountError.textContent = 'Por favor, insira um valor válido.';
+                withdrawalAmountError.classList.remove('hidden');
+                return;
+            }
+            if (amount < 50) {
+                withdrawalAmountError.textContent = 'O valor mínimo para saque é R$ 50,00.';
+                withdrawalAmountError.classList.remove('hidden');
+                return;
+            }
+            if (amount > availableBalance) {
+                withdrawalAmountError.textContent = 'Valor solicitado excede o saldo disponível.';
+                withdrawalAmountError.classList.remove('hidden');
+                return;
+            }
+            if (!method) {
+                paymentMethodError.textContent = 'Por favor, selecione um método de pagamento.';
+                paymentMethodError.classList.remove('hidden');
+                return;
+            }
+
+            let withdrawalDetails = {};
+            if (method === 'PIX') {
+                const pixKey = pixKeyInput.value.trim();
+                if (!pixKey) {
+                    showToast('Por favor, insira sua chave PIX.', 'error');
+                    return;
+                }
+                withdrawalDetails = { method: 'PIX', pix_key: pixKey };
+            } else if (method === 'Bank Transfer') {
+                const bankName = bankNameInput.value.trim();
+                const bankAgency = bankAgencyInput.value.trim();
+                const bankAccount = bankAccountInput.value.trim();
+                const bankAccountType = bankAccountTypeSelect.value;
+                    showToast('Por favor, preencha todos os dados bancários.', 'error');
+                    return;
+                }
+                withdrawalDetails = { method: 'Bank Transfer', bank_name: bankName, bank_agency: bankAgency, bank_account: bankAccount, bank_account_type: bankAccountType };
+            }
+
+            requestWithdrawalBtn.disabled = true;
+            requestWithdrawalBtn.textContent = 'Enviando...';
+
+            try {
+                // In a real application, this would send a request to a secure backend endpoint
+                // For this example, we'll simulate success
+                console.log('Solicitação de saque:', {
+                    partner_id: currentPartner.id,
+                    amount: amount,
+                    details: withdrawalDetails
+                });
+
+                // Simulate a database insert for withdrawal request
+                const { data, error } = await supabase
+                    .from('solicitacoes_saque') // Assuming a table named 'solicitacoes_saque' exists
+                    .insert([{
+                        parceiro_id: currentPartner.id,
+                        valor: amount,
+                        metodo: method,
+                        detalhes: withdrawalDetails,
+                        status: 'pending'
+                    }]);
+
+                if (error) throw error;
+
+                withdrawalSuccessMessage.classList.remove('hidden');
+                showToast('Solicitação de saque enviada com sucesso!', 'success');
+                withdrawalForm.reset();
+                pixDetailsGroup.style.display = 'none';
+                bankDetailsGroup.style.display = 'none';
+                // Optionally, re-fetch dashboard data to update available balance
+                await loadDashboardData();
+
+            } catch (err) {
+                console.error('Erro ao solicitar saque:', err);
+                showToast('Erro ao solicitar saque. Tente novamente.', 'error');
+            } finally {
+                requestWithdrawalBtn.disabled = false;
+                requestWithdrawalBtn.textContent = 'Solicitar Saque';
+            }
+        });
+
+        // Sidebar toggle for mobile
+        hamburgerMenu.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            mainContentWrapper.classList.toggle('sidebar-active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        mainContentWrapper.addEventListener('click', () => {
+            if (sidebar.classList.contains('active') && window.innerWidth <= 1024) {
+                sidebar.classList.remove('active');
+                mainContentWrapper.classList.remove('sidebar-active');
+            }
+        });
+
+        // Initial check on page load
+        checkSession();
+
+        // Navigation links (simple content switching for a single page app)
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-nav a').forEach(nav => nav.classList.remove('active'));
+                link.classList.add('active');
+
+                // In a real SPA, this would load different components.
+                // For this example, we just re-render the main dashboard content.
+                // You can add specific sections and toggle their visibility here.
+                if (link.id === 'nav-logout') {
+                    logout();
+                } else {
+                    // For other links, you might want to scroll to a section or load specific data
+                    // For now, just ensure dashboard content is visible
+                    showDashboard();
+                }
+
+                // Close sidebar on mobile after clicking a link
+                if (window.innerWidth <= 1024) {
+                    sidebar.classList.remove('active');
+                    mainContentWrapper.classList.remove('sidebar-active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
