@@ -5,54 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard do Parceiro - BizMix</title>
     <link rel="icon" href="https://bizmix.com.br/favicon.ico" type="image/x-icon">
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Font Awesome CDN for icons -->
+    <!-- Font Awesome for icons (optional, can use Unicode) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* General Styles */
-        :root {
-            --primary-blue: #2563eb;
-            --secondary-green: #10b981;
-            --light-gray: #f3f4f6;
-            --dark-gray: #1f2937;
-            --text-color: #374151;
-            --border-color: #e5e7eb;
-            --success-color: #10b981;
-            --pending-color: #f59e0b;
-            --rejected-color: #ef4444;
-        }
-
+        /* Basic Reset & Base Styles */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-family: 'Inter', sans-serif;
             margin: 0;
-            padding: 0;
-            background: linear-gradient(to right bottom, #e0f2fe, #d1e5f8); /* Light blue gradient */
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #f3f4f6; /* Light gray background */
+            color: #374151; /* Dark gray text */
+            line-height: 1.6;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #1f2937; /* Darker gray for headings */
+            margin-top: 0;
+            margin-bottom: 0.5em;
+        }
+        a {
+            color: #4F46E5; /* Primary indigo color for links */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        button {
+            cursor: pointer;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.375rem; /* md */
+            font-weight: 600; /* semibold */
+            transition: background-color 0.2s ease-in-out;
+        }
+        input, select, textarea {
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db; /* Light gray border */
+            border-radius: 0.375rem; /* md */
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 0.25rem;
+            margin-bottom: 1rem;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4F46E5; /* Primary indigo on focus */
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); /* Focus ring */
         }
 
-        /* Utility Classes */
+        /* Layout */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 1rem;
         }
-
         .flex { display: flex; }
         .flex-col { flex-direction: column; }
-        .justify-between { justify-content: space-between; }
+        .flex-grow { flex-grow: 1; }
+        .justify-center { justify-content: center; }
         .items-center { align-items: center; }
+        .grid { display: grid; }
         .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
         .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
         .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
         .px-4 { padding-left: 1rem; padding-right: 1rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-6 { margin-top: 1.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
         .rounded-lg { border-radius: 0.5rem; }
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        .bg-white { background-color: #fff; }
+        .bg-white { background-color: #ffffff; }
         .text-center { text-align: center; }
         .text-lg { font-size: 1.125rem; }
         .text-xl { font-size: 1.25rem; }
@@ -60,1148 +84,684 @@
         .font-bold { font-weight: 700; }
         .font-semibold { font-weight: 600; }
         .text-gray-700 { color: #374151; }
+        .text-gray-800 { color: #1f2937; }
         .text-gray-500 { color: #6b7280; }
-        .text-primary-blue { color: var(--primary-blue); }
-        .text-secondary-green { color: var(--secondary-green); }
-        .border { border: 1px solid var(--border-color); }
-        .border-gray-300 { border-color: #d1d5db; }
-        .w-full { width: 100%; }
-        .max-w-md { max-width: 28rem; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .mt-4 { margin-top: 1rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .mr-2 { margin-right: 0.5rem; }
-        .cursor-pointer { cursor: pointer; }
-        .hidden { display: none; }
+        .text-white { color: #ffffff; }
 
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease, box-shadow 0.2s ease;
-            border: none;
-        }
-        .btn-primary {
-            background-color: var(--primary-blue);
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
-        }
-        .btn-secondary {
-            background-color: var(--secondary-green);
-            color: #fff;
-        }
-        .btn-secondary:hover {
-            background-color: #059669;
-            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-        }
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--primary-blue);
-            color: var(--primary-blue);
-        }
-        .btn-outline:hover {
-            background-color: var(--primary-blue);
-            color: #fff;
-        }
-        .btn-sm {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.875rem;
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text-color);
-        }
-        .form-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            color: var(--text-color);
-            background-color: #fff;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .form-input:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-        }
-        .error-message {
-            color: var(--rejected-color);
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
-        }
-
-        /* Login Screen */
-        #login-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(to right top, #e0f2fe, #d1e5f8);
-        }
-        .login-card {
-            background-color: #fff;
-            padding: 2.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .login-card h2 {
-            color: var(--primary-blue);
-            margin-bottom: 1.5rem;
-            font-size: 1.75rem;
-        }
-        .login-card .logo {
-            margin-bottom: 2rem;
-        }
-        .login-card .logo img {
-            max-width: 150px;
-            height: auto;
-        }
-
-        /* Dashboard Layout */
-        #dashboard-screen {
-            display: flex;
-            min-height: 100vh;
-            transition: margin-left 0.3s ease;
-        }
+        /* Specific Components */
         .sidebar {
             width: 250px;
-            background-color: var(--dark-gray);
-            color: #fff;
-            padding: 1.5rem 1rem;
+            background-color: #1f2937; /* Dark gray sidebar */
+            color: #ffffff;
+            padding: 1.5rem;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, width 0.3s ease;
             position: fixed;
             height: 100%;
+            top: 0;
+            left: 0;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
             z-index: 1000;
         }
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-            width: 0;
-            padding: 0;
+        .sidebar.open {
+            transform: translateX(0);
         }
         .sidebar-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .sidebar-header .logo {
-            max-width: 120px;
-            height: auto;
-            margin-bottom: 1rem;
-        }
-        .sidebar-header h3 {
-            color: #fff;
-            font-size: 1.25rem;
-            margin: 0;
-        }
-        .sidebar-nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .sidebar-nav li {
-            margin-bottom: 0.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #374151;
+            margin-bottom: 1.5rem;
         }
         .sidebar-nav a {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 1rem;
-            color: #e0e7ff;
+            display: block;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem;
+            color: #d1d5db;
+        }
+        .sidebar-nav a:hover {
+            background-color: #374151;
+            color: #ffffff;
             text-decoration: none;
-            border-radius: 0.5rem;
-            transition: background-color 0.2s ease, color 0.2s ease;
         }
-        .sidebar-nav a:hover, .sidebar-nav a.active {
-            background-color: var(--primary-blue);
-            color: #fff;
-        }
-        .sidebar-nav a i {
-            margin-right: 0.75rem;
-            font-size: 1.1rem;
-        }
-
-        .main-content-wrapper {
-            flex-grow: 1;
-            margin-left: 250px; /* Adjust based on sidebar width */
-            transition: margin-left 0.3s ease;
+        .main-content {
+            margin-left: 0; /* Adjusted by JS for sidebar */
             padding: 1.5rem;
+            transition: margin-left 0.3s ease-in-out;
+            width: 100%;
+            box-sizing: border-box;
         }
-        .main-content-wrapper.sidebar-collapsed {
-            margin-left: 0;
+        .main-content.shifted {
+            margin-left: 250px;
         }
-
-        .dashboard-header {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .dashboard-header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-            color: var(--primary-blue);
-        }
-        .dashboard-header .date-display {
-            font-size: 1rem;
-            color: var(--text-color);
-        }
-        .dashboard-header .partner-badge {
-            background-color: var(--secondary-green);
-            color: #fff;
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .dashboard-header .logout-btn {
-            background-color: #ef4444;
-            color: #fff;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.2s ease;
-        }
-        .dashboard-header .logout-btn:hover {
-            background-color: #dc2626;
-        }
-
-        /* Hamburger menu for mobile */
         .hamburger-menu {
-            display: none; /* Hidden on desktop */
+            display: block; /* Show on mobile */
+            background: none;
+            border: none;
+            color: #1f2937;
+            font-size: 1.5rem;
+            padding: 0.5rem;
             position: fixed;
             top: 1rem;
             left: 1rem;
             z-index: 1001;
-            background-color: var(--primary-blue);
-            color: #fff;
-            border: none;
-            padding: 0.75rem;
+        }
+        .card {
+            background-color: #ffffff;
             border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background-color: #fff;
             padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 120px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
-        }
-        .stat-card .icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary-blue);
-        }
-        .stat-card .title {
-            font-size: 0.9rem;
-            color: var(--gray-500);
-            margin-bottom: 0.5rem;
-        }
-        .stat-card .value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark-gray);
-        }
-        .stat-card.bg-blue .icon { color: #60a5fa; }
-        .stat-card.bg-green .icon { color: #4ade80; }
-        .stat-card.bg-yellow .icon { color: #fcd34d; }
-        .stat-card.bg-red .icon { color: #f87171; }
-
-        /* Affiliate Link Section */
-        .affiliate-link-card {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-        }
-        .affiliate-link-card h3 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-            color: var(--primary-blue);
-            font-size: 1.4rem;
-        }
-        .affiliate-link-input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
+        .card-title {
             font-size: 1rem;
-            background-color: var(--light-gray);
-            color: var(--text-color);
-            margin-bottom: 1rem;
-            cursor: text;
+            font-weight: 500;
+            color: #6b7280;
+            margin-bottom: 0.5rem;
         }
-        .copy-success-message {
-            color: var(--secondary-green);
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            display: none;
+        .card-value {
+            font-size: 1.875rem; /* 3xl */
+            font-weight: 700;
+            color: #1f2937;
         }
+        .card.bg-indigo { background-color: #4F46E5; color: #ffffff; }
+        .card.bg-green { background-color: #10B981; color: #ffffff; }
+        .card.bg-yellow { background-color: #F59E0B; color: #ffffff; }
+        .card.bg-red { background-color: #EF4444; color: #ffffff; }
 
-        /* Sales Table */
-        .sales-table-card {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px; /* full */
+            font-size: 0.75rem; /* xs */
+            font-weight: 600;
+            display: inline-block;
         }
-        .sales-table-card h3 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-            color: var(--primary-blue);
-            font-size: 1.4rem;
+        .bg-green-100 { background-color: #d1fae5; } .text-green-800 { color: #065f46; }
+        .bg-yellow-100 { background-color: #fffbe0; } .text-yellow-800 { color: #92400e; }
+        .bg-red-100 { background-color: #fee2e2; } .text-red-800 { color: #991b1b; }
+        .bg-gray-100 { background-color: #f3f4f6; } .text-gray-800 { color: #1f2937; }
+
+        .table-container {
+            overflow-x: auto; /* Horizontal scroll for tables on small screens */
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
-        .table-responsive {
-            overflow-x: auto;
-            margin-bottom: 1rem;
-        }
-        .sales-table {
+        table {
             width: 100%;
             border-collapse: collapse;
+            background-color: #ffffff;
+        }
+        th, td {
             text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #e5e7eb; /* Light gray border */
         }
-        .sales-table th, .sales-table td {
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .sales-table th {
-            background-color: var(--light-gray);
+        th {
+            background-color: #f9fafb; /* Lighter gray for table header */
             font-weight: 600;
-            color: var(--dark-gray);
+            color: #4b5563;
             text-transform: uppercase;
-            font-size: 0.85rem;
-        }
-        .sales-table tbody tr:hover {
-            background-color: #f9fafb;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.5rem;
             font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: capitalize;
         }
-        .status-approved { background-color: #d1fae5; color: var(--success-color); }
-        .status-pending { background-color: #fef3c7; color: var(--pending-color); }
-        .status-rejected { background-color: #fee2e2; color: var(--rejected-color); }
-        .comissao-paga-yes { background-color: #d1fae5; color: var(--success-color); }
-        .comissao-paga-no { background-color: #fee2e2; color: var(--rejected-color); }
-
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .pagination-controls button {
-            background-color: var(--primary-blue);
-            color: #fff;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-        .pagination-controls button:hover:not(:disabled) {
-            background-color: #1d4ed8;
-        }
-        .pagination-controls button:disabled {
-            background-color: #9ca3af;
-            cursor: not-allowed;
-        }
-        .pagination-controls span {
-            font-weight: 600;
-            color: var(--dark-gray);
-        }
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-500);
-            font-style: italic;
+        tr:last-child td {
+            border-bottom: none;
         }
 
-        /* Withdrawal Section */
-        .withdrawal-card {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-        }
-        .withdrawal-card h3 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-            color: var(--primary-blue);
-            font-size: 1.4rem;
-        }
-        .withdrawal-card .balance {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--secondary-green);
-            margin-bottom: 1rem;
-        }
-        .withdrawal-card .min-withdrawal {
-            font-size: 0.9rem;
-            color: var(--gray-500);
-            margin-bottom: 1.5rem;
-        }
-        .withdrawal-form {
-            margin-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
-        }
-        .withdrawal-form select, .withdrawal-form input {
-            margin-bottom: 1rem;
-        }
+        /* Buttons */
+        .btn-primary { background-color: #4F46E5; color: #ffffff; }
+        .btn-primary:hover { background-color: #4338CA; }
+        .btn-secondary { background-color: #6b7280; color: #ffffff; }
+        .btn-secondary:hover { background-color: #4b5563; }
+        .btn-success { background-color: #10B981; color: #ffffff; }
+        .btn-success:hover { background-color: #059669; }
+        .btn-danger { background-color: #EF4444; color: #ffffff; }
+        .btn-danger:hover { background-color: #DC2626; }
+        .btn-disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed; }
 
-        /* Loading Spinner */
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--primary-blue);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 2rem auto;
-            display: block;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast Notifications */
-        .toast-container {
+        /* Message Box */
+        #messageContainer {
             position: fixed;
             top: 1rem;
             right: 1rem;
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            z-index: 10000;
+            width: 300px;
         }
-        .toast {
-            background-color: #333;
-            color: #fff;
-            padding: 0.8rem 1.2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: fadeInOut 3s forwards;
+        .message-box {
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
-        .toast.success { background-color: var(--success-color); }
-        .toast.error { background-color: var(--rejected-color); }
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(-20px); }
-            10% { opacity: 1; transform: translateY(0); }
-            90% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
+        .message-box.success { background-color: #d1fae5; color: #065f46; }
+        .message-box.error { background-color: #fee2e2; color: #991b1b; }
+        .message-box.info { background-color: #e0f2fe; color: #0369a1; }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
+        /* Responsive adjustments */
+        @media (min-width: 768px) { /* Tablet and larger */
             .sidebar {
-                transform: translateX(-100%);
-                width: 0;
-                padding: 0;
+                transform: translateX(0); /* Always open on larger screens */
+                position: static;
+                height: auto;
             }
-            .sidebar.active {
-                transform: translateX(0);
-                width: 250px;
-            }
-            .main-content-wrapper {
-                margin-left: 0;
+            .main-content {
+                margin-left: 250px; /* Make space for sidebar */
             }
             .hamburger-menu {
-                display: block;
+                display: none; /* Hide on larger screens */
             }
-            .main-content-wrapper.sidebar-active {
-                margin-left: 250px; /* Push content when sidebar is open */
-            }
+            .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+            .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+            .flex-row-md { flex-direction: row; }
         }
 
-        @media (max-width: 768px) {
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .dashboard-header .logout-btn {
-                width: 100%;
-                margin-top: 1rem;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .sales-table th, .sales-table td {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.9rem;
-            }
-            .sidebar {
-                width: 100%; /* Full width on small screens */
-                max-width: 250px; /* Max width even if full screen */
-            }
+        @media (min-width: 1024px) { /* Desktop */
+            .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
         }
     </style>
 </head>
 <body>
+    <div id="messageContainer"></div>
 
-    <div id="login-screen" class="flex-col">
-        <div class="login-card">
-            <div class="logo">
-                <img src="https://bizmix.com.br/somos-todos-um/assets/img/logo-bizmix.png" alt="BizMix Logo">
-            </div>
-            <h2>Acessar Dashboard do Parceiro</h2>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="partner-code" class="form-label">Código de Parceiro</label>
-                    <input type="text" id="partner-code" class="form-input" placeholder="Ex: HENRIQUE2025" required>
-                    <p id="login-error" class="error-message hidden">Código de parceiro inválido.</p>
-                </div>
-                <button type="submit" class="btn btn-primary w-full">Acessar Dashboard</button>
-            </form>
+    <!-- Login Section -->
+    <section id="loginSection" class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Login do Parceiro</h2>
+            <p class="mb-4 text-gray-700">Insira seu código de parceiro para acessar o dashboard.</p>
+            <input type="text" id="partnerCodeInput" placeholder="Seu código de parceiro" class="mb-4">
+            <button onclick="loginPartner()" class="btn-primary w-full">Entrar</button>
         </div>
-    </div>
+    </section>
 
-    <div id="dashboard-screen" class="hidden">
-        <button class="hamburger-menu" id="hamburger-menu"><i class="fas fa-bars"></i></button>
-
-        <aside class="sidebar" id="sidebar">
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="hidden flex-col md:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <img src="https://bizmix.com.br/somos-todos-um/assets/img/logo-bizmix.png" alt="BizMix Logo" class="logo">
-                <h3>Dashboard</h3>
+                <h2 class="text-xl font-bold text-white">BizMix Parceiro</h2>
+                <p class="text-sm text-gray-400 mt-1">Olá, <span id="partnerNameDisplay"></span>!</p>
+                <p class="text-xs text-gray-500">Código: <span id="partnerCodeDisplay"></span></p>
             </div>
             <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="#" id="nav-dashboard" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="#" id="nav-sales"><i class="fas fa-chart-line"></i> Minhas Vendas</a></li>
-                    <li><a href="#" id="nav-commissions"><i class="fas fa-money-bill-wave"></i> Comissões</a></li>
-                    <li><a href="#" id="nav-link"><i class="fas fa-link"></i> Meu Link</a></li>
-                    <li><a href="#" id="nav-settings"><i class="fas fa-cog"></i> Configurações</a></li>
-                    <li><a href="#" id="nav-logout"><i class="fas fa-sign-out-alt"></i> Sair</a></li>
-                </ul>
+                <a href="#overview" onclick="showSection('overview')"><i class="fas fa-tachometer-alt mr-2"></i> Visão Geral</a>
+                <a href="#sales" onclick="showSection('sales')"><i class="fas fa-chart-line mr-2"></i> Minhas Vendas</a>
+                <a href="#affiliate-link" onclick="showSection('affiliate-link')"><i class="fas fa-link mr-2"></i> Link de Afiliado</a>
+                <a href="#withdrawal" onclick="showSection('withdrawal')"><i class="fas fa-money-bill-wave mr-2"></i> Solicitar Saque</a>
+                <button onclick="logout()" class="btn-secondary w-full mt-6"><i class="fas fa-sign-out-alt mr-2"></i> Sair</button>
             </nav>
         </aside>
 
-        <main class="main-content-wrapper" id="main-content-wrapper">
-            <div class="dashboard-header">
-                <div>
-                    <h1 id="welcome-message">Olá, Parceiro!</h1>
-                    <span class="date-display" id="current-date"></span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <span class="partner-badge" id="partner-code-badge"></span>
-                    <button class="logout-btn" id="logout-button"><i class="fas fa-sign-out-alt mr-2"></i> Sair</button>
-                </div>
-            </div>
+        <!-- Hamburger Menu for Mobile -->
+        <button id="hamburgerBtn" class="hamburger-menu">
+            <i class="fas fa-bars"></i>
+        </button>
 
-            <div id="dashboard-content">
-                <!-- Statistics Cards -->
-                <div class="stats-grid">
-                    <div class="stat-card bg-blue">
-                        <i class="fas fa-shopping-cart icon"></i>
-                        <div class="title">Total de Vendas</div>
-                        <div class="value" id="total-sales">0</div>
+        <!-- Main Content -->
+        <main id="mainContent" class="main-content flex-grow p-6 md:ml-64">
+            <h1 class="text-3xl font-bold mb-6 text-gray-800">Dashboard do Parceiro</h1>
+
+            <!-- Overview Section -->
+            <section id="overview" class="mb-8">
+                <h2 class="text-2xl font-semibold mb-4">Visão Geral</h2>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <div class="card bg-indigo">
+                        <div class="card-title">Total de Vendas</div>
+                        <div id="totalSalesCount" class="card-value">0</div>
                     </div>
-                    <div class="stat-card bg-green">
-                        <i class="fas fa-dollar-sign icon"></i>
-                        <div class="title">Valor Total Vendido</div>
-                        <div class="value" id="total-value">R$ 0,00</div>
+                    <div class="card bg-green">
+                        <div class="card-title">Valor Total Vendido</div>
+                        <div id="totalSalesValue" class="card-value">R$ 0,00</div>
                     </div>
-                    <div class="stat-card bg-yellow">
-                        <i class="fas fa-hand-holding-usd icon"></i>
-                        <div class="title">Comissão Total</div>
-                        <div class="value" id="total-commission">R$ 0,00</div>
+                    <div class="card bg-yellow">
+                        <div class="card-title">Comissão Total</div>
+                        <div id="totalCommission" class="card-value">R$ 0,00</div>
                     </div>
-                    <div class="stat-card bg-red">
-                        <i class="fas fa-money-check-alt icon"></i>
-                        <div class="title">Comissão Paga</div>
-                        <div class="value" id="paid-commission">R$ 0,00</div>
+                    <div class="card bg-red">
+                        <div class="card-title">Comissão Pendente</div>
+                        <div id="pendingCommission" class="card-value">R$ 0,00</div>
                     </div>
-                    <div class="stat-card bg-blue">
-                        <i class="fas fa-wallet icon"></i>
-                        <div class="title">Comissão Pendente</div>
-                        <div class="value" id="pending-commission">R$ 0,00</div>
+                    <div class="card bg-indigo">
+                        <div class="card-title">Comissão Paga</div>
+                        <div id="paidCommission" class="card-value">R$ 0,00</div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Affiliate Link Section -->
-                <div class="affiliate-link-card">
-                    <h3>Seu Link de Afiliado</h3>
-                    <input type="text" id="affiliate-link-input" class="affiliate-link-input" readonly>
-                    <button class="btn btn-secondary" id="copy-link-btn"><i class="fas fa-copy mr-2"></i> Copiar Link</button>
-                    <span class="copy-success-message" id="copy-success-message">Copiado!</span>
+            <!-- Sales Section -->
+            <section id="sales" class="mb-8 hidden">
+                <h2 class="text-2xl font-semibold mb-4">Minhas Vendas</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Comprador</th>
+                                <th>Valor</th>
+                                <th>Comissão</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesTableBody">
+                            <!-- Sales rows will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
                 </div>
+                <div id="paginationControls" class="flex justify-center items-center mt-4 gap-2">
+                    <!-- Pagination buttons will be inserted here by JavaScript -->
+                </div>
+            </section>
 
-                <!-- Sales Table -->
-                <div class="sales-table-card">
-                    <h3>Minhas Vendas</h3>
-                    <div class="table-responsive">
-                        <table class="sales-table">
-                            <thead>
-                                <tr>
-                                    <th>Data da Venda</th>
-                                    <th>Nome do Comprador</th>
-                                    <th>Valor da Venda</th>
-                                    <th>Comissão</th>
-                                    <th>Status Pagamento</th>
-                                    <th>Comissão Paga</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sales-table-body">
-                                <!-- Sales rows will be inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="sales-empty-state" class="empty-state hidden">Nenhuma venda encontrada.</div>
-                    <div class="pagination-controls">
-                        <button id="prev-page-btn" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
-                        <span id="page-info">Página 1 de 1</span>
-                        <button id="next-page-btn" disabled>Próxima <i class="fas fa-chevron-right"></i></button>
+            <!-- Affiliate Link Section -->
+            <section id="affiliate-link" class="mb-8 hidden">
+                <h2 class="text-2xl font-semibold mb-4">Seu Link de Afiliado</h2>
+                <div class="card">
+                    <p class="mb-2 text-gray-700">Compartilhe este link para que suas vendas sejam rastreadas:</p>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input type="text" id="affiliateLinkDisplay" readonly class="flex-grow">
+                        <button onclick="copyAffiliateLink()" class="btn-primary flex-shrink-0"><i class="fas fa-copy mr-2"></i> Copiar Link</button>
                     </div>
                 </div>
+            </section>
 
-                <!-- Commission Withdrawal Section -->
-                <div class="withdrawal-card">
-                    <h3>Solicitar Saque de Comissão</h3>
-                    <p class="min-withdrawal">Saldo disponível para saque: <span class="balance" id="available-balance">R$ 0,00</span></p>
-                    <p class="min-withdrawal">Valor mínimo para saque: R$ 50,00</p>
+            <!-- Withdrawal Request Section -->
+            <section id="withdrawal" class="mb-8 hidden">
+                <h2 class="text-2xl font-semibold mb-4">Solicitar Saque</h2>
+                <div class="card">
+                    <p class="text-lg font-semibold mb-4">Saldo Disponível para Saque: <span id="availableBalance" class="text-green-600">R$ 0,00</span></p>
+                    <form id="withdrawalForm" onsubmit="event.preventDefault(); submitWithdrawalRequest();">
+                        <label for="withdrawalAmount" class="block text-sm font-medium text-gray-700">Valor do Saque (mín. R$ 50,00)</label>
+                        <input type="number" id="withdrawalAmount" min="50" step="0.01" required class="mb-4">
 
-                    <form id="withdrawal-form" class="withdrawal-form">
-                        <div class="form-group">
-                            <label for="withdrawal-amount" class="form-label">Valor do Saque (R$)</label>
-                            <input type="number" id="withdrawal-amount" class="form-input" min="50.00" step="0.01" required>
-                            <p id="withdrawal-amount-error" class="error-message hidden"></p>
+                        <label for="paymentMethod" class="block text-sm font-medium text-gray-700">Método de Pagamento</label>
+                        <select id="paymentMethod" onchange="togglePaymentDetails()" required class="mb-4">
+                            <option value="">Selecione...</option>
+                            <option value="pix">PIX</option>
+                            <option value="bank_transfer">Transferência Bancária</option>
+                        </select>
+
+                        <div id="pixDetails" style="display: none;">
+                            <label for="pixKey" class="block text-sm font-medium text-gray-700">Chave PIX</label>
+                            <input type="text" id="pixKey" placeholder="CPF, CNPJ, Email, Telefone ou Chave Aleatória" class="mb-4">
                         </div>
-                        <div class="form-group">
-                            <label for="payment-method" class="form-label">Método de Pagamento</label>
-                            <select id="payment-method" class="form-input" required>
-                                <option value="">Selecione</option>
-                                <option value="PIX">PIX</option>
-                                <option value="Bank Transfer">Transferência Bancária</option>
-                            </select>
-                            <p id="payment-method-error" class="error-message hidden"></p>
+
+                        <div id="bankTransferDetails" style="display: none;">
+                            <label for="bankDetails" class="block text-sm font-medium text-gray-700">Dados Bancários</label>
+                            <textarea id="bankDetails" rows="4" placeholder="Nome Completo, CPF, Banco, Agência, Conta" class="mb-4"></textarea>
                         </div>
-                        <div class="form-group" id="pix-details-group" style="display: none;">
-                            <label for="pix-key" class="form-label">Chave PIX</label>
-                            <input type="text" id="pix-key" class="form-input" placeholder="CPF, CNPJ, Email, Telefone ou Chave Aleatória">
-                        </div>
-                        <div class="form-group" id="bank-details-group" style="display: none;">
-                            <label for="bank-name" class="form-label">Nome do Banco</label>
-                            <input type="text" id="bank-name" class="form-input" placeholder="Ex: Banco do Brasil">
-                            <label for="bank-agency" class="form-label">Agência</label>
-                            <input type="text" id="bank-agency" class="form-input" placeholder="Ex: 0001">
-                            <label for="bank-account" class="form-label">Conta</label>
-                            <input type="text" id="bank-account" class="form-input" placeholder="Ex: 12345-6">
-                            <label for="bank-account-type" class="form-label">Tipo de Conta</label>
-                            <select id="bank-account-type" class="form-input">
-                                <option value="">Selecione</option>
-                                <option value="Corrente">Corrente</option>
-                                <option value="Poupança">Poupança</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-full" id="request-withdrawal-btn">Solicitar Saque</button>
-                        <p id="withdrawal-success-message" class="copy-success-message hidden">Solicitação de saque enviada com sucesso!</p>
+
+                        <button type="submit" id="requestWithdrawalButton" class="btn-primary w-full btn-disabled" disabled>
+                            <i class="fas fa-paper-plane mr-2"></i> Solicitar Saque
+                        </button>
                     </form>
                 </div>
-            </div>
+            </section>
+
         </main>
     </div>
 
-    <div class="toast-container" id="toast-container"></div>
-
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase Client Initialization
+        const { createClient } = supabase;
+
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQzNzM5OTIsImV4cCI6MjA0OTk0OTk5Mn0.ts1gZRoZn_c1lH5IkqXoLfRa_yXbKJ-0MJxnhKEH2Ew';
-        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQxOTk4NjQsImV4cCI6MjA0OTc3NTg2NH0.y8wl-8FY4r_Ry1gCMjJwHqxLhFuCvvmPq9a0_XMYF-U';
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // DOM Elements
-        const loginScreen = document.getElementById('login-screen');
-        const dashboardScreen = document.getElementById('dashboard-screen');
-        const loginForm = document.getElementById('login-form');
-        const partnerCodeInput = document.getElementById('partner-code');
-        const loginError = document.getElementById('login-error');
-        const welcomeMessage = document.getElementById('welcome-message');
-        const currentDateDisplay = document.getElementById('current-date');
-        const partnerCodeBadge = document.getElementById('partner-code-badge');
-        const logoutButton = document.getElementById('logout-button');
-        const hamburgerMenu = document.getElementById('hamburger-menu');
-        const sidebar = document.getElementById('sidebar');
-        const mainContentWrapper = document.getElementById('main-content-wrapper');
-
-        // Stats Cards
-        const totalSalesEl = document.getElementById('total-sales');
-        const totalValueEl = document.getElementById('total-value');
-        const totalCommissionEl = document.getElementById('total-commission');
-        const paidCommissionEl = document.getElementById('paid-commission');
-        const pendingCommissionEl = document.getElementById('pending-commission');
-
-        // Affiliate Link
-        const affiliateLinkInput = document.getElementById('affiliate-link-input');
-        const copyLinkBtn = document.getElementById('copy-link-btn');
-        const copySuccessMessage = document.getElementById('copy-success-message');
-
-        // Sales Table
-        const salesTableBody = document.getElementById('sales-table-body');
-        const salesEmptyState = document.getElementById('sales-empty-state');
-        const prevPageBtn = document.getElementById('prev-page-btn');
-        const nextPageBtn = document.getElementById('next-page-btn');
-        const pageInfo = document.getElementById('page-info');
-
-        // Withdrawal Form
-        const withdrawalForm = document.getElementById('withdrawal-form');
-        const availableBalanceEl = document.getElementById('available-balance');
-        const withdrawalAmountInput = document.getElementById('withdrawal-amount');
-        const paymentMethodSelect = document.getElementById('payment-method');
-        const pixDetailsGroup = document.getElementById('pix-details-group');
-        const bankDetailsGroup = document.getElementById('bank-details-group');
-        const pixKeyInput = document.getElementById('pix-key');
-        const bankNameInput = document.getElementById('bank-name');
-        const bankAgencyInput = document.getElementById('bank-agency');
-        const bankAccountInput = document.getElementById('bank-account');
-        const bankAccountTypeSelect = document.getElementById('bank-account-type');
-        const requestWithdrawalBtn = document.getElementById('request-withdrawal-btn');
-        const withdrawalSuccessMessage = document.getElementById('withdrawal-success-message');
-        const withdrawalAmountError = document.getElementById('withdrawal-amount-error');
-        const paymentMethodError = document.getElementById('payment-method-error');
-
-        // Global Variables
-        let currentPartner = null;
+        let currentPartnerId = null;
+        let currentPartnerCode = null;
+        let currentPartnerName = null;
         let allSales = [];
         let currentPage = 1;
-        const salesPerPage = 10;
+        const itemsPerPage = 10;
 
-        // --- Utility Functions ---
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-        }
-
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(dateString).toLocaleDateString('pt-BR', options);
-        }
-
-        function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            toastContainer.appendChild(toast);
+        // --- UI Management ---
+        function showMessage(message, type = 'info') {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageBox = document.createElement('div');
+            messageBox.className = `message-box ${type}`;
+            messageBox.textContent = message;
+            messageContainer.appendChild(messageBox);
             setTimeout(() => {
-                toast.remove();
-            }, 3000);
+                messageBox.remove();
+            }, 5000);
         }
 
-        function showLoading(element) {
-            element.innerHTML = '<div class="spinner"></div>';
-        }
+        function showSection(sectionId) {
+            document.querySelectorAll('#mainContent section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
 
-        function hideLoading(element) {
-            // Placeholder for actual content rendering
+            // Close sidebar on mobile after selection
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('mainContent').classList.remove('shifted');
+            }
         }
 
         // --- Authentication ---
-        async function login(partnerCode) {
-            loginError.classList.add('hidden');
+        async function loginPartner() {
+            const partnerCode = document.getElementById('partnerCodeInput').value.trim();
+            if (!partnerCode) {
+                showMessage('Por favor, insira seu código de parceiro.', 'error');
+                return;
+            }
+
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('parceiros')
-                    .select('*')
+                    .select('id, codigo_parceiro, nome_completo')
                     .eq('codigo_parceiro', partnerCode)
                     .single();
 
-                if (error || !data) {
-                    loginError.textContent = 'Código de parceiro inválido.';
-                    loginError.classList.remove('hidden');
-                    return false;
+                if (error && error.code === 'PGRST116') { // No rows found
+                    showMessage('Código de parceiro inválido.', 'error');
+                    return;
                 }
+                if (error) throw error;
 
-                currentPartner = data;
-                localStorage.setItem('partnerCode', partnerCode);
-                localStorage.setItem('partnerData', JSON.stringify(data));
-                showDashboard();
-                return true;
+                localStorage.setItem('partner_id', data.id);
+                localStorage.setItem('partner_code', data.codigo_parceiro);
+                localStorage.setItem('partner_name', data.nome_completo);
 
-            } catch (err) {
-                console.error('Erro ao fazer login:', err);
-                loginError.textContent = 'Ocorreu um erro ao tentar fazer login.';
-                loginError.classList.remove('hidden');
-                return false;
+                showMessage(`Bem-vindo(a), ${data.nome_completo}!`, 'success');
+                renderDashboard();
+            } catch (error) {
+                console.error('Erro ao fazer login:', error);
+                showMessage('Erro ao fazer login. Tente novamente.', 'error');
             }
         }
 
         function logout() {
-            currentPartner = null;
-            localStorage.removeItem('partnerCode');
-            localStorage.removeItem('partnerData');
-            showLogin();
-            showToast('Você foi desconectado.', 'info');
+            localStorage.removeItem('partner_id');
+            localStorage.removeItem('partner_code');
+            localStorage.removeItem('partner_name');
+            currentPartnerId = null;
+            currentPartnerCode = null;
+            currentPartnerName = null;
+            renderDashboard(); // Will show login form
+            showMessage('Você foi desconectado.', 'info');
         }
 
-        function checkSession() {
-            const storedPartnerCode = localStorage.getItem('partnerCode');
-            const storedPartnerData = localStorage.getItem('partnerData');
+        function renderDashboard() {
+            currentPartnerId = localStorage.getItem('partner_id');
+            currentPartnerName = localStorage.getItem('partner_name');
+            currentPartnerCode = localStorage.getItem('partner_code');
 
-            if (storedPartnerCode && storedPartnerData) {
-                try {
-                    currentPartner = JSON.parse(storedPartnerData);
-                    showDashboard();
-                } catch (e) {
-                    console.error("Erro ao parsear dados do parceiro do localStorage", e);
-                    showLogin();
-                }
+            if (currentPartnerId && currentPartnerName && currentPartnerCode) {
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboardSection').style.display = 'flex';
+                document.getElementById('partnerNameDisplay').textContent = currentPartnerName;
+                document.getElementById('partnerCodeDisplay').textContent = currentPartnerCode;
+
+                loadStatistics(currentPartnerId);
+                loadSalesTable(currentPartnerId);
+                updateAffiliateLink(currentPartnerCode);
+                showSection('overview'); // Default view
             } else {
-                showLogin();
+                document.getElementById('loginSection').style.display = 'flex';
+                document.getElementById('dashboardSection').style.display = 'none';
             }
         }
 
-        function showLogin() {
-            loginScreen.classList.remove('hidden');
-            dashboardScreen.classList.add('hidden');
-            partnerCodeInput.value = '';
-            loginError.classList.add('hidden');
-        }
-
-        async function showDashboard() {
-            loginScreen.classList.add('hidden');
-            dashboardScreen.classList.remove('hidden');
-            updateDashboardHeader();
-            await loadDashboardData();
-        }
-
-        function updateDashboardHeader() {
-            if (currentPartner) {
-                welcomeMessage.textContent = `Olá, ${currentPartner.nome_completo.split(' ')[0]}!`;
-                partnerCodeBadge.textContent = currentPartner.codigo_parceiro;
-                currentDateDisplay.textContent = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            }
-        }
-
-        // --- Data Loading and Rendering ---
-        async function loadDashboardData() {
-            if (!currentPartner) return;
-
-            showLoading(totalSalesEl.parentNode); // Show spinner for stats
-            showLoading(salesTableBody.parentNode); // Show spinner for table
-
+        // --- Statistics ---
+        async function loadStatistics(partnerId) {
             try {
-                const { data: salesData, error } = await supabase
+                const { data: sales, error } = await supabaseClient
                     .from('vendas')
-                    .select('*')
-                    .eq('parceiro_id', currentPartner.id)
-                    .order('created_at', { ascending: false });
+                    .select('valor_total, comissao_valor, status_pagamento, comissao_paga')
+                    .eq('parceiro_id', partnerId);
 
                 if (error) throw error;
 
-                allSales = salesData || [];
-                renderStats();
-                renderSalesTable();
-                updateAffiliateLink();
-                updateAvailableBalance();
+                let totalSalesCount = sales.length;
+                let totalSalesValue = 0;
+                let totalCommission = 0;
+                let paidCommission = 0;
+                let pendingCommission = 0;
 
-            } catch (err) {
-                console.error('Erro ao carregar dados do dashboard:', err);
-                showToast('Erro ao carregar dados do dashboard.', 'error');
-            } finally {
-                // Hide spinners (content will replace them)
+                sales.forEach(sale => {
+                    totalSalesValue += sale.valor_total;
+                    totalCommission += sale.comissao_valor;
+                    if (sale.comissao_paga) {
+                        paidCommission += sale.comissao_valor;
+                    }
+                });
+
+                pendingCommission = totalCommission - paidCommission;
+
+                document.getElementById('totalSalesCount').textContent = totalSalesCount;
+                document.getElementById('totalSalesValue').textContent = `R$ ${totalSalesValue.toFixed(2).replace('.', ',')}`;
+                document.getElementById('totalCommission').textContent = `R$ ${totalCommission.toFixed(2).replace('.', ',')}`;
+                document.getElementById('paidCommission').textContent = `R$ ${paidCommission.toFixed(2).replace('.', ',')}`;
+                document.getElementById('pendingCommission').textContent = `R$ ${pendingCommission.toFixed(2).replace('.', ',')}`;
+
+                // Update available balance for withdrawal
+                document.getElementById('availableBalance').textContent = `R$ ${pendingCommission.toFixed(2).replace('.', ',')}`;
+                const withdrawButton = document.getElementById('requestWithdrawalButton');
+                if (pendingCommission >= 50) {
+                    withdrawButton.disabled = false;
+                    withdrawButton.classList.remove('btn-disabled');
+                    withdrawButton.classList.add('btn-primary');
+                } else {
+                    withdrawButton.disabled = true;
+                    withdrawButton.classList.add('btn-disabled');
+                    withdrawButton.classList.remove('btn-primary');
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas:', error);
+                showMessage('Erro ao carregar estatísticas.', 'error');
             }
         }
 
-        function renderStats() {
-            const totalSales = allSales.length;
-            const totalValue = allSales.reduce((sum, sale) => sum + (parseFloat(sale.valor_total) || 0), 0);
-            const totalCommission = allSales.reduce((sum, sale) => sum + (parseFloat(sale.comissao_valor) || 0), 0);
-            const paidCommission = allSales.reduce((sum, sale) => sum + (sale.comissao_paga ? (parseFloat(sale.comissao_valor) || 0) : 0), 0);
-            const pendingCommission = totalCommission - paidCommission;
+        // --- Sales Table ---
+        async function loadSalesTable(partnerId) {
+            try {
+                const { data: sales, error } = await supabaseClient
+                    .from('vendas')
+                    .select('data_venda, nome_comprador, valor_total, comissao_valor, status_pagamento')
+                    .eq('parceiro_id', partnerId)
+                    .order('data_venda', { ascending: false });
 
-            totalSalesEl.textContent = totalSales;
-            totalValueEl.textContent = formatCurrency(totalValue);
-            totalCommissionEl.textContent = formatCurrency(totalCommission);
-            paidCommissionEl.textContent = formatCurrency(paidCommission);
-            pendingCommissionEl.textContent = formatCurrency(pendingCommission);
+                if (error) throw error;
+
+                allSales = sales;
+                renderSalesPage(currentPage);
+            } catch (error) {
+                console.error('Erro ao carregar vendas:', error);
+                showMessage('Erro ao carregar vendas.', 'error');
+            }
         }
 
-        function renderSalesTable() {
-            salesTableBody.innerHTML = '';
-            salesEmptyState.classList.add('hidden');
+        function renderSalesPage(page) {
+            const tableBody = document.getElementById('salesTableBody');
+            tableBody.innerHTML = '';
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const salesToRender = allSales.slice(startIndex, endIndex);
 
-            if (allSales.length === 0) {
-                salesEmptyState.classList.remove('hidden');
-                pageInfo.textContent = 'Página 0 de 0';
-                prevPageBtn.disabled = true;
-                nextPageBtn.disabled = true;
+            if (salesToRender.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-4 text-center text-gray-500">Nenhuma venda encontrada.</td></tr>`;
+            }
+
+            salesToRender.forEach(sale => {
+                const row = document.createElement('tr');
+                const statusClass = getStatusBadgeClass(sale.status_pagamento);
+                const formattedDate = new Date(sale.data_venda).toLocaleDateString('pt-BR');
+
+                row.innerHTML = `
+                    <td class="py-2 px-4 border-b border-gray-200">${formattedDate}</td>
+                    <td class="py-2 px-4 border-b border-gray-200">${sale.nome_comprador}</td>
+                    <td class="py-2 px-4 border-b border-gray-200">R$ ${sale.valor_total.toFixed(2).replace('.', ',')}</td>
+                    <td class="py-2 px-4 border-b border-gray-200">R$ ${sale.comissao_valor.toFixed(2).replace('.', ',')}</td>
+                    <td class="py-2 px-4 border-b border-gray-200">
+                        <span class="status-badge ${statusClass}">
+                            ${sale.status_pagamento.charAt(0).toUpperCase() + sale.status_pagamento.slice(1)}
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            renderPaginationControls();
+        }
+
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'approved': return 'bg-green-100 text-green-800';
+                case 'pending': return 'bg-yellow-100 text-yellow-800';
+                case 'rejected': return 'bg-red-100 text-red-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function renderPaginationControls() {
+            const totalPages = Math.ceil(allSales.length / itemsPerPage);
+            const paginationControls = document.getElementById('paginationControls');
+            paginationControls.innerHTML = '';
+
+            if (totalPages > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.textContent = 'Anterior';
+                prevButton.className = `px-3 py-1 rounded-md ${currentPage === 1 ? 'btn-disabled' : 'btn-primary'}`;
+                prevButton.disabled = currentPage === 1;
+                prevButton.onclick = () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderSalesPage(currentPage);
+                    }
+                };
+                paginationControls.appendChild(prevButton);
+
+                const pageInfo = document.createElement('span');
+                pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+                pageInfo.className = 'mx-2 text-gray-700';
+                paginationControls.appendChild(pageInfo);
+
+                const nextButton = document.createElement('button');
+                nextButton.textContent = 'Próxima';
+                nextButton.className = `px-3 py-1 rounded-md ${currentPage === totalPages ? 'btn-disabled' : 'btn-primary'}`;
+                nextButton.disabled = currentPage === totalPages;
+                nextButton.onclick = () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderSalesPage(currentPage);
+                    }
+                };
+                paginationControls.appendChild(nextButton);
+            }
+        }
+
+        // --- Affiliate Link ---
+        function updateAffiliateLink(partnerCode) {
+            const affiliateLink = `https://bizmix.com.br/somos-todos-um/parceiros/checkout.html?ref=${partnerCode}`;
+            document.getElementById('affiliateLinkDisplay').value = affiliateLink;
+        }
+
+        async function copyAffiliateLink() {
+            const affiliateLink = document.getElementById('affiliateLinkDisplay').value;
+            try {
+                await navigator.clipboard.writeText(affiliateLink);
+                showMessage('Link de afiliado copiado!', 'success');
+            } catch (err) {
+                console.error('Erro ao copiar link:', err);
+                showMessage('Erro ao copiar link. Tente manualmente.', 'error');
+            }
+        }
+
+        // --- Withdrawal Request ---
+        function togglePaymentDetails() {
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            document.getElementById('pixDetails').style.display = paymentMethod === 'pix' ? 'block' : 'none';
+            document.getElementById('bankTransferDetails').style.display = paymentMethod === 'bank_transfer' ? 'block' : 'none';
+            document.getElementById('pixKey').required = paymentMethod === 'pix';
+            document.getElementById('bankDetails').required = paymentMethod === 'bank_transfer';
+        }
+
+        async function submitWithdrawalRequest() {
+            const partnerId = localStorage.getItem('partner_id');
+            const availableBalanceText = document.getElementById('availableBalance').textContent;
+            const availableBalance = parseFloat(availableBalanceText.replace('R$', '').replace(',', '.').trim());
+            const withdrawalAmountInput = document.getElementById('withdrawalAmount');
+            const withdrawalAmount = parseFloat(withdrawalAmountInput.value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const pixKey = document.getElementById('pixKey').value.trim();
+            const bankDetails = document.getElementById('bankDetails').value.trim();
+
+            if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
+                showMessage('Por favor, insira um valor válido para saque.', 'error');
+                return;
+            }
+            if (withdrawalAmount < 50) {
+                showMessage('O valor mínimo para saque é R$ 50,00.', 'error');
+                return;
+            }
+            if (withdrawalAmount > availableBalance) {
+                showMessage('O valor solicitado é maior que o saldo disponível.', 'error');
+                return;
+            }
+            if (!paymentMethod) {
+                showMessage('Por favor, selecione um método de pagamento.', 'error');
+                return;
+            }
+            if (paymentMethod === 'pix' && !pixKey) {
+                showMessage('Por favor, insira a chave PIX.', 'error');
+                return;
+            }
+            if (paymentMethod === 'bank_transfer' && !bankDetails) {
+                showMessage('Por favor, insira os dados bancários.', 'error');
                 return;
             }
 
-            const startIndex = (currentPage - 1) * salesPerPage;
-            const endIndex = startIndex + salesPerPage;
-            const paginatedSales = allSales.slice(startIndex, endIndex);
+            try {
+                const { data, error } = await supabaseClient
+                    .from('solicitacoes_saque')
+                    .insert([
+                        {
+                            parceiro_id: partnerId,
+                            valor: withdrawalAmount,
+                            metodo_pagamento: paymentMethod,
+                            detalhes_pagamento: paymentMethod === 'pix' ? pixKey : bankDetails,
+                            status: 'pendente'
+                        }
+                    ]);
 
-            paginatedSales.forEach(sale => {
-                const row = salesTableBody.insertRow();
-                row.innerHTML = `
-                    <td>${formatDate(sale.created_at)}</td>
-                    <td>${sale.nome_comprador}</td>
-                    <td>${formatCurrency(sale.valor_total)}</td>
-                    <td>${formatCurrency(sale.comissao_valor)}</td>
-                    <td><span class="status-badge status-${sale.status_pagamento}">${sale.status_pagamento}</span></td>
-                    <td><span class="status-badge ${sale.comissao_paga ? 'comissao-paga-yes' : 'comissao-paga-no'}">${sale.comissao_paga ? 'Sim' : 'Não'}</span></td>
-                `;
-            });
+                if (error) throw error;
 
-            const totalPages = Math.ceil(allSales.length / salesPerPage);
-            pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
-            prevPageBtn.disabled = currentPage === 1;
-            nextPageBtn.disabled = currentPage === totalPages;
-        }
-
-        function updateAffiliateLink() {
-            if (currentPartner) {
-                affiliateLinkInput.value = `https://bizmix.com.br/somos-todos-um/parceiros/checkout.html?ref=${currentPartner.codigo_parceiro}`;
+                showMessage('Solicitação de saque enviada com sucesso! Aguarde a aprovação.', 'success');
+                document.getElementById('withdrawalForm').reset();
+                togglePaymentDetails(); // Hide details after reset
+                loadStatistics(partnerId); // Refresh statistics
+            } catch (error) {
+                console.error('Erro ao solicitar saque:', error);
+                showMessage('Erro ao solicitar saque. Tente novamente.', 'error');
             }
-        }
-
-        function updateAvailableBalance() {
-            const totalCommission = allSales.reduce((sum, sale) => sum + (parseFloat(sale.comissao_valor) || 0), 0);
-            const paidCommission = allSales.reduce((sum, sale) => sum + (sale.comissao_paga ? (parseFloat(sale.comissao_valor) || 0) : 0), 0);
-            const availableBalance = totalCommission - paidCommission;
-            availableBalanceEl.textContent = formatCurrency(availableBalance);
         }
 
         // --- Event Listeners ---
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const partnerCode = partnerCodeInput.value.trim();
-            if (partnerCode) {
-                await login(partnerCode);
-            }
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDashboard();
 
-        logoutButton.addEventListener('click', logout);
-        document.getElementById('nav-logout').addEventListener('click', logout);
+            // Hamburger menu toggle
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
 
-        copyLinkBtn.addEventListener('click', () => {
-            affiliateLinkInput.select();
-            navigator.clipboard.writeText(affiliateLinkInput.value)
-                .then(() => {
-                    copySuccessMessage.classList.remove('hidden');
-                    setTimeout(() => copySuccessMessage.classList.add('hidden'), 2000);
-                })
-                .catch(err => {
-                    console.error('Erro ao copiar link:', err);
-                    showToast('Erro ao copiar link.', 'error');
-                });
-        });
+            hamburgerBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                mainContent.classList.toggle('shifted');
+            });
 
-        prevPageBtn.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderSalesTable();
-            }
-        });
-
-        nextPageBtn.addEventListener('click', () => {
-            const totalPages = Math.ceil(allSales.length / salesPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderSalesTable();
-            }
-        });
-
-        paymentMethodSelect.addEventListener('change', () => {
-            pixDetailsGroup.style.display = 'none';
-            bankDetailsGroup.style.display = 'none';
-            if (paymentMethodSelect.value === 'PIX') {
-                pixDetailsGroup.style.display = 'block';
-            } else if (paymentMethodSelect.value === 'Bank Transfer') {
-                bankDetailsGroup.style.display = 'block';
-            }
-        });
-
-        withdrawalForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            withdrawalSuccessMessage.classList.add('hidden');
-            withdrawalAmountError.classList.add('hidden');
-            paymentMethodError.classList.add('hidden');
-
-            const amount = parseFloat(withdrawalAmountInput.value);
-            const method = paymentMethodSelect.value;
-            const availableBalance = parseFloat(availableBalanceEl.textContent.replace('R$', '').replace('.', '').replace(',', '.'));
-
-            if (isNaN(amount) || amount <= 0) {
-                withdrawalAmountError.textContent = 'Por favor, insira um valor válido.';
-                withdrawalAmountError.classList.remove('hidden');
-                return;
-            }
-            if (amount < 50) {
-                withdrawalAmountError.textContent = 'O valor mínimo para saque é R$ 50,00.';
-                withdrawalAmountError.classList.remove('hidden');
-                return;
-            }
-            if (amount > availableBalance) {
-                withdrawalAmountError.textContent = 'Valor solicitado excede o saldo disponível.';
-                withdrawalAmountError.classList.remove('hidden');
-                return;
-            }
-            if (!method) {
-                paymentMethodError.textContent = 'Por favor, selecione um método de pagamento.';
-                paymentMethodError.classList.remove('hidden');
-                return;
-            }
-
-            let withdrawalDetails = {};
-            if (method === 'PIX') {
-                const pixKey = pixKeyInput.value.trim();
-                if (!pixKey) {
-                    showToast('Por favor, insira sua chave PIX.', 'error');
-                    return;
-                }
-                withdrawalDetails = { method: 'PIX', pix_key: pixKey };
-            } else if (method === 'Bank Transfer') {
-                const bankName = bankNameInput.value.trim();
-                const bankAgency = bankAgencyInput.value.trim();
-                const bankAccount = bankAccountInput.value.trim();
-                const bankAccountType = bankAccountTypeSelect.value;
-                    showToast('Por favor, preencha todos os dados bancários.', 'error');
-                    return;
-                }
-                withdrawalDetails = { method: 'Bank Transfer', bank_name: bankName, bank_agency: bankAgency, bank_account: bankAccount, bank_account_type: bankAccountType };
-            }
-
-            requestWithdrawalBtn.disabled = true;
-            requestWithdrawalBtn.textContent = 'Enviando...';
-
-            try {
-                // In a real application, this would send a request to a secure backend endpoint
-                // For this example, we'll simulate success
-                console.log('Solicitação de saque:', {
-                    partner_id: currentPartner.id,
-                    amount: amount,
-                    details: withdrawalDetails
-                });
-
-                // Simulate a database insert for withdrawal request
-                const { data, error } = await supabase
-                    .from('solicitacoes_saque') // Assuming a table named 'solicitacoes_saque' exists
-                    .insert([{
-                        parceiro_id: currentPartner.id,
-                        valor: amount,
-                        metodo: method,
-                        detalhes: withdrawalDetails,
-                        status: 'pending'
-                    }]);
-
-                if (error) throw error;
-
-                withdrawalSuccessMessage.classList.remove('hidden');
-                showToast('Solicitação de saque enviada com sucesso!', 'success');
-                withdrawalForm.reset();
-                pixDetailsGroup.style.display = 'none';
-                bankDetailsGroup.style.display = 'none';
-                // Optionally, re-fetch dashboard data to update available balance
-                await loadDashboardData();
-
-            } catch (err) {
-                console.error('Erro ao solicitar saque:', err);
-                showToast('Erro ao solicitar saque. Tente novamente.', 'error');
-            } finally {
-                requestWithdrawalBtn.disabled = false;
-                requestWithdrawalBtn.textContent = 'Solicitar Saque';
-            }
-        });
-
-        // Sidebar toggle for mobile
-        hamburgerMenu.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            mainContentWrapper.classList.toggle('sidebar-active');
-        });
-
-        // Close sidebar when clicking outside on mobile
-        mainContentWrapper.addEventListener('click', () => {
-            if (sidebar.classList.contains('active') && window.innerWidth <= 1024) {
-                sidebar.classList.remove('active');
-                mainContentWrapper.classList.remove('sidebar-active');
-            }
-        });
-
-        // Initial check on page load
-        checkSession();
-
-        // Navigation links (simple content switching for a single page app)
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.sidebar-nav a').forEach(nav => nav.classList.remove('active'));
-                link.classList.add('active');
-
-                // In a real SPA, this would load different components.
-                // For this example, we just re-render the main dashboard content.
-                // You can add specific sections and toggle their visibility here.
-                if (link.id === 'nav-logout') {
-                    logout();
-                } else {
-                    // For other links, you might want to scroll to a section or load specific data
-                    // For now, just ensure dashboard content is visible
-                    showDashboard();
-                }
-
-                // Close sidebar on mobile after clicking a link
-                if (window.innerWidth <= 1024) {
-                    sidebar.classList.remove('active');
-                    mainContentWrapper.classList.remove('sidebar-active');
+            // Close sidebar when clicking outside on mobile
+            mainContent.addEventListener('click', () => {
+                if (window.innerWidth < 768 && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    mainContent.classList.remove('shifted');
                 }
             });
+
+            // Initial state for payment details
+            togglePaymentDetails();
         });
     </script>
 </body>
