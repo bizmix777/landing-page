@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagamento PIX - BizMix</title>
+    <!-- CDN para geração de QR Code -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <!-- CDN do Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="pix-generator.js"></script>
+    <!-- Script local para geração de PIX -->
+    <script src="js/pix-generator.js"></script>
     <style>
+        /* Estilos CSS (inalterados do original) */
         * {
             margin: 0;
             padding: 0;
@@ -286,33 +290,55 @@
     </div>
 
     <script>
-        // Configuração do Supabase
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4'
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+        // --- CONFIGURAÇÕES ---
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4';
+        const ENVIAR_EMAIL_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email';
+        const PRODUCT_PRICE = 47.00; // Valor do produto
 
-        let vendaId = null
-        let pixCode = null
-        let pixLink = null
-        let timerInterval = null
+        // --- SUPABASE CLIENT ---
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Inicializar página
+        let vendaId = null;
+        let pixCode = null;
+        let pixLink = null;
+        let timerInterval = null;
+        let compradorNome = ''; // Variável para armazenar o nome do comprador
+        let compradorEmail = ''; // Variável para armazenar o email do comprador
+
+        // Inicializa a página de pagamento PIX
         async function init() {
-            // Pegar ID da venda da URL
-            const urlParams = new URLSearchParams(window.location.search)
-            vendaId = urlParams.get('venda_id')
+            // Pega o ID da venda da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            vendaId = urlParams.get('venda_id');
 
             if (!vendaId) {
-                alert('ID da venda não encontrado!')
-                return
+                alert('ID da venda não encontrado!');
+                return;
             }
 
-            // Gerar código PIX
-            const pixData = gerarPixParaVenda(vendaId, 47.00)
-            pixCode = pixData.pixCode
-            pixLink = pixData.pixLink
+            // Busca os dados da venda para obter nome e email do comprador
+            const { data: venda, error: fetchError } = await supabase
+                .from('vendas')
+                .select('nome_comprador, email_comprador')
+                .eq('id', vendaId)
+                .single();
 
-            // Gerar QR Code visual
+            if (fetchError || !venda) {
+                console.error('Erro ao buscar dados da venda:', fetchError);
+                alert('Erro ao carregar dados da venda. Tente novamente.');
+                return;
+            }
+
+            compradorNome = venda.nome_comprador;
+            compradorEmail = venda.email_comprador;
+
+            // Gera o código PIX usando a função do pix-generator.js
+            const pixData = gerarPixParaVenda(vendaId, PRODUCT_PRICE);
+            pixCode = pixData.pixCode;
+            pixLink = pixData.pixLink;
+
+            // Gera o QR Code visual
             QRCode.toCanvas(
                 document.getElementById('qrcode'),
                 pixCode,
@@ -325,119 +351,135 @@
                     }
                 },
                 function (error) {
-                    if (error) console.error(error)
+                    if (error) console.error(error);
                 }
-            )
+            );
 
-            // Exibir código PIX
-            document.getElementById('pixCode').textContent = pixCode
+            // Exibe o código PIX para copiar e colar
+            document.getElementById('pixCode').textContent = pixCode;
 
-            // Atualizar venda com dados PIX
-            await atualizarVendaComPix()
+            // Atualiza a venda no Supabase com os dados do PIX (se ainda não estiverem lá)
+            await atualizarVendaComPix();
 
-            // Mostrar conteúdo
-            document.getElementById('loading').style.display = 'none'
-            document.getElementById('content').style.display = 'block'
+            // --- NOVA INTEGRAÇÃO: ENVIA EMAIL COM O CÓDIGO PIX ---
+            console.log('📧 Enviando email com código PIX para:', compradorEmail);
+            await fetch(ENVIAR_EMAIL_FUNCTION_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tipo: 'pix_gerado', // Tipo de email para o serviço de envio
+                    dados: {
+                        nome: compradorNome,
+                        email: compradorEmail,
+                        valor: PRODUCT_PRICE,
+                        pixCode: pixCode,
+                        linkPagamento: window.location.href // Link para esta própria página PIX
+                    }
+                })
+            });
+            console.log('✅ Requisição de envio de email PIX enviada.');
 
-            // Iniciar timer
-            iniciarTimer(15 * 60) // 15 minutos
+            // Mostra o conteúdo da página e inicia o timer
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            iniciarTimer(15 * 60); // 15 minutos
         }
 
-        // Atualizar venda com dados PIX
+        // Atualiza a venda no Supabase com os dados do PIX
         async function atualizarVendaComPix() {
             const { error } = await supabase
                 .from('vendas')
                 .update({
                     qr_code_pix: pixCode,
                     forma_pagamento: 'pix',
-                    status_pagamento: 'pending',
+                    status_pagamento: 'pending', // Garante que o status é 'pending'
                     updated_at: new Date().toISOString()
                 })
-                .eq('id', vendaId)
+                .eq('id', vendaId);
 
             if (error) {
-                console.error('Erro ao atualizar venda:', error)
+                console.error('Erro ao atualizar venda com dados PIX:', error);
             }
         }
 
-        // Copiar código PIX
+        // Copia o código PIX para a área de transferência
         function copiarCodigo() {
             navigator.clipboard.writeText(pixCode).then(() => {
-                const btn = event.target
-                const originalText = btn.textContent
-                btn.textContent = '✅ Código Copiado!'
-                btn.style.background = '#28a745'
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Código Copiado!';
+                btn.style.background = '#28a745';
                 
                 setTimeout(() => {
-                    btn.textContent = originalText
-                    btn.style.background = '#667eea'
-                }, 2000)
-            })
+                    btn.textContent = originalText;
+                    btn.style.background = '#667eea';
+                }, 2000);
+            });
         }
 
-        // Abrir no app do banco
+        // Abre o aplicativo do banco com o link PIX
         function abrirAppBanco() {
-            window.location.href = pixLink
+            window.location.href = pixLink;
         }
 
-        // Verificar pagamento
+        // Verifica o status do pagamento no Supabase
         async function verificarPagamento() {
-            const btn = event.target
-            btn.disabled = true
-            btn.textContent = '🔄 Verificando...'
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '🔄 Verificando...';
 
-            // Buscar venda no banco
             const { data, error } = await supabase
                 .from('vendas')
                 .select('status_pagamento')
                 .eq('id', vendaId)
-                .single()
+                .single();
 
-            btn.disabled = false
-            btn.textContent = '🔄 Verificar Pagamento'
+            btn.disabled = false;
+            btn.textContent = '🔄 Verificar Pagamento';
 
             if (error) {
-                alert('Erro ao verificar pagamento. Tente novamente.')
-                return
+                alert('Erro ao verificar pagamento. Tente novamente.');
+                return;
             }
 
             if (data.status_pagamento === 'approved') {
-                // Pagamento confirmado!
-                clearInterval(timerInterval)
-                document.getElementById('successMessage').classList.add('show')
-                document.getElementById('timer').style.display = 'none'
+                // Pagamento confirmado, redireciona para a página de sucesso
+                clearInterval(timerInterval);
+                document.getElementById('successMessage').classList.add('show');
+                document.getElementById('timer').style.display = 'none';
                 
                 setTimeout(() => {
-                    window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`
-                }, 3000)
+                    window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`;
+                }, 3000);
             } else {
-                alert('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.')
+                alert('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.');
             }
         }
 
-        // Timer de 15 minutos
+        // Inicia o contador regressivo para o PIX
         function iniciarTimer(segundos) {
-            let tempo = segundos
+            let tempo = segundos;
 
             timerInterval = setInterval(() => {
-                tempo--
+                tempo--;
                 
-                const minutos = Math.floor(tempo / 60)
-                const segs = tempo % 60
+                const minutos = Math.floor(tempo / 60);
+                const segs = tempo % 60;
                 
                 document.getElementById('timerValue').textContent = 
-                    `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`
+                    `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`;
 
                 if (tempo <= 0) {
-                    clearInterval(timerInterval)
-                    alert('Tempo expirado! Gere um novo código PIX.')
-                    window.location.href = 'checkout.html'
+                    clearInterval(timerInterval);
+                    alert('Tempo expirado! Gere um novo código PIX.');
+                    // Redireciona para o checkout para gerar uma nova venda/PIX
+                    window.location.href = 'checkout.html'; 
                 }
-            }, 1000)
+            }, 1000);
         }
 
-        // Inicializar ao carregar página
-        window.onload = init
+        // Inicializa a função 'init' quando a página é carregada
+        window.onload = init;
     </script>
 </body>
 </html>
