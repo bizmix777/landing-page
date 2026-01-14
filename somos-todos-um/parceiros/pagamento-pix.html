@@ -33,6 +33,7 @@
         .valor-amount { color: #667eea; font-size: 36px; font-weight: bold; }
         .qrcode-container { text-align: center; margin-bottom: 30px; }
         #qrcode { display: inline-block; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        #qrcode canvas { display: block; }
         .pix-code-container { margin-bottom: 20px; }
         .pix-code-label { color: #666; font-size: 14px; margin-bottom: 10px; text-align: center; }
         .pix-code-box { background: #f8f9fa; border: 2px dashed #667eea; border-radius: 10px; padding: 15px; word-break: break-all; font-family: monospace; font-size: 12px; color: #333; max-height: 100px; overflow-y: auto; }
@@ -128,7 +129,6 @@
         (function() {
             console.log('🚀 Iniciando página PIX...');
 
-            // CHAVE NOVA (final zM)
             const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
             const ENVIAR_EMAIL_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email';
@@ -146,7 +146,6 @@
             let compradorNome = '';
             let compradorEmail = '';
 
-            // Gerar código PIX
             function gerarPixParaVenda(vendaId, valor) {
                 const payload = [
                     { id: '00', value: '01' },
@@ -192,7 +191,6 @@
                 return { pixCode: pixCodeFinal, pixLink: pixLinkFinal };
             }
 
-            // Inicializar
             async function init() {
                 const urlParams = new URLSearchParams(window.location.search);
                 vendaId = urlParams.get('venda_id');
@@ -231,8 +229,13 @@
 
                 console.log('✅ Código PIX gerado:', pixCode.substring(0, 50) + '...');
 
+                // CORRIGIDO: Criar canvas dinamicamente
+                const qrcodeContainer = document.getElementById('qrcode');
+                const canvas = document.createElement('canvas');
+                qrcodeContainer.appendChild(canvas);
+
                 QRCode.toCanvas(
-                    document.getElementById('qrcode'),
+                    canvas,
                     pixCode,
                     { width: 250, margin: 2, color: { dark: '#000000', light: '#ffffff' }},
                     function (error) {
@@ -276,7 +279,10 @@
                 try {
                     const response = await fetch(ENVIAR_EMAIL_FUNCTION_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        },
                         body: JSON.stringify({
                             tipo: 'pix_gerado',
                             dados: {
@@ -297,7 +303,7 @@
                         emailStatusText.textContent = '✅ Email enviado! Verifique sua caixa de entrada.';
                         emailStatus.style.display = 'block';
                     } else {
-                        throw new Error(result.error);
+                        throw new Error(result.error || 'Erro ao enviar email');
                     }
                 } catch (error) {
                     console.error('❌ Erro email:', error);
@@ -371,7 +377,6 @@
                 }, 1000);
             }
 
-            // Expor funções globalmente
             window.pixApp = {
                 copiarCodigo,
                 abrirAppBanco,
