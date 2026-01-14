@@ -72,9 +72,10 @@
     <script>
         console.log('🚀 Checkout PIX iniciado');
 
+        // Configuração do Supabase (DECLARADO APENAS UMA VEZ!)
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         console.log('✅ Supabase inicializado');
 
@@ -108,7 +109,7 @@
             try {
                 console.log('💾 Criando venda no Supabase...');
 
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('vendas')
                     .insert({
                         nome_comprador: nome,
