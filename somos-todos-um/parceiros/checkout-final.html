@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento PIX - BizMix</title>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <title>Checkout PIX - BizMix</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -19,366 +18,186 @@
         }
         .container {
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             padding: 40px;
             max-width: 500px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { color: #333; font-size: 28px; margin-bottom: 10px; }
-        .header p { color: #666; font-size: 16px; }
-        .valor { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
-        .valor-label { color: #666; font-size: 14px; margin-bottom: 5px; }
-        .valor-amount { color: #667eea; font-size: 36px; font-weight: bold; }
-        .qrcode-container { text-align: center; margin-bottom: 30px; }
-        #qrcode { display: inline-block; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .pix-code-container { margin-bottom: 20px; }
-        .pix-code-label { color: #666; font-size: 14px; margin-bottom: 10px; text-align: center; }
-        .pix-code-box { background: #f8f9fa; border: 2px dashed #667eea; border-radius: 10px; padding: 15px; word-break: break-all; font-family: monospace; font-size: 12px; color: #333; max-height: 100px; overflow-y: auto; }
-        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; }
-        .btn-primary { background: #667eea; color: white; }
-        .btn-primary:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
-        .btn-secondary { background: #28a745; color: white; }
-        .btn-secondary:hover { background: #218838; }
-        .btn-outline { background: white; color: #667eea; border: 2px solid #667eea; }
-        .btn-outline:hover { background: #667eea; color: white; }
-        .timer { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
-        .timer-value { color: #667eea; font-weight: bold; font-size: 18px; }
-        .instrucoes { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-        .instrucoes h3 { color: #856404; font-size: 16px; margin-bottom: 10px; }
-        .instrucoes ol { color: #856404; font-size: 14px; padding-left: 20px; }
-        .instrucoes li { margin-bottom: 5px; }
-        .success-message { display: none; background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; }
-        .success-message.show { display: block; }
-        .loading { text-align: center; padding: 40px; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .email-status { background: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; }
-        .email-status.success { background: #d4edda; border-left-color: #28a745; color: #155724; }
-        .email-status.error { background: #f8d7da; border-left-color: #dc3545; color: #721c24; }
+        h1 { color: #667eea; text-align: center; margin-bottom: 10px; }
+        p { text-align: center; color: #666; margin-bottom: 30px; }
+        .price { font-size: 36px; color: #764ba2; text-align: center; font-weight: bold; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        input:focus { border-color: #667eea; outline: none; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; background: #667eea; color: white; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .btn:hover { background: #5568d3; }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+        .message { padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center; display: none; }
+        .message.show { display: block; }
+        .message.loading { background: #eef2ff; color: #667eea; }
+        .message.error { background: #ffebeb; color: #d9534f; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Gerando código PIX...</p>
-        </div>
+        <h1>💰 Checkout PIX</h1>
+        <p>Livro Digital - Somos Todos Um</p>
+        <div class="price">R$ 47,00</div>
 
-        <div id="content" style="display: none;">
-            <div class="header">
-                <h1>💰 Pagamento via PIX</h1>
-                <p>Livro Digital - Somos Todos Um</p>
+        <form id="checkoutForm">
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
             </div>
-
-            <div class="valor">
-                <div class="valor-label">Valor a pagar:</div>
-                <div class="valor-amount" id="valorDisplay">R$ 47,00</div>
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
             </div>
-
-            <div id="emailStatus" class="email-status" style="display: none;">
-                <p id="emailStatusText"></p>
+            <div class="form-group">
+                <label>Telefone</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" required>
             </div>
-
-            <div class="success-message" id="successMessage">
-                <h3>✅ Pagamento Confirmado!</h3>
-                <p>Seu pagamento foi recebido com sucesso.</p>
+            <div class="form-group">
+                <label>CPF</label>
+                <input type="text" id="cpf" name="cpf" placeholder="XXX.XXX.XXX-XX" required>
             </div>
+            <button type="submit" class="btn" id="btnSubmit">Gerar PIX</button>
+        </form>
 
-            <div class="timer" id="timer">
-                Tempo restante: <span class="timer-value" id="timerValue">15:00</span>
-            </div>
-
-            <div class="qrcode-container">
-                <div id="qrcode"></div>
-            </div>
-
-            <div class="pix-code-container">
-                <div class="pix-code-label">Código PIX (Copia e Cola):</div>
-                <div class="pix-code-box" id="pixCode"></div>
-            </div>
-
-            <button class="btn btn-primary" onclick="window.pixApp.copiarCodigo()">
-                📋 Copiar Código PIX
-            </button>
-
-            <button class="btn btn-secondary" onclick="window.pixApp.abrirAppBanco()">
-                📱 Abrir no App do Banco
-            </button>
-
-            <button class="btn btn-outline" onclick="window.pixApp.verificarPagamento()">
-                🔄 Verificar Pagamento
-            </button>
-
-            <div class="instrucoes">
-                <h3>📱 Como pagar:</h3>
-                <ol>
-                    <li>Abra o app do seu banco</li>
-                    <li>Escolha "Pagar com PIX"</li>
-                    <li>Escaneie o QR Code ou cole o código</li>
-                    <li>Confirme o pagamento</li>
-                    <li>Clique em "Verificar Pagamento"</li>
-                </ol>
-            </div>
-        </div>
+        <div id="message" class="message"></div>
     </div>
 
     <script>
         (function() {
-            console.log('🚀 Iniciando página PIX...');
+            'use strict';
+            
+            console.log('🚀 Checkout PIX iniciado');
 
-            // MESMA CHAVE SERVICE_ROLE DO CHECKOUT
+            // Configuração
             const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjcxNzU3MywiZXhwIjoyMDUyMjkzNTczfQ.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4';
-            const ENVIAR_EMAIL_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email';
-            const PRODUCT_PRICE = 47.00;
-            const PIX_KEY = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
-            const MERCHANT_NAME = 'HENRIQUE GOMES DA SILVA';
-            const MERCHANT_CITY = 'SAO PAULO';
-
+            
             const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            let vendaId = null;
-            let pixCode = null;
-            let pixLink = null;
-            let timerInterval = null;
-            let compradorNome = '';
-            let compradorEmail = '';
+            console.log('✅ Supabase inicializado');
 
-            // Gerar código PIX
-            function gerarPixParaVenda(vendaId, valor) {
-                const payload = [
-                    { id: '00', value: '01' },
-                    { id: '26', value: [
-                        { id: '00', value: 'br.gov.bcb.pix' },
-                        { id: '01', value: PIX_KEY }
-                    ]},
-                    { id: '52', value: '0000' },
-                    { id: '53', value: '986' },
-                    { id: '54', value: valor.toFixed(2) },
-                    { id: '58', value: MERCHANT_CITY },
-                    { id: '59', value: MERCHANT_NAME },
-                    { id: '60', value: 'BR' },
-                    { id: '62', value: [
-                        { id: '05', value: vendaId.toString() }
-                    ]}
-                ];
+            const urlParams = new URLSearchParams(window.location.search);
+            const affiliateCode = urlParams.get('ref') || null;
+            console.log('🔍 Código afiliado:', affiliateCode);
 
-                function serialize(obj) {
-                    if (Array.isArray(obj.value)) {
-                        const nested = obj.value.map(serialize).join('');
-                        return obj.id + String(nested.length).padStart(2, '0') + nested;
-                    }
-                    return obj.id + String(obj.value.length).padStart(2, '0') + obj.value;
-                }
+            const form = document.getElementById('checkoutForm');
+            const btnSubmit = document.getElementById('btnSubmit');
+            const message = document.getElementById('message');
 
-                const pixString = payload.map(serialize).join('') + '6304';
+            if (!form) {
+                console.error('❌ Formulário não encontrado!');
+                return;
+            }
+
+            console.log('✅ Formulário encontrado');
+
+            function showMessage(text, type) {
+                message.textContent = text;
+                message.className = `message show ${type}`;
+            }
+
+            function hideMessage() {
+                message.className = 'message';
+            }
+
+            // Event listener do formulário
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 
-                function crc16(str) {
-                    let crc = 0xFFFF;
-                    for (let i = 0; i < str.length; i++) {
-                        crc ^= str.charCodeAt(i) << 8;
-                        for (let j = 0; j < 8; j++) {
-                            crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : crc << 1;
-                        }
-                    }
-                    return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
-                }
+                console.log('📝 Formulário enviado pelo usuário');
 
-                const pixCodeFinal = pixString + crc16(pixString);
-                const pixLinkFinal = `https://nubank.com.br/pagar/${btoa(pixCodeFinal)}`;
+                btnSubmit.disabled = true;
+                showMessage('Processando...', 'loading');
 
-                return { pixCode: pixCodeFinal, pixLink: pixLinkFinal };
-            }
+                const nome = document.getElementById('nome').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const telefone = document.getElementById('telefone').value.trim();
+                const cpf = document.getElementById('cpf').value.trim();
 
-            // Inicializar
-            async function init() {
-                const urlParams = new URLSearchParams(window.location.search);
-                vendaId = urlParams.get('venda_id');
-
-                if (!vendaId) {
-                    alert('ID da venda não encontrado!');
+                // Validação
+                if (!nome || !email || !telefone || !cpf) {
+                    showMessage('Por favor, preencha todos os campos!', 'error');
+                    btnSubmit.disabled = false;
                     return;
                 }
 
-                console.log('📊 Venda ID:', vendaId);
-
-                const { data: venda, error: vendaError } = await db
-                    .from('vendas')
-                    .select('nome_comprador, email_comprador, valor_total')
-                    .eq('id', vendaId)
-                    .single();
-
-                if (vendaError) {
-                    console.error('❌ Erro ao buscar venda:', vendaError);
-                    alert('Erro ao carregar dados da venda!');
-                    return;
-                }
-
-                console.log('✅ Venda encontrada:', venda);
-
-                compradorNome = venda.nome_comprador;
-                compradorEmail = venda.email_comprador;
-                const valorVenda = venda.valor_total || PRODUCT_PRICE;
-
-                document.getElementById('valorDisplay').textContent = `R$ ${Number(valorVenda).toFixed(2)}`;
-
-                console.log('🔐 Gerando código PIX...');
-                const pixData = gerarPixParaVenda(vendaId, valorVenda);
-                pixCode = pixData.pixCode;
-                pixLink = pixData.pixLink;
-
-                console.log('✅ Código PIX gerado');
-
-                QRCode.toCanvas(
-                    document.getElementById('qrcode'),
-                    pixCode,
-                    { width: 250, margin: 2, color: { dark: '#000000', light: '#ffffff' }},
-                    function (error) {
-                        if (error) console.error('❌ Erro ao gerar QR Code:', error);
-                        else console.log('✅ QR Code gerado');
-                    }
-                );
-
-                document.getElementById('pixCode').textContent = pixCode;
-
-                await atualizarVendaComPix();
-                await enviarEmailPix();
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
-
-                iniciarTimer(15 * 60);
-            }
-
-            async function atualizarVendaComPix() {
-                console.log('💾 Atualizando venda com código PIX...');
-                const { error } = await db
-                    .from('vendas')
-                    .update({
-                        qr_code_pix: pixCode,
-                        forma_pagamento: 'pix',
-                        status_pagamento: 'pending',
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', vendaId);
-
-                if (error) console.error('❌ Erro ao atualizar venda:', error);
-                else console.log('✅ Venda atualizada');
-            }
-
-            async function enviarEmailPix() {
-                console.log('📧 Enviando email...');
-                const emailStatus = document.getElementById('emailStatus');
-                const emailStatusText = document.getElementById('emailStatusText');
+                console.log('📊 Dados:', { nome, email, telefone, cpf });
 
                 try {
-                    const response = await fetch(ENVIAR_EMAIL_FUNCTION_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            tipo: 'pix_gerado',
-                            dados: {
-                                nome: compradorNome,
-                                email: compradorEmail,
-                                valor: PRODUCT_PRICE,
-                                pixCode: pixCode,
-                                linkPagamento: window.location.href
-                            }
+                    console.log('💾 Criando venda no Supabase...');
+
+                    const { data, error } = await db
+                        .from('vendas')
+                        .insert({
+                            nome_comprador: nome,
+                            email_comprador: email,
+                            telefone_comprador: telefone,
+                            cpf_comprador: cpf,
+                            valor_total: 47.00,
+                            valor_comissao: 14.10,
+                            status_pagamento: 'pending',
+                            forma_pagamento: 'pix',
+                            codigo_indicacao: affiliateCode,
+                            data_venda: new Date().toISOString()
                         })
-                    });
+                        .select()
+                        .single();
 
-                    const result = await response.json();
-                    console.log('📧 Resposta:', result);
-
-                    if (result.success) {
-                        emailStatus.className = 'email-status success';
-                        emailStatusText.textContent = '✅ Email enviado! Verifique sua caixa de entrada.';
-                        emailStatus.style.display = 'block';
-                    } else {
-                        throw new Error(result.error);
+                    if (error) {
+                        console.error('❌ Erro Supabase:', error);
+                        throw new Error(error.message || 'Erro ao criar venda');
                     }
-                } catch (error) {
-                    console.error('❌ Erro email:', error);
-                    emailStatus.className = 'email-status error';
-                    emailStatusText.textContent = '⚠️ Email não enviado. Código disponível aqui.';
-                    emailStatus.style.display = 'block';
-                }
-            }
 
-            function copiarCodigo() {
-                navigator.clipboard.writeText(pixCode).then(() => {
-                    const btn = event.target;
-                    const originalText = btn.textContent;
-                    btn.textContent = '✅ Copiado!';
-                    btn.style.background = '#28a745';
+                    console.log('✅ Venda criada:', data.id);
+                    console.log('🔄 Redirecionando para PIX...');
+
+                    const redirectUrl = `/somos-todos-um/parceiros/pagamento-pix.html?venda_id=${data.id}`;
+                    console.log('🔗 URL:', redirectUrl);
+                    
+                    // Aguardar 500ms antes de redirecionar
                     setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#667eea';
-                    }, 2000);
+                        window.location.href = redirectUrl;
+                    }, 500);
+
+                } catch (error) {
+                    console.error('❌ Erro:', error);
+                    showMessage('Erro: ' + error.message, 'error');
+                    btnSubmit.disabled = false;
+                }
+            });
+
+            // Máscaras
+            const telefoneInput = document.getElementById('telefone');
+            const cpfInput = document.getElementById('cpf');
+
+            if (telefoneInput) {
+                telefoneInput.addEventListener('input', function(e) {
+                    let v = e.target.value.replace(/\D/g, "");
+                    v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+                    v = v.replace(/(\d)(\d{4})$/, "$1-$2");
+                    e.target.value = v;
                 });
             }
 
-            function abrirAppBanco() {
-                window.location.href = pixLink;
+            if (cpfInput) {
+                cpfInput.addEventListener('input', function(e) {
+                    let v = e.target.value.replace(/\D/g, "");
+                    v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                    v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                    v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                    e.target.value = v;
+                });
             }
 
-            async function verificarPagamento() {
-                const btn = event.target;
-                btn.disabled = true;
-                btn.textContent = '🔄 Verificando...';
-
-                const { data, error } = await db
-                    .from('vendas')
-                    .select('status_pagamento')
-                    .eq('id', vendaId)
-                    .single();
-
-                btn.disabled = false;
-                btn.textContent = '🔄 Verificar Pagamento';
-
-                if (error) {
-                    alert('Erro ao verificar. Tente novamente.');
-                    return;
-                }
-
-                if (data.status_pagamento === 'approved') {
-                    clearInterval(timerInterval);
-                    document.getElementById('successMessage').classList.add('show');
-                    document.getElementById('timer').style.display = 'none';
-                    setTimeout(() => {
-                        window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`;
-                    }, 3000);
-                } else {
-                    alert('Pagamento não confirmado. Aguarde e tente novamente.');
-                }
-            }
-
-            function iniciarTimer(segundos) {
-                let tempo = segundos;
-                timerInterval = setInterval(() => {
-                    tempo--;
-                    const minutos = Math.floor(tempo / 60);
-                    const segs = tempo % 60;
-                    document.getElementById('timerValue').textContent = 
-                        `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`;
-                    if (tempo <= 0) {
-                        clearInterval(timerInterval);
-                        alert('Tempo expirado!');
-                        window.location.href = 'checkout-final.html';
-                    }
-                }, 1000);
-            }
-
-            // Expor funções globalmente
-            window.pixApp = {
-                copiarCodigo,
-                abrirAppBanco,
-                verificarPagamento
-            };
-
-            window.onload = init;
+            console.log('✅ Checkout pronto! Aguardando preenchimento do formulário...');
         })();
     </script>
 </body>
