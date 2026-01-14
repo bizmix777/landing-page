@@ -128,7 +128,7 @@
         (function() {
             console.log('🚀 Iniciando página PIX...');
 
-            // MESMA CHAVE SERVICE_ROLE DO CHECKOUT
+            // CHAVE NOVA (final zM)
             const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
             const ENVIAR_EMAIL_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email';
@@ -212,7 +212,7 @@
 
                 if (vendaError) {
                     console.error('❌ Erro ao buscar venda:', vendaError);
-                    alert('Erro ao carregar dados da venda!');
+                    alert('Erro ao carregar dados da venda: ' + vendaError.message);
                     return;
                 }
 
@@ -229,7 +229,7 @@
                 pixCode = pixData.pixCode;
                 pixLink = pixData.pixLink;
 
-                console.log('✅ Código PIX gerado');
+                console.log('✅ Código PIX gerado:', pixCode.substring(0, 50) + '...');
 
                 QRCode.toCanvas(
                     document.getElementById('qrcode'),
@@ -265,7 +265,7 @@
                     .eq('id', vendaId);
 
                 if (error) console.error('❌ Erro ao atualizar venda:', error);
-                else console.log('✅ Venda atualizada');
+                else console.log('✅ Venda atualizada com código PIX');
             }
 
             async function enviarEmailPix() {
