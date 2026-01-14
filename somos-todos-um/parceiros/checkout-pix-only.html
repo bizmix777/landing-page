@@ -128,8 +128,11 @@
                 console.log('✅ Venda criada:', data.id);
                 console.log('🔄 Redirecionando para PIX...');
 
-                // REDIRECIONAR PARA PÁGINA PIX
-                window.location.href = `pagamento-pix.html?venda_id=${data.id}`;
+                // CAMINHO ABSOLUTO CORRETO
+                const redirectUrl = `/somos-todos-um/parceiros/pagamento-pix.html?venda_id=${data.id}`;
+                console.log('🔗 URL de redirecionamento:', redirectUrl);
+                
+                window.location.href = redirectUrl;
 
             } catch (error) {
                 console.error('❌ Erro:', error);
