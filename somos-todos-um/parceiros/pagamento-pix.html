@@ -7,12 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -22,7 +17,6 @@
             align-items: center;
             padding: 20px;
         }
-
         .container {
             background: white;
             border-radius: 20px;
@@ -31,217 +25,38 @@
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 16px;
-        }
-
-        .valor {
-            text-align: center;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .valor-label {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .valor-amount {
-            color: #667eea;
-            font-size: 36px;
-            font-weight: bold;
-        }
-
-        .qrcode-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        #qrcode {
-            display: inline-block;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .pix-code-container {
-            margin-bottom: 20px;
-        }
-
-        .pix-code-label {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .pix-code-box {
-            background: #f8f9fa;
-            border: 2px dashed #667eea;
-            border-radius: 10px;
-            padding: 15px;
-            word-break: break-all;
-            font-family: monospace;
-            font-size: 12px;
-            color: #333;
-            max-height: 100px;
-            overflow-y: auto;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-        }
-
-        .btn-outline {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .btn-outline:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .timer {
-            text-align: center;
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 20px;
-        }
-
-        .timer-value {
-            color: #667eea;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .instrucoes {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .instrucoes h3 {
-            color: #856404;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .instrucoes ol {
-            color: #856404;
-            font-size: 14px;
-            padding-left: 20px;
-        }
-
-        .instrucoes li {
-            margin-bottom: 5px;
-        }
-
-        .success-message {
-            display: none;
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .email-status {
-            background: #d1ecf1;
-            border-left: 4px solid #0c5460;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .email-status.success {
-            background: #d4edda;
-            border-left-color: #28a745;
-            color: #155724;
-        }
-
-        .email-status.error {
-            background: #f8d7da;
-            border-left-color: #dc3545;
-            color: #721c24;
-        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #333; font-size: 28px; margin-bottom: 10px; }
+        .header p { color: #666; font-size: 16px; }
+        .valor { text-align: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; }
+        .valor-label { color: #666; font-size: 14px; margin-bottom: 5px; }
+        .valor-amount { color: #667eea; font-size: 36px; font-weight: bold; }
+        .qrcode-container { text-align: center; margin-bottom: 30px; }
+        #qrcode { display: inline-block; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .pix-code-container { margin-bottom: 20px; }
+        .pix-code-label { color: #666; font-size: 14px; margin-bottom: 10px; text-align: center; }
+        .pix-code-box { background: #f8f9fa; border: 2px dashed #667eea; border-radius: 10px; padding: 15px; word-break: break-all; font-family: monospace; font-size: 12px; color: #333; max-height: 100px; overflow-y: auto; }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5568d3; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-secondary { background: #28a745; color: white; }
+        .btn-secondary:hover { background: #218838; }
+        .btn-outline { background: white; color: #667eea; border: 2px solid #667eea; }
+        .btn-outline:hover { background: #667eea; color: white; }
+        .timer { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+        .timer-value { color: #667eea; font-weight: bold; font-size: 18px; }
+        .instrucoes { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .instrucoes h3 { color: #856404; font-size: 16px; margin-bottom: 10px; }
+        .instrucoes ol { color: #856404; font-size: 14px; padding-left: 20px; }
+        .instrucoes li { margin-bottom: 5px; }
+        .success-message { display: none; background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; }
+        .success-message.show { display: block; }
+        .loading { text-align: center; padding: 40px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .email-status { background: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center; }
+        .email-status.success { background: #d4edda; border-left-color: #28a745; color: #155724; }
+        .email-status.error { background: #f8d7da; border-left-color: #dc3545; color: #721c24; }
     </style>
 </head>
 <body>
@@ -309,15 +124,17 @@
         </div>
     </div>
 
-    <script src="js/pix-generator.js"></script>
     <script>
         console.log('🚀 Iniciando página PIX...');
 
-        // Configuração do Supabase (DECLARADO APENAS UMA VEZ!)
+        // ===== CONFIGURAÇÕES (DECLARADO APENAS UMA VEZ!) =====
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4';
         const ENVIAR_EMAIL_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email';
         const PRODUCT_PRICE = 47.00;
+        const PIX_KEY = '6ea0fa32-993a-4769-b515-61dbca2db8f6'; // Chave PIX aleatória
+        const MERCHANT_NAME = 'HENRIQUE GOMES DA SILVA';
+        const MERCHANT_CITY = 'SAO PAULO';
 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -328,11 +145,54 @@
         let compradorNome = '';
         let compradorEmail = '';
 
-        // Inicializar página
-        async function init() {
-            console.log('🚀 Iniciando página PIX...');
+        // ===== FUNÇÃO: GERAR CÓDIGO PIX =====
+        function gerarPixParaVenda(vendaId, valor) {
+            const payload = [
+                { id: '00', value: '01' },
+                { id: '26', value: [
+                    { id: '00', value: 'br.gov.bcb.pix' },
+                    { id: '01', value: PIX_KEY }
+                ]},
+                { id: '52', value: '0000' },
+                { id: '53', value: '986' },
+                { id: '54', value: valor.toFixed(2) },
+                { id: '58', value: MERCHANT_CITY },
+                { id: '59', value: MERCHANT_NAME },
+                { id: '60', value: 'BR' },
+                { id: '62', value: [
+                    { id: '05', value: vendaId.toString() }
+                ]}
+            ];
+
+            function serialize(obj) {
+                if (Array.isArray(obj.value)) {
+                    const nested = obj.value.map(serialize).join('');
+                    return obj.id + String(nested.length).padStart(2, '0') + nested;
+                }
+                return obj.id + String(obj.value.length).padStart(2, '0') + obj.value;
+            }
+
+            const pixString = payload.map(serialize).join('') + '6304';
             
-            // Pegar ID da venda da URL
+            function crc16(str) {
+                let crc = 0xFFFF;
+                for (let i = 0; i < str.length; i++) {
+                    crc ^= str.charCodeAt(i) << 8;
+                    for (let j = 0; j < 8; j++) {
+                        crc = (crc & 0x8000) ? (crc << 1) ^ 0x1021 : crc << 1;
+                    }
+                }
+                return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+            }
+
+            const pixCodeFinal = pixString + crc16(pixString);
+            const pixLinkFinal = `https://nubank.com.br/pagar/${btoa(pixCodeFinal)}`;
+
+            return { pixCode: pixCodeFinal, pixLink: pixLinkFinal };
+        }
+
+        // ===== FUNÇÃO: INICIALIZAR =====
+        async function init() {
             const urlParams = new URLSearchParams(window.location.search);
             vendaId = urlParams.get('venda_id');
 
@@ -343,7 +203,6 @@
 
             console.log('📊 Venda ID:', vendaId);
 
-            // Buscar dados da venda no Supabase
             const { data: venda, error: vendaError } = await supabase
                 .from('vendas')
                 .select('nome_comprador, email_comprador, valor_total')
@@ -362,10 +221,8 @@
             compradorEmail = venda.email_comprador;
             const valorVenda = venda.valor_total || PRODUCT_PRICE;
 
-            // Atualizar display do valor
             document.getElementById('valorDisplay').textContent = `R$ ${Number(valorVenda).toFixed(2)}`;
 
-            // Gerar código PIX
             console.log('🔐 Gerando código PIX...');
             const pixData = gerarPixParaVenda(vendaId, valorVenda);
             pixCode = pixData.pixCode;
@@ -373,45 +230,29 @@
 
             console.log('✅ Código PIX gerado');
 
-            // Gerar QR Code visual
             QRCode.toCanvas(
                 document.getElementById('qrcode'),
                 pixCode,
-                {
-                    width: 250,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#ffffff'
-                    }
-                },
+                { width: 250, margin: 2, color: { dark: '#000000', light: '#ffffff' }},
                 function (error) {
                     if (error) console.error('❌ Erro ao gerar QR Code:', error);
                     else console.log('✅ QR Code gerado');
                 }
             );
 
-            // Exibir código PIX
             document.getElementById('pixCode').textContent = pixCode;
 
-            // Atualizar venda com dados PIX
             await atualizarVendaComPix();
-
-            // ENVIAR EMAIL COM CÓDIGO PIX
             await enviarEmailPix();
 
-            // Mostrar conteúdo
             document.getElementById('loading').style.display = 'none';
             document.getElementById('content').style.display = 'block';
 
-            // Iniciar timer
-            iniciarTimer(15 * 60); // 15 minutos
+            iniciarTimer(15 * 60);
         }
 
-        // Atualizar venda com dados PIX
         async function atualizarVendaComPix() {
             console.log('💾 Atualizando venda com código PIX...');
-            
             const { error } = await supabase
                 .from('vendas')
                 .update({
@@ -422,28 +263,19 @@
                 })
                 .eq('id', vendaId);
 
-            if (error) {
-                console.error('❌ Erro ao atualizar venda:', error);
-            } else {
-                console.log('✅ Venda atualizada com código PIX');
-            }
+            if (error) console.error('❌ Erro ao atualizar venda:', error);
+            else console.log('✅ Venda atualizada');
         }
 
-        // ENVIAR EMAIL COM CÓDIGO PIX
         async function enviarEmailPix() {
-            console.log('📧 Enviando email com código PIX...');
-            console.log('📧 Para:', compradorEmail);
-            console.log('📧 Nome:', compradorNome);
-
+            console.log('📧 Enviando email...');
             const emailStatus = document.getElementById('emailStatus');
             const emailStatusText = document.getElementById('emailStatusText');
 
             try {
                 const response = await fetch(ENVIAR_EMAIL_FUNCTION_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         tipo: 'pix_gerado',
                         dados: {
@@ -457,33 +289,29 @@
                 });
 
                 const result = await response.json();
-                console.log('📧 Resposta do envio:', result);
+                console.log('📧 Resposta:', result);
 
                 if (result.success) {
-                    console.log('✅ Email enviado com sucesso!');
                     emailStatus.className = 'email-status success';
-                    emailStatusText.textContent = '✅ Email enviado! Verifique sua caixa de entrada.';
+                    emailStatusText.textContent = '✅ Email enviado!';
                     emailStatus.style.display = 'block';
                 } else {
-                    throw new Error(result.error || 'Erro desconhecido');
+                    throw new Error(result.error);
                 }
-
             } catch (error) {
-                console.error('❌ Erro ao enviar email:', error);
+                console.error('❌ Erro email:', error);
                 emailStatus.className = 'email-status error';
-                emailStatusText.textContent = '⚠️ Não foi possível enviar o email. O código PIX está disponível nesta página.';
+                emailStatusText.textContent = '⚠️ Email não enviado. Código disponível aqui.';
                 emailStatus.style.display = 'block';
             }
         }
 
-        // Copiar código PIX
         function copiarCodigo() {
             navigator.clipboard.writeText(pixCode).then(() => {
                 const btn = event.target;
                 const originalText = btn.textContent;
-                btn.textContent = '✅ Código Copiado!';
+                btn.textContent = '✅ Copiado!';
                 btn.style.background = '#28a745';
-                
                 setTimeout(() => {
                     btn.textContent = originalText;
                     btn.style.background = '#667eea';
@@ -491,18 +319,15 @@
             });
         }
 
-        // Abrir no app do banco
         function abrirAppBanco() {
             window.location.href = pixLink;
         }
 
-        // Verificar pagamento
         async function verificarPagamento() {
             const btn = event.target;
             btn.disabled = true;
             btn.textContent = '🔄 Verificando...';
 
-            // Buscar venda no banco
             const { data, error } = await supabase
                 .from('vendas')
                 .select('status_pagamento')
@@ -513,46 +338,38 @@
             btn.textContent = '🔄 Verificar Pagamento';
 
             if (error) {
-                alert('Erro ao verificar pagamento. Tente novamente.');
+                alert('Erro ao verificar. Tente novamente.');
                 return;
             }
 
             if (data.status_pagamento === 'approved') {
-                // Pagamento confirmado!
                 clearInterval(timerInterval);
                 document.getElementById('successMessage').classList.add('show');
                 document.getElementById('timer').style.display = 'none';
-                
                 setTimeout(() => {
                     window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`;
                 }, 3000);
             } else {
-                alert('Pagamento ainda não confirmado. Aguarde alguns segundos e tente novamente.');
+                alert('Pagamento não confirmado. Aguarde e tente novamente.');
             }
         }
 
-        // Timer de 15 minutos
         function iniciarTimer(segundos) {
             let tempo = segundos;
-
             timerInterval = setInterval(() => {
                 tempo--;
-                
                 const minutos = Math.floor(tempo / 60);
                 const segs = tempo % 60;
-                
                 document.getElementById('timerValue').textContent = 
                     `${String(minutos).padStart(2, '0')}:${String(segs).padStart(2, '0')}`;
-
                 if (tempo <= 0) {
                     clearInterval(timerInterval);
-                    alert('Tempo expirado! Gere um novo código PIX.');
+                    alert('Tempo expirado!');
                     window.location.href = 'checkout.html';
                 }
             }, 1000);
         }
 
-        // Inicializar ao carregar página
         window.onload = init;
     </script>
 </body>
