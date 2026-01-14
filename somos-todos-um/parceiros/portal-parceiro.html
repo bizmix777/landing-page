@@ -662,6 +662,199 @@
                             Saque
                         </a>
                     </li>
+                    <!-- Meus Dados Section - ADICIONAR APÓS A SEÇÃO "withdrawal" -->
+<section id="meus-dados" class="dashboard-section">
+    <div class="section-card">
+        <h2>👤 Dados Pessoais</h2>
+        <form id="personalDataForm">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="form-group">
+                    <label for="editNome">Nome Completo *</label>
+                    <input type="text" id="editNome" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editEmail">Email *</label>
+                    <input type="email" id="editEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTelefone">Telefone</label>
+                    <input type="text" id="editTelefone" placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="editCPF">CPF</label>
+                    <input type="text" id="editCPF" placeholder="000.000.000-00">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="savePersonalDataButton">
+                💾 Salvar Dados Pessoais
+            </button>
+            <p id="personalDataMessage" class="alert hidden" style="margin-top: 15px;"></p>
+        </form>
+    </div>
+
+    <div class="section-card">
+        <h2>📍 Endereço</h2>
+        <form id="addressForm">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="form-group">
+                    <label for="editCEP">CEP</label>
+                    <input type="text" id="editCEP" placeholder="00000-000">
+                </div>
+
+                <div class="form-group">
+                    <label for="editEndereco">Endereço</label>
+                    <input type="text" id="editEndereco" placeholder="Rua, Avenida, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label for="editNumero">Número</label>
+                    <input type="text" id="editNumero" placeholder="123">
+                </div>
+
+                <div class="form-group">
+                    <label for="editComplemento">Complemento</label>
+                    <input type="text" id="editComplemento" placeholder="Apto, Bloco, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label for="editBairro">Bairro</label>
+                    <input type="text" id="editBairro">
+                </div>
+
+                <div class="form-group">
+                    <label for="editCidade">Cidade</label>
+                    <input type="text" id="editCidade">
+                </div>
+
+                <div class="form-group">
+                    <label for="editEstado">Estado</label>
+                    <select id="editEstado">
+                        <option value="">Selecione</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="saveAddressButton">
+                💾 Salvar Endereço
+            </button>
+            <p id="addressMessage" class="alert hidden" style="margin-top: 15px;"></p>
+        </form>
+    </div>
+
+    <div class="section-card">
+        <h2>🏦 Dados Bancários</h2>
+        <form id="bankDataForm">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="form-group">
+                    <label for="editBanco">Banco</label>
+                    <input type="text" id="editBanco" placeholder="Ex: Banco do Brasil">
+                </div>
+
+                <div class="form-group">
+                    <label for="editAgencia">Agência</label>
+                    <input type="text" id="editAgencia" placeholder="0000">
+                </div>
+
+                <div class="form-group">
+                    <label for="editConta">Conta</label>
+                    <input type="text" id="editConta" placeholder="00000-0">
+                </div>
+
+                <div class="form-group">
+                    <label for="editTipoConta">Tipo de Conta</label>
+                    <select id="editTipoConta">
+                        <option value="">Selecione</option>
+                        <option value="Corrente">Corrente</option>
+                        <option value="Poupança">Poupança</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editPixTipo">Tipo de Chave PIX</label>
+                    <select id="editPixTipo">
+                        <option value="">Selecione</option>
+                        <option value="cpf">CPF</option>
+                        <option value="cnpj">CNPJ</option>
+                        <option value="email">Email</option>
+                        <option value="telefone">Telefone</option>
+                        <option value="aleatoria">Chave Aleatória</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editPixChave">Chave PIX</label>
+                    <input type="text" id="editPixChave" placeholder="Sua chave PIX">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="saveBankDataButton">
+                💾 Salvar Dados Bancários
+            </button>
+            <p id="bankDataMessage" class="alert hidden" style="margin-top: 15px;"></p>
+        </form>
+    </div>
+
+    <div class="section-card">
+        <h2>🔒 Alterar Senha</h2>
+        <p style="margin-bottom: 20px; color: var(--text-light); font-size: 14px;">
+            Disponível apenas para login com email/senha.
+        </p>
+        <form id="passwordForm">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div class="form-group">
+                    <label for="currentPassword">Senha Atual *</label>
+                    <input type="password" id="currentPassword" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="newPassword">Nova Senha *</label>
+                    <input type="password" id="newPassword" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Nova Senha *</label>
+                    <input type="password" id="confirmPassword" required minlength="6">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="changePasswordButton">
+                🔐 Alterar Senha
+            </button>
+            <p id="passwordMessage" class="alert hidden" style="margin-top: 15px;"></p>
+        </form>
+    </div>
+</section>
                 </ul>
             </nav>
         </aside>
