@@ -3,1075 +3,2046 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin Dashboard - BizMix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Super Admin - Bizmix</title>
+    <!-- Font Awesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts - Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
-        /* Base Styles */
-        body {
-            font-family: 'Inter', sans-serif;
+        :root {
+            --primary-color: #4A90E2; /* Azul */
+            --secondary-color: #8A2BE2; /* Roxo */
+            --background-light: #f4f7f6;
+            --background-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --text-dark: #34495e;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.2);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f3f4f6; /* light gray */
-            color: #374151;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Utility Classes */
-        .hidden { display: none !important; }
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
-        .gap-4 { gap: 1rem; }
-        .p-4 { padding: 1rem; }
-        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .bg-white { background-color: #ffffff; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-        .text-2xl { font-size: 1.5rem; line-height: 2rem; }
-        .font-semibold { font-weight: 600; }
-        .font-bold { font-weight: 700; }
-        .text-gray-700 { color: #374151; }
-        .text-gray-500 { color: #6b7280; }
-        .text-blue-600 { color: #2563eb; }
-        .text-green-600 { color: #10b981; }
-        .text-red-600 { color: #ef4444; }
-        .w-full { width: 100%; }
-        .h-screen { height: 100vh; }
-        .grid { display: grid; }
-        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-        .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-        .gap-6 { gap: 1.5rem; }
-        .border { border-width: 1px; }
-        .border-gray-200 { border-color: #e5e7eb; }
-        .cursor-pointer { cursor: pointer; }
-        .hover\:bg-gray-100:hover { background-color: #f3f4f6; }
-        .transition-colors { transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform; transition-duration: 150ms; }
-        .duration-150 { transition-duration: 150ms; }
-        .relative { position: relative; }
-        .absolute { position: absolute; }
-        .top-0 { top: 0; }
-        .right-0 { right: 0; }
-        .left-0 { left: 0; }
-        .bottom-0 { bottom: 0; }
-        .z-50 { z-index: 50; }
-        .bg-opacity-75 { background-color: rgba(0, 0, 0, 0.75); }
-        .text-center { text-align: center; }
-        .block { display: block; }
-        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-        .text-xs { font-size: 0.75rem; line-height: 1rem; }
-        .uppercase { text-transform: uppercase; }
-        .tracking-wider { letter-spacing: 0.05em; }
-        .whitespace-nowrap { white-space: nowrap; }
-        .overflow-x-auto { overflow-x: auto; }
-        .min-w-full { min-width: 100%; }
-        .border-b { border-bottom-width: 1px; }
-        .border-gray-300 { border-color: #d1d5db; }
-        .focus\:outline-none:focus { outline: 2px solid transparent; outline-offset: 2px; }
-        .focus\:ring-2:focus { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-shadow); }
-        .focus\:ring-blue-500:focus { --tw-ring-color: #3b82f6; }
-        .hover\:bg-blue-700:hover { background-color: #1d4ed8; }
-        .hover\:bg-green-700:hover { background-color: #047857; }
-        .hover\:bg-red-700:hover { background-color: #b91c1c; }
-        .hover\:bg-gray-200:hover { background-color: #e5e7eb; }
-        .border-blue-500 { border-color: #3b82f6; }
-        .text-blue-500 { color: #3b82f6; }
-        .bg-blue-50 { background-color: #eff6ff; }
-        .bg-green-50 { background-color: #ecfdf5; }
-        .bg-red-50 { background-color: #fef2f2; }
-        .text-green-500 { color: #22c55e; }
-        .text-red-500 { color: #ef4444; }
-        .text-yellow-500 { color: #f59e0b; }
-        .bg-yellow-50 { background-color: #fffbeb; }
-        .bg-gray-50 { background-color: #f9fafb; }
-        .border-green-500 { border-color: #22c55e; }
-        .border-red-500 { border-color: #ef4444; }
-        .border-yellow-500 { border-color: #f59e0b; }
-        .border-gray-500 { border-color: #6b7280; }
-        .p-2 { padding: 0.5rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-        .text-white { color: #ffffff; }
-        .bg-blue-600 { background-color: #2563eb; }
-        .bg-green-600 { background-color: #10b981; }
-        .bg-red-600 { background-color: #ef4444; }
-        .bg-gray-600 { background-color: #4b5563; }
-        .hover\:bg-gray-500:hover { background-color: #6b7280; }
-        .hover\:bg-blue-600:hover { background-color: #2563eb; }
-        .hover\:bg-green-600:hover { background-color: #10b981; }
-        .hover\:bg-red-600:hover { background-color: #ef4444; }
-        .hover\:bg-gray-600:hover { background-color: #4b5563; }
-        .focus\:ring-gray-500:focus { --tw-ring-color: #6b7280; }
-        .focus\:ring-green-500:focus { --tw-ring-color: #22c55e; }
-        .focus\:ring-red-500:focus { --tw-ring-color: #ef4444; }
-        .focus\:ring-blue-600:focus { --tw-ring-color: #2563eb; }
-        .focus\:ring-offset-2:focus { --tw-ring-offset-width: 2px; }
-        .focus\:ring-offset-white:focus { --tw-ring-offset-color: #ffffff; }
-        .border-transparent { border-color: transparent; }
-        .ring-offset-white { --tw-ring-offset-color: #ffffff; }
-        .ring-blue-500 { --tw-ring-color: #3b82f6; }
-        .ring-offset-2 { --tw-ring-offset-width: 2px; }
-        .inline-flex { display: inline-flex; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .rounded-md { border-radius: 0.375rem; }
-        .text-base { font-size: 1rem; line-height: 1.5rem; }
-        .font-medium { font-weight: 500; }
-        .leading-6 { line-height: 1.5rem; }
-        .transition { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-        .ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-        .duration-300 { transition-duration: 300ms; }
-        .opacity-0 { opacity: 0; }
-        .opacity-100 { opacity: 1; }
-        .transform { transform: var(--tw-transform); }
-        .scale-95 { --tw-scale-x: .95; --tw-scale-y: .95; transform: var(--tw-transform); }
-        .scale-100 { --tw-scale-x: 1; --tw-scale-y: 1; transform: var(--tw-transform); }
-        .ease-out { transition-timing-function: cubic-bezier(0, 0, 0.2, 1); }
-        .ease-in { transition-timing-function: cubic-bezier(0.4, 0, 1, 1); }
-        .duration-200 { transition-duration: 200ms; }
-        .duration-75 { transition-duration: 75ms; }
-        .origin-top-right { transform-origin: top right; }
-        .ring-1 { --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color); --tw-ring-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color); box-shadow: var(--tw-ring-shadow); }
-        .ring-black { --tw-ring-color: #000000; }
-        .ring-opacity-5 { --tw-ring-opacity: 0.05; }
-        .divide-y > :not([hidden]) ~ :not([hidden]) { border-top-width: 1px; border-color: #e5e7eb; }
-        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-        .text-gray-900 { color: #111827; }
-        .hover\:bg-gray-100:hover { background-color: #f3f4f6; }
-        .block { display: block; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-        .text-gray-700 { color: #374151; }
-        .hover\:text-gray-900:hover { color: #111827; }
-        .active { background-color: #e0e7ff; color: #2563eb; } /* Active sidebar item */
-
-        /* Specific Layouts */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 250px 1fr; /* Sidebar width and main content */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
             min-height: 100vh;
-        }
-
-        .header {
-            grid-column: 2 / 3; /* Header spans main content area */
-            background-color: #ffffff;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 1rem 1.5rem;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            color: var(--text-dark);
+            overflow-x: hidden; /* Evita scroll horizontal indesejado */
         }
 
+        /* Scrollbar customizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--background-light);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Layout principal */
         .sidebar {
-            grid-column: 1 / 2;
-            background-color: #1f2937; /* Darker gray for sidebar */
-            color: #ffffff;
-            padding: 1.5rem 0;
+            width: 250px;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
+            box-shadow: 2px 0 5px var(--shadow-medium);
+            position: fixed;
+            height: 100%;
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
         }
 
         .sidebar .logo {
-            padding: 0 1.5rem 1.5rem;
-            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
             font-weight: 700;
-            color: #ffffff;
-            border-bottom: 1px solid #374151;
-            margin-bottom: 1.5rem;
-        }
-
-        .sidebar nav a {
+            color: var(--text-light);
             display: flex;
             align-items: center;
-            padding: 0.75rem 1.5rem;
-            color: #d1d5db;
+            justify-content: center;
+            gap: 10px;
+        }
+        .sidebar.collapsed .logo span {
+            display: none;
+        }
+        .sidebar .logo i {
+            font-size: 28px;
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar nav ul li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-light);
             text-decoration: none;
-            transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .sidebar nav a:hover {
-            background-color: #374151;
-            color: #ffffff;
+        .sidebar nav ul li a i {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px; /* Garante alinhamento dos ícones */
+            text-align: center;
+        }
+        .sidebar.collapsed nav ul li a i {
+            margin-right: 0;
+        }
+        .sidebar.collapsed nav ul li a span {
+            display: none;
+        }
+        .sidebar.collapsed nav ul li a {
+            justify-content: center;
+            padding: 12px 0;
         }
 
-        .sidebar nav a.active {
-            background-color: #2563eb; /* Primary blue for active */
-            color: #ffffff;
-        }
 
-        .sidebar nav a svg {
-            margin-right: 0.75rem;
-            width: 20px;
-            height: 20px;
+        .sidebar nav ul li a:hover,
+        .sidebar nav ul li a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
         }
 
         .main-content {
-            grid-column: 2 / 3;
-            padding: 1.5rem;
+            margin-left: 250px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            transition: margin-left 0.3s ease;
+        }
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        .header {
+            background-color: var(--card-bg);
+            padding: 15px 30px;
+            box-shadow: 0 2px 5px var(--shadow-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .header .left-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header .left-section .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .header .left-section .menu-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .header .right-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header .user-info {
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .header .logout-btn {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--text-light);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+        .header .logout-btn:hover {
+            opacity: 0.9;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: var(--background-light);
             overflow-y: auto;
         }
 
-        .dashboard-section {
-            margin-bottom: 2rem;
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-dark);
         }
 
-        /* Card Styles */
-        .card {
-            background-color: #ffffff;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 1.5rem;
+        /* Cards de estatísticas */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
         }
 
-        /* Button Styles */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.625rem 1.25rem;
-            border-radius: 0.375rem;
-            font-weight: 500;
-            font-size: 0.875rem;
-            line-height: 1.25rem;
-            cursor: pointer;
-            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
-            border: 1px solid transparent;
+        .stat-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid var(--primary-color);
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px var(--shadow-medium);
         }
 
-        .btn-primary {
-            background-color: #2563eb; /* Primary blue */
-            color: #ffffff;
-        }
-        .btn-primary:hover { background-color: #1d4ed8; }
-
-        .btn-secondary {
-            background-color: #6b7280; /* Gray */
-            color: #ffffff;
-        }
-        .btn-secondary:hover { background-color: #4b5563; }
-
-        .btn-success {
-            background-color: #10b981; /* Green */
-            color: #ffffff;
-        }
-        .btn-success:hover { background-color: #047857; }
-
-        .btn-danger {
-            background-color: #ef4444; /* Red */
-            color: #ffffff;
-        }
-        .btn-danger:hover { background-color: #b91c1c; }
-
-        .btn-outline {
-            background-color: transparent;
-            border-color: #d1d5db;
-            color: #374151;
-        }
-        .btn-outline:hover { background-color: #f3f4f6; }
-
-        /* Form Elements */
-        .form-group {
-            margin-bottom: 1rem;
+        .stat-card .icon {
+            font-size: 36px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
         }
 
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #374151;
-            margin-bottom: 0.5rem;
+        .stat-card .label {
+            font-size: 16px;
+            color: #777;
+            margin-bottom: 5px;
         }
 
-        .form-input, .form-select, .form-textarea {
-            display: block;
-            width: 100%;
-            padding: 0.625rem 1rem;
-            font-size: 1rem;
-            line-height: 1.5rem;
-            border-radius: 0.375rem;
-            border: 1px solid #d1d5db;
-            background-color: #ffffff;
-            color: #374151;
-            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-dark);
         }
 
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            border-color: #2563eb;
-            outline: 0;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+        /* Gráficos */
+        .chart-container {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            margin-bottom: 30px;
         }
 
-        /* Table Styles */
+        /* Tabelas */
         .table-container {
-            overflow-x: auto;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--shadow-light);
+            overflow-x: auto; /* Para tabelas responsivas */
         }
 
-        .data-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            background-color: #ffffff;
+            margin-top: 20px;
         }
 
-        .data-table th, .data-table td {
-            padding: 0.75rem 1rem;
+        table th, table td {
+            padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
         }
 
-        .data-table th {
-            background-color: #f9fafb;
+        table th {
+            background-color: #f8f8f8;
             font-weight: 600;
-            font-size: 0.75rem;
+            color: var(--text-dark);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #4b5563;
+            font-size: 14px;
         }
 
-        .data-table tbody tr:hover {
-            background-color: #f3f4f6;
+        table tbody tr:hover {
+            background-color: #f1f1f1;
         }
 
-        /* Status Badges */
-        .badge {
+        /* Botões */
+        .btn {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: var(--text-light);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: opacity 0.3s ease, transform 0.2s ease;
             display: inline-flex;
             align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
+            gap: 8px;
+            text-decoration: none;
         }
-        .badge-success { background-color: #ecfdf5; color: #059669; } /* green-100, green-600 */
-        .badge-warning { background-color: #fffbeb; color: #d97706; } /* yellow-100, yellow-600 */
-        .badge-danger { background-color: #fef2f2; color: #dc2626; } /* red-100, red-600 */
-        .badge-info { background-color: #eff6ff; color: #2563eb; } /* blue-100, blue-600 */
-        .badge-secondary { background-color: #e5e7eb; color: #4b5563; } /* gray-200, gray-600 */
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: none;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 15px;
+        }
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 5px;
+        }
 
-        /* Loading Screen */
-        .loading-screen {
+        /* Badges de status */
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-light);
+        }
+        .badge-success { background-color: var(--success-color); }
+        .badge-warning { background-color: var(--warning-color); }
+        .badge-danger { background-color: var(--danger-color); }
+        .badge-info { background-color: var(--info-color); }
+        .badge-primary { background-color: var(--primary-color); }
+        .badge-secondary { background-color: var(--secondary-color); }
+
+        /* Formulários e filtros */
+        .filters-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
+        .filters-bar label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-right: 5px;
+        }
+        .filters-bar select,
+        .filters-bar input[type="text"],
+        .filters-bar input[type="date"] {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 14px;
+            color: var(--text-dark);
+            background-color: var(--card-bg);
+            transition: border-color 0.3s ease;
+        }
+        .filters-bar select:focus,
+        .filters-bar input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        /* Modals */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px var(--shadow-medium);
+            width: 90%;
+            max-width: 700px;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .modal-header h3 {
+            font-size: 22px;
+            color: var(--text-dark);
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #777;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .modal-body form .form-group {
             display: flex;
             flex-direction: column;
+        }
+        .modal-body form .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .modal-body form label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .modal-body form input[type="text"],
+        .modal-body form input[type="email"],
+        .modal-body form input[type="password"],
+        .modal-body form input[type="number"],
+        .modal-body form select,
+        .modal-body form textarea {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 14px;
+            color: var(--text-dark);
+            background-color: #f9f9f9;
+            transition: border-color 0.3s ease;
+        }
+        .modal-body form input:focus,
+        .modal-body form select:focus,
+        .modal-body form textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        .modal-body form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .modal-body form .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .modal-body form .checkbox-group label {
+            display: flex;
             align-items: center;
+            gap: 5px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+        .modal-body form .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .modal-footer .btn-cancel {
+            background-color: #ccc;
+            color: var(--text-dark);
+        }
+        .modal-footer .btn-cancel:hover {
+            background-color: #bbb;
+            opacity: 1;
+        }
+
+        /* Loading state */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
             justify-content: center;
-            z-index: 1000;
-            color: #2563eb;
-            font-size: 1.5rem;
-            font-weight: 600;
+            align-items: center;
+            z-index: 3000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-
+        .loading-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
         .spinner {
-            border: 4px solid rgba(37, 99, 235, 0.3);
-            border-top: 4px solid #2563eb;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        /* Modal Styles */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-
-        .modal-content {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-
-        .modal-content h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: #1f2937;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
-        .modal-close-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #6b7280;
-        }
-        .modal-close-btn:hover { color: #374151; }
-
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .toast {
-            background-color: #ffffff;
-            padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            min-width: 250px;
-            max-width: 350px;
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .toast-success { border-left: 4px solid #10b981; }
-        .toast-error { border-left: 4px solid #ef4444; }
-        .toast-info { border-left: 4px solid #2563eb; }
-
-        .toast-icon {
-            width: 20px;
-            height: 20px;
-        }
-        .toast-message {
-            font-size: 0.875rem;
-            color: #374151;
-        }
-
-        /* Tabs */
-        .tabs-container {
-            display: flex;
-            border-bottom: 1px solid #e5e7eb;
-            margin-bottom: 1.5rem;
-        }
-
-        .tab-button {
-            padding: 0.75rem 1.25rem;
-            font-weight: 500;
-            color: #6b7280;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-        }
-
-        .tab-button:hover {
-            color: #374151;
-        }
-
-        .tab-button.active {
-            color: #2563eb;
-            border-bottom-color: #2563eb;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .dashboard-layout {
-                grid-template-columns: 1fr; /* Stack sidebar and main content */
-            }
+        /* Responsividade */
+        @media (max-width: 992px) {
             .sidebar {
-                position: fixed;
-                left: -250px; /* Hide sidebar by default */
-                transition: left 0.3s ease-in-out;
-                z-index: 20;
+                width: 70px;
             }
-            .sidebar.open {
-                left: 0;
+            .sidebar .logo span,
+            .sidebar nav ul li a span {
+                display: none;
             }
-            .header {
-                grid-column: 1 / 2;
+            .sidebar nav ul li a {
+                justify-content: center;
+                padding: 12px 0;
+            }
+            .sidebar nav ul li a i {
+                margin-right: 0;
             }
             .main-content {
-                grid-column: 1 / 2;
+                margin-left: 70px;
             }
-            .menu-toggle {
-                display: block; /* Show menu toggle button */
+            .header .left-section .menu-toggle {
+                display: none; /* Oculta o toggle em telas menores se o menu já está colapsado */
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+                padding: 15px;
+            }
+            .sidebar.collapsed {
+                width: 100%;
+            }
+            .sidebar .logo {
+                justify-content: flex-start;
+            }
+            .sidebar .logo span {
+                display: inline;
+            }
+            .sidebar nav ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+            }
+            .sidebar nav ul li {
+                margin-bottom: 0;
+            }
+            .sidebar nav ul li a {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            .sidebar nav ul li a i {
+                margin-right: 8px;
+            }
+            .sidebar.collapsed nav ul li a span {
+                display: inline;
+            }
+            .sidebar.collapsed nav ul li a i {
+                margin-right: 8px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .main-content.expanded {
+                margin-left: 0;
+            }
+            .header {
+                padding: 10px 20px;
+            }
+            .header .left-section .menu-toggle {
+                display: block; /* Mostra o toggle para expandir/colapsar o menu lateral */
+            }
+            .content-area {
+                padding: 20px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+            .modal-body form {
+                grid-template-columns: 1fr;
+            }
+            .filters-bar {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen" class="loading-screen">
-        <div class="spinner"></div>
-        <p id="loading-message">Carregando...</p>
-    </div>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="logo">
+            <i class="fas fa-gem"></i> <span>Bizmix Admin</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" data-section="dashboard" class="active"><i class="fas fa-chart-line"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" data-section="parceiros"><i class="fas fa-users"></i> <span>Gerenciar Parceiros</span></a></li>
+                <li><a href="#" data-section="igrejas"><i class="fas fa-church"></i> <span>Gerenciar Igrejas</span></a></li>
+                <li><a href="#" data-section="produtos"><i class="fas fa-box"></i> <span>Gerenciar Produtos</span></a></li>
+                <li><a href="#" data-section="vendas"><i class="fas fa-shopping-cart"></i> <span>Vendas</span></a></li>
+                <li><a href="#" data-section="saques"><i class="fas fa-money-check-alt"></i> <span>Aprovar Saques</span></a></li>
+                <li><a href="#" data-section="configuracoes"><i class="fas fa-cog"></i> <span>Configurações</span></a></li>
+            </ul>
+        </nav>
+    </aside>
 
-    <!-- Main Dashboard Layout -->
-    <div id="dashboard-layout" class="dashboard-layout hidden">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="logo">BizMix Admin</div>
-            <nav>
-                <a href="#" data-section="dashboard-section" class="active">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125h9.75a1.125 1.125 0 001.125-1.125V9.75M8.25 21h8.25" />
-                    </svg>
-                    Dashboard
-                </a>
-                <a href="#" data-section="parceiros-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.75c0-2.25.75-4.5 2.25-6.187m-13.5-3.75a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM12 10.5a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM12 10.5c0 1.232.59 2.35 1.5 3.078m-1.5-3.078c-1.232 0-2.35-.59-3.078-1.5M18 10.5a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM18 10.5c0 1.232-.59 2.35-1.5 3.078m-1.5-3.078c-1.232 0-2.35-.59-3.078-1.5" />
-                    </svg>
-                    Gerenciar Parceiros
-                </a>
-                <a href="#" data-section="igrejas-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-1.5-10.5L11.25 4.5l-9.75 6.75V15h9.75v5.25H21V10.5z" />
-                    </svg>
-                    Gerenciar Igrejas
-                </a>
-                <a href="#" data-section="produtos-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.25m11.25 0V7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0h11.25m-11.25 0H18m-9 0H2.25M8.25 6h7.5M12 2.25v13.5" />
-                    </svg>
-                    Gerenciar Produtos
-                </a>
-                <a href="#" data-section="vendas-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m1.5-1.5h15M12 10.5h.008v.008H12v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                    </svg>
-                    Vendas
-                </a>
-                <a href="#" data-section="saques-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182L12 10.5m-3.75 5.167l-.962-.362a4.5 4.5 0 00-2.447 1.194L3 20.25M12 12.75l1.5.75c1.172.879 3.07 0 4.242-1.172V5.625m-4.5 1.125L12 5.25M3 12.75l1.5.75c1.172.879 3.07 0 4.242-1.172V5.625m-4.5 1.125L12 5.25" />
-                    </svg>
-                    Aprovar Saques
-                </a>
-                <a href="#" data-section="upload-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-                    </svg>
-                    Upload de Arquivos
-                </a>
-                <a href="#" data-section="comprovantes-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12H5.625c-.621 0-1.125-.504-1.125-1.125V11.25m11.25-4.5H12.375c-.621 0-1.125-.504-1.125-1.125V4.5m-1.5 21V10.5m0 2.25V21m0-10.5H9.75m0 0H4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Comprovantes
-                </a>
-                <a href="#" data-section="configuracoes-section">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0M3.75 18H7.5m-3-6h15m-15 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0M9.75 12H3.75" />
-                    </svg>
-                    Configurações
-                </a>
-            </nav>
-        </aside>
-
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
         <!-- Header -->
         <header class="header">
-            <div class="flex items-center gap-4">
-                <button id="menu-toggle" class="btn btn-outline hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-                </button>
-                <h1 class="text-xl font-semibold text-gray-700">Dashboard Administrativo</h1>
+            <div class="left-section">
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                <h2 id="currentSectionTitle">Dashboard</h2>
             </div>
-            <div class="flex items-center gap-4">
-                <span id="user-email" class="text-gray-700 font-medium">henrique65@gmail.com</span>
-                <button id="logout-button" class="btn btn-secondary">Sair</button>
+            <div class="right-section">
+                <span class="user-info" id="adminName">Admin</span>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
             </div>
         </header>
 
-        <!-- Main Content Area -->
-        <main class="main-content">
+        <!-- Content Area -->
+        <main class="content-area">
             <!-- Dashboard Section -->
-            <section id="dashboard-section" class="dashboard-section active">
-                <h2 class="text-2xl font-bold mb-4">Visão Geral</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="card">
-                        <h3 class="text-lg font-semibold text-gray-500 mb-2">Total Parceiros</h3>
-                        <p id="total-parceiros" class="text-3xl font-bold text-blue-600">0</p>
+            <section id="dashboard" class="content-section active">
+                <h1 class="section-title">Dashboard</h1>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-users icon"></i>
+                        <span class="label">Total de Parceiros</span>
+                        <span class="value" id="totalParceiros">0</span>
                     </div>
-                    <div class="card">
-                        <h3 class="text-lg font-semibold text-gray-500 mb-2">Total Igrejas</h3>
-                        <p id="total-igrejas" class="text-3xl font-bold text-green-600">0</p>
+                    <div class="stat-card">
+                        <i class="fas fa-church icon"></i>
+                        <span class="label">Total de Igrejas</span>
+                        <span class="value" id="totalIgrejas">0</span>
                     </div>
-                    <div class="card">
-                        <h3 class="text-lg font-semibold text-gray-500 mb-2">Total Vendas</h3>
-                        <p id="total-vendas" class="text-3xl font-bold text-yellow-500">0</p>
+                    <div class="stat-card">
+                        <i class="fas fa-shopping-cart icon"></i>
+                        <span class="label">Vendas Mês Atual</span>
+                        <span class="value" id="vendasMesAtual">R$ 0,00</span>
                     </div>
-                    <div class="card">
-                        <h3 class="text-lg font-semibold text-gray-500 mb-2">Saques Pendentes</h3>
-                        <p id="saques-pendentes" class="text-3xl font-bold text-red-600">0</p>
+                    <div class="stat-card">
+                        <i class="fas fa-hourglass-half icon"></i>
+                        <span class="label">Saques Pendentes</span>
+                        <span class="value" id="saquesPendentes">0</span>
                     </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3>Vendas por Mês</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
+
+                <div class="table-container">
+                    <h3>Últimas Atividades</h3>
+                    <table id="latestActivitiesTable">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Atividade</th>
+                                <th>Usuário</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dados carregados via JS -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
             <!-- Gerenciar Parceiros Section -->
-            <section id="parceiros-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Gerenciar Parceiros</h2>
-                <div class="flex justify-between items-center mb-4">
-                    <button id="export-parceiros-csv" class="btn btn-outline">Exportar CSV</button>
+            <section id="parceiros" class="content-section">
+                <h1 class="section-title">Gerenciar Parceiros</h1>
+                <div class="filters-bar">
+                    <div class="form-group">
+                        <label for="parceiroStatusFilter">Status:</label>
+                        <select id="parceiroStatusFilter">
+                            <option value="todos">Todos</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="parceiroTypeFilter">Tipo:</label>
+                        <select id="parceiroTypeFilter">
+                            <option value="todos">Todos</option>
+                            <option value="pessoa_fisica">Pessoa Física</option>
+                            <option value="pessoa_juridica">Pessoa Jurídica</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="loadParceiros()"><i class="fas fa-filter"></i> Filtrar</button>
+                    <button class="btn btn-outline" onclick="exportarCSV(parceirosData, 'parceiros')"><i class="fas fa-file-csv"></i> Exportar CSV</button>
                 </div>
+
                 <div class="table-container">
-                    <table class="data-table w-full">
+                    <table id="parceirosTable">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Nome Completo</th>
                                 <th>Email</th>
+                                <th>CPF/CNPJ</th>
                                 <th>Tipo</th>
+                                <th>Código Parceiro</th>
                                 <th>Status</th>
+                                <th>Comissão Total</th>
                                 <th>Data Cadastro</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="parceiros-table-body">
-                            <!-- Parceiros data will be loaded here -->
-                            <tr><td colspan="6" class="text-center py-4">Carregando parceiros...</td></tr>
+                        <tbody>
+                            <!-- Dados carregados via JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <!-- Gerenciar Igrejas Section -->
-            <section id="igrejas-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Gerenciar Igrejas</h2>
-                <div class="flex justify-between items-center mb-4">
-                    <button id="export-igrejas-csv" class="btn btn-outline">Exportar CSV</button>
+            <section id="igrejas" class="content-section">
+                <h1 class="section-title">Gerenciar Igrejas</h1>
+                <div class="filters-bar">
+                    <div class="form-group">
+                        <label for="igrejaStatusFilter">Status:</label>
+                        <select id="igrejaStatusFilter">
+                            <option value="todos">Todos</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="loadIgrejas()"><i class="fas fa-filter"></i> Filtrar</button>
+                    <button class="btn btn-outline" onclick="exportarCSV(igrejasData, 'igrejas')"><i class="fas fa-file-csv"></i> Exportar CSV</button>
                 </div>
+
                 <div class="table-container">
-                    <table class="data-table w-full">
+                    <table id="igrejasTable">
                         <thead>
                             <tr>
-                                <th>Nome Igreja</th>
+                                <th>ID</th>
+                                <th>Nome da Igreja</th>
                                 <th>Responsável</th>
                                 <th>Email</th>
+                                <th>CNPJ</th>
+                                <th>Código Igreja</th>
                                 <th>Status</th>
+                                <th>Comissão Total</th>
                                 <th>Data Cadastro</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="igrejas-table-body">
-                            <!-- Igrejas data will be loaded here -->
-                            <tr><td colspan="6" class="text-center py-4">Carregando igrejas...</td></tr>
+                        <tbody>
+                            <!-- Dados carregados via JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <!-- Gerenciar Produtos Section -->
-            <section id="produtos-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Gerenciar Produtos</h2>
-                <div class="flex justify-between items-center mb-4">
-                    <button id="add-produto-btn" class="btn btn-primary">Adicionar Produto</button>
+            <section id="produtos" class="content-section">
+                <h1 class="section-title">Gerenciar Produtos</h1>
+                <div class="filters-bar">
+                    <button class="btn" onclick="openAddProductModal()"><i class="fas fa-plus"></i> Adicionar Novo Produto</button>
                 </div>
+
                 <div class="table-container">
-                    <table class="data-table w-full">
+                    <table id="produtosTable">
                         <thead>
                             <tr>
-                                <th>Nome Produto</th>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
                                 <th>Preço</th>
-                                <th>Comissão Parceiro</th>
-                                <th>Comissão Igreja</th>
+                                <th>Comissão %</th>
+                                <th>Disponível Para</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="produtos-table-body">
-                            <!-- Produtos data will be loaded here -->
-                            <tr><td colspan="6" class="text-center py-4">Carregando produtos...</td></tr>
+                        <tbody>
+                            <!-- Dados carregados via JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <!-- Vendas Section -->
-            <section id="vendas-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Vendas</h2>
-                <div class="flex flex-wrap gap-4 mb-4">
-                    <div class="form-group flex-1 min-w-[200px]">
-                        <label for="vendas-start-date" class="form-label">Data Início</label>
-                        <input type="date" id="vendas-start-date" class="form-input">
+            <section id="vendas" class="content-section">
+                <h1 class="section-title">Vendas</h1>
+                <div class="filters-bar">
+                    <div class="form-group">
+                        <label for="vendaDataInicio">Data Início:</label>
+                        <input type="date" id="vendaDataInicio">
                     </div>
-                    <div class="form-group flex-1 min-w-[200px]">
-                        <label for="vendas-end-date" class="form-label">Data Fim</label>
-                        <input type="date" id="vendas-end-date" class="form-input">
+                    <div class="form-group">
+                        <label for="vendaDataFim">Data Fim:</label>
+                        <input type="date" id="vendaDataFim">
                     </div>
-                    <div class="form-group flex-1 min-w-[200px]">
-                        <label for="vendas-status-filter" class="form-label">Status</label>
-                        <select id="vendas-status-filter" class="form-select">
-                            <option value="">Todos</option>
-                            <option value="concluida">Concluída</option>
+                    <div class="form-group">
+                        <label for="vendaStatusFilter">Status:</label>
+                        <select id="vendaStatusFilter">
+                            <option value="todos">Todos</option>
+                            <option value="aprovada">Aprovada</option>
                             <option value="pendente">Pendente</option>
-                            <option value="cancelada">Cancelada</option>
+                            <option value="rejeitada">Rejeitada</option>
                         </select>
                     </div>
-                    <div class="flex items-end gap-2">
-                        <button id="filter-vendas-btn" class="btn btn-primary">Filtrar</button>
-                        <button id="export-vendas-csv" class="btn btn-outline">Exportar CSV</button>
+                    <div class="form-group">
+                        <label for="vendaTipoVendedorFilter">Tipo Vendedor:</label>
+                        <select id="vendaTipoVendedorFilter">
+                            <option value="todos">Todos</option>
+                            <option value="parceiro">Parceiro</option>
+                            <option value="igreja">Igreja</option>
+                        </select>
                     </div>
+                    <button class="btn" onclick="loadVendas()"><i class="fas fa-filter"></i> Filtrar</button>
+                    <button class="btn btn-outline" onclick="exportarCSV(vendasData, 'vendas')"><i class="fas fa-file-csv"></i> Exportar Relatório</button>
                 </div>
+
                 <div class="table-container">
-                    <table class="data-table w-full">
+                    <table id="vendasTable">
                         <thead>
                             <tr>
-                                <th>Data Venda</th>
+                                <th>ID Venda</th>
+                                <th>Data</th>
                                 <th>Produto</th>
-                                <th>Parceiro</th>
-                                <th>Igreja</th>
+                                <th>Comprador</th>
+                                <th>Email</th>
                                 <th>Valor</th>
+                                <th>Comissão</th>
+                                <th>Vendedor</th>
+                                <th>Tipo Vendedor</th>
                                 <th>Status</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="vendas-table-body">
-                            <!-- Vendas data will be loaded here -->
-                            <tr><td colspan="6" class="text-center py-4">Carregando vendas...</td></tr>
+                        <tbody>
+                            <!-- Dados carregados via JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <!-- Aprovar Saques Section -->
-            <section id="saques-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Aprovar Saques</h2>
-                <div class="tabs-container">
-                    <button class="tab-button active" data-tab="pendentes-saques">Pendentes</button>
-                    <button class="tab-button" data-tab="aprovados-saques">Aprovados</button>
-                    <button class="tab-button" data-tab="rejeitados-saques">Rejeitados</button>
-                    <button class="tab-button" data-tab="pagos-saques">Pagos</button>
+            <section id="saques" class="content-section">
+                <h1 class="section-title">Aprovar Saques</h1>
+                <div class="filters-bar">
+                    <div class="btn-group">
+                        <button class="btn btn-sm" onclick="loadSaques('pendente')">Pendentes</button>
+                        <button class="btn btn-sm btn-outline" onclick="loadSaques('aprovado')">Aprovados</button>
+                        <button class="btn btn-sm btn-outline" onclick="loadSaques('rejeitado')">Rejeitados</button>
+                        <button class="btn btn-sm btn-outline" onclick="loadSaques('pago')">Pagos</button>
+                    </div>
                 </div>
 
-                <div id="pendentes-saques" class="tab-content active">
-                    <div class="table-container">
-                        <table class="data-table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Parceiro/Igreja</th>
-                                    <th>Valor</th>
-                                    <th>Data Solicitação</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="saques-pendentes-table-body">
-                                <!-- Saques pendentes data -->
-                                <tr><td colspan="4" class="text-center py-4">Carregando saques pendentes...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div id="aprovados-saques" class="tab-content">
-                    <div class="table-container">
-                        <table class="data-table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Parceiro/Igreja</th>
-                                    <th>Valor</th>
-                                    <th>Data Solicitação</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="saques-aprovados-table-body">
-                                <!-- Saques aprovados data -->
-                                <tr><td colspan="4" class="text-center py-4">Carregando saques aprovados...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div id="rejeitados-saques" class="tab-content">
-                    <div class="table-container">
-                        <table class="data-table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Parceiro/Igreja</th>
-                                    <th>Valor</th>
-                                    <th>Data Solicitação</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="saques-rejeitados-table-body">
-                                <!-- Saques rejeitados data -->
-                                <tr><td colspan="4" class="text-center py-4">Carregando saques rejeitados...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div id="pagos-saques" class="tab-content">
-                    <div class="table-container">
-                        <table class="data-table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Parceiro/Igreja</th>
-                                    <th>Valor</th>
-                                    <th>Data Solicitação</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="saques-pagos-table-body">
-                                <!-- Saques pagos data -->
-                                <tr><td colspan="4" class="text-center py-4">Carregando saques pagos...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Upload de Arquivos Section -->
-            <section id="upload-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Upload de Arquivos</h2>
-                <div class="card mb-4">
-                    <div class="form-group">
-                        <label for="file-input" class="form-label">Selecione um arquivo para upload</label>
-                        <input type="file" id="file-input" class="form-input">
-                    </div>
-                    <button id="upload-file-btn" class="btn btn-primary">Upload</button>
-                </div>
-                <h3 class="text-xl font-semibold mb-2">Arquivos Enviados</h3>
                 <div class="table-container">
-                    <table class="data-table w-full">
+                    <table id="saquesTable">
                         <thead>
                             <tr>
-                                <th>Nome do Arquivo</th>
-                                <th>Tamanho</th>
-                                <th>Última Modificação</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="uploaded-files-table-body">
-                            <!-- Uploaded files list -->
-                            <tr><td colspan="4" class="text-center py-4">Nenhum arquivo enviado.</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- Comprovantes Section -->
-            <section id="comprovantes-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Comprovantes</h2>
-                <div class="table-container">
-                    <table class="data-table w-full">
-                        <thead>
-                            <tr>
-                                <th>ID Venda</th>
-                                <th>Parceiro</th>
-                                <th>Valor</th>
-                                <th>Comprovante</th>
+                                <th>ID Solicitação</th>
+                                <th>Data Solicitação</th>
+                                <th>Parceiro/Igreja</th>
+                                <th>Tipo</th>
+                                <th>Valor Solicitado</th>
+                                <th>Método</th>
+                                <th>Dados Bancários</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
-                        <tbody id="comprovantes-table-body">
-                            <!-- Comprovantes data -->
-                            <tr><td colspan="6" class="text-center py-4">Carregando comprovantes...</td></tr>
+                        <tbody>
+                            <!-- Dados carregados via JS -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
             <!-- Configurações Section -->
-            <section id="configuracoes-section" class="dashboard-section hidden">
-                <h2 class="text-2xl font-bold mb-4">Configurações do Sistema</h2>
-                <div class="card mb-4">
-                    <h3 class="text-xl font-semibold mb-2">Taxas de Comissão</h3>
-                    <div class="form-group">
-                        <label for="comissao-parceiro-default" class="form-label">Comissão Padrão Parceiro (%)</label>
-                        <input type="number" id="comissao-parceiro-default" class="form-input" value="10">
-                    </div>
-                    <div class="form-group">
-                        <label for="comissao-igreja-default" class="form-label">Comissão Padrão Igreja (%)</label>
-                        <input type="number" id="comissao-igreja-default" class="form-input" value="5">
-                    </div>
-                    <button id="save-comissoes-btn" class="btn btn-primary">Salvar Configurações</button>
+            <section id="configuracoes" class="content-section">
+                <h1 class="section-title">Configurações</h1>
+                <div class="table-container">
+                    <h3>Configurações Gerais</h3>
+                    <p>Aqui você pode gerenciar configurações globais do sistema.</p>
+                    <!-- Conteúdo de configurações -->
                 </div>
             </section>
         </main>
     </div>
 
     <!-- Modals -->
-    <!-- Generic Edit/Add Modal -->
-    <div id="generic-edit-modal" class="modal hidden">
+
+    <!-- Modal de Edição de Parceiro/Igreja -->
+    <div class="modal-overlay" id="editParceiroIgrejaModal">
         <div class="modal-content">
-            <button class="modal-close-btn" onclick="closeModal('generic-edit-modal')">&times;</button>
-            <h3 id="generic-edit-modal-title"></h3>
-            <form id="generic-edit-form">
-                <!-- Form fields will be dynamically inserted here -->
-            </form>
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('generic-edit-modal')">Cancelar</button>
-                <button type="submit" form="generic-edit-form" class="btn btn-primary" id="generic-edit-modal-save-btn">Salvar</button>
+            <div class="modal-header">
+                <h3 id="editModalTitle">Editar Parceiro</h3>
+                <button class="modal-close" onclick="closeModal('editParceiroIgrejaModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="editParceiroIgrejaForm">
+                    <input type="hidden" id="editId">
+                    <input type="hidden" id="editTipoParceiro">
+
+                    <div class="form-group">
+                        <label for="editNomeCompleto">Nome Completo / Nome da Igreja</label>
+                        <input type="text" id="editNomeCompleto" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCpfCnpj">CPF/CNPJ</label>
+                        <input type="text" id="editCpfCnpj" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTelefone">Telefone</label>
+                        <input type="text" id="editTelefone">
+                    </div>
+                    <div class="form-group" id="formGroupResponsavel">
+                        <label for="editResponsavel">Responsável (Igreja)</label>
+                        <input type="text" id="editResponsavel">
+                    </div>
+                    <div class="form-group">
+                        <label for="editCodigoParceiro">Código Parceiro</label>
+                        <input type="text" id="editCodigoParceiro" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStatus">Status</label>
+                        <select id="editStatus">
+                            <option value="pendente">Pendente</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editComissaoPadrao">Comissão Padrão (%)</label>
+                        <input type="number" id="editComissaoPadrao" min="0" max="100">
+                    </div>
+                    <!-- Endereço -->
+                    <div class="form-group full-width">
+                        <label for="editCep">CEP</label>
+                        <input type="text" id="editCep">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEndereco">Endereço</label>
+                        <input type="text" id="editEndereco">
+                    </div>
+                    <div class="form-group">
+                        <label for="editNumero">Número</label>
+                        <input type="text" id="editNumero">
+                    </div>
+                    <div class="form-group">
+                        <label for="editComplemento">Complemento</label>
+                        <input type="text" id="editComplemento">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBairro">Bairro</label>
+                        <input type="text" id="editBairro">
+                    </div>
+                    <div class="form-group">
+                        <label for="editCidade">Cidade</label>
+                        <input type="text" id="editCidade">
+                    </div>
+                    <div class="form-group">
+                        <label for="editEstado">Estado</label>
+                        <input type="text" id="editEstado">
+                    </div>
+                    <!-- Dados Bancários -->
+                    <div class="form-group full-width">
+                        <label for="editBanco">Banco</label>
+                        <input type="text" id="editBanco">
+                    </div>
+                    <div class="form-group">
+                        <label for="editAgencia">Agência</label>
+                        <input type="text" id="editAgencia">
+                    </div>
+                    <div class="form-group">
+                        <label for="editConta">Conta</label>
+                        <input type="text" id="editConta">
+                    </div>
+                    <div class="form-group">
+                        <label for="editTipoConta">Tipo de Conta</label>
+                        <select id="editTipoConta">
+                            <option value="">Selecione</option>
+                            <option value="corrente">Corrente</option>
+                            <option value="poupanca">Poupança</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPixTipo">Tipo PIX</label>
+                        <select id="editPixTipo">
+                            <option value="">Selecione</option>
+                            <option value="cpf_cnpj">CPF/CNPJ</option>
+                            <option value="email">Email</option>
+                            <option value="telefone">Telefone</option>
+                            <option value="aleatoria">Aleatória</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPixChave">Chave PIX</label>
+                        <input type="text" id="editPixChave">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="editObservacoes">Observações</label>
+                        <textarea id="editObservacoes"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal('editParceiroIgrejaModal')">Cancelar</button>
+                <button class="btn" onclick="saveParceiroIgreja()">Salvar</button>
             </div>
         </div>
     </div>
 
-    <!-- Generic Delete Confirmation Modal -->
-    <div id="generic-delete-modal" class="modal hidden">
+    <!-- Modal de Aprovação de Saque -->
+    <div class="modal-overlay" id="approveSaqueModal">
         <div class="modal-content">
-            <button class="modal-close-btn" onclick="closeModal('generic-delete-modal')">&times;</button>
-            <h3 class="text-xl font-semibold mb-4">Confirmar Exclusão</h3>
-            <p id="delete-modal-message" class="mb-4">Tem certeza que deseja excluir este item?</p>
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" onclick="closeModal('generic-delete-modal')">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="confirm-delete-btn">Excluir</button>
+            <div class="modal-header">
+                <h3>Detalhes da Solicitação de Saque</h3>
+                <button class="modal-close" onclick="closeModal('approveSaqueModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID Solicitação:</strong> <span id="saqueId"></span></p>
+                <p><strong>Parceiro/Igreja:</strong> <span id="saqueNome"></span> (<span id="saqueTipo"></span>)</p>
+                <p><strong>Valor Solicitado:</strong> <span id="saqueValor"></span></p>
+                <p><strong>Método:</strong> <span id="saqueMetodo"></span></p>
+                <p><strong>Dados Bancários:</strong> <span id="saqueDadosBancarios"></span></p>
+                <p><strong>Status Atual:</strong> <span id="saqueStatus"></span></p>
+                <p><strong>Observações:</strong> <span id="saqueObservacoes"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal('approveSaqueModal')">Fechar</button>
+                <button class="btn btn-danger" onclick="rejeitarSaque(currentSaqueId)"><i class="fas fa-times-circle"></i> Rejeitar</button>
+                <button class="btn btn-warning" onclick="marcarSaquePago(currentSaqueId)"><i class="fas fa-check-double"></i> Marcar como Pago</button>
+                <button class="btn btn-success" onclick="aprovarSaque(currentSaqueId)"><i class="fas fa-check-circle"></i> Aprovar</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notifications Container -->
-    <div id="toast-container" class="toast-container"></div>
+    <!-- Modal de Adicionar/Editar Produto -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="productModalTitle">Adicionar Novo Produto</h3>
+                <button class="modal-close" onclick="closeModal('productModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="productForm">
+                    <input type="hidden" id="productId">
+                    <div class="form-group full-width">
+                        <label for="productNome">Nome</label>
+                        <input type="text" id="productNome" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="productDescricao">Descrição</label>
+                        <textarea id="productDescricao"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPreco">Preço</label>
+                        <input type="number" id="productPreco" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productComissao">Comissão (%)</label>
+                        <input type="number" id="productComissao" min="0" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategoria">Categoria</label>
+                        <select id="productCategoria" required>
+                            <option value="">Selecione</option>
+                            <option value="religioso">Religioso</option>
+                            <option value="curso">Curso</option>
+                            <option value="ebook">Ebook</option>
+                            <option value="fisico">Físico</option>
+                            <option value="digital">Digital</option>
+                            <option value="geral">Geral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStatus">Status</label>
+                        <select id="productStatus" required>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Disponível Para</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" id="disponivelParceiros" value="parceiros"> Parceiros</label>
+                            <label><input type="checkbox" id="disponivelIgrejas" value="igrejas"> Igrejas</label>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="productLinkCheckout">Link Checkout</label>
+                        <input type="text" id="productLinkCheckout">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="productImagemUrl">URL da Imagem</label>
+                        <input type="text" id="productImagemUrl">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal('productModal')">Cancelar</button>
+                <button class="btn" onclick="saveProduct()">Salvar Produto</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- Supabase JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
     <script>
-        // CRITICAL: Supabase client initialization ONLY ONCE
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3OTQ2MTUsImV4cCI6MjA1MjM3MDYxNX0.ku3lXVHh5hqEYdqzwZDqJrLMxLZhiOVYJKLDIy1Kdtc';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://nnxklhcpqtpbxnbgjjqd.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ueGtsaGNwcXRwYnhuYmdqanFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYzNDU5NjksImV4cCI6MjA1MTkyMTk2OX0.xZEKkTJVvzYNvBxJxPzGqYhHLq2fFKjOCMZnGCLKAzs';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // DOM Elements
-        const loadingScreen = document.getElementById('loading-screen');
-        const loadingMessage = document.getElementById('loading-message');
-        const dashboardLayout = document.getElementById('dashboard-layout');
-        const userEmailSpan = document.getElementById('user-email');
-        const logoutButton = document.getElementById('logout-button');
+        // Variáveis globais para dados
+        let parceirosData = [];
+        let igrejasData = [];
+        let produtosData = [];
+        let vendasData = [];
+        let saquesData = [];
+        let currentSaqueId = null;
+
+        // Elementos DOM
         const sidebar = document.getElementById('sidebar');
-        const menuToggle = document.getElementById('menu-toggle');
-        const sidebarLinks = document.querySelectorAll('.sidebar nav a');
-        const dashboardSections = document.querySelectorAll('.dashboard-section');
-        const toastContainer = document.getElementById('toast-container');
+        const mainContent = document.getElementById('mainContent');
+        const menuToggle = document.getElementById('menuToggle');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const currentSectionTitle = document.getElementById('currentSectionTitle');
 
-        // Global state for modals
-        let currentModalCallback = null;
-        let currentModalData = null;
-
-        // --- Utility Functions ---
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.innerHTML = `
-                <svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                    ${type === 'success' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />' : ''}
-                    ${type === 'error' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.174 3.35 1.9 3.35h13.713c1.726 0 2.766-1.85 1.9-3.35L13.73 7.91c-.57-.99-1.93-.99-2.5 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />' : ''}
-                    ${type === 'info' ? '<path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063 1.063l-.041.02M12 21a9 9 0 110-18 9 9 0 010 18zm.375-15.004c.834-.414 1.65-.851 2.478-1.243a3.375 3.375 0 00-3.464-1.243 3.375 3.375 0 00-3.464 1.243c.828.392 1.644.829 2.478 1.243z" />' : ''}
-                </svg>
-                <span class="toast-message">${message}</span>
-            `;
-            toastContainer.appendChild(toast);
-
-            setTimeout(() => toast.classList.add('show'), 10); // Small delay for animation
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.addEventListener('transitionend', () => toast.remove());
-            }, 5000);
+        // Helper Functions
+        function showLoading() { loadingOverlay.classList.add('active'); }
+        function hideLoading() { loadingOverlay.classList.remove('active'); }
+        function showToast(message, type = 'success') {
+            alert(message); // Simplificado para alert, pode ser substituído por uma biblioteca de toast
         }
-
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
         }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-            currentModalCallback = null;
-            currentModalData = null;
-        }
-
-        function showDeleteModal(message, callback, data) {
-            document.getElementById('delete-modal-message').textContent = message;
-            currentModalCallback = callback;
-            currentModalData = data;
-            showModal('generic-delete-modal');
-        }
-
-        document.getElementById('confirm-delete-btn').addEventListener('click', () => {
-            if (currentModalCallback) {
-                currentModalCallback(currentModalData);
-            }
-            closeModal('generic-delete-modal');
-        });
-
         function formatDate(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
             return date.toLocaleDateString('pt-BR');
         }
-
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        function getStatusBadge(status) {
+            let className = '';
+            switch (status) {
+                case 'ativo': className = 'badge-success'; break;
+                case 'pendente': className = 'badge-warning'; break;
+                case 'inativo': className = 'badge-danger'; break;
+                case 'aprovado': className = 'badge-success'; break;
+                case 'rejeitado': className = 'badge-danger'; break;
+                case 'pago': className = 'badge-primary'; break;
+                default: className = 'badge-info'; break;
+            }
+            return `<span class="badge ${className}">${status}</span>`;
+        }
+        function maskCpfCnpj(value) {
+            if (!value) return '';
+            value = value.replace(/\D/g, '');
+            if (value.length <= 11) { // CPF
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            } else { // CNPJ
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            }
+            return value;
         }
 
-        function getBadgeClass(status) {
-            switch (status) {
-                case 'ativo': return 'badge-success';
-                case 'pendente': return 'badge-warning';
-                case 'inativo': return 'badge-danger';
-                case 'aprovado': return 'badge-success';
-                case 'rejeitado': return 'badge-danger';
-                case 'pago': return 'badge-info';
-                case 'concluida': return 'badge-success';
-                case 'cancelada': return 'badge-danger';
-                default: return 'badge-secondary';
+        // --- Authentication ---
+        async function checkAuth() {
+            showLoading();
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (!session) {
+                    window.location.href = '/admin/login.html'; // Redireciona para a página de login do admin
+                    return;
+                }
+                
+                const { data: admin, error } = await supabase
+                    .from('parceiros')
+                    .select('nome_completo, tipo_parceiro')
+                    .eq('auth_user_id', session.user.id)
+                    .single();
+
+                if (error || !admin || admin.tipo_parceiro !== 'admin') {
+                    alert('Acesso negado. Apenas administradores podem acessar este painel.');
+                    await supabase.auth.signOut();
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+                document.getElementById('adminName').textContent = admin.nome_completo || 'Admin';
+            } catch (error) {
+                console.error('Erro na autenticação:', error);
+                alert('Erro na autenticação. Por favor, tente novamente.');
+                await supabase.auth.signOut();
+                window.location.href = '/admin/login.html';
+            } finally {
+                hideLoading();
             }
         }
 
-        function exportToCsv(filename, rows) {
-            const csvFile = rows.map(e => e.join(",")).join("\n");
-            const blob = new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
+        async function logout() {
+            showLoading();
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                window.location.href = '/admin/login.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+                showToast('Erro ao fazer logout.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Navigation ---
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.sidebar nav ul li a').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.sidebar nav ul li a[data-section="${sectionId}"]`).classList.add('active');
+            currentSectionTitle.textContent = document.querySelector(`.sidebar nav ul li a[data-section="${sectionId}"] span`).textContent;
+
+            // Carregar dados da seção ativa
+            switch (sectionId) {
+                case 'dashboard': loadDashboardStats(); break;
+                case 'parceiros': loadParceiros(); break;
+                case 'igrejas': loadIgrejas(); break;
+                case 'produtos': loadProdutos(); break;
+                case 'vendas': loadVendas(); break;
+                case 'saques': loadSaques(); break;
+                case 'configuracoes': /* Nenhuma ação de carregamento específica por enquanto */ break;
+            }
+        }
+
+        // --- Dashboard Functions ---
+        async function loadDashboardStats() {
+            showLoading();
+            try {
+                // Total de Parceiros (Pessoa Física + Jurídica)
+                const { count: parceirosCount, error: parceirosError } = await supabase
+                    .from('parceiros')
+                    .select('id', { count: 'exact' })
+                    .in('tipo_parceiro', ['pessoa_fisica', 'pessoa_juridica']);
+                if (parceirosError) throw parceirosError;
+                document.getElementById('totalParceiros').textContent = parceirosCount;
+
+                // Total de Igrejas
+                const { count: igrejasCount, error: igrejasError } = await supabase
+                    .from('parceiros')
+                    .select('id', { count: 'exact' })
+                    .eq('tipo_parceiro', 'igreja');
+                if (igrejasError) throw igrejasError;
+                document.getElementById('totalIgrejas').textContent = igrejasCount;
+
+                // Vendas Mês Atual (Placeholder - precisa de tabela 'vendas')
+                // Exemplo:
+                // const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+                // const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0, 23, 59, 59).toISOString();
+                // const { data: vendasMes, error: vendasMesError } = await supabase
+                //     .from('vendas')
+                //     .select('valor')
+                //     .gte('data_venda', startOfMonth)
+                //     .lte('data_venda', endOfMonth);
+                // if (vendasMesError) throw vendasMesError;
+                // const totalVendasMes = vendasMes.reduce((sum, venda) => sum + venda.valor, 0);
+                // document.getElementById('vendasMesAtual').textContent = formatCurrency(totalVendasMes);
+                document.getElementById('vendasMesAtual').textContent = formatCurrency(0); // Placeholder
+
+                // Saques Pendentes (Placeholder - precisa de tabela 'solicitacoes_saque')
+                // Exemplo:
+                // const { count: saquesPendentesCount, error: saquesPendentesError } = await supabase
+                //     .from('solicitacoes_saque')
+                //     .select('id', { count: 'exact' })
+                //     .eq('status', 'pendente');
+                // if (saquesPendentesError) throw saquesPendentesError;
+                // document.getElementById('saquesPendentes').textContent = saquesPendentesCount;
+                document.getElementById('saquesPendentes').textContent = 0; // Placeholder
+
+                // Gráfico de Vendas (Exemplo Chart.js)
+                const ctx = document.getElementById('salesChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                        datasets: [{
+                            label: 'Vendas (R$)',
+                            data: [1200, 1900, 3000, 5000, 2000, 3000], // Dados de exemplo
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Últimas Atividades (Placeholder)
+                const latestActivitiesTable = document.getElementById('latestActivitiesTable').querySelector('tbody');
+                latestActivitiesTable.innerHTML = `
+                    <tr><td>${formatDate(new Date())}</td><td>Novo parceiro cadastrado</td><td>João Silva</td></tr>
+                    <tr><td>${formatDate(new Date())}</td><td>Solicitação de saque</td><td>Igreja da Paz</td></tr>
+                `;
+
+            } catch (error) {
+                console.error('Erro ao carregar estatísticas do dashboard:', error);
+                showToast('Erro ao carregar dados do dashboard.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Gerenciar Parceiros Functions ---
+        async function loadParceiros() {
+            showLoading();
+            try {
+                const statusFilter = document.getElementById('parceiroStatusFilter').value;
+                const typeFilter = document.getElementById('parceiroTypeFilter').value;
+
+                let query = supabase
+                    .from('parceiros')
+                    .select('*')
+                    .in('tipo_parceiro', ['pessoa_fisica', 'pessoa_juridica']);
+
+                if (statusFilter !== 'todos') {
+                    query = query.eq('status', statusFilter);
+                }
+                if (typeFilter !== 'todos') {
+                    query = query.eq('tipo_parceiro', typeFilter);
+                }
+
+                const { data, error } = await query;
+                if (error) throw error;
+                parceirosData = data;
+                renderParceirosTable(data);
+            } catch (error) {
+                console.error('Erro ao carregar parceiros:', error);
+                showToast('Erro ao carregar parceiros.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderParceirosTable(parceiros) {
+            const tableBody = document.getElementById('parceirosTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+            parceiros.forEach(parceiro => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${parceiro.id.substring(0, 8)}...</td>
+                    <td>${parceiro.nome_completo}</td>
+                    <td>${parceiro.email}</td>
+                    <td>${maskCpfCnpj(parceiro.cpf_cnpj)}</td>
+                    <td>${parceiro.tipo_parceiro === 'pessoa_fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'}</td>
+                    <td>${parceiro.codigo_parceiro}</td>
+                    <td>${getStatusBadge(parceiro.status)}</td>
+                    <td>${formatCurrency(parceiro.comissao_total || 0)}</td>
+                    <td>${formatDate(parceiro.criado_em)}</td>
+                    <td>
+                        <div class="btn-group">
+                            ${parceiro.status === 'pendente' ? `<button class="btn btn-sm btn-success" onclick="aprovarParceiro('${parceiro.id}')"><i class="fas fa-check"></i> Aprovar</button>` : ''}
+                            <button class="btn btn-sm btn-primary" onclick="openEditParceiroIgrejaModal('${parceiro.id}', 'parceiro')"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn btn-sm btn-danger" onclick="desativarParceiro('${parceiro.id}')"><i class="fas fa-ban"></i> Desativar</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        async function aprovarParceiro(id) {
+            if (!confirm('Tem certeza que deseja APROVAR este parceiro?')) return;
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('parceiros')
+                    .update({ status: 'ativo', aprovado_em: new Date().toISOString() })
+                    .eq('id', id);
+                if (error) throw error;
+                showToast('Parceiro aprovado com sucesso!', 'success');
+                loadParceiros();
+            } catch (error) {
+                console.error('Erro ao aprovar parceiro:', error);
+                showToast('Erro ao aprovar parceiro.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function desativarParceiro(id) {
+            if (!confirm('Tem certeza que deseja DESATIVAR este parceiro?')) return;
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('parceiros')
+                    .update({ status: 'inativo' })
+                    .eq('id', id);
+                if (error) throw error;
+                showToast('Parceiro desativado com sucesso!', 'success');
+                loadParceiros();
+            } catch (error) {
+                console.error('Erro ao desativar parceiro:', error);
+                showToast('Erro ao desativar parceiro.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Gerenciar Igrejas Functions ---
+        async function loadIgrejas() {
+            showLoading();
+            try {
+                const statusFilter = document.getElementById('igrejaStatusFilter').value;
+
+                let query = supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('tipo_parceiro', 'igreja');
+
+                if (statusFilter !== 'todos') {
+                    query = query.eq('status', statusFilter);
+                }
+
+                const { data, error } = await query;
+                if (error) throw error;
+                igrejasData = data;
+                renderIgrejasTable(data);
+            } catch (error) {
+                console.error('Erro ao carregar igrejas:', error);
+                showToast('Erro ao carregar igrejas.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderIgrejasTable(igrejas) {
+            const tableBody = document.getElementById('igrejasTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+            igrejas.forEach(igreja => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${igreja.id.substring(0, 8)}...</td>
+                    <td>${igreja.nome_igreja || igreja.nome_completo}</td>
+                    <td>${igreja.responsavel_igreja || 'N/A'}</td>
+                    <td>${igreja.email}</td>
+                    <td>${maskCpfCnpj(igreja.cpf_cnpj)}</td>
+                    <td>${igreja.codigo_parceiro}</td>
+                    <td>${getStatusBadge(igreja.status)}</td>
+                    <td>${formatCurrency(igreja.comissao_total || 0)}</td>
+                    <td>${formatDate(igreja.criado_em)}</td>
+                    <td>
+                        <div class="btn-group">
+                            ${igreja.status === 'pendente' ? `<button class="btn btn-sm btn-success" onclick="aprovarParceiro('${igreja.id}')"><i class="fas fa-check"></i> Aprovar</button>` : ''}
+                            <button class="btn btn-sm btn-primary" onclick="openEditParceiroIgrejaModal('${igreja.id}', 'igreja')"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn btn-sm btn-danger" onclick="desativarParceiro('${igreja.id}')"><i class="fas fa-ban"></i> Desativar</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // --- Modal de Edição de Parceiro/Igreja ---
+        async function openEditParceiroIgrejaModal(id, type) {
+            showLoading();
+            try {
+                const { data, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                if (error) throw error;
+
+                document.getElementById('editModalTitle').textContent = type === 'parceiro' ? 'Editar Parceiro' : 'Editar Igreja';
+                document.getElementById('editId').value = data.id;
+                document.getElementById('editTipoParceiro').value = type;
+
+                document.getElementById('editNomeCompleto').value = data.nome_completo || data.nome_igreja || '';
+                document.getElementById('editEmail').value = data.email || '';
+                document.getElementById('editCpfCnpj').value = data.cpf_cnpj || '';
+                document.getElementById('editTelefone').value = data.telefone || '';
+                document.getElementById('editCodigoParceiro').value = data.codigo_parceiro || '';
+                document.getElementById('editStatus').value = data.status || 'pendente';
+                document.getElementById('editComissaoPadrao').value = data.comissao_padrao || 0;
+
+                // Campos específicos para Igreja
+                const formGroupResponsavel = document.getElementById('formGroupResponsavel');
+                if (type === 'igreja') {
+                    formGroupResponsavel.style.display = 'flex';
+                    document.getElementById('editResponsavel').value = data.responsavel_igreja || '';
+                } else {
+                    formGroupResponsavel.style.display = 'none';
+                }
+
+                // Endereço
+                document.getElementById('editCep').value = data.cep || '';
+                document.getElementById('editEndereco').value = data.endereco || '';
+                document.getElementById('editNumero').value = data.numero || '';
+                document.getElementById('editComplemento').value = data.complemento || '';
+                document.getElementById('editBairro').value = data.bairro || '';
+                document.getElementById('editCidade').value = data.cidade || '';
+                document.getElementById('editEstado').value = data.estado || '';
+
+                // Dados Bancários
+                document.getElementById('editBanco').value = data.banco || '';
+                document.getElementById('editAgencia').value = data.agencia || '';
+                document.getElementById('editConta').value = data.conta || '';
+                document.getElementById('editTipoConta').value = data.tipo_conta || '';
+                document.getElementById('editPixTipo').value = data.pix_tipo || '';
+                document.getElementById('editPixChave').value = data.pix_chave || '';
+                document.getElementById('editObservacoes').value = data.observacoes || '';
+
+                openModal('editParceiroIgrejaModal');
+            } catch (error) {
+                console.error('Erro ao carregar dados para edição:', error);
+                showToast('Erro ao carregar dados para edição.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveParceiroIgreja() {
+            showLoading();
+            try {
+                const id = document.getElementById('editId').value;
+                const type = document.getElementById('editTipoParceiro').value;
+
+                const updateData = {
+                    email: document.getElementById('editEmail').value,
+                    cpf_cnpj: document.getElementById('editCpfCnpj').value,
+                    telefone: document.getElementById('editTelefone').value,
+                    codigo_parceiro: document.getElementById('editCodigoParceiro').value,
+                    status: document.getElementById('editStatus').value,
+                    comissao_padrao: document.getElementById('editComissaoPadrao').value,
+                    cep: document.getElementById('editCep').value,
+                    endereco: document.getElementById('editEndereco').value,
+                    numero: document.getElementById('editNumero').value,
+                    complemento: document.getElementById('editComplemento').value,
+                    bairro: document.getElementById('editBairro').value,
+                    cidade: document.getElementById('editCidade').value,
+                    estado: document.getElementById('editEstado').value,
+                    banco: document.getElementById('editBanco').value,
+                    agencia: document.getElementById('editAgencia').value,
+                    conta: document.getElementById('editConta').value,
+                    tipo_conta: document.getElementById('editTipoConta').value,
+                    pix_tipo: document.getElementById('editPixTipo').value,
+                    pix_chave: document.getElementById('editPixChave').value,
+                    observacoes: document.getElementById('editObservacoes').value,
+                    updated_at: new Date().toISOString()
+                };
+
+                if (type === 'parceiro') {
+                    updateData.nome_completo = document.getElementById('editNomeCompleto').value;
+                } else { // Igreja
+                    updateData.nome_igreja = document.getElementById('editNomeCompleto').value;
+                    updateData.responsavel_igreja = document.getElementById('editResponsavel').value;
+                }
+
+                const { error } = await supabase
+                    .from('parceiros')
+                    .update(updateData)
+                    .eq('id', id);
+
+                if (error) throw error;
+                showToast('Dados salvos com sucesso!', 'success');
+                closeModal('editParceiroIgrejaModal');
+                if (type === 'parceiro') loadParceiros();
+                else loadIgrejas();
+            } catch (error) {
+                console.error('Erro ao salvar dados:', error);
+                showToast('Erro ao salvar dados.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Gerenciar Produtos Functions ---
+        async function loadProdutos() {
+            showLoading();
+            try {
+                const { data, error } = await supabase
+                    .from('produtos')
+                    .select('*');
+                if (error) throw error;
+                produtosData = data;
+                renderProdutosTable(data);
+            } catch (error) {
+                console.error('Erro ao carregar produtos:', error);
+                showToast('Erro ao carregar produtos.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderProdutosTable(produtos) {
+            const tableBody = document.getElementById('produtosTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+            produtos.forEach(produto => {
+                const row = tableBody.insertRow();
+                const disponivelParaBadges = produto.disponivel_para ? produto.disponivel_para.map(item => `<span class="badge badge-info">${item}</span>`).join(' ') : '';
+                row.innerHTML = `
+                    <td>${produto.id.substring(0, 8)}...</td>
+                    <td>${produto.nome}</td>
+                    <td><span class="badge badge-primary">${produto.categoria}</span></td>
+                    <td>${formatCurrency(produto.preco)}</td>
+                    <td>${produto.comissao_percentual}%</td>
+                    <td>${disponivelParaBadges}</td>
+                    <td>${getStatusBadge(produto.status)}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-primary" onclick="openEditProductModal('${produto.id}')"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="btn btn-sm btn-danger" onclick="desativarProduto('${produto.id}')"><i class="fas fa-ban"></i> Desativar</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        function openAddProductModal() {
+            document.getElementById('productModalTitle').textContent = 'Adicionar Novo Produto';
+            document.getElementById('productForm').reset();
+            document.getElementById('productId').value = '';
+            openModal('productModal');
+        }
+
+        async function openEditProductModal(id) {
+            showLoading();
+            try {
+                const { data, error } = await supabase
+                    .from('produtos')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                if (error) throw error;
+
+                document.getElementById('productModalTitle').textContent = 'Editar Produto';
+                document.getElementById('productId').value = data.id;
+                document.getElementById('productNome').value = data.nome || '';
+                document.getElementById('productDescricao').value = data.descricao || '';
+                document.getElementById('productPreco').value = data.preco || 0;
+                document.getElementById('productComissao').value = data.comissao_percentual || 0;
+                document.getElementById('productCategoria').value = data.categoria || '';
+                document.getElementById('productStatus').value = data.status || 'ativo';
+                document.getElementById('productLinkCheckout').value = data.link_checkout || '';
+                document.getElementById('productImagemUrl').value = data.imagem_url || '';
+
+                // Checkboxes Disponível Para
+                document.getElementById('disponivelParceiros').checked = data.disponivel_para && data.disponivel_para.includes('parceiros');
+                document.getElementById('disponivelIgrejas').checked = data.disponivel_para && data.disponivel_para.includes('igrejas');
+
+                openModal('productModal');
+            } catch (error) {
+                console.error('Erro ao carregar produto para edição:', error);
+                showToast('Erro ao carregar produto para edição.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveProduct() {
+            showLoading();
+            try {
+                const id = document.getElementById('productId').value;
+                const disponivelPara = [];
+                if (document.getElementById('disponivelParceiros').checked) disponivelPara.push('parceiros');
+                if (document.getElementById('disponivelIgrejas').checked) disponivelPara.push('igrejas');
+
+                const productData = {
+                    nome: document.getElementById('productNome').value,
+                    descricao: document.getElementById('productDescricao').value,
+                    preco: parseFloat(document.getElementById('productPreco').value),
+                    comissao_percentual: parseInt(document.getElementById('productComissao').value),
+                    categoria: document.getElementById('productCategoria').value,
+                    status: document.getElementById('productStatus').value,
+                    disponivel_para: disponivelPara,
+                    link_checkout: document.getElementById('productLinkCheckout').value,
+                    imagem_url: document.getElementById('productImagemUrl').value,
+                    updated_at: new Date().toISOString()
+                };
+
+                let error;
+                if (id) { // Editar
+                    ({ error } = await supabase.from('produtos').update(productData).eq('id', id));
+                } else { // Adicionar
+                    ({ error } = await supabase.from('produtos').insert([productData]));
+                }
+
+                if (error) throw error;
+                showToast('Produto salvo com sucesso!', 'success');
+                closeModal('productModal');
+                loadProdutos();
+            } catch (error) {
+                console.error('Erro ao salvar produto:', error);
+                showToast('Erro ao salvar produto.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function desativarProduto(id) {
+            if (!confirm('Tem certeza que deseja DESATIVAR este produto?')) return;
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('produtos')
+                    .update({ status: 'inativo' })
+                    .eq('id', id);
+                if (error) throw error;
+                showToast('Produto desativado com sucesso!', 'success');
+                loadProdutos();
+            } catch (error) {
+                console.error('Erro ao desativar produto:', error);
+                showToast('Erro ao desativar produto.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Vendas Functions ---
+        async function loadVendas() {
+            showLoading();
+            try {
+                // Implementar lógica para carregar vendas da tabela 'vendas'
+                // Filtrar por data, status, tipo de vendedor
+                // Exemplo:
+                // const { data, error } = await supabase.from('vendas').select('*');
+                // if (error) throw error;
+                // vendasData = data;
+                // renderVendasTable(data);
+                
+                // Placeholder
+                vendasData = [
+                    { id: 'v1', data: new Date().toISOString(), produto: 'Livro Somos Todos Um', comprador: 'Maria', email: 'maria@email.com', valor: 97.00, comissao: 29.10, vendedor: 'Parceiro A', tipo_vendedor: 'parceiro', status: 'aprovada' },
+                    { id: 'v2', data: new Date().toISOString(), produto: 'Livro Somos Todos Um', comprador: 'Pedro', email: 'pedro@email.com', valor: 97.00, comissao: 29.10, vendedor: 'Igreja B', tipo_vendedor: 'igreja', status: 'pendente' }
+                ];
+                renderVendasTable(vendasData);
+
+            } catch (error) {
+                console.error('Erro ao carregar vendas:', error);
+                showToast('Erro ao carregar vendas.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderVendasTable(vendas) {
+            const tableBody = document.getElementById('vendasTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+            vendas.forEach(venda => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${venda.id.substring(0, 8)}...</td>
+                    <td>${formatDate(venda.data)}</td>
+                    <td>${venda.produto}</td>
+                    <td>${venda.comprador}</td>
+                    <td>${venda.email}</td>
+                    <td>${formatCurrency(venda.valor)}</td>
+                    <td>${formatCurrency(venda.comissao)}</td>
+                    <td>${venda.vendedor}</td>
+                    <td>${venda.tipo_vendedor === 'parceiro' ? 'Parceiro' : 'Igreja'}</td>
+                    <td>${getStatusBadge(venda.status)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="alert('Ver detalhes da venda ${venda.id}')"><i class="fas fa-info-circle"></i> Detalhes</button>
+                    </td>
+                `;
+            });
+        }
+
+        // --- Aprovar Saques Functions ---
+        async function loadSaques(statusFilter = 'pendente') {
+            showLoading();
+            try {
+                // Implementar lógica para carregar saques da tabela 'solicitacoes_saque'
+                // Exemplo:
+                // let query = supabase.from('solicitacoes_saque').select('*, parceiros(nome_completo, nome_igreja, tipo_parceiro)');
+                // if (statusFilter !== 'todos') {
+                //     query = query.eq('status', statusFilter);
+                // }
+                // const { data, error } = await query;
+                // if (error) throw error;
+                // saquesData = data;
+                // renderSaquesTable(data);
+
+                // Placeholder
+                saquesData = [
+                    { id: 's1', data_solicitacao: new Date().toISOString(), parceiro_id: 'p1', valor_solicitado: 150.00, metodo: 'PIX', dados_bancarios: 'CPF: 123.456.789-00', status: 'pendente', observacoes: 'Primeiro saque' },
+                    { id: 's2', data_solicitacao: new Date().toISOString(), parceiro_id: 'p2', valor_solicitado: 200.00, metodo: 'Transferência', dados_bancarios: 'Banco: 001, Ag: 1234, C: 56789-0', status: 'aprovado', observacoes: '' }
+                ];
+                renderSaquesTable(saquesData, statusFilter);
+
+            } catch (error) {
+                console.error('Erro ao carregar saques:', error);
+                showToast('Erro ao carregar saques.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderSaquesTable(saques, currentStatusTab) {
+            const tableBody = document.getElementById('saquesTable').querySelector('tbody');
+            tableBody.innerHTML = '';
+            saques.filter(saque => saque.status === currentStatusTab).forEach(saque => {
+                const row = tableBody.insertRow();
+                // Simular dados do parceiro/igreja
+                const parceiroNome = saque.parceiro_id === 'p1' ? 'Parceiro Teste' : 'Igreja Exemplo';
+                const parceiroTipo = saque.parceiro_id === 'p1' ? 'parceiro' : 'igreja';
+
+                row.innerHTML = `
+                    <td>${saque.id.substring(0, 8)}...</td>
+                    <td>${formatDate(saque.data_solicitacao)}</td>
+                    <td>${parceiroNome}</td>
+                    <td>${parceiroTipo === 'parceiro' ? 'Parceiro' : 'Igreja'}</td>
+                    <td>${formatCurrency(saque.valor_solicitado)}</td>
+                    <td>${saque.metodo}</td>
+                    <td>${saque.dados_bancarios}</td>
+                    <td>${getStatusBadge(saque.status)}</td>
+                    <td>
+                        <div class="btn-group">
+                            ${saque.status === 'pendente' ? `
+                                <button class="btn btn-sm btn-success" onclick="openApproveSaqueModal('${saque.id}')"><i class="fas fa-check"></i> Aprovar</button>
+                                <button class="btn btn-sm btn-danger" onclick="rejeitarSaque('${saque.id}')"><i class="fas fa-times"></i> Rejeitar</button>
+                            ` : ''}
+                            ${saque.status === 'aprovado' ? `
+                                <button class="btn btn-sm btn-warning" onclick="marcarSaquePago('${saque.id}')"><i class="fas fa-check-double"></i> Marcar Pago</button>
+                            ` : ''}
+                            <button class="btn btn-sm btn-info" onclick="openApproveSaqueModal('${saque.id}')"><i class="fas fa-info-circle"></i> Detalhes</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        async function openApproveSaqueModal(id) {
+            showLoading();
+            try {
+                const saque = saquesData.find(s => s.id === id); // Buscar do array local ou do Supabase
+                if (!saque) throw new Error('Saque não encontrado.');
+
+                currentSaqueId = id;
+                document.getElementById('saqueId').textContent = saque.id;
+                document.getElementById('saqueNome').textContent = saque.parceiro_id === 'p1' ? 'Parceiro Teste' : 'Igreja Exemplo';
+                document.getElementById('saqueTipo').textContent = saque.parceiro_id === 'p1' ? 'Parceiro' : 'Igreja';
+                document.getElementById('saqueValor').textContent = formatCurrency(saque.valor_solicitado);
+                document.getElementById('saqueMetodo').textContent = saque.metodo;
+                document.getElementById('saqueDadosBancarios').textContent = saque.dados_bancarios;
+                document.getElementById('saqueStatus').innerHTML = getStatusBadge(saque.status);
+                document.getElementById('saqueObservacoes').textContent = saque.observacoes || 'Nenhuma.';
+
+                // Ajustar botões visíveis no modal conforme o status
+                document.querySelector('#approveSaqueModal .btn-success').style.display = saque.status === 'pendente' ? 'inline-flex' : 'none';
+                document.querySelector('#approveSaqueModal .btn-danger').style.display = saque.status === 'pendente' ? 'inline-flex' : 'none';
+                document.querySelector('#approveSaqueModal .btn-warning').style.display = saque.status === 'aprovado' ? 'inline-flex' : 'none';
+
+                openModal('approveSaqueModal');
+            } catch (error) {
+                console.error('Erro ao abrir modal de saque:', error);
+                showToast('Erro ao carregar detalhes do saque.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function aprovarSaque(id) {
+            if (!confirm('Tem certeza que deseja APROVAR esta solicitação de saque?')) return;
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('solicitacoes_saque') // Substitua pelo nome real da sua tabela de saques
+                    .update({ status: 'aprovado', data_aprovacao: new Date().toISOString() })
+                    .eq('id', id);
+                if (error) throw error;
+                showToast('Saque aprovado com sucesso!', 'success');
+                closeModal('approveSaqueModal');
+                loadSaques('pendente'); // Recarrega a aba de pendentes
+            } catch (error) {
+                console.error('Erro ao aprovar saque:', error);
+                showToast('Erro ao aprovar saque.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function rejeitarSaque(id) {
+            if (!confirm('Tem certeza que deseja REJEITAR esta solicitação de saque?')) return;
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('solicitacoes_saque') // Substitua pelo nome real da sua tabela de saques
+                    .update({ status: 'rejeitado', data_rejeicao: new Date().toISOString() })
+                    .eq('id', id);
+                if (error) throw error;
+                showToast('Saque rejeitado com sucesso!', 'success');
+                closeModal('approveSaqueModal');
+                loadSaques('pendente');
+            } catch (error) {
+                console.error('Erro ao rejeitar saque:', error);
+                showToast('Erro ao rejeitar saque.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function marcarSaquePago(id) {
+            if (!confirm('Tem certeza que deseja marcar este saque como PAGO?')) return;
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('solicitacoes_saque') // Substitua pelo nome real da sua tabela de saques
+                    .update({ status: 'pago', data_pagamento: new Date().toISOString() })
+                    .eq('id', id);
+                if (error) throw error;
+                showToast('Saque marcado como pago com sucesso!', 'success');
+                closeModal('approveSaqueModal');
+                loadSaques('aprovado'); // Recarrega a aba de aprovados
+            } catch (error) {
+                console.error('Erro ao marcar saque como pago:', error);
+                showToast('Erro ao marcar saque como pago.', 'danger');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Export CSV ---
+        function exportarCSV(data, filename) {
+            if (!data || data.length === 0) {
+                showToast('Nenhum dado para exportar.', 'info');
+                return;
+            }
+
+            const header = Object.keys(data[0]);
+            const csv = [
+                header.join(','),
+                ...data.map(row => header.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
             if (link.download !== undefined) {
                 const url = URL.createObjectURL(blob);
-                link.setAttribute("href", url);
-                link.setAttribute("download", filename);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `${filename}_${new Date().toISOString().slice(0,10)}.csv`);
                 link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
@@ -1079,936 +2050,57 @@
             }
         }
 
-        // --- Authentication Flow ---
-        async function checkAuth() {
-            loadingScreen.classList.remove('hidden');
-            loadingMessage.textContent = 'Verificando autenticação...';
-
-            const timeout = setTimeout(() => {
-                loadingMessage.textContent = 'Tempo limite excedido. Por favor, tente novamente.';
-                setTimeout(() => window.location.href = '/admin/login.html', 2000);
-            }, 10000); // 10 seconds timeout
-
-            try {
-                const { data: { session }, error } = await supabase.auth.getSession();
-
-                if (error) throw error;
-
-                if (!session) {
-                    showToast('Sessão expirada ou não autenticada.', 'error');
-                    window.location.href = '/admin/login.html';
-                    return;
-                }
-
-                const userEmail = session.user.email;
-                userEmailSpan.textContent = userEmail;
-
-                loadingMessage.textContent = 'Buscando permissões de usuário...';
-                const { data: parceiro, error: parceiroError } = await supabase
-                    .from('parceiros')
-                    .select('tipo_parceiro')
-                    .eq('email', userEmail)
-                    .single();
-
-                if (parceiroError) throw parceiroError;
-
-                if (!parceiro || parceiro.tipo_parceiro !== 'admin') {
-                    showToast('Acesso negado. Você não tem permissões de administrador.', 'error');
-                    window.location.href = '/admin/login.html'; // Redirect non-admin
-                    return;
-                }
-
-                clearTimeout(timeout);
-                loadingScreen.classList.add('hidden');
-                dashboardLayout.classList.remove('hidden');
-                showToast('Bem-vindo, Administrador!', 'success');
-                loadDashboardData(); // Load initial dashboard data
-            } catch (err) {
-                console.error('Erro de autenticação:', err.message);
-                showToast(`Erro de autenticação: ${err.message}`, 'error');
-                clearTimeout(timeout);
-                loadingScreen.classList.add('hidden');
-                window.location.href = '/admin/login.html';
-            }
+        // --- Modal Control ---
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
         }
 
-        async function handleLogout() {
-            try {
-                const { error } = await supabase.auth.signOut();
-                if (error) throw error;
-                showToast('Logout realizado com sucesso.', 'success');
-                window.location.href = '/admin/login.html';
-            } catch (error) {
-                console.error('Erro ao fazer logout:', error.message);
-                showToast(`Erro ao fazer logout: ${error.message}`, 'error');
-            }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
-
-        // --- Dashboard Data Loading ---
-        async function loadDashboardData() {
-            try {
-                // Total Parceiros
-                const { count: parceirosCount, error: parceirosError } = await supabase
-                    .from('parceiros')
-                    .select('*', { count: 'exact', head: true });
-                if (parceirosError) throw parceirosError;
-                document.getElementById('total-parceiros').textContent = parceirosCount;
-
-                // Total Igrejas
-                const { count: igrejasCount, error: igrejasError } = await supabase
-                    .from('igrejas')
-                    .select('*', { count: 'exact', head: true });
-                if (igrejasError) throw igrejasError;
-                document.getElementById('total-igrejas').textContent = igrejasCount;
-
-                // Total Vendas
-                const { count: vendasCount, error: vendasError } = await supabase
-                    .from('vendas')
-                    .select('*', { count: 'exact', head: true });
-                if (vendasError) throw vendasError;
-                document.getElementById('total-vendas').textContent = vendasCount;
-
-                // Saques Pendentes
-                const { count: saquesCount, error: saquesError } = await supabase
-                    .from('solicitacoes_saque')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('status', 'pendente');
-                if (saquesError) throw saquesError;
-                document.getElementById('saques-pendentes').textContent = saquesCount;
-
-            } catch (error) {
-                console.error('Erro ao carregar dados do dashboard:', error.message);
-                showToast(`Erro ao carregar dados do dashboard: ${error.message}`, 'error');
-            }
-        }
-
-        // --- Section Specific Functions ---
-
-        // Gerenciar Parceiros
-        async function loadParceiros() {
-            const tbody = document.getElementById('parceiros-table-body');
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Carregando parceiros...</td></tr>';
-            try {
-                const { data, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .order('data_cadastro', { ascending: false });
-                if (error) throw error;
-
-                tbody.innerHTML = '';
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhum parceiro encontrado.</td></tr>';
-                    return;
-                }
-
-                data.forEach(parceiro => {
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td>${parceiro.nome_completo}</td>
-                        <td>${parceiro.email}</td>
-                        <td><span class="badge ${getBadgeClass(parceiro.tipo_parceiro)}">${parceiro.tipo_parceiro}</span></td>
-                        <td><span class="badge ${getBadgeClass(parceiro.status)}">${parceiro.status}</span></td>
-                        <td>${formatDate(parceiro.data_cadastro)}</td>
-                        <td class="flex gap-2">
-                            <button class="btn btn-success btn-sm" onclick="handleParceiroAction('aprovar', '${parceiro.id}', '${parceiro.status}')">Aprovar</button>
-                            <button class="btn btn-primary btn-sm" onclick="openEditParceiroModal('${parceiro.id}')">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="handleParceiroAction('desativar', '${parceiro.id}', '${parceiro.status}')">Desativar</button>
-                        </td>
-                    `;
-                });
-            } catch (error) {
-                console.error('Erro ao carregar parceiros:', error.message);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-600">Erro ao carregar parceiros: ${error.message}</td></tr>`;
-                showToast(`Erro ao carregar parceiros: ${error.message}`, 'error');
-            }
-        }
-
-        async function handleParceiroAction(action, id, currentStatus) {
-            let newStatus = currentStatus;
-            let message = '';
-            if (action === 'aprovar') {
-                newStatus = 'ativo';
-                message = 'Parceiro aprovado com sucesso!';
-            } else if (action === 'desativar') {
-                newStatus = 'inativo';
-                message = 'Parceiro desativado com sucesso!';
-            } else {
-                return;
-            }
-
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({ status: newStatus })
-                    .eq('id', id);
-                if (error) throw error;
-                showToast(message, 'success');
-                loadParceiros();
-            } catch (error) {
-                console.error(`Erro ao ${action} parceiro:`, error.message);
-                showToast(`Erro ao ${action} parceiro: ${error.message}`, 'error');
-            }
-        }
-
-        async function openEditParceiroModal(parceiroId) {
-            const modalTitle = document.getElementById('generic-edit-modal-title');
-            const form = document.getElementById('generic-edit-form');
-            form.innerHTML = 'Carregando dados do parceiro...';
-            modalTitle.textContent = 'Editar Parceiro';
-            showModal('generic-edit-modal');
-
-            try {
-                const { data: parceiro, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('id', parceiroId)
-                    .single();
-                if (error) throw error;
-
-                form.innerHTML = `
-                    <div class="form-group">
-                        <label for="edit-parceiro-nome" class="form-label">Nome Completo</label>
-                        <input type="text" id="edit-parceiro-nome" class="form-input" value="${parceiro.nome_completo}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-parceiro-email" class="form-label">Email</label>
-                        <input type="email" id="edit-parceiro-email" class="form-input" value="${parceiro.email}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-parceiro-tipo" class="form-label">Tipo Parceiro</label>
-                        <select id="edit-parceiro-tipo" class="form-select" required>
-                            <option value="parceiro" ${parceiro.tipo_parceiro === 'parceiro' ? 'selected' : ''}>Parceiro</option>
-                            <option value="admin" ${parceiro.tipo_parceiro === 'admin' ? 'selected' : ''}>Admin</option>
-                            <option value="igreja" ${parceiro.tipo_parceiro === 'igreja' ? 'selected' : ''}>Igreja</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-parceiro-status" class="form-label">Status</label>
-                        <select id="edit-parceiro-status" class="form-select" required>
-                            <option value="ativo" ${parceiro.status === 'ativo' ? 'selected' : ''}>Ativo</option>
-                            <option value="pendente" ${parceiro.status === 'pendente' ? 'selected' : ''}>Pendente</option>
-                            <option value="inativo" ${parceiro.status === 'inativo' ? 'selected' : ''}>Inativo</option>
-                        </select>
-                    </div>
-                `;
-                document.getElementById('generic-edit-modal-save-btn').onclick = () => saveParceiro(parceiroId);
-            } catch (error) {
-                console.error('Erro ao carregar dados do parceiro:', error.message);
-                showToast(`Erro ao carregar dados do parceiro: ${error.message}`, 'error');
-                closeModal('generic-edit-modal');
-            }
-        }
-
-        async function saveParceiro(parceiroId) {
-            const nome_completo = document.getElementById('edit-parceiro-nome').value;
-            const email = document.getElementById('edit-parceiro-email').value;
-            const tipo_parceiro = document.getElementById('edit-parceiro-tipo').value;
-            const status = document.getElementById('edit-parceiro-status').value;
-
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({ nome_completo, email, tipo_parceiro, status })
-                    .eq('id', parceiroId);
-                if (error) throw error;
-                showToast('Parceiro atualizado com sucesso!', 'success');
-                closeModal('generic-edit-modal');
-                loadParceiros();
-            } catch (error) {
-                console.error('Erro ao salvar parceiro:', error.message);
-                showToast(`Erro ao salvar parceiro: ${error.message}`, 'error');
-            }
-        }
-
-        document.getElementById('export-parceiros-csv').addEventListener('click', async () => {
-            try {
-                const { data, error } = await supabase.from('parceiros').select('*');
-                if (error) throw error;
-
-                const headers = ['id', 'nome_completo', 'email', 'tipo_parceiro', 'status', 'data_cadastro'];
-                const rows = [headers.map(h => h.toUpperCase())]; // CSV header
-                data.forEach(p => {
-                    rows.push(headers.map(h => p[h]));
-                });
-                exportToCsv('parceiros.csv', rows);
-                showToast('Parceiros exportados com sucesso!', 'success');
-            } catch (error) {
-                console.error('Erro ao exportar parceiros:', error.message);
-                showToast(`Erro ao exportar parceiros: ${error.message}`, 'error');
-            }
-        });
-
-        // Gerenciar Igrejas
-        async function loadIgrejas() {
-            const tbody = document.getElementById('igrejas-table-body');
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Carregando igrejas...</td></tr>';
-            try {
-                const { data, error } = await supabase
-                    .from('igrejas')
-                    .select('*')
-                    .order('data_cadastro', { ascending: false });
-                if (error) throw error;
-
-                tbody.innerHTML = '';
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhuma igreja encontrada.</td></tr>';
-                    return;
-                }
-
-                data.forEach(igreja => {
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td>${igreja.nome_igreja}</td>
-                        <td>${igreja.responsavel}</td>
-                        <td>${igreja.email}</td>
-                        <td><span class="badge ${getBadgeClass(igreja.status)}">${igreja.status}</span></td>
-                        <td>${formatDate(igreja.data_cadastro)}</td>
-                        <td class="flex gap-2">
-                            <button class="btn btn-success btn-sm" onclick="handleIgrejaAction('aprovar', '${igreja.id}', '${igreja.status}')">Aprovar</button>
-                            <button class="btn btn-primary btn-sm" onclick="openEditIgrejaModal('${igreja.id}')">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="handleIgrejaAction('desativar', '${igreja.id}', '${igreja.status}')">Desativar</button>
-                        </td>
-                    `;
-                });
-            } catch (error) {
-                console.error('Erro ao carregar igrejas:', error.message);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-600">Erro ao carregar igrejas: ${error.message}</td></tr>`;
-                showToast(`Erro ao carregar igrejas: ${error.message}`, 'error');
-            }
-        }
-
-        async function handleIgrejaAction(action, id, currentStatus) {
-            let newStatus = currentStatus;
-            let message = '';
-            if (action === 'aprovar') {
-                newStatus = 'ativo';
-                message = 'Igreja aprovada com sucesso!';
-            } else if (action === 'desativar') {
-                newStatus = 'inativo';
-                message = 'Igreja desativada com sucesso!';
-            } else {
-                return;
-            }
-
-            try {
-                const { error } = await supabase
-                    .from('igrejas')
-                    .update({ status: newStatus })
-                    .eq('id', id);
-                if (error) throw error;
-                showToast(message, 'success');
-                loadIgrejas();
-            } catch (error) {
-                console.error(`Erro ao ${action} igreja:`, error.message);
-                showToast(`Erro ao ${action} igreja: ${error.message}`, 'error');
-            }
-        }
-
-        async function openEditIgrejaModal(igrejaId) {
-            const modalTitle = document.getElementById('generic-edit-modal-title');
-            const form = document.getElementById('generic-edit-form');
-            form.innerHTML = 'Carregando dados da igreja...';
-            modalTitle.textContent = 'Editar Igreja';
-            showModal('generic-edit-modal');
-
-            try {
-                const { data: igreja, error } = await supabase
-                    .from('igrejas')
-                    .select('*')
-                    .eq('id', igrejaId)
-                    .single();
-                if (error) throw error;
-
-                form.innerHTML = `
-                    <div class="form-group">
-                        <label for="edit-igreja-nome" class="form-label">Nome Igreja</label>
-                        <input type="text" id="edit-igreja-nome" class="form-input" value="${igreja.nome_igreja}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-igreja-responsavel" class="form-label">Responsável</label>
-                        <input type="text" id="edit-igreja-responsavel" class="form-input" value="${igreja.responsavel}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-igreja-email" class="form-label">Email</label>
-                        <input type="email" id="edit-igreja-email" class="form-input" value="${igreja.email}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-igreja-status" class="form-label">Status</label>
-                        <select id="edit-igreja-status" class="form-select" required>
-                            <option value="ativo" ${igreja.status === 'ativo' ? 'selected' : ''}>Ativo</option>
-                            <option value="pendente" ${igreja.status === 'pendente' ? 'selected' : ''}>Pendente</option>
-                            <option value="inativo" ${igreja.status === 'inativo' ? 'selected' : ''}>Inativo</option>
-                        </select>
-                    </div>
-                `;
-                document.getElementById('generic-edit-modal-save-btn').onclick = () => saveIgreja(igrejaId);
-            } catch (error) {
-                console.error('Erro ao carregar dados da igreja:', error.message);
-                showToast(`Erro ao carregar dados da igreja: ${error.message}`, 'error');
-                closeModal('generic-edit-modal');
-            }
-        }
-
-        async function saveIgreja(igrejaId) {
-            const nome_igreja = document.getElementById('edit-igreja-nome').value;
-            const responsavel = document.getElementById('edit-igreja-responsavel').value;
-            const email = document.getElementById('edit-igreja-email').value;
-            const status = document.getElementById('edit-igreja-status').value;
-
-            try {
-                const { error } = await supabase
-                    .from('igrejas')
-                    .update({ nome_igreja, responsavel, email, status })
-                    .eq('id', igrejaId);
-                if (error) throw error;
-                showToast('Igreja atualizada com sucesso!', 'success');
-                closeModal('generic-edit-modal');
-                loadIgrejas();
-            } catch (error) {
-                console.error('Erro ao salvar igreja:', error.message);
-                showToast(`Erro ao salvar igreja: ${error.message}`, 'error');
-            }
-        }
-
-        document.getElementById('export-igrejas-csv').addEventListener('click', async () => {
-            try {
-                const { data, error } = await supabase.from('igrejas').select('*');
-                if (error) throw error;
-
-                const headers = ['id', 'nome_igreja', 'responsavel', 'email', 'status', 'data_cadastro'];
-                const rows = [headers.map(h => h.toUpperCase())];
-                data.forEach(i => {
-                    rows.push(headers.map(h => i[h]));
-                });
-                exportToCsv('igrejas.csv', rows);
-                showToast('Igrejas exportadas com sucesso!', 'success');
-            } catch (error) {
-                console.error('Erro ao exportar igrejas:', error.message);
-                showToast(`Erro ao exportar igrejas: ${error.message}`, 'error');
-            }
-        });
-
-        // Gerenciar Produtos
-        async function loadProdutos() {
-            const tbody = document.getElementById('produtos-table-body');
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Carregando produtos...</td></tr>';
-            try {
-                const { data, error } = await supabase
-                    .from('produtos')
-                    .select('*')
-                    .order('nome_produto', { ascending: true });
-                if (error) throw error;
-
-                tbody.innerHTML = '';
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhum produto encontrado.</td></tr>';
-                    return;
-                }
-
-                data.forEach(produto => {
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td>${produto.nome_produto}</td>
-                        <td>${formatCurrency(produto.preco)}</td>
-                        <td>${produto.comissao_parceiro}%</td>
-                        <td>${produto.comissao_igreja}%</td>
-                        <td><span class="badge ${getBadgeClass(produto.status)}">${produto.status}</span></td>
-                        <td class="flex gap-2">
-                            <button class="btn btn-primary btn-sm" onclick="openEditProdutoModal('${produto.id}')">Editar</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteProduto('${produto.id}')">Excluir</button>
-                        </td>
-                    `;
-                });
-            } catch (error) {
-                console.error('Erro ao carregar produtos:', error.message);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-600">Erro ao carregar produtos: ${error.message}</td></tr>`;
-                showToast(`Erro ao carregar produtos: ${error.message}`, 'error');
-            }
-        }
-
-        document.getElementById('add-produto-btn').addEventListener('click', () => openEditProdutoModal(null));
-
-        async function openEditProdutoModal(produtoId) {
-            const modalTitle = document.getElementById('generic-edit-modal-title');
-            const form = document.getElementById('generic-edit-form');
-            form.innerHTML = '';
-            modalTitle.textContent = produtoId ? 'Editar Produto' : 'Adicionar Produto';
-            showModal('generic-edit-modal');
-
-            let produto = { nome_produto: '', preco: 0, comissao_parceiro: 0, comissao_igreja: 0, status: 'ativo' };
-            if (produtoId) {
-                form.innerHTML = 'Carregando dados do produto...';
-                try {
-                    const { data, error } = await supabase
-                        .from('produtos')
-                        .select('*')
-                        .eq('id', produtoId)
-                        .single();
-                    if (error) throw error;
-                    produto = data;
-                } catch (error) {
-                    console.error('Erro ao carregar dados do produto:', error.message);
-                    showToast(`Erro ao carregar dados do produto: ${error.message}`, 'error');
-                    closeModal('generic-edit-modal');
-                    return;
-                }
-            }
-
-            form.innerHTML = `
-                <div class="form-group">
-                    <label for="edit-produto-nome" class="form-label">Nome Produto</label>
-                    <input type="text" id="edit-produto-nome" class="form-input" value="${produto.nome_produto}" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-produto-preco" class="form-label">Preço</label>
-                    <input type="number" id="edit-produto-preco" class="form-input" step="0.01" value="${produto.preco}" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-produto-comissao-parceiro" class="form-label">Comissão Parceiro (%)</label>
-                    <input type="number" id="edit-produto-comissao-parceiro" class="form-input" value="${produto.comissao_parceiro}" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-produto-comissao-igreja" class="form-label">Comissão Igreja (%)</label>
-                    <input type="number" id="edit-produto-comissao-igreja" class="form-input" value="${produto.comissao_igreja}" required>
-                </div>
-                <div class="form-group">
-                    <label for="edit-produto-status" class="form-label">Status</label>
-                    <select id="edit-produto-status" class="form-select" required>
-                        <option value="ativo" ${produto.status === 'ativo' ? 'selected' : ''}>Ativo</option>
-                        <option value="inativo" ${produto.status === 'inativo' ? 'selected' : ''}>Inativo</option>
-                    </select>
-                </div>
-            `;
-            document.getElementById('generic-edit-modal-save-btn').onclick = () => saveProduto(produtoId);
-        }
-
-        async function saveProduto(produtoId) {
-            const nome_produto = document.getElementById('edit-produto-nome').value;
-            const preco = parseFloat(document.getElementById('edit-produto-preco').value);
-            const comissao_parceiro = parseFloat(document.getElementById('edit-produto-comissao-parceiro').value);
-            const comissao_igreja = parseFloat(document.getElementById('edit-produto-comissao-igreja').value);
-            const status = document.getElementById('edit-produto-status').value;
-
-            try {
-                if (produtoId) {
-                    const { error } = await supabase
-                        .from('produtos')
-                        .update({ nome_produto, preco, comissao_parceiro, comissao_igreja, status })
-                        .eq('id', produtoId);
-                    if (error) throw error;
-                    showToast('Produto atualizado com sucesso!', 'success');
-                } else {
-                    const { error } = await supabase
-                        .from('produtos')
-                        .insert([{ nome_produto, preco, comissao_parceiro, comissao_igreja, status }]);
-                    if (error) throw error;
-                    showToast('Produto adicionado com sucesso!', 'success');
-                }
-                closeModal('generic-edit-modal');
-                loadProdutos();
-            } catch (error) {
-                console.error('Erro ao salvar produto:', error.message);
-                showToast(`Erro ao salvar produto: ${error.message}`, 'error');
-            }
-        }
-
-        function deleteProduto(produtoId) {
-            showDeleteModal('Tem certeza que deseja excluir este produto? Esta ação é irreversível.', async () => {
-                try {
-                    const { error } = await supabase
-                        .from('produtos')
-                        .delete()
-                        .eq('id', produtoId);
-                    if (error) throw error;
-                    showToast('Produto excluído com sucesso!', 'success');
-                    loadProdutos();
-                } catch (error) {
-                    console.error('Erro ao excluir produto:', error.message);
-                    showToast(`Erro ao excluir produto: ${error.message}`, 'error');
-                }
-            });
-        }
-
-        // Vendas
-        async function loadVendas() {
-            const tbody = document.getElementById('vendas-table-body');
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Carregando vendas...</td></tr>';
-            try {
-                let query = supabase
-                    .from('vendas')
-                    .select(`
-                        *,
-                        produto:produtos(nome_produto),
-                        parceiro:parceiros(nome_completo),
-                        igreja:igrejas(nome_igreja)
-                    `)
-                    .order('data_venda', { ascending: false });
-
-                const startDate = document.getElementById('vendas-start-date').value;
-                const endDate = document.getElementById('vendas-end-date').value;
-                const statusFilter = document.getElementById('vendas-status-filter').value;
-
-                if (startDate) query = query.gte('data_venda', startDate);
-                if (endDate) query = query.lte('data_venda', endDate);
-                if (statusFilter) query = query.eq('status', statusFilter);
-
-                const { data, error } = await query;
-                if (error) throw error;
-
-                tbody.innerHTML = '';
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhuma venda encontrada.</td></tr>';
-                    return;
-                }
-
-                data.forEach(venda => {
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td>${formatDate(venda.data_venda)}</td>
-                        <td>${venda.produto ? venda.produto.nome_produto : 'N/A'}</td>
-                        <td>${venda.parceiro ? venda.parceiro.nome_completo : 'N/A'}</td>
-                        <td>${venda.igreja ? venda.igreja.nome_igreja : 'N/A'}</td>
-                        <td>${formatCurrency(venda.valor)}</td>
-                        <td><span class="badge ${getBadgeClass(venda.status)}">${venda.status}</span></td>
-                    `;
-                });
-            } catch (error) {
-                console.error('Erro ao carregar vendas:', error.message);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-600">Erro ao carregar vendas: ${error.message}</td></tr>`;
-                showToast(`Erro ao carregar vendas: ${error.message}`, 'error');
-            }
-        }
-        document.getElementById('filter-vendas-btn').addEventListener('click', loadVendas);
-        document.getElementById('export-vendas-csv').addEventListener('click', async () => {
-            try {
-                let query = supabase
-                    .from('vendas')
-                    .select(`
-                        data_venda,
-                        valor,
-                        status,
-                        produto:produtos(nome_produto),
-                        parceiro:parceiros(nome_completo),
-                        igreja:igrejas(nome_igreja)
-                    `);
-
-                const startDate = document.getElementById('vendas-start-date').value;
-                const endDate = document.getElementById('vendas-end-date').value;
-                const statusFilter = document.getElementById('vendas-status-filter').value;
-
-                if (startDate) query = query.gte('data_venda', startDate);
-                if (endDate) query = query.lte('data_venda', endDate);
-                if (statusFilter) query = query.eq('status', statusFilter);
-
-                const { data, error } = await query;
-                if (error) throw error;
-
-                const headers = ['Data Venda', 'Produto', 'Parceiro', 'Igreja', 'Valor', 'Status'];
-                const rows = [headers];
-                data.forEach(v => {
-                    rows.push([
-                        formatDate(v.data_venda),
-                        v.produto ? v.produto.nome_produto : 'N/A',
-                        v.parceiro ? v.parceiro.nome_completo : 'N/A',
-                        v.igreja ? v.igreja.nome_igreja : 'N/A',
-                        v.valor,
-                        v.status
-                    ]);
-                });
-                exportToCsv('vendas.csv', rows);
-                showToast('Vendas exportadas com sucesso!', 'success');
-            } catch (error) {
-                console.error('Erro ao exportar vendas:', error.message);
-                showToast(`Erro ao exportar vendas: ${error.message}`, 'error');
-            }
-        });
-
-        // Aprovar Saques
-        async function loadSaques(statusFilter) {
-            const tbodyId = `saques-${statusFilter}-table-body`;
-            const tbody = document.getElementById(tbodyId);
-            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4">Carregando saques ${statusFilter}...</td></tr>`;
-            try {
-                const { data, error } = await supabase
-                    .from('solicitacoes_saque')
-                    .select(`
-                        *,
-                        parceiro:parceiros(nome_completo),
-                        igreja:igrejas(nome_igreja)
-                    `)
-                    .eq('status', statusFilter)
-                    .order('data_solicitacao', { ascending: false });
-                if (error) throw error;
-
-                tbody.innerHTML = '';
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4">Nenhum saque ${statusFilter} encontrado.</td></tr>`;
-                    return;
-                }
-
-                data.forEach(saque => {
-                    const row = tbody.insertRow();
-                    const entityName = saque.parceiro ? saque.parceiro.nome_completo : (saque.igreja ? saque.igreja.nome_igreja : 'N/A');
-                    let actionsHtml = '';
-                    if (statusFilter === 'pendente') {
-                        actionsHtml = `
-                            <button class="btn btn-success btn-sm" onclick="handleSaqueAction('aprovar', '${saque.id}')">Aprovar</button>
-                            <button class="btn btn-danger btn-sm" onclick="handleSaqueAction('rejeitar', '${saque.id}')">Rejeitar</button>
-                        `;
-                    } else if (statusFilter === 'aprovado') {
-                        actionsHtml = `
-                            <button class="btn btn-info btn-sm" onclick="handleSaqueAction('pagar', '${saque.id}')">Marcar como Pago</button>
-                            <button class="btn btn-danger btn-sm" onclick="handleSaqueAction('rejeitar', '${saque.id}')">Rejeitar</button>
-                        `;
-                    }
-                    row.innerHTML = `
-                        <td>${entityName}</td>
-                        <td>${formatCurrency(saque.valor)}</td>
-                        <td>${formatDate(saque.data_solicitacao)}</td>
-                        <td class="flex gap-2">${actionsHtml}</td>
-                    `;
-                });
-            } catch (error) {
-                console.error(`Erro ao carregar saques ${statusFilter}:`, error.message);
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-600">Erro ao carregar saques ${statusFilter}: ${error.message}</td></tr>`;
-                showToast(`Erro ao carregar saques ${statusFilter}: ${error.message}`, 'error');
-            }
-        }
-
-        async function handleSaqueAction(action, id) {
-            let newStatus = '';
-            let message = '';
-            if (action === 'aprovar') {
-                newStatus = 'aprovado';
-                message = 'Saque aprovado com sucesso!';
-            } else if (action === 'rejeitar') {
-                newStatus = 'rejeitado';
-                message = 'Saque rejeitado com sucesso!';
-            } else if (action === 'pagar') {
-                newStatus = 'pago';
-                message = 'Saque marcado como pago com sucesso!';
-            } else {
-                return;
-            }
-
-            try {
-                const { error } = await supabase
-                    .from('solicitacoes_saque')
-                    .update({ status: newStatus })
-                    .eq('id', id);
-                if (error) throw error;
-                showToast(message, 'success');
-                loadSaques('pendentes'); // Reload pendentes tab
-                loadSaques('aprovados'); // Reload aprovados tab
-                loadSaques('rejeitados'); // Reload rejeitados tab
-                loadSaques('pagos'); // Reload pagos tab
-                loadDashboardData(); // Update dashboard stats
-            } catch (error) {
-                console.error(`Erro ao ${action} saque:`, error.message);
-                showToast(`Erro ao ${action} saque: ${error.message}`, 'error');
-            }
-        }
-
-        // Upload de Arquivos
-        async function loadUploadedFiles() {
-            const tbody = document.getElementById('uploaded-files-table-body');
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Carregando arquivos...</td></tr>';
-            try {
-                const { data, error } = await supabase.storage.from('admin-uploads').list('', {
-                    limit: 100,
-                    offset: 0,
-                    sortBy: { column: 'name', order: 'asc' },
-                });
-                if (error) throw error;
-
-                tbody.innerHTML = '';
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Nenhum arquivo enviado.</td></tr>';
-                    return;
-                }
-
-                for (const file of data) {
-                    const { data: publicUrlData } = supabase.storage.from('admin-uploads').getPublicUrl(file.name);
-                    const row = tbody.insertRow();
-                    row.innerHTML = `
-                        <td>${file.name}</td>
-                        <td>${(file.metadata.size / 1024).toFixed(2)} KB</td>
-                        <td>${formatDate(file.updated_at)}</td>
-                        <td class="flex gap-2">
-                            <a href="${publicUrlData.publicUrl}" target="_blank" class="btn btn-primary btn-sm">Download</a>
-                            <button class="btn btn-danger btn-sm" onclick="deleteFile('${file.name}')">Excluir</button>
-                        </td>
-                    `;
-                }
-            } catch (error) {
-                console.error('Erro ao carregar arquivos:', error.message);
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-red-600">Erro ao carregar arquivos: ${error.message}</td></tr>`;
-                showToast(`Erro ao carregar arquivos: ${error.message}`, 'error');
-            }
-        }
-
-        document.getElementById('upload-file-btn').addEventListener('click', async () => {
-            const fileInput = document.getElementById('file-input');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                showToast('Por favor, selecione um arquivo para upload.', 'warning');
-                return;
-            }
-
-            try {
-                const { error } = await supabase.storage.from('admin-uploads').upload(file.name, file);
-                if (error) throw error;
-                showToast('Arquivo enviado com sucesso!', 'success');
-                fileInput.value = ''; // Clear input
-                loadUploadedFiles();
-            } catch (error) {
-                console.error('Erro ao enviar arquivo:', error.message);
-                showToast(`Erro ao enviar arquivo: ${error.message}`, 'error');
-            }
-        });
-
-        function deleteFile(fileName) {
-            showDeleteModal(`Tem certeza que deseja excluir o arquivo "${fileName}"?`, async () => {
-                try {
-                    const { error } = await supabase.storage.from('admin-uploads').remove([fileName]);
-                    if (error) throw error;
-                    showToast('Arquivo excluído com sucesso!', 'success');
-                    loadUploadedFiles();
-                } catch (error) {
-                    console.error('Erro ao excluir arquivo:', error.message);
-                    showToast(`Erro ao excluir arquivo: ${error.message}`, 'error');
-                }
-            });
-        }
-
-        // Comprovantes
-        async function loadComprovantes() {
-            const tbody = document.getElementById('comprovantes-table-body');
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Carregando comprovantes...</td></tr>';
-            try {
-                const { data, error } = await supabase
-                    .from('vendas')
-                    .select(`
-                        id,
-                        valor,
-                        status,
-                        comprovante_url,
-                        parceiro:parceiros(nome_completo)
-                    `)
-                    .not('comprovante_url', 'is', null)
-                    .order('id', { ascending: false });
-                if (error) throw error;
-
-                tbody.innerHTML = '';
-                if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4">Nenhum comprovante encontrado.</td></tr>';
-                    return;
-                }
-
-                data.forEach(venda => {
-                    const row = tbody.insertRow();
-                    const statusBadge = `<span class="badge ${getBadgeClass(venda.status)}">${venda.status}</span>`;
-                    row.innerHTML = `
-                        <td>${venda.id.substring(0, 8)}...</td>
-                        <td>${venda.parceiro ? venda.parceiro.nome_completo : 'N/A'}</td>
-                        <td>${formatCurrency(venda.valor)}</td>
-                        <td><a href="${venda.comprovante_url}" target="_blank" class="text-blue-600 hover:underline">Ver Comprovante</a></td>
-                        <td>${statusBadge}</td>
-                        <td class="flex gap-2">
-                            ${venda.status === 'pendente' ? `
-                                <button class="btn btn-success btn-sm" onclick="handleComprovanteAction('${venda.id}', 'concluida')">Aprovar</button>
-                                <button class="btn btn-danger btn-sm" onclick="handleComprovanteAction('${venda.id}', 'cancelada')">Rejeitar</button>
-                            ` : ''}
-                        </td>
-                    `;
-                });
-            } catch (error) {
-                console.error('Erro ao carregar comprovantes:', error.message);
-                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-red-600">Erro ao carregar comprovantes: ${error.message}</td></tr>`;
-                showToast(`Erro ao carregar comprovantes: ${error.message}`, 'error');
-            }
-        }
-
-        async function handleComprovanteAction(vendaId, newStatus) {
-            try {
-                const { error } = await supabase
-                    .from('vendas')
-                    .update({ status: newStatus })
-                    .eq('id', vendaId);
-                if (error) throw error;
-                showToast(`Comprovante ${newStatus === 'concluida' ? 'aprovado' : 'rejeitado'} com sucesso!`, 'success');
-                loadComprovantes();
-                loadDashboardData();
-            } catch (error) {
-                console.error('Erro ao atualizar status do comprovante:', error.message);
-                showToast(`Erro ao atualizar status do comprovante: ${error.message}`, 'error');
-            }
-        }
-
-        // Configurações
-        document.getElementById('save-comissoes-btn').addEventListener('click', async () => {
-            const comissaoParceiro = document.getElementById('comissao-parceiro-default').value;
-            const comissaoIgreja = document.getElementById('comissao-igreja-default').value;
-
-            // In a real app, you'd save these to a 'settings' table or similar
-            // For now, just show a toast
-            showToast('Configurações de comissão salvas (funcionalidade de persistência precisa ser implementada).', 'info');
-        });
-
 
         // --- Event Listeners ---
-        logoutButton.addEventListener('click', handleLogout);
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth(); // Verifica autenticação ao carregar a página
+            showSection('dashboard'); // Mostra o dashboard por padrão
 
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-
-                dashboardSections.forEach(section => section.classList.add('hidden'));
-                const targetSectionId = link.dataset.section;
-                document.getElementById(targetSectionId).classList.remove('hidden');
-
-                // Load data for the selected section
-                switch (targetSectionId) {
-                    case 'dashboard-section': loadDashboardData(); break;
-                    case 'parceiros-section': loadParceiros(); break;
-                    case 'igrejas-section': loadIgrejas(); break;
-                    case 'produtos-section': loadProdutos(); break;
-                    case 'vendas-section': loadVendas(); break;
-                    case 'saques-section':
-                        loadSaques('pendentes');
-                        // Activate first tab by default
-                        document.querySelectorAll('#saques-section .tab-button').forEach(btn => btn.classList.remove('active'));
-                        document.querySelector('#saques-section .tab-button[data-tab="pendentes-saques"]').classList.add('active');
-                        document.querySelectorAll('#saques-section .tab-content').forEach(content => content.classList.remove('active'));
-                        document.getElementById('pendentes-saques').classList.add('active');
-                        break;
-                    case 'upload-section': loadUploadedFiles(); break;
-                    case 'comprovantes-section': loadComprovantes(); break;
-                    case 'configuracoes-section': /* No specific load needed yet */ break;
-                }
+            // Event listeners para navegação na sidebar
+            document.querySelectorAll('.sidebar nav ul li a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = e.currentTarget.dataset.section;
+                    showSection(sectionId);
+                });
             });
-        });
 
-        // Tab functionality for Aprovar Saques
-        document.querySelectorAll('#saques-section .tabs-container .tab-button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                document.querySelectorAll('#saques-section .tabs-container .tab-button').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-
-                document.querySelectorAll('#saques-section .tab-content').forEach(content => content.classList.remove('active'));
-                const targetTabId = e.target.dataset.tab;
-                document.getElementById(targetTabId).classList.add('active');
-
-                const status = targetTabId.replace('-saques', '');
-                loadSaques(status);
+            // Event listener para o toggle do menu
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
             });
-        });
 
-        // Initial check on page load
-        checkAuth();
+            // Fechar modal ao clicar fora
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        closeModal(overlay.id);
+                    }
+                });
+            });
+
+            // Event listeners para filtros de parceiros
+            document.getElementById('parceiroStatusFilter').addEventListener('change', loadParceiros);
+            document.getElementById('parceiroTypeFilter').addEventListener('change', loadParceiros);
+
+            // Event listeners para filtros de igrejas
+            document.getElementById('igrejaStatusFilter').addEventListener('change', loadIgrejas);
+
+            // Event listeners para filtros de vendas
+            document.getElementById('vendaDataInicio').addEventListener('change', loadVendas);
+            document.getElementById('vendaDataFim').addEventListener('change', loadVendas);
+            document.getElementById('vendaStatusFilter').addEventListener('change', loadVendas);
+            document.getElementById('vendaTipoVendedorFilter').addEventListener('change', loadVendas);
+        });
     </script>
 </body>
 </html>
