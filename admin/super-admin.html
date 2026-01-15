@@ -3,47 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin - BizMix</title>
-    <!-- Tailwind CSS 2.2.19 -->
+    <title>BizMix - Super Admin Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <!-- Font Awesome 6.0.0 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Supabase JS 2.x -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
         }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .gradient-bg {
+            background: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
+        .sidebar {
+            width: 250px;
+            transition: all 0.3s ease;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .sidebar.collapsed {
+            width: 80px;
         }
+        .sidebar.collapsed .menu-text {
+            display: none;
+        }
+        .sidebar.collapsed .logo-full {
+            display: none;
+        }
+        .sidebar.collapsed .logo-icon {
+            display: block;
+        }
+        .logo-icon {
+            display: none;
+        }
+        .main-content {
+            margin-left: 250px;
+            transition: all 0.3s ease;
+        }
+        .main-content.collapsed {
+            margin-left: 80px;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .badge-ativo { background-color: #d1fae5; color: #065f46; }
+        .badge-pendente { background-color: #fffbeb; color: #92400e; }
+        .badge-inativo { background-color: #fee2e2; color: #991b1b; }
+        .badge-rejeitado { background-color: #fee2e2; color: #991b1b; }
+        .badge-aprovado { background-color: #dbeafe; color: #1e40af; }
+        .badge-pago { background-color: #d1fae5; color: #065f46; }
 
-        /* Custom styles for gradients and shadows */
-        .sidebar-gradient {
-            background: linear-gradient(180deg, #4a00e0, #8e2de2);
-        }
-        .header-gradient {
-            background: linear-gradient(90deg, #4a00e0, #8e2de2);
-        }
-        .card-shadow {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        .tab-button.active {
-            background-color: #8e2de2;
-            color: white;
-        }
-        .loading-overlay {
+        /* Loading Overlay */
+        #loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -54,1694 +71,1829 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            flex-direction: column;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
-        .loading-spinner {
+        .spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-top: 4px solid #fff;
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
+            margin-bottom: 15px;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .hidden {
+            display: none !important;
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+        .toast {
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        .toast.success { background-color: #4CAF50; }
+        .toast.error { background-color: #f44336; }
+        .toast.info { background-color: #2196F3; }
+
+        /* Responsive Tables */
+        .table-responsive {
+            overflow-x: auto;
+        }
     </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased">
+<body class="bg-gray-100">
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay hidden">
-        <div class="loading-spinner mr-3"></div>
-        <span>Carregando...</span>
+    <div id="loading-overlay" class="hidden">
+        <div class="spinner"></div>
+        <p id="loading-message">Carregando...</p>
     </div>
 
-    <div class="flex h-screen">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 sidebar-gradient text-white flex flex-col transition-all duration-300 ease-in-out">
-            <div class="p-6 text-2xl font-bold border-b border-purple-700">BizMix Admin</div>
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('dashboard')">
-                    <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('parceiros')">
-                    <i class="fas fa-users mr-3"></i> Gerenciar Parceiros
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('igrejas')">
-                    <i class="fas fa-church mr-3"></i> Gerenciar Igrejas
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('produtos')">
-                    <i class="fas fa-box-open mr-3"></i> Gerenciar Produtos
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('vendas')">
-                    <i class="fas fa-shopping-cart mr-3"></i> Vendas
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('saques')">
-                    <i class="fas fa-money-bill-wave mr-3"></i> Aprovar Saques
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('upload')">
-                    <i class="fas fa-upload mr-3"></i> Upload de Arquivos
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('comprovantes')">
-                    <i class="fas fa-receipt mr-3"></i> Comprovantes
-                </a>
-                <a href="#" class="flex items-center p-3 rounded-lg hover:bg-purple-700 transition-colors duration-200" onclick="switchTab('configuracoes')">
-                    <i class="fas fa-cog mr-3"></i> Configurações
-                </a>
-            </nav>
-            <div class="p-4 border-t border-purple-700">
-                <button id="logoutButton" class="w-full flex items-center justify-center p-3 rounded-lg bg-red-600 hover:bg-red-700 transition-colors duration-200">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Sair
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed top-0 left-0 h-full bg-gradient-to-br from-purple-700 to-indigo-800 text-white shadow-lg z-50">
+        <div class="p-4 flex items-center justify-between border-b border-indigo-700">
+            <div class="flex items-center">
+                <img src="https://bizmix.com.br/images/logo.png" alt="BizMix Logo" class="h-8 logo-full">
+                <img src="https://bizmix.com.br/images/icon.png" alt="BizMix Icon" class="h-8 logo-icon hidden">
+                <span class="text-xl font-semibold ml-3 logo-full">BizMix Admin</span>
+            </div>
+            <button id="sidebar-toggle" class="text-white focus:outline-none">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <nav class="mt-5">
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="dashboard">
+                <i class="fas fa-tachometer-alt w-6"></i>
+                <span class="ml-3 menu-text">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="parceiros">
+                <i class="fas fa-handshake w-6"></i>
+                <span class="ml-3 menu-text">Gerenciar Parceiros</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="igrejas">
+                <i class="fas fa-church w-6"></i>
+                <span class="ml-3 menu-text">Gerenciar Igrejas</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="produtos">
+                <i class="fas fa-box-open w-6"></i>
+                <span class="ml-3 menu-text">Gerenciar Produtos</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="vendas">
+                <i class="fas fa-shopping-cart w-6"></i>
+                <span class="ml-3 menu-text">Vendas</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="saques">
+                <i class="fas fa-money-bill-wave w-6"></i>
+                <span class="ml-3 menu-text">Aprovar Saques</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="upload-arquivos">
+                <i class="fas fa-upload w-6"></i>
+                <span class="ml-3 menu-text">Upload de Arquivos</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="comprovantes">
+                <i class="fas fa-receipt w-6"></i>
+                <span class="ml-3 menu-text">Comprovantes</span>
+            </a>
+            <a href="#" class="flex items-center py-2 px-4 text-gray-200 hover:bg-indigo-700 hover:text-white transition-colors duration-200" data-section="configuracoes">
+                <i class="fas fa-cog w-6"></i>
+                <span class="ml-3 menu-text">Configurações</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="main-content" class="main-content min-h-screen bg-gray-100 p-6">
+        <!-- Header -->
+        <header class="bg-white shadow-md rounded-lg p-4 flex items-center justify-between mb-6">
+            <h1 class="text-2xl font-semibold text-gray-800">Super Admin Panel</h1>
+            <div class="flex items-center space-x-4">
+                <span id="logged-user-email" class="text-gray-700 font-medium"></span>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Sair
                 </button>
             </div>
-        </aside>
+        </header>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Header -->
-            <header class="header-gradient text-white p-4 flex justify-between items-center card-shadow">
-                <button id="sidebarToggle" class="text-white focus:outline-none mr-4">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-                <h1 class="text-2xl font-semibold">Painel Administrativo</h1>
-                <div class="flex items-center">
-                    <span id="userEmail" class="mr-4 text-lg"></span>
-                    <i class="fas fa-user-circle text-3xl"></i>
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
-                <!-- Dashboard Tab -->
-                <div id="dashboard" class="tab-content active">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-lg card-shadow hover:shadow-lg transition-shadow duration-300">
-                            <div class="flex items-center justify-between">
-                                <i class="fas fa-users text-4xl text-purple-500"></i>
-                                <div class="text-right">
-                                    <p class="text-gray-500 text-sm">Total Parceiros</p>
-                                    <p id="totalParceiros" class="text-3xl font-bold text-gray-800">0</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg card-shadow hover:shadow-lg transition-shadow duration-300">
-                            <div class="flex items-center justify-between">
-                                <i class="fas fa-church text-4xl text-blue-500"></i>
-                                <div class="text-right">
-                                    <p class="text-gray-500 text-sm">Total Igrejas</p>
-                                    <p id="totalIgrejas" class="text-3xl font-bold text-gray-800">0</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg card-shadow hover:shadow-lg transition-shadow duration-300">
-                            <div class="flex items-center justify-between">
-                                <i class="fas fa-shopping-cart text-4xl text-green-500"></i>
-                                <div class="text-right">
-                                    <p class="text-gray-500 text-sm">Total Vendas</p>
-                                    <p id="totalVendas" class="text-3xl font-bold text-gray-800">R$ 0.00</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg card-shadow hover:shadow-lg transition-shadow duration-300">
-                            <div class="flex items-center justify-between">
-                                <i class="fas fa-money-bill-wave text-4xl text-yellow-500"></i>
-                                <div class="text-right">
-                                    <p class="text-gray-500 text-sm">Saques Pendentes</p>
-                                    <p id="saquesPendentes" class="text-3xl font-bold text-gray-800">R$ 0.00</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-lg card-shadow">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Vendas nos Últimos 6 Meses</h3>
-                            <canvas id="salesChart"></canvas>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg card-shadow">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-4">Atividades Recentes</h3>
-                            <ul id="recentActivitiesList" class="space-y-3">
-                                <!-- Recent activities will be loaded here -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gerenciar Parceiros Tab -->
-                <div id="parceiros" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Parceiros</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow mb-6">
-                        <div class="flex flex-wrap gap-4 mb-4">
-                            <div>
-                                <label for="parceiroStatusFilter" class="block text-sm font-medium text-gray-700">Status:</label>
-                                <select id="parceiroStatusFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
-                                    <option value="todos">Todos</option>
-                                    <option value="pendente">Pendente</option>
-                                    <option value="ativo">Ativo</option>
-                                    <option value="inativo">Inativo</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="parceiroTipoFilter" class="block text-sm font-medium text-gray-700">Tipo:</label>
-                                <select id="parceiroTipoFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
-                                    <option value="todos">Todos</option>
-                                    <option value="pessoa_fisica">Pessoa Física</option>
-                                    <option value="pessoa_juridica">Pessoa Jurídica</option>
-                                </select>
-                            </div>
-                            <button onclick="loadParceiros()" class="mt-auto px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200">Aplicar Filtros</button>
-                            <button onclick="exportParceirosToCSV()" class="mt-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 ml-auto">Exportar CSV</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CPF/CNPJ</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefone</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cadastro</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="parceirosTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Parceiros will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gerenciar Igrejas Tab -->
-                <div id="igrejas" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Igrejas</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow mb-6">
-                        <div class="flex flex-wrap gap-4 mb-4">
-                            <div>
-                                <label for="igrejaStatusFilter" class="block text-sm font-medium text-gray-700">Status:</label>
-                                <select id="igrejaStatusFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
-                                    <option value="todos">Todos</option>
-                                    <option value="pendente">Pendente</option>
-                                    <option value="ativo">Ativo</option>
-                                    <option value="inativo">Inativo</option>
-                                </select>
-                            </div>
-                            <button onclick="loadIgrejas()" class="mt-auto px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200">Aplicar Filtros</button>
-                            <button onclick="exportIgrejasToCSV()" class="mt-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 ml-auto">Exportar CSV</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome Responsável</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome Igreja</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefone</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cadastro</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="igrejasTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Igrejas will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Gerenciar Produtos Tab -->
-                <div id="produtos" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Produtos</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow mb-6">
-                        <button onclick="openAddProdutoModal()" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200 mb-4">Adicionar Novo Produto</button>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disponível Para</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="produtosTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Produtos will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vendas Tab -->
-                <div id="vendas" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Vendas</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow mb-6">
-                        <div class="flex flex-wrap gap-4 mb-4">
-                            <div>
-                                <label for="vendaStartDate" class="block text-sm font-medium text-gray-700">Data Início:</label>
-                                <input type="date" id="vendaStartDate" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
-                            </div>
-                            <div>
-                                <label for="vendaEndDate" class="block text-sm font-medium text-gray-700">Data Fim:</label>
-                                <input type="date" id="vendaEndDate" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
-                            </div>
-                            <div>
-                                <label for="vendaStatusFilter" class="block text-sm font-medium text-gray-700">Status:</label>
-                                <select id="vendaStatusFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
-                                    <option value="todos">Todos</option>
-                                    <option value="pago">Pago</option>
-                                    <option value="pendente">Pendente</option>
-                                    <option value="cancelado">Cancelado</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="vendaTipoVendedorFilter" class="block text-sm font-medium text-gray-700">Vendedor:</label>
-                                <select id="vendaTipoVendedorFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md">
-                                    <option value="todos">Todos</option>
-                                    <option value="parceiro">Parceiro</option>
-                                    <option value="igreja">Igreja</option>
-                                </select>
-                            </div>
-                            <button onclick="loadVendas()" class="mt-auto px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200">Aplicar Filtros</button>
-                            <button onclick="exportVendasReport()" class="mt-auto px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 ml-auto">Exportar Relatório</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produto</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendedor</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo Vendedor</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor Total</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comissão</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Venda</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="vendasTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Vendas will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Aprovar Saques Tab -->
-                <div id="saques" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Aprovar Saques</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow mb-6">
-                        <div class="flex border-b border-gray-200 mb-4">
-                            <button class="tab-button px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600 active" data-saque-status="pendente" onclick="loadSaques('pendente')">Pendentes</button>
-                            <button class="tab-button px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600" data-saque-status="aprovado" onclick="loadSaques('aprovado')">Aprovados</button>
-                            <button class="tab-button px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600" data-saque-status="rejeitado" onclick="loadSaques('rejeitado')">Rejeitados</button>
-                            <button class="tab-button px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600" data-saque-status="pago" onclick="loadSaques('pago')">Pagos</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parceiro</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Banco</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agência</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Conta</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PIX</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Solicitação</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="saquesTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Saques will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Upload de Arquivos Tab -->
-                <div id="upload" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Upload de Arquivos</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow mb-6">
-                        <input type="file" id="fileInput" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 mb-4">
-                        <button id="uploadButton" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200">Fazer Upload</button>
-                        <div id="uploadStatus" class="mt-4 text-sm text-gray-600"></div>
-                        <h3 class="text-xl font-semibold text-gray-800 mt-8 mb-4">Arquivos no Bucket 'public-files'</h3>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome do Arquivo</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="fileListTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Files will be listed here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Comprovantes Tab -->
-                <div id="comprovantes" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Comprovantes</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow mb-6">
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parceiro</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Upload</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="comprovantesTableBody" class="bg-white divide-y divide-gray-200">
-                                    <!-- Comprovantes will be loaded here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Configurações Tab -->
-                <div id="configuracoes" class="tab-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-6">Configurações do Sistema</h2>
-                    <div class="bg-white p-6 rounded-lg card-shadow">
-                        <form id="settingsForm">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label for="comissaoPadrao" class="block text-sm font-medium text-gray-700">Comissão Padrão (%)</label>
-                                    <input type="number" id="comissaoPadrao" name="comissaoPadrao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                                </div>
-                                <div>
-                                    <label for="emailNotificacoes" class="block text-sm font-medium text-gray-700">Email para Notificações</label>
-                                    <input type="email" id="emailNotificacoes" name="emailNotificacoes" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                                </div>
-                                <!-- Add more settings fields as needed -->
-                            </div>
-                            <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors duration-200">Salvar Configurações</button>
-                        </form>
-                    </div>
-                </div>
-            </main>
-        </div>
-    </div>
-
-    <!-- Modals -->
-
-    <!-- Edit Parceiro Modal -->
-    <div id="editParceiroModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <h3 class="text-lg font-bold mb-4">Editar Parceiro</h3>
-            <form id="editParceiroForm">
-                <input type="hidden" id="editParceiroId">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="main-section">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="card p-6 flex items-center justify-between gradient-bg text-white">
                     <div>
-                        <label for="editParceiroNome" class="block text-sm font-medium text-gray-700">Nome Completo</label>
-                        <input type="text" id="editParceiroNome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        <p class="text-sm font-medium">Total Parceiros</p>
+                        <p id="stat-parceiros" class="text-3xl font-bold">0</p>
                     </div>
+                    <i class="fas fa-handshake text-4xl opacity-75"></i>
+                </div>
+                <div class="card p-6 flex items-center justify-between bg-blue-500 text-white">
                     <div>
-                        <label for="editParceiroEmail" class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="editParceiroEmail" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        <p class="text-sm font-medium">Total Igrejas</p>
+                        <p id="stat-igrejas" class="text-3xl font-bold">0</p>
                     </div>
+                    <i class="fas fa-church text-4xl opacity-75"></i>
+                </div>
+                <div class="card p-6 flex items-center justify-between bg-green-500 text-white">
                     <div>
-                        <label for="editParceiroCpfCnpj" class="block text-sm font-medium text-gray-700">CPF/CNPJ</label>
-                        <input type="text" id="editParceiroCpfCnpj" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        <p class="text-sm font-medium">Vendas Mês</p>
+                        <p id="stat-vendas" class="text-3xl font-bold">R$ 0,00</p>
                     </div>
+                    <i class="fas fa-shopping-cart text-4xl opacity-75"></i>
+                </div>
+                <div class="card p-6 flex items-center justify-between bg-yellow-500 text-white">
                     <div>
-                        <label for="editParceiroTelefone" class="block text-sm font-medium text-gray-700">Telefone</label>
-                        <input type="text" id="editParceiroTelefone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                        <p class="text-sm font-medium">Saques Pendentes</p>
+                        <p id="stat-saques" class="text-3xl font-bold">0</p>
                     </div>
-                    <div>
-                        <label for="editParceiroStatus" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select id="editParceiroStatus" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                            <option value="pendente">Pendente</option>
+                    <i class="fas fa-money-bill-wave text-4xl opacity-75"></i>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Vendas nos Últimos 6 Meses</h3>
+                    <canvas id="salesChart"></canvas>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Últimas Atividades</h3>
+                    <div class="table-responsive">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr>
+                                    <th class="py-2 px-4 border-b text-left text-gray-600">Atividade</th>
+                                    <th class="py-2 px-4 border-b text-left text-gray-600">Data</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-activities-body">
+                                <!-- Atividades serão carregadas aqui -->
+                                <tr><td colspan="2" class="py-4 px-4 text-center text-gray-500">Nenhuma atividade recente.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gerenciar Parceiros Section -->
+        <section id="parceiros-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Parceiros</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="flex flex-wrap items-center justify-between mb-4">
+                    <div class="flex flex-wrap gap-4 mb-4 md:mb-0">
+                        <input type="text" id="parceiro-search" placeholder="Buscar parceiro..." class="p-2 border rounded-md">
+                        <select id="parceiro-filter-status" class="p-2 border rounded-md">
+                            <option value="">Todos os Status</option>
                             <option value="ativo">Ativo</option>
+                            <option value="pendente">Pendente</option>
                             <option value="inativo">Inativo</option>
                         </select>
-                    </div>
-                    <div>
-                        <label for="editParceiroTipo" class="block text-sm font-medium text-gray-700">Tipo</label>
-                        <select id="editParceiroTipo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                            <option value="pessoa_fisica">Pessoa Física</option>
-                            <option value="pessoa_juridica">Pessoa Jurídica</option>
+                        <select id="parceiro-filter-type" class="p-2 border rounded-md">
+                            <option value="">Todos os Tipos</option>
+                            <option value="parceiro">Parceiro</option>
                             <option value="igreja">Igreja</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
+                    <div class="flex gap-4">
+                        <button id="add-parceiro-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-plus mr-2"></i>Adicionar Parceiro</button>
+                        <button id="export-parceiros-csv" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-file-csv mr-2"></i>Exportar CSV</button>
+                    </div>
                 </div>
-                <div class="flex justify-end mt-6">
-                    <button type="button" onclick="closeModal('editParceiroModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 mr-2">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">Salvar</button>
+                <div class="table-responsive">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Nome</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Email</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Tipo</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Status</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parceiros-table-body">
+                            <!-- Parceiros serão carregados aqui -->
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+        </section>
 
-    <!-- Edit Igreja Modal -->
-    <div id="editIgrejaModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <h3 class="text-lg font-bold mb-4">Editar Igreja</h3>
-            <form id="editIgrejaForm">
-                <input type="hidden" id="editIgrejaId">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="editIgrejaNomeResponsavel" class="block text-sm font-medium text-gray-700">Nome Responsável</label>
-                        <input type="text" id="editIgrejaNomeResponsavel" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                    </div>
-                    <div>
-                        <label for="editIgrejaNomeIgreja" class="block text-sm font-medium text-gray-700">Nome da Igreja</label>
-                        <input type="text" id="editIgrejaNomeIgreja" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                    </div>
-                    <div>
-                        <label for="editIgrejaEmail" class="block text-sm font-medium text-gray-700">Email</label>
-                        <input type="email" id="editIgrejaEmail" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                    </div>
-                    <div>
-                        <label for="editIgrejaTelefone" class="block text-sm font-medium text-gray-700">Telefone</label>
-                        <input type="text" id="editIgrejaTelefone" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                    </div>
-                    <div>
-                        <label for="editIgrejaStatus" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select id="editIgrejaStatus" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                            <option value="pendente">Pendente</option>
+        <!-- Gerenciar Igrejas Section -->
+        <section id="igrejas-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Igrejas</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="flex flex-wrap items-center justify-between mb-4">
+                    <div class="flex flex-wrap gap-4 mb-4 md:mb-0">
+                        <input type="text" id="igreja-search" placeholder="Buscar igreja..." class="p-2 border rounded-md">
+                        <select id="igreja-filter-status" class="p-2 border rounded-md">
+                            <option value="">Todos os Status</option>
                             <option value="ativo">Ativo</option>
+                            <option value="pendente">Pendente</option>
                             <option value="inativo">Inativo</option>
                         </select>
                     </div>
+                    <div class="flex gap-4">
+                        <button id="add-igreja-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-plus mr-2"></i>Adicionar Igreja</button>
+                        <button id="export-igrejas-csv" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-file-csv mr-2"></i>Exportar CSV</button>
+                    </div>
                 </div>
-                <div class="flex justify-end mt-6">
-                    <button type="button" onclick="closeModal('editIgrejaModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 mr-2">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">Salvar</button>
+                <div class="table-responsive">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Nome</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Email</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Status</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="igrejas-table-body">
+                            <!-- Igrejas serão carregadas aqui -->
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+        </section>
 
-    <!-- Add/Edit Produto Modal -->
-    <div id="produtoModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <h3 id="produtoModalTitle" class="text-lg font-bold mb-4">Adicionar Produto</h3>
-            <form id="produtoForm">
-                <input type="hidden" id="produtoId">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="produtoNome" class="block text-sm font-medium text-gray-700">Nome</label>
-                        <input type="text" id="produtoNome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
-                    </div>
-                    <div>
-                        <label for="produtoPreco" class="block text-sm font-medium text-gray-700">Preço</label>
-                        <input type="number" step="0.01" id="produtoPreco" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3" required>
-                    </div>
-                    <div class="md:col-span-2">
-                        <label for="produtoDescricao" class="block text-sm font-medium text-gray-700">Descrição</label>
-                        <textarea id="produtoDescricao" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"></textarea>
-                    </div>
-                    <div>
-                        <label for="produtoComissao" class="block text-sm font-medium text-gray-700">Comissão (%)</label>
-                        <input type="number" step="0.01" id="produtoComissao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                    </div>
-                    <div>
-                        <label for="produtoCategoria" class="block text-sm font-medium text-gray-700">Categoria</label>
-                        <select id="produtoCategoria" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                            <option value="religioso">Religioso</option>
-                            <option value="curso">Curso</option>
-                            <option value="ebook">Ebook</option>
-                            <option value="fisico">Físico</option>
-                            <option value="digital">Digital</option>
-                            <option value="geral">Geral</option>
+        <!-- Gerenciar Produtos Section -->
+        <section id="produtos-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Produtos</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="flex justify-end mb-4">
+                    <button id="add-produto-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-plus mr-2"></i>Adicionar Produto</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Nome</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Preço</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Categoria</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Disponível Para</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="produtos-table-body">
+                            <!-- Produtos serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vendas Section -->
+        <section id="vendas-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Vendas</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="flex flex-wrap items-center justify-between mb-4">
+                    <div class="flex flex-wrap gap-4 mb-4 md:mb-0">
+                        <input type="date" id="venda-filter-start-date" class="p-2 border rounded-md">
+                        <input type="date" id="venda-filter-end-date" class="p-2 border rounded-md">
+                        <select id="venda-filter-status" class="p-2 border rounded-md">
+                            <option value="">Todos os Status</option>
+                            <option value="concluida">Concluída</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="cancelada">Cancelada</option>
                         </select>
+                        <select id="venda-filter-seller-type" class="p-2 border rounded-md">
+                            <option value="">Todos os Vendedores</option>
+                            <option value="parceiro">Parceiro</option>
+                            <option value="igreja">Igreja</option>
+                        </select>
+                        <button id="apply-venda-filters" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Aplicar Filtros</button>
                     </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Disponível Para</label>
-                        <div class="mt-1 flex space-x-4">
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" id="disponivelParceiros" value="parceiros" class="form-checkbox">
-                                <span class="ml-2 text-gray-700">Parceiros</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" id="disponivelIgrejas" value="igrejas" class="form-checkbox">
-                                <span class="ml-2 text-gray-700">Igrejas</span>
-                            </label>
+                    <button id="export-vendas-csv" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-file-csv mr-2"></i>Exportar Relatório</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Produto</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Vendedor</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Valor</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Data</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vendas-table-body">
+                            <!-- Vendas serão carregadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Aprovar Saques Section -->
+        <section id="saques-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Aprovar Saques</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="flex border-b border-gray-200 mb-4">
+                    <button class="tab-button py-2 px-4 text-gray-600 hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600 focus:outline-none active-tab" data-tab="pendentes">Pendentes</button>
+                    <button class="tab-button py-2 px-4 text-gray-600 hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600 focus:outline-none" data-tab="aprovados">Aprovados</button>
+                    <button class="tab-button py-2 px-4 text-gray-600 hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600 focus:outline-none" data-tab="rejeitados">Rejeitados</button>
+                    <button class="tab-button py-2 px-4 text-gray-600 hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-600 focus:outline-none" data-tab="pagos">Pagos</button>
+                </div>
+
+                <div id="saques-tab-content">
+                    <div id="tab-pendentes" class="tab-pane">
+                        <div class="table-responsive">
+                            <table class="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Parceiro</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Valor</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Data Solicitação</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="saques-pendentes-table-body">
+                                    <!-- Saques pendentes serão carregados aqui -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                    <div class="md:col-span-2">
-                        <label for="produtoImagemUrl" class="block text-sm font-medium text-gray-700">URL da Imagem</label>
-                        <input type="text" id="produtoImagemUrl" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    <div id="tab-aprovados" class="tab-pane hidden">
+                        <div class="table-responsive">
+                            <table class="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Parceiro</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Valor</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Data Aprovação</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="saques-aprovados-table-body">
+                                    <!-- Saques aprovados serão carregados aqui -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="md:col-span-2">
-                        <label for="produtoLinkCheckout" class="block text-sm font-medium text-gray-700">Link de Checkout</label>
-                        <input type="text" id="produtoLinkCheckout" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
+                    <div id="tab-rejeitados" class="tab-pane hidden">
+                        <div class="table-responsive">
+                            <table class="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Parceiro</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Valor</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Data Rejeição</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Motivo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="saques-rejeitados-table-body">
+                                    <!-- Saques rejeitados serão carregados aqui -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div>
-                        <label for="produtoStatus" class="block text-sm font-medium text-gray-700">Status</label>
-                        <select id="produtoStatus" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3">
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
+                    <div id="tab-pagos" class="tab-pane hidden">
+                        <div class="table-responsive">
+                            <table class="min-w-full bg-white">
+                                <thead>
+                                    <tr>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Parceiro</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Valor</th>
+                                        <th class="py-2 px-4 border-b text-left text-gray-600">Data Pagamento</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="saques-pagos-table-body">
+                                    <!-- Saques pagos serão carregados aqui -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="flex justify-end mt-6">
-                    <button type="button" onclick="closeModal('produtoModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 mr-2">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">Salvar</button>
+            </div>
+        </section>
+
+        <!-- Upload de Arquivos Section -->
+        <section id="upload-arquivos-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Upload de Arquivos</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="mb-4">
+                    <label for="file-input" class="block text-gray-700 text-sm font-bold mb-2">Selecione um arquivo:</label>
+                    <input type="file" id="file-input" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
                 </div>
-            </form>
-        </div>
-    </div>
+                <button id="upload-file-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg mb-4"><i class="fas fa-upload mr-2"></i>Upload Arquivo</button>
+                <div id="upload-progress-container" class="w-full bg-gray-200 rounded-full h-2.5 mb-4 hidden">
+                    <div id="upload-progress-bar" class="bg-indigo-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Arquivos no Storage</h3>
+                <div class="table-responsive">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Nome do Arquivo</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Tamanho</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Última Modificação</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="file-list-body">
+                            <!-- Lista de arquivos será carregada aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-    <!-- Saque Detail Modal -->
-    <div id="saqueDetailModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <h3 class="text-lg font-bold mb-4">Detalhes do Saque</h3>
-            <div id="saqueDetails" class="space-y-2 text-gray-700">
-                <!-- Saque details will be loaded here -->
+        <!-- Comprovantes Section -->
+        <section id="comprovantes-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Comprovantes</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <div class="table-responsive">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                            <tr>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">ID</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Parceiro/Igreja</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Valor</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Data</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Status</th>
+                                <th class="py-2 px-4 border-b text-left text-gray-600">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comprovantes-table-body">
+                            <!-- Comprovantes serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="flex justify-end mt-6">
-                <button type="button" onclick="closeModal('saqueDetailModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Fechar</button>
-            </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Comprovante Preview Modal -->
-    <div id="comprovantePreviewModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
-            <h3 class="text-lg font-bold mb-4">Visualizar Comprovante</h3>
-            <img id="comprovanteImage" src="" alt="Comprovante" class="max-w-full h-auto mx-auto my-4">
-            <div class="flex justify-end mt-6">
-                <button type="button" onclick="closeModal('comprovantePreviewModal')" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">Fechar</button>
+        <!-- Configurações Section -->
+        <section id="configuracoes-section" class="main-section hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Configurações do Sistema</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <form id="settings-form">
+                    <div class="mb-4">
+                        <label for="site-name" class="block text-gray-700 text-sm font-bold mb-2">Nome do Site:</label>
+                        <input type="text" id="site-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div class="mb-4">
+                        <label for="admin-email-contact" class="block text-gray-700 text-sm font-bold mb-2">Email de Contato Admin:</label>
+                        <input type="email" id="admin-email-contact" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <button type="submit" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg"><i class="fas fa-save mr-2"></i>Salvar Configurações</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Modals -->
+        <!-- Generic Modal Structure -->
+        <div id="generic-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+            <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 shadow-lg rounded-md bg-white">
+                <div class="flex justify-between items-center pb-3 border-b">
+                    <h3 id="modal-title" class="text-2xl font-semibold text-gray-800"></h3>
+                    <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+                </div>
+                <div id="modal-body" class="mt-4">
+                    <!-- Content will be injected here -->
+                </div>
+                <div id="modal-footer" class="flex justify-end mt-4 pt-3 border-t">
+                    <button class="close-modal-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">Cancelar</button>
+                    <button id="modal-save-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg ml-2">Salvar</button>
+                </div>
             </div>
         </div>
+
+        <!-- Image Preview Modal -->
+        <div id="image-preview-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+            <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-1/2 shadow-lg rounded-md bg-white">
+                <div class="flex justify-between items-center pb-3 border-b">
+                    <h3 class="text-2xl font-semibold text-gray-800">Visualizar Imagem</h3>
+                    <button class="close-image-modal-btn text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+                </div>
+                <div class="mt-4 text-center">
+                    <img id="preview-image" src="" alt="Comprovante" class="max-w-full h-auto mx-auto">
+                </div>
+                <div class="flex justify-end mt-4 pt-3 border-t">
+                    <button class="close-image-modal-btn bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg">Fechar</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Supabase Client Initialization (CRITICAL: Declared ONLY ONCE)
+        // Supabase Configuration (CRITICAL: Declared ONLY ONCE)
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const ADMIN_AUTH_USER_ID = 'd7f914a5-8f74-4a6c-acd5-7462e1a190ca'; // henrique65@gmail.com's auth.users.id
-        const BUCKET_NAME = 'public-files';
-
-        let currentActiveTab = 'dashboard';
-        let salesChartInstance = null; // To store Chart.js instance
+        // Global UI Elements
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingMessage = document.getElementById('loading-message');
+        const toastContainer = document.getElementById('toast-container');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const logoutButton = document.getElementById('logout-button');
+        const loggedUserEmailSpan = document.getElementById('logged-user-email');
+        const genericModal = document.getElementById('generic-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalSaveBtn = document.getElementById('modal-save-btn');
+        const imagePreviewModal = document.getElementById('image-preview-modal');
+        const previewImage = document.getElementById('preview-image');
 
         // --- Utility Functions ---
-        function showLoading() {
-            document.getElementById('loadingOverlay').classList.remove('hidden');
+        function showLoading(message = 'Carregando...') {
+            loadingMessage.textContent = message;
+            loadingOverlay.classList.remove('hidden');
         }
 
         function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
+            loadingOverlay.classList.add('hidden');
         }
 
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10); // Small delay for animation
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.addEventListener('transitionend', () => toast.remove());
+            }, 3000);
         }
 
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        }
-
-        function getStatusBadge(status) {
-            let colorClass = '';
-            switch (status) {
-                case 'ativo':
-                case 'aprovado':
-                case 'pago':
-                    colorClass = 'bg-green-100 text-green-800';
-                    break;
-                case 'pendente':
-                    colorClass = 'bg-yellow-100 text-yellow-800';
-                    break;
-                case 'inativo':
-                case 'rejeitado':
-                case 'cancelado':
-                    colorClass = 'bg-red-100 text-red-800';
-                    break;
-                default:
-                    colorClass = 'bg-gray-100 text-gray-800';
-            }
-            return `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${colorClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>`;
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-
-        // --- Authentication & Authorization ---
-        async function checkAuthAndRedirect() {
-            showLoading();
-            const { data: { user }, error } = await supabase.auth.getUser();
-
-            if (error || !user) {
-                console.error('User not authenticated:', error?.message);
-                window.location.href = '/admin/index.html'; // Redirect to login page
-                return;
-            }
-
-            // Check if the authenticated user is an admin
-            const { data: parceiro, error: parceiroError } = await supabase
-                .from('parceiros')
-                .select('tipo_parceiro, email')
-                .eq('auth_user_id', user.id)
-                .single();
-
-            if (parceiroError || !parceiro || parceiro.tipo_parceiro !== 'admin') {
-                console.error('User is not an admin or not found in parceiros table:', parceiroError?.message);
-                alert('Acesso negado. Você não tem permissão de administrador.');
-                await supabase.auth.signOut();
-                window.location.href = '/admin/index.html'; // Redirect to login page
-                return;
-            }
-
-            document.getElementById('userEmail').textContent = parceiro.email;
-            hideLoading();
-            switchTab(currentActiveTab); // Load initial tab content
-        }
-
-        async function logout() {
-            showLoading();
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                console.error('Error logging out:', error.message);
-                alert('Erro ao fazer logout.');
+        function openModal(title, bodyHtml, onSaveCallback = null) {
+            modalTitle.textContent = title;
+            modalBody.innerHTML = bodyHtml;
+            genericModal.classList.remove('hidden');
+            if (onSaveCallback) {
+                modalSaveBtn.onclick = onSaveCallback;
+                modalSaveBtn.classList.remove('hidden');
             } else {
-                window.location.href = '/admin/index.html';
+                modalSaveBtn.classList.add('hidden');
             }
-            hideLoading();
         }
 
-        // --- Tab Management ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
-            currentActiveTab = tabId;
+        function closeModal() {
+            genericModal.classList.add('hidden');
+            modalBody.innerHTML = ''; // Clear content
+            modalSaveBtn.onclick = null; // Clear callback
+        }
 
-            // Update active state for sidebar links
-            document.querySelectorAll('#sidebar nav a').forEach(link => {
-                if (link.onclick && link.onclick.toString().includes(`switchTab('${tabId}')`)) {
-                    link.classList.add('bg-purple-700');
-                } else {
-                    link.classList.remove('bg-purple-700');
+        function openImagePreviewModal(imageUrl) {
+            previewImage.src = imageUrl;
+            imagePreviewModal.classList.remove('hidden');
+        }
+
+        function closeImagePreviewModal() {
+            imagePreviewModal.classList.add('hidden');
+            previewImage.src = '';
+        }
+
+        // --- Authentication Flow (CRITICAL) ---
+        async function checkAuthAndLoad() {
+            showLoading('Verificando autenticação...');
+            try {
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+                if (sessionError) throw sessionError;
+
+                if (!session) {
+                    showToast('Sessão não encontrada. Redirecionando para login.', 'info');
+                    setTimeout(() => window.location.href = '/admin/login.html', 1500);
+                    return;
                 }
-            });
 
-            // Load content for the active tab
-            switch (tabId) {
-                case 'dashboard':
-                    loadDashboardStats();
-                    loadSalesChart();
-                    loadRecentActivities();
-                    break;
-                case 'parceiros':
-                    loadParceiros();
-                    break;
-                case 'igrejas':
-                    loadIgrejas();
-                    break;
-                case 'produtos':
-                    loadProdutos();
-                    break;
-                case 'vendas':
-                    loadVendas();
-                    break;
-                case 'saques':
-                    loadSaques('pendente'); // Default to pending saques
-                    break;
-                case 'upload':
-                    listFiles();
-                    break;
-                case 'comprovantes':
-                    loadComprovantes();
-                    break;
-                case 'configuracoes':
-                    loadSettings();
-                    break;
+                const user = session.user;
+                loggedUserEmailSpan.textContent = user.email;
+
+                showLoading('Verificando permissões...');
+                const { data: parceiroData, error: parceiroError } = await supabase
+                    .from('parceiros')
+                    .select('tipo_parceiro')
+                    .eq('auth_user_id', user.id)
+                    .single();
+
+                if (parceiroError && parceiroError.code !== 'PGRST116') { // PGRST116 means no rows found
+                    throw parceiroError;
+                }
+
+                if (!parceiroData || parceiroData.tipo_parceiro !== 'admin') {
+                    showToast('Acesso negado. Você não tem permissão de administrador.', 'error');
+                    setTimeout(() => window.location.href = '/admin/login.html', 1500); // Redirect non-admins
+                    return;
+                }
+
+                showToast('Bem-vindo, administrador!', 'success');
+                hideLoading();
+                loadDashboard(); // Load default section
+                document.querySelectorAll('.main-section')[0].classList.remove('hidden'); // Show dashboard
+            } catch (error) {
+                console.error('Erro na autenticação:', error);
+                showToast(`Erro de autenticação: ${error.message}`, 'error');
+                setTimeout(() => window.location.href = '/admin/login.html', 2000);
             }
+        }
+
+        async function handleLogout() {
+            showLoading('Saindo...');
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                showToast('Logout realizado com sucesso!', 'success');
+                setTimeout(() => window.location.href = '/admin/login.html', 1000);
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+                showToast(`Erro ao sair: ${error.message}`, 'error');
+                hideLoading();
+            }
+        }
+
+        // --- Sidebar & Section Management ---
+        function toggleSidebar() {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('collapsed');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.main-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
+
+            document.querySelectorAll('aside a').forEach(link => {
+                link.classList.remove('bg-indigo-700', 'text-white');
+                link.classList.add('text-gray-200');
+            });
+            document.querySelector(`aside a[data-section="${sectionId}"]`).classList.add('bg-indigo-700', 'text-white');
+            document.querySelector(`aside a[data-section="${sectionId}"]`).classList.remove('text-gray-200');
         }
 
         // --- Dashboard Functions ---
-        async function loadDashboardStats() {
-            showLoading();
+        let salesChartInstance = null;
+        async function loadDashboard() {
+            showLoading('Carregando dados do dashboard...');
             try {
-                const { count: parceirosCount, error: pError } = await supabase.from('parceiros').select('*', { count: 'exact' }).in('tipo_parceiro', ['pessoa_fisica', 'pessoa_juridica']);
-                const { count: igrejasCount, error: iError } = await supabase.from('parceiros').select('*', { count: 'exact' }).eq('tipo_parceiro', 'igreja');
-                const { data: vendasData, error: vError } = await supabase.from('vendas').select('valor_total');
-                const { data: saquesData, error: sError } = await supabase.from('saques').select('valor').eq('status', 'pendente');
+                // Fetch stats
+                const { count: parceirosCount, error: pError } = await supabase.from('parceiros').select('*', { count: 'exact' });
+                const { count: igrejasCount, error: iError } = await supabase.from('igrejas').select('*', { count: 'exact' });
+                const { data: vendasData, error: vError } = await supabase.from('vendas').select('valor').gte('data_venda', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString());
+                const { count: saquesCount, error: sError } = await supabase.from('saques').select('*', { count: 'exact' }).eq('status', 'pendente');
 
+                if (pError) console.error('Error fetching parceiros count:', pError);
+                if (iError) console.error('Error fetching igrejas count:', iError);
+                if (vError) console.error('Error fetching vendas data:', vError);
+                if (sError) console.error('Error fetching saques count:', sError);
 
-                document.getElementById('totalParceiros').textContent = parceirosCount || 0;
-                document.getElementById('totalIgrejas').textContent = igrejasCount || 0;
-                
-                const totalVendas = vendasData ? vendasData.reduce((sum, venda) => sum + venda.valor_total, 0) : 0;
-                document.getElementById('totalVendas').textContent = formatCurrency(totalVendas);
+                document.getElementById('stat-parceiros').textContent = parceirosCount || 0;
+                document.getElementById('stat-igrejas').textContent = igrejasCount || 0;
+                const totalVendasMes = vendasData ? vendasData.reduce((sum, venda) => sum + venda.valor, 0) : 0;
+                document.getElementById('stat-vendas').textContent = `R$ ${totalVendasMes.toFixed(2).replace('.', ',')}`;
+                document.getElementById('stat-saques').textContent = saquesCount || 0;
 
-                const saquesPendentes = saquesData ? saquesData.reduce((sum, saque) => sum + saque.valor, 0) : 0;
-                document.getElementById('saquesPendentes').textContent = formatCurrency(saquesPendentes);
+                // Fetch sales data for chart (last 6 months)
+                const salesData = await fetchSalesDataForChart();
+                renderSalesChart(salesData);
+
+                // Fetch recent activities (placeholder for now)
+                document.getElementById('recent-activities-body').innerHTML = `
+                    <tr><td colspan="2" class="py-4 px-4 text-center text-gray-500">Nenhuma atividade recente.</td></tr>
+                `;
 
             } catch (error) {
-                console.error('Erro ao carregar estatísticas do dashboard:', error.message);
-                alert('Erro ao carregar estatísticas do dashboard.');
+                console.error('Erro ao carregar dashboard:', error);
+                showToast(`Erro ao carregar dashboard: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        async function loadSalesChart() {
-            showLoading();
-            try {
+        async function fetchSalesDataForChart() {
+            const today = new Date();
+            const months = [];
+            const sales = [];
+            for (let i = 5; i >= 0; i--) {
+                const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                const monthName = date.toLocaleString('pt-BR', { month: 'short' });
+                const year = date.getFullYear();
+                months.push(`${monthName}/${year.toString().slice(-2)}`);
+
+                const startDate = new Date(date.getFullYear(), date.getMonth(), 1).toISOString();
+                const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59).toISOString();
+
                 const { data, error } = await supabase
                     .from('vendas')
-                    .select('data_venda, valor_total')
-                    .gte('data_venda', new Date(new Date().setMonth(new Date().getMonth() - 6)).toISOString()); // Last 6 months
+                    .select('valor')
+                    .gte('data_venda', startDate)
+                    .lte('data_venda', endDate);
 
-                if (error) throw error;
-
-                const monthlySales = {};
-                data.forEach(sale => {
-                    const month = new Date(sale.data_venda).toLocaleString('pt-BR', { month: 'short', year: '2-digit' });
-                    monthlySales[month] = (monthlySales[month] || 0) + sale.valor_total;
-                });
-
-                const labels = Object.keys(monthlySales).sort((a, b) => new Date('1 ' + a).getTime() - new Date('1 ' + b).getTime());
-                const values = labels.map(label => monthlySales[label]);
-
-                const ctx = document.getElementById('salesChart').getContext('2d');
-                if (salesChartInstance) {
-                    salesChartInstance.destroy(); // Destroy previous instance
+                if (error) {
+                    console.error(`Error fetching sales for ${monthName}:`, error);
+                    sales.push(0);
+                } else {
+                    const total = data.reduce((sum, item) => sum + item.valor, 0);
+                    sales.push(total);
                 }
-                salesChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Vendas (R$)',
-                            data: values,
-                            borderColor: '#8e2de2',
-                            backgroundColor: 'rgba(142, 45, 226, 0.2)',
-                            fill: true,
-                            tension: 0.1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true
+            }
+            return { months, sales };
+        }
+
+        function renderSalesChart({ months, sales }) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            if (salesChartInstance) {
+                salesChartInstance.destroy();
+            }
+            salesChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: sales,
+                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                        borderColor: '#6366f1',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
                             }
                         }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
                     }
-                });
-
-            } catch (error) {
-                console.error('Erro ao carregar gráfico de vendas:', error.message);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function loadRecentActivities() {
-            showLoading();
-            try {
-                // This is a placeholder. You'd need a dedicated 'activities' table or complex joins.
-                // For now, let's simulate some activities.
-                const activities = [
-                    { text: 'Novo parceiro "João Silva" cadastrado.', time: '2 minutos atrás' },
-                    { text: 'Venda de "Livro Somos Todos Um" para "Maria Souza".', time: '1 hora atrás' },
-                    { text: 'Saque de R$ 500.00 solicitado por "Igreja da Paz".', time: '3 horas atrás' },
-                    { text: 'Produto "Curso de Liderança" atualizado.', time: '1 dia atrás' },
-                ];
-
-                const list = document.getElementById('recentActivitiesList');
-                list.innerHTML = '';
-                activities.forEach(activity => {
-                    const li = document.createElement('li');
-                    li.className = 'flex items-center text-gray-700';
-                    li.innerHTML = `<i class="fas fa-circle text-xs text-purple-400 mr-3"></i> <span>${activity.text} <span class="text-gray-500 text-sm ml-2">${activity.time}</span></span>`;
-                    list.appendChild(li);
-                });
-
-            } catch (error) {
-                console.error('Erro ao carregar atividades recentes:', error.message);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // --- Gerenciar Parceiros Functions ---
-        async function loadParceiros() {
-            showLoading();
-            try {
-                const statusFilter = document.getElementById('parceiroStatusFilter').value;
-                const tipoFilter = document.getElementById('parceiroTipoFilter').value;
-
-                let query = supabase.from('parceiros').select('*').in('tipo_parceiro', ['pessoa_fisica', 'pessoa_juridica']);
-
-                if (statusFilter !== 'todos') {
-                    query = query.eq('status', statusFilter);
                 }
-                if (tipoFilter !== 'todos') {
-                    query = query.eq('tipo_parceiro', tipoFilter);
+            });
+        }
+
+        // --- Parceiros Functions ---
+        async function fetchParceiros() {
+            showLoading('Carregando parceiros...');
+            try {
+                let query = supabase.from('parceiros').select('*');
+
+                const search = document.getElementById('parceiro-search').value.toLowerCase();
+                const status = document.getElementById('parceiro-filter-status').value;
+                const type = document.getElementById('parceiro-filter-type').value;
+
+                if (search) {
+                    query = query.or(`nome_completo.ilike.%${search}%,email.ilike.%${search}%`);
+                }
+                if (status) {
+                    query = query.eq('status', status);
+                }
+                if (type) {
+                    query = query.eq('tipo_parceiro', type);
                 }
 
                 const { data, error } = await query.order('created_at', { ascending: false });
                 if (error) throw error;
 
-                renderParceirosTable(data);
+                const tableBody = document.getElementById('parceiros-table-body');
+                tableBody.innerHTML = '';
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="py-4 px-4 text-center text-gray-500">Nenhum parceiro encontrado.</td></tr>';
+                    return;
+                }
+
+                data.forEach(parceiro => {
+                    const row = `
+                        <tr>
+                            <td class="py-2 px-4 border-b">${parceiro.id.substring(0, 8)}...</td>
+                            <td class="py-2 px-4 border-b">${parceiro.nome_completo}</td>
+                            <td class="py-2 px-4 border-b">${parceiro.email}</td>
+                            <td class="py-2 px-4 border-b">${parceiro.tipo_parceiro}</td>
+                            <td class="py-2 px-4 border-b">
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold badge-${parceiro.status}">${parceiro.status}</span>
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded-md text-sm mr-2 edit-parceiro-btn" data-id="${parceiro.id}"><i class="fas fa-edit"></i></button>
+                                <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md text-sm deactivate-parceiro-btn" data-id="${parceiro.id}" data-status="${parceiro.status}"><i class="fas fa-power-off"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+
+                attachParceiroEventListeners();
             } catch (error) {
-                console.error('Erro ao carregar parceiros:', error.message);
-                alert('Erro ao carregar parceiros.');
+                console.error('Erro ao carregar parceiros:', error);
+                showToast(`Erro ao carregar parceiros: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        function renderParceirosTable(parceiros) {
-            const tableBody = document.getElementById('parceirosTableBody');
-            tableBody.innerHTML = '';
-            parceiros.forEach(parceiro => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${parceiro.nome_completo || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${parceiro.email || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${parceiro.cpf_cnpj || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${parceiro.telefone || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(parceiro.status)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${parceiro.tipo_parceiro === 'pessoa_fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(parceiro.created_at)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="openEditParceiroModal('${parceiro.id}')" class="text-indigo-600 hover:text-indigo-900 mr-2"><i class="fas fa-edit"></i></button>
-                        <button onclick="toggleParceiroStatus('${parceiro.id}', '${parceiro.status === 'ativo' ? 'inativo' : 'ativo'}')" class="text-red-600 hover:text-red-900">
-                            <i class="fas ${parceiro.status === 'ativo' ? 'fa-ban' : 'fa-check-circle'}"></i>
-                        </button>
-                    </td>
-                `;
+        function attachParceiroEventListeners() {
+            document.querySelectorAll('.edit-parceiro-btn').forEach(button => {
+                button.onclick = (e) => openEditParceiroModal(e.currentTarget.dataset.id);
+            });
+            document.querySelectorAll('.deactivate-parceiro-btn').forEach(button => {
+                button.onclick = (e) => toggleParceiroStatus(e.currentTarget.dataset.id, e.currentTarget.dataset.status);
             });
         }
 
-        async function openEditParceiroModal(parceiroId) {
-            showLoading();
-            try {
+        async function openEditParceiroModal(parceiroId = null) {
+            let parceiro = {};
+            let title = 'Adicionar Novo Parceiro';
+            if (parceiroId) {
+                showLoading('Carregando dados do parceiro...');
                 const { data, error } = await supabase.from('parceiros').select('*').eq('id', parceiroId).single();
-                if (error) throw error;
-
-                document.getElementById('editParceiroId').value = data.id;
-                document.getElementById('editParceiroNome').value = data.nome_completo;
-                document.getElementById('editParceiroEmail').value = data.email;
-                document.getElementById('editParceiroCpfCnpj').value = data.cpf_cnpj;
-                document.getElementById('editParceiroTelefone').value = data.telefone;
-                document.getElementById('editParceiroStatus').value = data.status;
-                document.getElementById('editParceiroTipo').value = data.tipo_parceiro;
-
-                openModal('editParceiroModal');
-            } catch (error) {
-                console.error('Erro ao carregar dados do parceiro:', error.message);
-                alert('Erro ao carregar dados do parceiro.');
-            } finally {
                 hideLoading();
+                if (error) {
+                    showToast(`Erro ao carregar parceiro: ${error.message}`, 'error');
+                    return;
+                }
+                parceiro = data;
+                title = 'Editar Parceiro';
             }
-        }
 
-        document.getElementById('editParceiroForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            try {
-                const id = document.getElementById('editParceiroId').value;
-                const updates = {
-                    nome_completo: document.getElementById('editParceiroNome').value,
-                    email: document.getElementById('editParceiroEmail').value,
-                    cpf_cnpj: document.getElementById('editParceiroCpfCnpj').value,
-                    telefone: document.getElementById('editParceiroTelefone').value,
-                    status: document.getElementById('editParceiroStatus').value,
-                    tipo_parceiro: document.getElementById('editParceiroTipo').value,
-                    updated_at: new Date().toISOString()
+            const bodyHtml = `
+                <form id="parceiro-form">
+                    <input type="hidden" id="parceiro-id" value="${parceiro.id || ''}">
+                    <div class="mb-4">
+                        <label for="nome_completo" class="block text-gray-700 text-sm font-bold mb-2">Nome Completo:</label>
+                        <input type="text" id="nome_completo" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${parceiro.nome_completo || ''}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                        <input type="email" id="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${parceiro.email || ''}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="cpf_cnpj" class="block text-gray-700 text-sm font-bold mb-2">CPF/CNPJ:</label>
+                        <input type="text" id="cpf_cnpj" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${parceiro.cpf_cnpj || ''}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="telefone" class="block text-gray-700 text-sm font-bold mb-2">Telefone:</label>
+                        <input type="text" id="telefone" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${parceiro.telefone || ''}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="tipo_parceiro" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Parceiro:</label>
+                        <select id="tipo_parceiro" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="parceiro" ${parceiro.tipo_parceiro === 'parceiro' ? 'selected' : ''}>Parceiro</option>
+                            <option value="igreja" ${parceiro.tipo_parceiro === 'igreja' ? 'selected' : ''}>Igreja</option>
+                            <option value="admin" ${parceiro.tipo_parceiro === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                        <select id="status" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="ativo" ${parceiro.status === 'ativo' ? 'selected' : ''}>Ativo</option>
+                            <option value="pendente" ${parceiro.status === 'pendente' ? 'selected' : ''}>Pendente</option>
+                            <option value="inativo" ${parceiro.status === 'inativo' ? 'selected' : ''}>Inativo</option>
+                        </select>
+                    </div>
+                </form>
+            `;
+            openModal(title, bodyHtml, async () => {
+                const id = document.getElementById('parceiro-id').value;
+                const newParceiroData = {
+                    nome_completo: document.getElementById('nome_completo').value,
+                    email: document.getElementById('email').value,
+                    cpf_cnpj: document.getElementById('cpf_cnpj').value,
+                    telefone: document.getElementById('telefone').value,
+                    tipo_parceiro: document.getElementById('tipo_parceiro').value,
+                    status: document.getElementById('status').value,
                 };
 
-                const { error } = await supabase.from('parceiros').update(updates).eq('id', id);
-                if (error) throw error;
-
-                alert('Parceiro atualizado com sucesso!');
-                closeModal('editParceiroModal');
-                loadParceiros();
-            } catch (error) {
-                console.error('Erro ao salvar parceiro:', error.message);
-                alert('Erro ao salvar parceiro.');
-            } finally {
-                hideLoading();
-            }
-        });
-
-        async function toggleParceiroStatus(parceiroId, newStatus) {
-            if (!confirm(`Tem certeza que deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este parceiro?`)) return;
-            showLoading();
-            try {
-                const { error } = await supabase.from('parceiros').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', parceiroId);
-                if (error) throw error;
-                alert(`Parceiro ${newStatus === 'ativo' ? 'ativado' : 'desativado'} com sucesso!`);
-                loadParceiros();
-            } catch (error) {
-                console.error('Erro ao alterar status do parceiro:', error.message);
-                alert('Erro ao alterar status do parceiro.');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function exportParceirosToCSV() {
-            const table = document.getElementById('parceirosTableBody');
-            let csv = 'Nome Completo,Email,CPF/CNPJ,Telefone,Status,Tipo,Data Cadastro\n';
-            for (let i = 0; i < table.rows.length; i++) {
-                const row = table.rows[i];
-                const rowData = [];
-                for (let j = 0; j < row.cells.length - 1; j++) { // Exclude actions column
-                    rowData.push(row.cells[j].textContent.trim().replace(/,/g, ''));
+                showLoading(id ? 'Atualizando parceiro...' : 'Adicionando parceiro...');
+                try {
+                    let error;
+                    if (id) {
+                        ({ error } = await supabase.from('parceiros').update(newParceiroData).eq('id', id));
+                    } else {
+                        ({ error } = await supabase.from('parceiros').insert([newParceiroData]));
+                    }
+                    if (error) throw error;
+                    showToast(`Parceiro ${id ? 'atualizado' : 'adicionado'} com sucesso!`, 'success');
+                    closeModal();
+                    fetchParceiros();
+                } catch (err) {
+                    console.error('Erro ao salvar parceiro:', err);
+                    showToast(`Erro ao salvar parceiro: ${err.message}`, 'error');
+                } finally {
+                    hideLoading();
                 }
-                csv += rowData.join(',') + '\n';
-            }
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'parceiros.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            });
         }
 
-        // --- Gerenciar Igrejas Functions ---
-        async function loadIgrejas() {
-            showLoading();
+        async function toggleParceiroStatus(parceiroId, currentStatus) {
+            const newStatus = currentStatus === 'ativo' ? 'inativo' : 'ativo';
+            if (!confirm(`Tem certeza que deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este parceiro?`)) return;
+
+            showLoading('Atualizando status do parceiro...');
             try {
-                const statusFilter = document.getElementById('igrejaStatusFilter').value;
+                const { error } = await supabase.from('parceiros').update({ status: newStatus }).eq('id', parceiroId);
+                if (error) throw error;
+                showToast(`Status do parceiro atualizado para ${newStatus}.`, 'success');
+                fetchParceiros();
+            } catch (error) {
+                console.error('Erro ao atualizar status do parceiro:', error);
+                showToast(`Erro ao atualizar status: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
 
-                let query = supabase.from('parceiros').select('*').eq('tipo_parceiro', 'igreja');
+        async function exportParceirosCSV() {
+            showLoading('Exportando parceiros...');
+            try {
+                const { data, error } = await supabase.from('parceiros').select('*');
+                if (error) throw error;
 
-                if (statusFilter !== 'todos') {
-                    query = query.eq('status', statusFilter);
+                if (data.length === 0) {
+                    showToast('Nenhum parceiro para exportar.', 'info');
+                    return;
+                }
+
+                const headers = Object.keys(data[0]);
+                const csv = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'parceiros.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast('Parceiros exportados com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao exportar parceiros:', error);
+                showToast(`Erro ao exportar parceiros: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Igrejas Functions ---
+        async function fetchIgrejas() {
+            showLoading('Carregando igrejas...');
+            try {
+                let query = supabase.from('igrejas').select('*');
+
+                const search = document.getElementById('igreja-search').value.toLowerCase();
+                const status = document.getElementById('igreja-filter-status').value;
+
+                if (search) {
+                    query = query.or(`nome_igreja.ilike.%${search}%,email.ilike.%${search}%`);
+                }
+                if (status) {
+                    query = query.eq('status', status);
                 }
 
                 const { data, error } = await query.order('created_at', { ascending: false });
                 if (error) throw error;
 
-                renderIgrejasTable(data);
+                const tableBody = document.getElementById('igrejas-table-body');
+                tableBody.innerHTML = '';
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="py-4 px-4 text-center text-gray-500">Nenhuma igreja encontrada.</td></tr>';
+                    return;
+                }
+
+                data.forEach(igreja => {
+                    const row = `
+                        <tr>
+                            <td class="py-2 px-4 border-b">${igreja.id.substring(0, 8)}...</td>
+                            <td class="py-2 px-4 border-b">${igreja.nome_igreja}</td>
+                            <td class="py-2 px-4 border-b">${igreja.email}</td>
+                            <td class="py-2 px-4 border-b">
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold badge-${igreja.status}">${igreja.status}</span>
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded-md text-sm mr-2 edit-igreja-btn" data-id="${igreja.id}"><i class="fas fa-edit"></i></button>
+                                <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md text-sm deactivate-igreja-btn" data-id="${igreja.id}" data-status="${igreja.status}"><i class="fas fa-power-off"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+
+                attachIgrejaEventListeners();
             } catch (error) {
-                console.error('Erro ao carregar igrejas:', error.message);
-                alert('Erro ao carregar igrejas.');
+                console.error('Erro ao carregar igrejas:', error);
+                showToast(`Erro ao carregar igrejas: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        function renderIgrejasTable(igrejas) {
-            const tableBody = document.getElementById('igrejasTableBody');
-            tableBody.innerHTML = '';
-            igrejas.forEach(igreja => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${igreja.nome_completo || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${igreja.nome_igreja || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${igreja.email || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${igreja.telefone || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(igreja.status)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(igreja.created_at)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="openEditIgrejaModal('${igreja.id}')" class="text-indigo-600 hover:text-indigo-900 mr-2"><i class="fas fa-edit"></i></button>
-                        <button onclick="toggleIgrejaStatus('${igreja.id}', '${igreja.status === 'ativo' ? 'inativo' : 'ativo'}')" class="text-red-600 hover:text-red-900">
-                            <i class="fas ${igreja.status === 'ativo' ? 'fa-ban' : 'fa-check-circle'}"></i>
-                        </button>
-                    </td>
-                `;
+        function attachIgrejaEventListeners() {
+            document.querySelectorAll('.edit-igreja-btn').forEach(button => {
+                button.onclick = (e) => openEditIgrejaModal(e.currentTarget.dataset.id);
+            });
+            document.querySelectorAll('.deactivate-igreja-btn').forEach(button => {
+                button.onclick = (e) => toggleIgrejaStatus(e.currentTarget.dataset.id, e.currentTarget.dataset.status);
             });
         }
 
-        async function openEditIgrejaModal(igrejaId) {
-            showLoading();
-            try {
-                const { data, error } = await supabase.from('parceiros').select('*').eq('id', igrejaId).single();
-                if (error) throw error;
-
-                document.getElementById('editIgrejaId').value = data.id;
-                document.getElementById('editIgrejaNomeResponsavel').value = data.nome_completo;
-                document.getElementById('editIgrejaNomeIgreja').value = data.nome_igreja;
-                document.getElementById('editIgrejaEmail').value = data.email;
-                document.getElementById('editIgrejaTelefone').value = data.telefone;
-                document.getElementById('editIgrejaStatus').value = data.status;
-
-                openModal('editIgrejaModal');
-            } catch (error) {
-                console.error('Erro ao carregar dados da igreja:', error.message);
-                alert('Erro ao carregar dados da igreja.');
-            } finally {
+        async function openEditIgrejaModal(igrejaId = null) {
+            let igreja = {};
+            let title = 'Adicionar Nova Igreja';
+            if (igrejaId) {
+                showLoading('Carregando dados da igreja...');
+                const { data, error } = await supabase.from('igrejas').select('*').eq('id', igrejaId).single();
                 hideLoading();
+                if (error) {
+                    showToast(`Erro ao carregar igreja: ${error.message}`, 'error');
+                    return;
+                }
+                igreja = data;
+                title = 'Editar Igreja';
             }
-        }
 
-        document.getElementById('editIgrejaForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            try {
-                const id = document.getElementById('editIgrejaId').value;
-                const updates = {
-                    nome_completo: document.getElementById('editIgrejaNomeResponsavel').value,
-                    nome_igreja: document.getElementById('editIgrejaNomeIgreja').value,
-                    email: document.getElementById('editIgrejaEmail').value,
-                    telefone: document.getElementById('editIgrejaTelefone').value,
-                    status: document.getElementById('editIgrejaStatus').value,
-                    updated_at: new Date().toISOString()
+            const bodyHtml = `
+                <form id="igreja-form">
+                    <input type="hidden" id="igreja-id" value="${igreja.id || ''}">
+                    <div class="mb-4">
+                        <label for="nome_igreja" class="block text-gray-700 text-sm font-bold mb-2">Nome da Igreja:</label>
+                        <input type="text" id="nome_igreja" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${igreja.nome_igreja || ''}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email_igreja" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                        <input type="email" id="email_igreja" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${igreja.email || ''}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="cnpj_igreja" class="block text-gray-700 text-sm font-bold mb-2">CNPJ:</label>
+                        <input type="text" id="cnpj_igreja" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${igreja.cnpj || ''}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="telefone_igreja" class="block text-gray-700 text-sm font-bold mb-2">Telefone:</label>
+                        <input type="text" id="telefone_igreja" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${igreja.telefone || ''}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="endereco_igreja" class="block text-gray-700 text-sm font-bold mb-2">Endereço:</label>
+                        <input type="text" id="endereco_igreja" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${igreja.endereco || ''}">
+                    </div>
+                    <div class="mb-4">
+                        <label for="status_igreja" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                        <select id="status_igreja" class="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="ativo" ${igreja.status === 'ativo' ? 'selected' : ''}>Ativo</option>
+                            <option value="pendente" ${igreja.status === 'pendente' ? 'selected' : ''}>Pendente</option>
+                            <option value="inativo" ${igreja.status === 'inativo' ? 'selected' : ''}>Inativo</option>
+                        </select>
+                    </div>
+                </form>
+            `;
+            openModal(title, bodyHtml, async () => {
+                const id = document.getElementById('igreja-id').value;
+                const newIgrejaData = {
+                    nome_igreja: document.getElementById('nome_igreja').value,
+                    email: document.getElementById('email_igreja').value,
+                    cnpj: document.getElementById('cnpj_igreja').value,
+                    telefone: document.getElementById('telefone_igreja').value,
+                    endereco: document.getElementById('endereco_igreja').value,
+                    status: document.getElementById('status_igreja').value,
                 };
 
-                const { error } = await supabase.from('parceiros').update(updates).eq('id', id);
-                if (error) throw error;
-
-                alert('Igreja atualizada com sucesso!');
-                closeModal('editIgrejaModal');
-                loadIgrejas();
-            } catch (error) {
-                console.error('Erro ao salvar igreja:', error.message);
-                alert('Erro ao salvar igreja.');
-            } finally {
-                hideLoading();
-            }
-        });
-
-        async function toggleIgrejaStatus(igrejaId, newStatus) {
-            if (!confirm(`Tem certeza que deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} esta igreja?`)) return;
-            showLoading();
-            try {
-                const { error } = await supabase.from('parceiros').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', igrejaId);
-                if (error) throw error;
-                alert(`Igreja ${newStatus === 'ativo' ? 'ativada' : 'desativada'} com sucesso!`);
-                loadIgrejas();
-            } catch (error) {
-                console.error('Erro ao alterar status da igreja:', error.message);
-                alert('Erro ao alterar status da igreja.');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function exportIgrejasToCSV() {
-            const table = document.getElementById('igrejasTableBody');
-            let csv = 'Nome Responsável,Nome Igreja,Email,Telefone,Status,Data Cadastro\n';
-            for (let i = 0; i < table.rows.length; i++) {
-                const row = table.rows[i];
-                const rowData = [];
-                for (let j = 0; j < row.cells.length - 1; j++) { // Exclude actions column
-                    rowData.push(row.cells[j].textContent.trim().replace(/,/g, ''));
+                showLoading(id ? 'Atualizando igreja...' : 'Adicionando igreja...');
+                try {
+                    let error;
+                    if (id) {
+                        ({ error } = await supabase.from('igrejas').update(newIgrejaData).eq('id', id));
+                    } else {
+                        ({ error } = await supabase.from('igrejas').insert([newIgrejaData]));
+                    }
+                    if (error) throw error;
+                    showToast(`Igreja ${id ? 'atualizada' : 'adicionada'} com sucesso!`, 'success');
+                    closeModal();
+                    fetchIgrejas();
+                } catch (err) {
+                    console.error('Erro ao salvar igreja:', err);
+                    showToast(`Erro ao salvar igreja: ${err.message}`, 'error');
+                } finally {
+                    hideLoading();
                 }
-                csv += rowData.join(',') + '\n';
-            }
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'igrejas.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            });
         }
 
-        // --- Gerenciar Produtos Functions ---
-        async function loadProdutos() {
-            showLoading();
+        async function toggleIgrejaStatus(igrejaId, currentStatus) {
+            const newStatus = currentStatus === 'ativo' ? 'inativo' : 'ativo';
+            if (!confirm(`Tem certeza que deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} esta igreja?`)) return;
+
+            showLoading('Atualizando status da igreja...');
+            try {
+                const { error } = await supabase.from('igrejas').update({ status: newStatus }).eq('id', igrejaId);
+                if (error) throw error;
+                showToast(`Status da igreja atualizado para ${newStatus}.`, 'success');
+                fetchIgrejas();
+            } catch (error) {
+                console.error('Erro ao atualizar status da igreja:', error);
+                showToast(`Erro ao atualizar status: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function exportIgrejasCSV() {
+            showLoading('Exportando igrejas...');
+            try {
+                const { data, error } = await supabase.from('igrejas').select('*');
+                if (error) throw error;
+
+                if (data.length === 0) {
+                    showToast('Nenhuma igreja para exportar.', 'info');
+                    return;
+                }
+
+                const headers = Object.keys(data[0]);
+                const csv = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'igrejas.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast('Igrejas exportadas com sucesso!', 'success');
+            } catch (error) {
+                console.error('Erro ao exportar igrejas:', error);
+                showToast(`Erro ao exportar igrejas: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Produtos Functions ---
+        async function fetchProdutos() {
+            showLoading('Carregando produtos...');
             try {
                 const { data, error } = await supabase.from('produtos').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
-                renderProdutosTable(data);
+
+                const tableBody = document.getElementById('produtos-table-body');
+                tableBody.innerHTML = '';
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="py-4 px-4 text-center text-gray-500">Nenhum produto encontrado.</td></tr>';
+                    return;
+                }
+
+                data.forEach(produto => {
+                    const row = `
+                        <tr>
+                            <td class="py-2 px-4 border-b">${produto.id.substring(0, 8)}...</td>
+                            <td class="py-2 px-4 border-b">${produto.nome}</td>
+                            <td class="py-2 px-4 border-b">R$ ${produto.preco.toFixed(2).replace('.', ',')}</td>
+                            <td class="py-2 px-4 border-b">${produto.categoria}</td>
+                            <td class="py-2 px-4 border-b">${produto.disponivel_para.join(', ')}</td>
+                            <td class="py-2 px-4 border-b">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded-md text-sm mr-2 edit-produto-btn" data-id="${produto.id}"><i class="fas fa-edit"></i></button>
+                                <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md text-sm delete-produto-btn" data-id="${produto.id}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+
+                attachProdutoEventListeners();
             } catch (error) {
-                console.error('Erro ao carregar produtos:', error.message);
-                alert('Erro ao carregar produtos.');
+                console.error('Erro ao carregar produtos:', error);
+                showToast(`Erro ao carregar produtos: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        function renderProdutosTable(produtos) {
-            const tableBody = document.getElementById('produtosTableBody');
-            tableBody.innerHTML = '';
-            produtos.forEach(produto => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${produto.nome || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(produto.preco)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${produto.categoria || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${produto.disponivel_para ? produto.disponivel_para.join(', ') : 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(produto.status)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="openEditProdutoModal('${produto.id}')" class="text-indigo-600 hover:text-indigo-900 mr-2"><i class="fas fa-edit"></i></button>
-                        <button onclick="toggleProdutoStatus('${produto.id}', '${produto.status === 'ativo' ? 'inativo' : 'ativo'}')" class="text-red-600 hover:text-red-900">
-                            <i class="fas ${produto.status === 'ativo' ? 'fa-ban' : 'fa-check-circle'}"></i>
-                        </button>
-                    </td>
-                `;
+        function attachProdutoEventListeners() {
+            document.querySelectorAll('.edit-produto-btn').forEach(button => {
+                button.onclick = (e) => openEditProdutoModal(e.currentTarget.dataset.id);
+            });
+            document.querySelectorAll('.delete-produto-btn').forEach(button => {
+                button.onclick = (e) => deleteProduto(e.currentTarget.dataset.id);
             });
         }
 
-        function openAddProdutoModal() {
-            document.getElementById('produtoModalTitle').textContent = 'Adicionar Novo Produto';
-            document.getElementById('produtoForm').reset();
-            document.getElementById('produtoId').value = '';
-            openModal('produtoModal');
-        }
-
-        async function openEditProdutoModal(produtoId) {
-            showLoading();
-            try {
+        async function openEditProdutoModal(produtoId = null) {
+            let produto = {};
+            let title = 'Adicionar Novo Produto';
+            if (produtoId) {
+                showLoading('Carregando dados do produto...');
                 const { data, error } = await supabase.from('produtos').select('*').eq('id', produtoId).single();
-                if (error) throw error;
-
-                document.getElementById('produtoModalTitle').textContent = 'Editar Produto';
-                document.getElementById('produtoId').value = data.id;
-                document.getElementById('produtoNome').value = data.nome;
-                document.getElementById('produtoDescricao').value = data.descricao;
-                document.getElementById('produtoPreco').value = data.preco;
-                document.getElementById('produtoComissao').value = data.comissao_percentual;
-                document.getElementById('produtoCategoria').value = data.categoria;
-                document.getElementById('disponivelParceiros').checked = data.disponivel_para && data.disponivel_para.includes('parceiros');
-                document.getElementById('disponivelIgrejas').checked = data.disponivel_para && data.disponivel_para.includes('igrejas');
-                document.getElementById('produtoImagemUrl').value = data.imagem_url;
-                document.getElementById('produtoLinkCheckout').value = data.link_checkout;
-                document.getElementById('produtoStatus').value = data.status;
-
-                openModal('produtoModal');
-            } catch (error) {
-                console.error('Erro ao carregar dados do produto:', error.message);
-                alert('Erro ao carregar dados do produto.');
-            } finally {
                 hideLoading();
+                if (error) {
+                    showToast(`Erro ao carregar produto: ${error.message}`, 'error');
+                    return;
+                }
+                produto = data;
+                title = 'Editar Produto';
             }
-        }
 
-        document.getElementById('produtoForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            try {
-                const id = document.getElementById('produtoId').value;
+            const bodyHtml = `
+                <form id="produto-form">
+                    <input type="hidden" id="produto-id" value="${produto.id || ''}">
+                    <div class="mb-4">
+                        <label for="nome_produto" class="block text-gray-700 text-sm font-bold mb-2">Nome do Produto:</label>
+                        <input type="text" id="nome_produto" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${produto.nome || ''}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="descricao_produto" class="block text-gray-700 text-sm font-bold mb-2">Descrição:</label>
+                        <textarea id="descricao_produto" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">${produto.descricao || ''}</textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="preco_produto" class="block text-gray-700 text-sm font-bold mb-2">Preço:</label>
+                        <input type="number" step="0.01" id="preco_produto" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${produto.preco || ''}" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="categoria_produto" class="block text-gray-700 text-sm font-bold mb-2">Categoria:</label>
+                        <input type="text" id="categoria_produto" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="${produto.categoria || ''}">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Disponível Para:</label>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="disponivel_parceiros" value="parceiros" class="mr-2" ${produto.disponivel_para && produto.disponivel_para.includes('parceiros') ? 'checked' : ''}>
+                            <label for="disponivel_parceiros" class="mr-4">Parceiros</label>
+                            <input type="checkbox" id="disponivel_igrejas" value="igrejas" class="mr-2" ${produto.disponivel_para && produto.disponivel_para.includes('igrejas') ? 'checked' : ''}>
+                            <label for="disponivel_igrejas">Igrejas</label>
+                        </div>
+                    </div>
+                </form>
+            `;
+            openModal(title, bodyHtml, async () => {
+                const id = document.getElementById('produto-id').value;
                 const disponivelPara = [];
-                if (document.getElementById('disponivelParceiros').checked) disponivelPara.push('parceiros');
-                if (document.getElementById('disponivelIgrejas').checked) disponivelPara.push('igrejas');
+                if (document.getElementById('disponivel_parceiros').checked) disponivelPara.push('parceiros');
+                if (document.getElementById('disponivel_igrejas').checked) disponivelPara.push('igrejas');
 
-                const productData = {
-                    nome: document.getElementById('produtoNome').value,
-                    descricao: document.getElementById('produtoDescricao').value,
-                    preco: parseFloat(document.getElementById('produtoPreco').value),
-                    comissao_percentual: parseFloat(document.getElementById('produtoComissao').value),
-                    categoria: document.getElementById('produtoCategoria').value,
+                const newProdutoData = {
+                    nome: document.getElementById('nome_produto').value,
+                    descricao: document.getElementById('descricao_produto').value,
+                    preco: parseFloat(document.getElementById('preco_produto').value),
+                    categoria: document.getElementById('categoria_produto').value,
                     disponivel_para: disponivelPara,
-                    imagem_url: document.getElementById('produtoImagemUrl').value,
-                    link_checkout: document.getElementById('produtoLinkCheckout').value,
-                    status: document.getElementById('produtoStatus').value,
-                    updated_at: new Date().toISOString()
                 };
 
-                let error;
-                if (id) {
-                    ({ error } = await supabase.from('produtos').update(productData).eq('id', id));
-                } else {
-                    ({ error } = await supabase.from('produtos').insert(productData));
+                showLoading(id ? 'Atualizando produto...' : 'Adicionando produto...');
+                try {
+                    let error;
+                    if (id) {
+                        ({ error } = await supabase.from('produtos').update(newProdutoData).eq('id', id));
+                    } else {
+                        ({ error } = await supabase.from('produtos').insert([newProdutoData]));
+                    }
+                    if (error) throw error;
+                    showToast(`Produto ${id ? 'atualizado' : 'adicionado'} com sucesso!`, 'success');
+                    closeModal();
+                    fetchProdutos();
+                } catch (err) {
+                    console.error('Erro ao salvar produto:', err);
+                    showToast(`Erro ao salvar produto: ${err.message}`, 'error');
+                } finally {
+                    hideLoading();
                 }
+            });
+        }
 
-                if (error) throw error;
+        async function deleteProduto(produtoId) {
+            if (!confirm('Tem certeza que deseja excluir este produto?')) return;
 
-                alert('Produto salvo com sucesso!');
-                closeModal('produtoModal');
-                loadProdutos();
-            } catch (error) {
-                console.error('Erro ao salvar produto:', error.message);
-                alert('Erro ao salvar produto.');
-            } finally {
-                hideLoading();
-            }
-        });
-
-        async function toggleProdutoStatus(produtoId, newStatus) {
-            if (!confirm(`Tem certeza que deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este produto?`)) return;
-            showLoading();
+            showLoading('Excluindo produto...');
             try {
-                const { error } = await supabase.from('produtos').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', produtoId);
+                const { error } = await supabase.from('produtos').delete().eq('id', produtoId);
                 if (error) throw error;
-                alert(`Produto ${newStatus === 'ativo' ? 'ativado' : 'desativado'} com sucesso!`);
-                loadProdutos();
+                showToast('Produto excluído com sucesso!', 'success');
+                fetchProdutos();
             } catch (error) {
-                console.error('Erro ao alterar status do produto:', error.message);
-                alert('Erro ao alterar status do produto.');
+                console.error('Erro ao excluir produto:', error);
+                showToast(`Erro ao excluir produto: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
         // --- Vendas Functions ---
-        async function loadVendas() {
-            showLoading();
+        async function fetchVendas() {
+            showLoading('Carregando vendas...');
             try {
-                const startDate = document.getElementById('vendaStartDate').value;
-                const endDate = document.getElementById('vendaEndDate').value;
-                const statusFilter = document.getElementById('vendaStatusFilter').value;
-                const tipoVendedorFilter = document.getElementById('vendaTipoVendedorFilter').value;
+                let query = supabase.from('vendas').select('*');
 
-                let query = supabase
-                    .from('vendas')
-                    .select(`
-                        *,
-                        produto:produtos(nome),
-                        vendedor:parceiros(nome_completo, tipo_parceiro)
-                    `);
+                const startDate = document.getElementById('venda-filter-start-date').value;
+                const endDate = document.getElementById('venda-filter-end-date').value;
+                const status = document.getElementById('venda-filter-status').value;
+                const sellerType = document.getElementById('venda-filter-seller-type').value;
 
                 if (startDate) query = query.gte('data_venda', startDate);
-                if (endDate) query = query.lte('data_venda', endDate);
-                if (statusFilter !== 'todos') query = query.eq('status', statusFilter);
-                // Filtering by vendedor type would require a join or a more complex query if 'vendedor_id' is not directly linked to 'parceiros.tipo_parceiro'
-                // For simplicity, we'll filter after fetching if needed, or assume 'vendedor_id' links to 'parceiros' table.
+                if (endDate) query = query.lte('data_venda', endDate + 'T23:59:59'); // Include end of day
+                if (status) query = query.eq('status', status);
+                // Seller type filtering would require joining with parceiros/igrejas table or having seller_type in vendas table
 
                 const { data, error } = await query.order('data_venda', { ascending: false });
                 if (error) throw error;
 
-                const filteredData = data.filter(venda => {
-                    if (tipoVendedorFilter === 'todos') return true;
-                    return venda.vendedor?.tipo_parceiro === tipoVendedorFilter;
-                });
-
-                renderVendasTable(filteredData);
-            } catch (error) {
-                console.error('Erro ao carregar vendas:', error.message);
-                alert('Erro ao carregar vendas.');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function renderVendasTable(vendas) {
-            const tableBody = document.getElementById('vendasTableBody');
-            tableBody.innerHTML = '';
-            vendas.forEach(venda => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${venda.produto?.nome || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${venda.vendedor?.nome_completo || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${venda.vendedor?.tipo_parceiro || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(venda.valor_total)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(venda.comissao)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(venda.status)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(venda.data_venda)}</td>
-                `;
-            });
-        }
-
-        function exportVendasReport() {
-            const table = document.getElementById('vendasTableBody');
-            let csv = 'Produto,Vendedor,Tipo Vendedor,Valor Total,Comissão,Status,Data Venda\n';
-            for (let i = 0; i < table.rows.length; i++) {
-                const row = table.rows[i];
-                const rowData = [];
-                for (let j = 0; j < row.cells.length; j++) {
-                    rowData.push(row.cells[j].textContent.trim().replace(/,/g, ''));
-                }
-                csv += rowData.join(',') + '\n';
-            }
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'relatorio_vendas.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // --- Aprovar Saques Functions ---
-        async function loadSaques(statusFilter) {
-            showLoading();
-            try {
-                document.querySelectorAll('#saques .tab-button').forEach(btn => {
-                    if (btn.dataset.saqueStatus === statusFilter) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-
-                const { data, error } = await supabase
-                    .from('saques')
-                    .select(`
-                        *,
-                        parceiro:parceiros(nome_completo)
-                    `)
-                    .eq('status', statusFilter)
-                    .order('data_solicitacao', { ascending: false });
-
-                if (error) throw error;
-                renderSaquesTable(data, statusFilter);
-            } catch (error) {
-                console.error('Erro ao carregar saques:', error.message);
-                alert('Erro ao carregar saques.');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function renderSaquesTable(saques, currentStatusFilter) {
-            const tableBody = document.getElementById('saquesTableBody');
-            tableBody.innerHTML = '';
-            saques.forEach(saque => {
-                const row = tableBody.insertRow();
-                let actionsHtml = '';
-                if (currentStatusFilter === 'pendente') {
-                    actionsHtml = `
-                        <button onclick="approveSaque('${saque.id}')" class="text-green-600 hover:text-green-900 mr-2"><i class="fas fa-check-circle"></i> Aprovar</button>
-                        <button onclick="rejectSaque('${saque.id}')" class="text-red-600 hover:text-red-900"><i class="fas fa-times-circle"></i> Rejeitar</button>
-                    `;
-                } else if (currentStatusFilter === 'aprovado') {
-                    actionsHtml = `
-                        <button onclick="markSaqueAsPaid('${saque.id}')" class="text-blue-600 hover:text-blue-900"><i class="fas fa-money-check-alt"></i> Marcar como Pago</button>
-                    `;
-                }
-                
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${saque.parceiro?.nome_completo || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatCurrency(saque.valor)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${saque.banco || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${saque.agencia || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${saque.conta || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${saque.pix || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(saque.status)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(saque.data_solicitacao)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="openSaqueDetailModal('${saque.id}')" class="text-purple-600 hover:text-purple-900 mr-2"><i class="fas fa-info-circle"></i> Detalhes</button>
-                        ${actionsHtml}
-                    </td>
-                `;
-            });
-        }
-
-        async function openSaqueDetailModal(saqueId) {
-            showLoading();
-            try {
-                const { data, error } = await supabase
-                    .from('saques')
-                    .select(`
-                        *,
-                        parceiro:parceiros(nome_completo, email, cpf_cnpj, telefone)
-                    `)
-                    .eq('id', saqueId)
-                    .single();
-                if (error) throw error;
-
-                const detailsDiv = document.getElementById('saqueDetails');
-                detailsDiv.innerHTML = `
-                    <p><strong>Parceiro:</strong> ${data.parceiro?.nome_completo || 'N/A'}</p>
-                    <p><strong>Email Parceiro:</strong> ${data.parceiro?.email || 'N/A'}</p>
-                    <p><strong>CPF/CNPJ Parceiro:</strong> ${data.parceiro?.cpf_cnpj || 'N/A'}</p>
-                    <p><strong>Telefone Parceiro:</strong> ${data.parceiro?.telefone || 'N/A'}</p>
-                    <p><strong>Valor:</strong> ${formatCurrency(data.valor)}</p>
-                    <p><strong>Banco:</strong> ${data.banco || 'N/A'}</p>
-                    <p><strong>Agência:</strong> ${data.agencia || 'N/A'}</p>
-                    <p><strong>Conta:</strong> ${data.conta || 'N/A'}</p>
-                    <p><strong>Tipo Conta:</strong> ${data.tipo_conta || 'N/A'}</p>
-                    <p><strong>PIX:</strong> ${data.pix || 'N/A'}</p>
-                    <p><strong>Status:</strong> ${getStatusBadge(data.status)}</p>
-                    <p><strong>Data Solicitação:</strong> ${formatDate(data.data_solicitacao)}</p>
-                    <p><strong>Data Aprovação/Rejeição:</strong> ${data.data_processamento ? formatDate(data.data_processamento) : 'N/A'}</p>
-                    <p><strong>Observações:</strong> ${data.observacoes || 'N/A'}</p>
-                `;
-                openModal('saqueDetailModal');
-            } catch (error) {
-                console.error('Erro ao carregar detalhes do saque:', error.message);
-                alert('Erro ao carregar detalhes do saque.');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function updateSaqueStatus(saqueId, newStatus) {
-            if (!confirm(`Confirmar alteração de status para "${newStatus}"?`)) return;
-            showLoading();
-            try {
-                const { error } = await supabase.from('saques').update({ status: newStatus, data_processamento: new Date().toISOString() }).eq('id', saqueId);
-                if (error) throw error;
-                alert(`Saque ${newStatus} com sucesso!`);
-                loadSaques(newStatus); // Reload current tab
-            } catch (error) {
-                console.error(`Erro ao ${newStatus} saque:`, error.message);
-                alert(`Erro ao ${newStatus} saque.`);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function approveSaque(saqueId) { updateSaqueStatus(saqueId, 'aprovado'); }
-        function rejectSaque(saqueId) { updateSaqueStatus(saqueId, 'rejeitado'); }
-        function markSaqueAsPaid(saqueId) { updateSaqueStatus(saqueId, 'pago'); }
-
-        // --- Upload de Arquivos Functions ---
-        async function handleFileUpload() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert('Por favor, selecione um arquivo para upload.');
-                return;
-            }
-
-            showLoading();
-            const uploadStatus = document.getElementById('uploadStatus');
-            uploadStatus.textContent = 'Fazendo upload...';
-
-            try {
-                const filePath = `${file.name}`; // You might want to add a folder structure, e.g., `uploads/${file.name}`
-                const { data, error } = await supabase.storage.from(BUCKET_NAME).upload(filePath, file);
-
-                if (error) throw error;
-
-                uploadStatus.textContent = `Upload de "${file.name}" concluído!`;
-                fileInput.value = ''; // Clear input
-                listFiles(); // Refresh file list
-            } catch (error) {
-                console.error('Erro no upload:', error.message);
-                uploadStatus.textContent = `Erro no upload: ${error.message}`;
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function listFiles() {
-            showLoading();
-            try {
-                const { data, error } = await supabase.storage.from(BUCKET_NAME).list();
-                if (error) throw error;
-
-                const tableBody = document.getElementById('fileListTableBody');
+                const tableBody = document.getElementById('vendas-table-body');
                 tableBody.innerHTML = '';
-
                 if (data.length === 0) {
-                    tableBody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Nenhum arquivo encontrado.</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="6" class="py-4 px-4 text-center text-gray-500">Nenhuma venda encontrada.</td></tr>';
                     return;
                 }
 
-                for (const file of data) {
-                    const { data: publicUrlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(file.name);
-                    const publicUrl = publicUrlData.publicUrl;
+                for (const venda of data) {
+                    let sellerName = 'N/A';
+                    if (venda.id_parceiro) {
+                        const { data: parceiro, error: pError } = await supabase.from('parceiros').select('nome_completo').eq('id', venda.id_parceiro).single();
+                        if (parceiro) sellerName = parceiro.nome_completo;
+                        if (pError && pError.code !== 'PGRST116') console.error('Error fetching parceiro for venda:', pError);
+                    } else if (venda.id_igreja) {
+                        const { data: igreja, error: iError } = await supabase.from('igrejas').select('nome_igreja').eq('id', venda.id_igreja).single();
+                        if (igreja) sellerName = igreja.nome_igreja;
+                        if (iError && iError.code !== 'PGRST116') console.error('Error fetching igreja for venda:', iError);
+                    }
 
-                    const row = tableBody.insertRow();
-                    row.innerHTML = `
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${file.name}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <a href="${publicUrl}" target="_blank" class="text-blue-600 hover:underline">${publicUrl}</a>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                            <button onclick="deleteFile('${file.name}')" class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i> Excluir</button>
-                        </td>
+                    const row = `
+                        <tr>
+                            <td class="py-2 px-4 border-b">${venda.id.substring(0, 8)}...</td>
+                            <td class="py-2 px-4 border-b">${venda.nome_produto || 'Produto Desconhecido'}</td>
+                            <td class="py-2 px-4 border-b">${sellerName}</td>
+                            <td class="py-2 px-4 border-b">R$ ${venda.valor.toFixed(2).replace('.', ',')}</td>
+                            <td class="py-2 px-4 border-b">${new Date(venda.data_venda).toLocaleDateString()}</td>
+                            <td class="py-2 px-4 border-b">
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold badge-${venda.status}">${venda.status}</span>
+                            </td>
+                        </tr>
                     `;
+                    tableBody.innerHTML += row;
                 }
             } catch (error) {
-                console.error('Erro ao listar arquivos:', error.message);
-                alert('Erro ao listar arquivos.');
+                console.error('Erro ao carregar vendas:', error);
+                showToast(`Erro ao carregar vendas: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        async function deleteFile(filePath) {
-            if (!confirm(`Tem certeza que deseja excluir o arquivo "${filePath}"?`)) return;
-            showLoading();
+        async function exportVendasCSV() {
+            showLoading('Exportando vendas...');
             try {
-                const { error } = await supabase.storage.from(BUCKET_NAME).remove([filePath]);
+                let query = supabase.from('vendas').select('*');
+                const { data, error } = await query.order('data_venda', { ascending: false });
                 if (error) throw error;
-                alert('Arquivo excluído com sucesso!');
-                listFiles();
+
+                if (data.length === 0) {
+                    showToast('Nenhuma venda para exportar.', 'info');
+                    return;
+                }
+
+                const headers = Object.keys(data[0]);
+                const csv = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'vendas.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast('Vendas exportadas com sucesso!', 'success');
             } catch (error) {
-                console.error('Erro ao excluir arquivo:', error.message);
-                alert('Erro ao excluir arquivo.');
+                console.error('Erro ao exportar vendas:', error);
+                showToast(`Erro ao exportar vendas: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Saques Functions ---
+        let currentSaqueTab = 'pendentes';
+        async function fetchSaques(statusFilter = 'pendente') {
+            showLoading(`Carregando saques ${statusFilter}...`);
+            try {
+                const { data, error } = await supabase
+                    .from('saques')
+                    .select('*, parceiros(nome_completo)')
+                    .eq('status', statusFilter)
+                    .order('data_solicitacao', { ascending: false });
+                if (error) throw error;
+
+                const tableBody = document.getElementById(`saques-${statusFilter}-table-body`);
+                tableBody.innerHTML = '';
+                if (data.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" class="py-4 px-4 text-center text-gray-500">Nenhum saque ${statusFilter} encontrado.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(saque => {
+                    let actions = '';
+                    if (statusFilter === 'pendentes') {
+                        actions = `
+                            <button class="bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded-md text-sm mr-2 approve-saque-btn" data-id="${saque.id}"><i class="fas fa-check"></i> Aprovar</button>
+                            <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md text-sm reject-saque-btn" data-id="${saque.id}"><i class="fas fa-times"></i> Rejeitar</button>
+                        `;
+                    } else if (statusFilter === 'aprovados') {
+                        actions = `
+                            <button class="bg-indigo-500 hover:bg-indigo-600 text-white py-1 px-2 rounded-md text-sm mark-paid-saque-btn" data-id="${saque.id}"><i class="fas fa-money-check-alt"></i> Marcar como Pago</button>
+                        `;
+                    }
+
+                    const row = `
+                        <tr>
+                            <td class="py-2 px-4 border-b">${saque.id.substring(0, 8)}...</td>
+                            <td class="py-2 px-4 border-b">${saque.parceiros.nome_completo}</td>
+                            <td class="py-2 px-4 border-b">R$ ${saque.valor.toFixed(2).replace('.', ',')}</td>
+                            <td class="py-2 px-4 border-b">${new Date(saque.data_solicitacao).toLocaleDateString()}</td>
+                            <td class="py-2 px-4 border-b">${actions}</td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+
+                attachSaqueEventListeners();
+            } catch (error) {
+                console.error('Erro ao carregar saques:', error);
+                showToast(`Erro ao carregar saques: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function attachSaqueEventListeners() {
+            document.querySelectorAll('.approve-saque-btn').forEach(button => {
+                button.onclick = (e) => updateSaqueStatus(e.currentTarget.dataset.id, 'aprovado');
+            });
+            document.querySelectorAll('.reject-saque-btn').forEach(button => {
+                button.onclick = (e) => updateSaqueStatus(e.currentTarget.dataset.id, 'rejeitado');
+            });
+            document.querySelectorAll('.mark-paid-saque-btn').forEach(button => {
+                button.onclick = (e) => updateSaqueStatus(e.currentTarget.dataset.id, 'pago');
+            });
+        }
+
+        async function updateSaqueStatus(saqueId, newStatus) {
+            if (!confirm(`Tem certeza que deseja ${newStatus} este saque?`)) return;
+
+            showLoading(`Atualizando saque para ${newStatus}...`);
+            try {
+                const { error } = await supabase.from('saques').update({ status: newStatus, data_atualizacao: new Date().toISOString() }).eq('id', saqueId);
+                if (error) throw error;
+                showToast(`Saque ${newStatus} com sucesso!`, 'success');
+                fetchSaques(currentSaqueTab); // Reload current tab
+            } catch (error) {
+                console.error('Erro ao atualizar saque:', error);
+                showToast(`Erro ao atualizar saque: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Upload de Arquivos Functions ---
+        const BUCKET_NAME = 'public-files'; // Configurable bucket name
+        const uploadProgressBar = document.getElementById('upload-progress-bar');
+        const uploadProgressContainer = document.getElementById('upload-progress-container');
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showToast('Selecione um arquivo para upload.', 'info');
+                return;
+            }
+
+            showLoading('Iniciando upload...');
+            uploadProgressContainer.classList.remove('hidden');
+            uploadProgressBar.style.width = '0%';
+
+            try {
+                const filePath = `${Date.now()}-${file.name}`;
+                const { data, error } = await supabase.storage
+                    .from(BUCKET_NAME)
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        // onUploadProgress is not directly supported by supabase-js v2 upload method
+                        // For progress, you'd typically use a custom XHR or a different library
+                    });
+
+                if (error) throw error;
+
+                uploadProgressBar.style.width = '100%';
+                showToast('Arquivo enviado com sucesso!', 'success');
+                fileInput.value = ''; // Clear input
+                fetchFiles();
+            } catch (error) {
+                console.error('Erro ao fazer upload:', error);
+                showToast(`Erro ao fazer upload: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+                uploadProgressContainer.classList.add('hidden');
+            }
+        }
+
+        async function fetchFiles() {
+            showLoading('Carregando lista de arquivos...');
+            try {
+                const { data, error } = await supabase.storage.from(BUCKET_NAME).list('', {
+                    limit: 100,
+                    offset: 0,
+                    sortBy: { column: 'name', order: 'asc' },
+                });
+
+                if (error) throw error;
+
+                const fileListBody = document.getElementById('file-list-body');
+                fileListBody.innerHTML = '';
+                if (data.length === 0) {
+                    fileListBody.innerHTML = '<tr><td colspan="4" class="py-4 px-4 text-center text-gray-500">Nenhum arquivo encontrado.</td></tr>';
+                    return;
+                }
+
+                data.forEach(file => {
+                    const row = `
+                        <tr>
+                            <td class="py-2 px-4 border-b">${file.name}</td>
+                            <td class="py-2 px-4 border-b">${(file.metadata.size / 1024).toFixed(2)} KB</td>
+                            <td class="py-2 px-4 border-b">${new Date(file.updated_at).toLocaleDateString()}</td>
+                            <td class="py-2 px-4 border-b">
+                                <a href="${supabase.storage.from(BUCKET_NAME).getPublicUrl(file.name).data.publicUrl}" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-2 rounded-md text-sm mr-2"><i class="fas fa-eye"></i> Ver</a>
+                                <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md text-sm delete-file-btn" data-name="${file.name}"><i class="fas fa-trash"></i> Excluir</button>
+                            </td>
+                        </tr>
+                    `;
+                    fileListBody.innerHTML += row;
+                });
+
+                document.querySelectorAll('.delete-file-btn').forEach(button => {
+                    button.onclick = (e) => deleteFile(e.currentTarget.dataset.name);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar arquivos:', error);
+                showToast(`Erro ao carregar arquivos: ${error.message}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deleteFile(fileName) {
+            if (!confirm(`Tem certeza que deseja excluir o arquivo "${fileName}"?`)) return;
+
+            showLoading('Excluindo arquivo...');
+            try {
+                const { error } = await supabase.storage.from(BUCKET_NAME).remove([fileName]);
+                if (error) throw error;
+                showToast('Arquivo excluído com sucesso!', 'success');
+                fetchFiles();
+            } catch (error) {
+                console.error('Erro ao excluir arquivo:', error);
+                showToast(`Erro ao excluir arquivo: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
         // --- Comprovantes Functions ---
-        async function loadComprovantes() {
-            showLoading();
+        async function fetchComprovantes() {
+            showLoading('Carregando comprovantes...');
             try {
                 const { data, error } = await supabase
-                    .from('comprovantes') // Assuming a 'comprovantes' table exists
-                    .select(`
-                        *,
-                        parceiro:parceiros(nome_completo)
-                    `)
-                    .order('data_upload', { ascending: false });
-
+                    .from('comprovantes')
+                    .select('*, parceiros(nome_completo), igrejas(nome_igreja)')
+                    .order('data_envio', { ascending: false });
                 if (error) throw error;
-                renderComprovantesTable(data);
+
+                const tableBody = document.getElementById('comprovantes-table-body');
+                tableBody.innerHTML = '';
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="py-4 px-4 text-center text-gray-500">Nenhum comprovante encontrado.</td></tr>';
+                    return;
+                }
+
+                data.forEach(comprovante => {
+                    const entityName = comprovante.parceiros ? comprovante.parceiros.nome_completo : (comprovante.igrejas ? comprovante.igrejas.nome_igreja : 'N/A');
+                    const row = `
+                        <tr>
+                            <td class="py-2 px-4 border-b">${comprovante.id.substring(0, 8)}...</td>
+                            <td class="py-2 px-4 border-b">${entityName}</td>
+                            <td class="py-2 px-4 border-b">R$ ${comprovante.valor.toFixed(2).replace('.', ',')}</td>
+                            <td class="py-2 px-4 border-b">${new Date(comprovante.data_envio).toLocaleDateString()}</td>
+                            <td class="py-2 px-4 border-b">
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold badge-${comprovante.status}">${comprovante.status}</span>
+                            </td>
+                            <td class="py-2 px-4 border-b">
+                                <button class="bg-indigo-500 hover:bg-indigo-600 text-white py-1 px-2 rounded-md text-sm mr-2 view-comprovante-btn" data-url="${comprovante.url_comprovante}"><i class="fas fa-eye"></i> Ver</button>
+                                ${comprovante.status === 'pendente' ? `
+                                    <button class="bg-green-500 hover:bg-green-600 text-white py-1 px-2 rounded-md text-sm mr-2 approve-comprovante-btn" data-id="${comprovante.id}"><i class="fas fa-check"></i> Aprovar</button>
+                                    <button class="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded-md text-sm reject-comprovante-btn" data-id="${comprovante.id}"><i class="fas fa-times"></i> Rejeitar</button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
+                });
+
+                attachComprovanteEventListeners();
             } catch (error) {
-                console.error('Erro ao carregar comprovantes:', error.message);
-                alert('Erro ao carregar comprovantes.');
+                console.error('Erro ao carregar comprovantes:', error);
+                showToast(`Erro ao carregar comprovantes: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        function renderComprovantesTable(comprovantes) {
-            const tableBody = document.getElementById('comprovantesTableBody');
-            tableBody.innerHTML = '';
-            comprovantes.forEach(comprovante => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${comprovante.parceiro?.nome_completo || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${comprovante.tipo || 'N/A'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(comprovante.status)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(comprovante.data_upload)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="openComprovantePreviewModal('${comprovante.arquivo_url}')" class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-eye"></i> Visualizar</button>
-                        <button onclick="approveComprovante('${comprovante.id}')" class="text-green-600 hover:text-green-900 mr-2"><i class="fas fa-check-circle"></i> Aprovar</button>
-                        <button onclick="rejectComprovante('${comprovante.id}')" class="text-red-600 hover:text-red-900"><i class="fas fa-times-circle"></i> Rejeitar</button>
-                    </td>
-                `;
+        function attachComprovanteEventListeners() {
+            document.querySelectorAll('.view-comprovante-btn').forEach(button => {
+                button.onclick = (e) => openImagePreviewModal(e.currentTarget.dataset.url);
             });
-        }
-
-        function openComprovantePreviewModal(fileUrl) {
-            document.getElementById('comprovanteImage').src = fileUrl;
-            openModal('comprovantePreviewModal');
+            document.querySelectorAll('.approve-comprovante-btn').forEach(button => {
+                button.onclick = (e) => updateComprovanteStatus(e.currentTarget.dataset.id, 'aprovado');
+            });
+            document.querySelectorAll('.reject-comprovante-btn').forEach(button => {
+                button.onclick = (e) => updateComprovanteStatus(e.currentTarget.dataset.id, 'rejeitado');
+            });
         }
 
         async function updateComprovanteStatus(comprovanteId, newStatus) {
-            if (!confirm(`Confirmar alteração de status para "${newStatus}"?`)) return;
-            showLoading();
+            if (!confirm(`Tem certeza que deseja ${newStatus} este comprovante?`)) return;
+
+            showLoading(`Atualizando comprovante para ${newStatus}...`);
             try {
-                const { error } = await supabase.from('comprovantes').update({ status: newStatus, updated_at: new Date().toISOString() }).eq('id', comprovanteId);
+                const { error } = await supabase.from('comprovantes').update({ status: newStatus, data_atualizacao: new Date().toISOString() }).eq('id', comprovanteId);
                 if (error) throw error;
-                alert(`Comprovante ${newStatus} com sucesso!`);
-                loadComprovantes();
+                showToast(`Comprovante ${newStatus} com sucesso!`, 'success');
+                fetchComprovantes();
             } catch (error) {
-                console.error(`Erro ao ${newStatus} comprovante:`, error.message);
-                alert(`Erro ao ${newStatus} comprovante.`);
+                console.error('Erro ao atualizar comprovante:', error);
+                showToast(`Erro ao atualizar comprovante: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
-
-        function approveComprovante(comprovanteId) { updateComprovanteStatus(comprovanteId, 'aprovado'); }
-        function rejectComprovante(comprovanteId) { updateComprovanteStatus(comprovanteId, 'rejeitado'); }
 
         // --- Configurações Functions ---
         async function loadSettings() {
-            showLoading();
+            showLoading('Carregando configurações...');
             try {
                 // Assuming a 'settings' table with a single row or specific keys
-                const { data, error } = await supabase.from('configuracoes').select('*').single(); // Or .limit(1)
-                if (error && error.code !== 'PGRST116') throw error; // PGRST116 means no rows found, which is fine for initial load
+                const { data, error } = await supabase.from('configuracoes').select('*').single();
+                if (error && error.code !== 'PGRST116') throw error; // PGRST116 means no rows found
 
                 if (data) {
-                    document.getElementById('comissaoPadrao').value = data.comissao_padrao || '';
-                    document.getElementById('emailNotificacoes').value = data.email_notificacoes || '';
+                    document.getElementById('site-name').value = data.site_name || '';
+                    document.getElementById('admin-email-contact').value = data.admin_email_contact || '';
                 }
             } catch (error) {
-                console.error('Erro ao carregar configurações:', error.message);
-                alert('Erro ao carregar configurações.');
+                console.error('Erro ao carregar configurações:', error);
+                showToast(`Erro ao carregar configurações: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
-        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
+        async function saveSettings(event) {
+            event.preventDefault();
+            showLoading('Salvando configurações...');
             try {
-                const comissaoPadrao = parseFloat(document.getElementById('comissaoPadrao').value);
-                const emailNotificacoes = document.getElementById('emailNotificacoes').value;
+                const siteName = document.getElementById('site-name').value;
+                const adminEmailContact = document.getElementById('admin-email-contact').value;
 
-                const settings = {
-                    comissao_padrao: comissaoPadrao,
-                    email_notificacoes: emailNotificacoes,
-                    updated_at: new Date().toISOString()
-                };
-
-                // Assuming a single settings row, try to update, if not exists, insert
-                const { data: existingSettings, error: selectError } = await supabase.from('configuracoes').select('id').limit(1);
-                if (selectError) throw selectError;
-
-                let error;
-                if (existingSettings && existingSettings.length > 0) {
-                    ({ error } = await supabase.from('configuracoes').update(settings).eq('id', existingSettings[0].id));
-                } else {
-                    ({ error } = await supabase.from('configuracoes').insert(settings));
-                }
-                
+                // Assuming a single row in 'configuracoes' table, upserting
+                const { error } = await supabase.from('configuracoes').upsert(
+                    { id: 1, site_name: siteName, admin_email_contact: adminEmailContact },
+                    { onConflict: 'id' }
+                );
                 if (error) throw error;
-
-                alert('Configurações salvas com sucesso!');
+                showToast('Configurações salvas com sucesso!', 'success');
             } catch (error) {
-                console.error('Erro ao salvar configurações:', error.message);
-                alert('Erro ao salvar configurações.');
+                console.error('Erro ao salvar configurações:', error);
+                showToast(`Erro ao salvar configurações: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
-        });
+        }
+
 
         // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', checkAuthAndRedirect);
-        document.getElementById('logoutButton').addEventListener('click', logout);
-        document.getElementById('sidebarToggle').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-        });
+        document.addEventListener('DOMContentLoaded', checkAuthAndLoad);
 
-        // Parceiros Filters
-        document.getElementById('parceiroStatusFilter').addEventListener('change', loadParceiros);
-        document.getElementById('parceiroTipoFilter').addEventListener('change', loadParceiros);
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        logoutButton.addEventListener('click', handleLogout);
 
-        // Igrejas Filters
-        document.getElementById('igrejaStatusFilter').addEventListener('change', loadIgrejas);
-
-        // Vendas Filters
-        document.getElementById('vendaStartDate').addEventListener('change', loadVendas);
-        document.getElementById('vendaEndDate').addEventListener('change', loadVendas);
-        document.getElementById('vendaStatusFilter').addEventListener('change', loadVendas);
-        document.getElementById('vendaTipoVendedorFilter').addEventListener('change', loadVendas);
-
-        // Upload Button
-        document.getElementById('uploadButton').addEventListener('click', handleFileUpload);
-
-        // Modals close on click outside (optional, but good UX)
-        document.querySelectorAll('.fixed.inset-0').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal(modal.id);
+        document.querySelectorAll('aside a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = e.currentTarget.dataset.section;
+                showSection(sectionId);
+                // Load data for the selected section
+                switch (sectionId) {
+                    case 'dashboard': loadDashboard(); break;
+                    case 'parceiros': fetchParceiros(); break;
+                    case 'igrejas': fetchIgrejas(); break;
+                    case 'produtos': fetchProdutos(); break;
+                    case 'vendas': fetchVendas(); break;
+                    case 'saques': fetchSaques(currentSaqueTab); break;
+                    case 'upload-arquivos': fetchFiles(); break;
+                    case 'comprovantes': fetchComprovantes(); break;
+                    case 'configuracoes': loadSettings(); break;
                 }
             });
         });
+
+        // Close modal buttons
+        document.querySelectorAll('.close-modal-btn').forEach(button => {
+            button.addEventListener('click', closeModal);
+        });
+        genericModal.addEventListener('click', (e) => {
+            if (e.target === genericModal) closeModal();
+        });
+
+        // Close image preview modal buttons
+        document.querySelectorAll('.close-image-modal-btn').forEach(button => {
+            button.addEventListener('click', closeImagePreviewModal);
+        });
+        imagePreviewModal.addEventListener('click', (e) => {
+            if (e.target === imagePreviewModal) closeImagePreviewModal();
+        });
+
+        // Parceiros section events
+        document.getElementById('parceiro-search').addEventListener('input', fetchParceiros);
+        document.getElementById('parceiro-filter-status').addEventListener('change', fetchParceiros);
+        document.getElementById('parceiro-filter-type').addEventListener('change', fetchParceiros);
+        document.getElementById('add-parceiro-btn').addEventListener('click', () => openEditParceiroModal(null));
+        document.getElementById('export-parceiros-csv').addEventListener('click', exportParceirosCSV);
+
+        // Igrejas section events
+        document.getElementById('igreja-search').addEventListener('input', fetchIgrejas);
+        document.getElementById('igreja-filter-status').addEventListener('change', fetchIgrejas);
+        document.getElementById('add-igreja-btn').addEventListener('click', () => openEditIgrejaModal(null));
+        document.getElementById('export-igrejas-csv').addEventListener('click', exportIgrejasCSV);
+
+        // Produtos section events
+        document.getElementById('add-produto-btn').addEventListener('click', () => openEditProdutoModal(null));
+
+        // Vendas section events
+        document.getElementById('apply-venda-filters').addEventListener('click', fetchVendas);
+        document.getElementById('export-vendas-csv').addEventListener('click', exportVendasCSV);
+
+        // Saques section events
+        document.querySelectorAll('#saques-section .tab-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                document.querySelectorAll('#saques-section .tab-button').forEach(btn => btn.classList.remove('active-tab', 'border-indigo-600', 'text-indigo-600'));
+                document.querySelectorAll('#saques-tab-content .tab-pane').forEach(pane => pane.classList.add('hidden'));
+
+                e.currentTarget.classList.add('active-tab', 'border-indigo-600', 'text-indigo-600');
+                const tabId = e.currentTarget.dataset.tab;
+                document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+                currentSaqueTab = tabId;
+                fetchSaques(tabId);
+            });
+        });
+
+        // Upload de Arquivos events
+        document.getElementById('upload-file-btn').addEventListener('click', uploadFile);
+
+        // Configurações events
+        document.getElementById('settings-form').addEventListener('submit', saveSettings);
+
     </script>
 </body>
 </html>
