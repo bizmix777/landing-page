@@ -1112,3 +1112,1666 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMix Admin - Super Painel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .sidebar {
+            width: 250px;
+            transition: all 0.3s ease;
+            background: linear-gradient(180deg, #4a00e0 0%, #8e2de2 100%);
+            color: white;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        .sidebar.collapsed {
+            width: 60px;
+        }
+        .sidebar.collapsed .menu-text {
+            display: none;
+        }
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+        .sidebar.collapsed .logo-icon {
+            display: block;
+        }
+        .sidebar .logo-icon {
+            display: none;
+        }
+        .main-content {
+            margin-left: 250px;
+            transition: all 0.3s ease;
+        }
+        .main-content.collapsed {
+            margin-left: 60px;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+        .nav-link i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+        .sidebar.collapsed .nav-link i {
+            margin-right: 0;
+        }
+        .sidebar.collapsed .nav-link {
+            justify-content: center;
+            padding: 12px 0;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 700px;
+            position: relative;
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-success { background-color: #d1fae5; color: #065f46; }
+        .badge-warning { background-color: #fffbeb; color: #92400e; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        .badge-info { background-color: #dbeafe; color: #1e40af; }
+        .badge-primary { background-color: #e0e7ff; color: #4338ca; }
+        .badge-secondary { background-color: #e5e7eb; color: #374151; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8e2de2;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a00e0;
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <span class="ml-4">Carregando...</span>
+    </div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+        <div class="p-6 flex items-center justify-center border-b border-purple-700">
+            <i class="fas fa-chart-line text-3xl logo-icon"></i>
+            <h1 class="text-2xl font-bold logo-text">BizMix Admin</h1>
+        </div>
+        <nav class="p-4">
+            <ul>
+                <li><a href="#" class="nav-link active" data-tab="dashboard"><i class="fas fa-tachometer-alt"></i><span class="menu-text">Dashboard</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="parceiros"><i class="fas fa-handshake"></i><span class="menu-text">Parceiros</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="igrejas"><i class="fas fa-church"></i><span class="menu-text">Igrejas</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="produtos"><i class="fas fa-box"></i><span class="menu-text">Produtos</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="vendas"><i class="fas fa-shopping-cart"></i><span class="menu-text">Vendas</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="saques"><i class="fas fa-money-bill-wave"></i><span class="menu-text">Saques</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="upload-arquivos"><i class="fas fa-upload"></i><span class="menu-text">Upload Arquivos</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="comprovantes"><i class="fas fa-receipt"></i><span class="menu-text">Comprovantes</span></a></li>
+                <li><a href="#" class="nav-link" data-tab="configuracoes"><i class="fas fa-cog"></i><span class="menu-text">Configurações</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="main-content" class="main-content flex-1 p-6 bg-gray-100">
+        <!-- Header -->
+        <header class="flex justify-between items-center pb-6 border-b border-gray-200 mb-6">
+            <button id="sidebar-toggle" class="text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-4">
+                <span id="user-email" class="font-medium text-gray-700">admin@bizmix.com.br</span>
+                <button id="logout-button" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-200">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Sair
+                </button>
+            </div>
+        </header>
+
+        <!-- Tab Content -->
+        <div id="tab-contents">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="card p-6 text-center bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                        <i class="fas fa-handshake text-4xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Parceiros Ativos</h3>
+                        <p id="dashboard-parceiros" class="text-3xl font-bold mt-2">0</p>
+                    </div>
+                    <div class="card p-6 text-center bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+                        <i class="fas fa-church text-4xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Igrejas Ativas</h3>
+                        <p id="dashboard-igrejas" class="text-3xl font-bold mt-2">0</p>
+                    </div>
+                    <div class="card p-6 text-center bg-gradient-to-r from-green-500 to-green-600 text-white">
+                        <i class="fas fa-shopping-cart text-4xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Vendas Totais</h3>
+                        <p id="dashboard-vendas" class="text-3xl font-bold mt-2">R$ 0.00</p>
+                    </div>
+                    <div class="card p-6 text-center bg-gradient-to-r from-yellow-500 to-yellow-600 text-white">
+                        <i class="fas fa-money-bill-wave text-4xl mb-3"></i>
+                        <h3 class="text-xl font-semibold">Saques Pendentes</h3>
+                        <p id="dashboard-saques" class="text-3xl font-bold mt-2">0</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Vendas nos Últimos 6 Meses</h3>
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                    <div class="card p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4">Últimas Atividades</h3>
+                        <ul id="latest-activities" class="space-y-3 text-gray-700">
+                            <!-- Atividades serão carregadas aqui -->
+                            <li class="flex items-center"><i class="fas fa-circle text-xs text-blue-500 mr-3"></i><span>Nenhuma atividade recente.</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gerenciar Parceiros Tab -->
+            <div id="parceiros" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Parceiros</h2>
+                <div class="card p-6 mb-6">
+                    <div class="flex flex-wrap items-center justify-between mb-4">
+                        <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                            <input type="text" id="parceiros-search" placeholder="Buscar parceiro..." class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                            <select id="parceiros-status-filter" class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Todos os Status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="ativo">Ativo</option>
+                                <option value="inativo">Inativo</option>
+                            </select>
+                            <select id="parceiros-tipo-filter" class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Todos os Tipos</option>
+                                <option value="pessoa_fisica">Pessoa Física</option>
+                                <option value="pessoa_juridica">Pessoa Jurídica</option>
+                            </select>
+                            <button onclick="loadParceiros()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-filter mr-2"></i>Filtrar</button>
+                        </div>
+                        <button onclick="exportTableToCSV('parceiros-table', 'parceiros.csv')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-file-csv mr-2"></i>Exportar CSV</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md" id="parceiros-table">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">Nome</th>
+                                    <th class="py-3 px-6 text-left">Email</th>
+                                    <th class="py-3 px-6 text-left">Tipo</th>
+                                    <th class="py-3 px-6 text-left">Status</th>
+                                    <th class="py-3 px-6 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light" id="parceiros-list">
+                                <!-- Parceiros serão carregados aqui -->
+                                <tr><td colspan="5" class="py-3 px-6 text-center">Nenhum parceiro encontrado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gerenciar Igrejas Tab -->
+            <div id="igrejas" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Igrejas</h2>
+                <div class="card p-6 mb-6">
+                    <div class="flex flex-wrap items-center justify-between mb-4">
+                        <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                            <input type="text" id="igrejas-search" placeholder="Buscar igreja..." class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                            <select id="igrejas-status-filter" class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Todos os Status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="ativo">Ativo</option>
+                                <option value="inativo">Inativo</option>
+                            </select>
+                            <button onclick="loadIgrejas()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-filter mr-2"></i>Filtrar</button>
+                        </div>
+                        <button onclick="exportTableToCSV('igrejas-table', 'igrejas.csv')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-file-csv mr-2"></i>Exportar CSV</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md" id="igrejas-table">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">Nome da Igreja</th>
+                                    <th class="py-3 px-6 text-left">Responsável</th>
+                                    <th class="py-3 px-6 text-left">Email</th>
+                                    <th class="py-3 px-6 text-left">Status</th>
+                                    <th class="py-3 px-6 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light" id="igrejas-list">
+                                <!-- Igrejas serão carregadas aqui -->
+                                <tr><td colspan="5" class="py-3 px-6 text-center">Nenhuma igreja encontrada.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gerenciar Produtos Tab -->
+            <div id="produtos" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Produtos</h2>
+                <div class="card p-6 mb-6">
+                    <div class="flex justify-end mb-4">
+                        <button onclick="openAddProdutoModal()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-plus mr-2"></i>Adicionar Produto</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md" id="produtos-table">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">Nome</th>
+                                    <th class="py-3 px-6 text-left">Preço</th>
+                                    <th class="py-3 px-6 text-left">Comissão (%)</th>
+                                    <th class="py-3 px-6 text-left">Categoria</th>
+                                    <th class="py-3 px-6 text-left">Disponível Para</th>
+                                    <th class="py-3 px-6 text-left">Status</th>
+                                    <th class="py-3 px-6 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light" id="produtos-list">
+                                <!-- Produtos serão carregados aqui -->
+                                <tr><td colspan="7" class="py-3 px-6 text-center">Nenhum produto encontrado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vendas Tab -->
+            <div id="vendas" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Vendas</h2>
+                <div class="card p-6 mb-6">
+                    <div class="flex flex-wrap items-center justify-between mb-4">
+                        <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                            <input type="date" id="vendas-start-date" class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                            <input type="date" id="vendas-end-date" class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                            <select id="vendas-status-filter" class="p-2 border rounded-md focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Todos os Status</option>
+                                <option value="aprovada">Aprovada</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="cancelada">Cancelada</option>
+                            </select>
+                            <button onclick="loadVendas()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-filter mr-2"></i>Filtrar</button>
+                        </div>
+                        <button onclick="exportTableToCSV('vendas-table', 'vendas.csv')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-file-csv mr-2"></i>Exportar CSV</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md" id="vendas-table">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">ID Venda</th>
+                                    <th class="py-3 px-6 text-left">Produto</th>
+                                    <th class="py-3 px-6 text-left">Vendedor</th>
+                                    <th class="py-3 px-6 text-left">Valor</th>
+                                    <th class="py-3 px-6 text-left">Comissão</th>
+                                    <th class="py-3 px-6 text-left">Data</th>
+                                    <th class="py-3 px-6 text-left">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light" id="vendas-list">
+                                <!-- Vendas serão carregadas aqui -->
+                                <tr><td colspan="7" class="py-3 px-6 text-center">Nenhuma venda encontrada.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aprovar Saques Tab -->
+            <div id="saques" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Aprovar Saques</h2>
+                <div class="card p-6 mb-6">
+                    <div class="flex border-b border-gray-200 mb-4">
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:border-purple-500 focus:outline-none saques-tab-btn active" data-saque-status="pendente">Pendentes</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:border-purple-500 focus:outline-none saques-tab-btn" data-saque-status="aprovado">Aprovados</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:border-purple-500 focus:outline-none saques-tab-btn" data-saque-status="rejeitado">Rejeitados</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:border-purple-500 focus:outline-none saques-tab-btn" data-saque-status="pago">Pagos</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md" id="saques-table">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">ID Saque</th>
+                                    <th class="py-3 px-6 text-left">Parceiro</th>
+                                    <th class="py-3 px-6 text-left">Valor</th>
+                                    <th class="py-3 px-6 text-left">Data Solicitação</th>
+                                    <th class="py-3 px-6 text-left">Status</th>
+                                    <th class="py-3 px-6 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light" id="saques-list">
+                                <!-- Saques serão carregados aqui -->
+                                <tr><td colspan="6" class="py-3 px-6 text-center">Nenhum saque encontrado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload de Arquivos Tab -->
+            <div id="upload-arquivos" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Upload de Arquivos</h2>
+                <div class="card p-6">
+                    <p class="text-gray-700 mb-4">Gerencie o upload de arquivos para o Supabase Storage.</p>
+                    <div class="mb-4">
+                        <label for="file-input" class="block text-gray-700 text-sm font-bold mb-2">Selecione um arquivo:</label>
+                        <input type="file" id="file-input" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                    </div>
+                    <button id="upload-button" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-upload mr-2"></i>Fazer Upload</button>
+                    <div id="upload-status" class="mt-4 text-sm text-gray-600"></div>
+                    <div id="uploaded-files-list" class="mt-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Arquivos no Storage</h3>
+                        <ul id="file-list" class="space-y-2">
+                            <!-- Arquivos serão listados aqui -->
+                            <li>Nenhum arquivo encontrado.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comprovantes Tab -->
+            <div id="comprovantes" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Gerenciar Comprovantes</h2>
+                <div class="card p-6">
+                    <p class="text-gray-700 mb-4">Visualize e gerencie os comprovantes de pagamentos e transações.</p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg shadow-md">
+                            <thead>
+                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                                    <th class="py-3 px-6 text-left">ID Comprovante</th>
+                                    <th class="py-3 px-6 text-left">Referência</th>
+                                    <th class="py-3 px-6 text-left">Valor</th>
+                                    <th class="py-3 px-6 text-left">Data</th>
+                                    <th class="py-3 px-6 text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 text-sm font-light" id="comprovantes-list">
+                                <!-- Comprovantes serão carregados aqui -->
+                                <tr><td colspan="5" class="py-3 px-6 text-center">Nenhum comprovante encontrado.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações Tab -->
+            <div id="configuracoes" class="tab-content">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6">Configurações do Sistema</h2>
+                <div class="card p-6">
+                    <p class="text-gray-700 mb-4">Ajuste as configurações gerais do sistema BizMix.</p>
+                    <form>
+                        <div class="mb-4">
+                            <label for="site-name" class="block text-gray-700 text-sm font-bold mb-2">Nome do Site:</label>
+                            <input type="text" id="site-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                        <div class="mb-4">
+                            <label for="default-commission" class="block text-gray-700 text-sm font-bold mb-2">Comissão Padrão (%):</label>
+                            <input type="number" id="default-commission" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-save mr-2"></i>Salvar Configurações</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Edit Parceiro Modal -->
+    <div id="editParceiroModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('editParceiroModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4">Editar Parceiro</h3>
+            <form id="editParceiroForm">
+                <input type="hidden" id="edit-parceiro-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="edit-parceiro-nome" class="block text-gray-700 text-sm font-bold mb-2">Nome Completo:</label>
+                        <input type="text" id="edit-parceiro-nome" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                        <input type="email" id="edit-parceiro-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-cpfcnpj" class="block text-gray-700 text-sm font-bold mb-2">CPF/CNPJ:</label>
+                        <input type="text" id="edit-parceiro-cpfcnpj" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-telefone" class="block text-gray-700 text-sm font-bold mb-2">Telefone:</label>
+                        <input type="text" id="edit-parceiro-telefone" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-tipo" class="block text-gray-700 text-sm font-bold mb-2">Tipo:</label>
+                        <select id="edit-parceiro-tipo" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="pessoa_fisica">Pessoa Física</option>
+                            <option value="pessoa_juridica">Pessoa Jurídica</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                        <select id="edit-parceiro-status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="pendente">Pendente</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-comissao" class="block text-gray-700 text-sm font-bold mb-2">Comissão Padrão (%):</label>
+                        <input type="number" id="edit-parceiro-comissao" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-produtos-permitidos" class="block text-gray-700 text-sm font-bold mb-2">Produtos Permitidos (separar por vírgula):</label>
+                        <input type="text" id="edit-parceiro-produtos-permitidos" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                </div>
+                <h4 class="text-xl font-semibold mb-3">Dados Bancários</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="edit-parceiro-banco" class="block text-gray-700 text-sm font-bold mb-2">Banco:</label>
+                        <input type="text" id="edit-parceiro-banco" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-agencia" class="block text-gray-700 text-sm font-bold mb-2">Agência:</label>
+                        <input type="text" id="edit-parceiro-agencia" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-conta" class="block text-gray-700 text-sm font-bold mb-2">Conta:</label>
+                        <input type="text" id="edit-parceiro-conta" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-parceiro-pix" class="block text-gray-700 text-sm font-bold mb-2">Chave Pix:</label>
+                        <input type="text" id="edit-parceiro-pix" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" onclick="closeModal('editParceiroModal')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md transition duration-200">Cancelar</button>
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Igreja Modal -->
+    <div id="editIgrejaModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('editIgrejaModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4">Editar Igreja</h3>
+            <form id="editIgrejaForm">
+                <input type="hidden" id="edit-igreja-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="edit-igreja-nome-igreja" class="block text-gray-700 text-sm font-bold mb-2">Nome da Igreja:</label>
+                        <input type="text" id="edit-igreja-nome-igreja" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="edit-igreja-responsavel" class="block text-gray-700 text-sm font-bold mb-2">Responsável:</label>
+                        <input type="text" id="edit-igreja-responsavel" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="edit-igreja-email" class="block text-gray-700 text-sm font-bold mb-2">Email:</label>
+                        <input type="email" id="edit-igreja-email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="edit-igreja-cpfcnpj" class="block text-gray-700 text-sm font-bold mb-2">CNPJ:</label>
+                        <input type="text" id="edit-igreja-cpfcnpj" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-igreja-telefone" class="block text-gray-700 text-sm font-bold mb-2">Telefone:</label>
+                        <input type="text" id="edit-igreja-telefone" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-igreja-status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                        <select id="edit-igreja-status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                            <option value="pendente">Pendente</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-igreja-comissao" class="block text-gray-700 text-sm font-bold mb-2">Comissão Padrão (%):</label>
+                        <input type="number" id="edit-igreja-comissao" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                </div>
+                <h4 class="text-xl font-semibold mb-3">Dados Bancários</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="edit-igreja-banco" class="block text-gray-700 text-sm font-bold mb-2">Banco:</label>
+                        <input type="text" id="edit-igreja-banco" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-igreja-agencia" class="block text-gray-700 text-sm font-bold mb-2">Agência:</label>
+                        <input type="text" id="edit-igreja-agencia" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-igreja-conta" class="block text-gray-700 text-sm font-bold mb-2">Conta:</label>
+                        <input type="text" id="edit-igreja-conta" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <div>
+                        <label for="edit-igreja-pix" class="block text-gray-700 text-sm font-bold mb-2">Chave Pix:</label>
+                        <input type="text" id="edit-igreja-pix" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" onclick="closeModal('editIgrejaModal')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md transition duration-200">Cancelar</button>
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Produto Modal -->
+    <div id="produtoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('produtoModal')">&times;</span>
+            <h3 id="produto-modal-title" class="text-2xl font-bold mb-4">Adicionar Produto</h3>
+            <form id="produtoForm">
+                <input type="hidden" id="produto-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="produto-nome" class="block text-gray-700 text-sm font-bold mb-2">Nome:</label>
+                        <input type="text" id="produto-nome" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="produto-preco" class="block text-gray-700 text-sm font-bold mb-2">Preço:</label>
+                        <input type="number" step="0.01" id="produto-preco" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="produto-comissao" class="block text-gray-700 text-sm font-bold mb-2">Comissão (%):</label>
+                        <input type="number" step="0.01" id="produto-comissao" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div>
+                        <label for="produto-categoria" class="block text-gray-700 text-sm font-bold mb-2">Categoria:</label>
+                        <select id="produto-categoria" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="geral">Geral</option>
+                            <option value="religioso">Religioso</option>
+                            <option value="curso">Curso</option>
+                            <option value="ebook">Ebook</option>
+                            <option value="fisico">Físico</option>
+                            <option value="digital">Digital</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="produto-disponivel-para" class="block text-gray-700 text-sm font-bold mb-2">Disponível Para:</label>
+                        <select multiple id="produto-disponivel-para" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24" required>
+                            <option value="parceiros">Parceiros</option>
+                            <option value="igrejas">Igrejas</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Segure CTRL/CMD para selecionar múltiplos.</p>
+                    </div>
+                    <div>
+                        <label for="produto-status" class="block text-gray-700 text-sm font-bold mb-2">Status:</label>
+                        <select id="produto-status" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="produto-descricao" class="block text-gray-700 text-sm font-bold mb-2">Descrição:</label>
+                    <textarea id="produto-descricao" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="produto-imagem-url" class="block text-gray-700 text-sm font-bold mb-2">URL da Imagem:</label>
+                    <input type="url" id="produto-imagem-url" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="mb-4">
+                    <label for="produto-link-checkout" class="block text-gray-700 text-sm font-bold mb-2">Link de Checkout:</label>
+                    <input type="url" id="produto-link-checkout" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" onclick="closeModal('produtoModal')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md transition duration-200">Cancelar</button>
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md transition duration-200">Salvar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Saque Details Modal -->
+    <div id="saqueDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('saqueDetailsModal')">&times;</span>
+            <h3 class="text-2xl font-bold mb-4">Detalhes do Saque</h3>
+            <div id="saque-details-content" class="text-gray-700">
+                <!-- Detalhes do saque serão carregados aqui -->
+            </div>
+            <div class="flex justify-end space-x-4 mt-6" id="saque-actions">
+                <!-- Botões de ação serão carregados aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Client Initialization
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'; // Substitua pelo seu URL Supabase
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM''; // Substitua pela sua chave anon Supabase
+        const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let currentAdminId = null; // Para armazenar o ID do admin logado
+
+        // --- Utility Functions ---
+        function showLoading() { document.getElementById('loading-overlay').classList.remove('hidden'); }
+        function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 p-4 rounded-md shadow-lg text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        }
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleDateString('pt-BR', options);
+        }
+        function getBadgeClass(status) {
+            switch (status) {
+                case 'ativo': case 'aprovado': case 'pago': return 'badge-success';
+                case 'pendente': return 'badge-warning';
+                case 'inativo': case 'rejeitado': case 'cancelada': return 'badge-danger';
+                default: return 'badge-info';
+            }
+        }
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        function exportTableToCSV(tableID, filename) {
+            const table = document.getElementById(tableID);
+            let csv = [];
+            for (let i = 0; i < table.rows.length; i++) {
+                let row = [], cols = table.rows[i].querySelectorAll('td, th');
+                for (let j = 0; j < cols.length; j++) {
+                    // Exclude the 'Ações' column
+                    if (cols[j].textContent.trim() !== 'Ações') {
+                        let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ');
+                        data = data.replace(/"/g, '""');
+                        row.push('"' + data + '"');
+                    }
+                }
+                csv.push(row.join(','));
+            }
+            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+            const downloadLink = document.createElement('a');
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = 'none';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        // --- Authentication ---
+        async function checkAuth() {
+            showLoading();
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = '/admin/login.html'; // Redirecionar para a página de login
+                return;
+            }
+            currentUser = session.user;
+            document.getElementById('user-email').textContent = currentUser.email;
+
+            // Verificar se o usuário é admin
+            const { data: adminData, error: adminError } = await supabase
+                .from('parceiros')
+                .select('id, tipo_parceiro')
+                .eq('auth_user_id', currentUser.id)
+                .single();
+
+            if (adminError || !adminData || adminData.tipo_parceiro !== 'admin') {
+                showToast('Acesso negado. Você não tem permissões de administrador.', 'danger');
+                await supabase.auth.signOut();
+                window.location.href = '/admin/login.html';
+                return;
+            }
+            currentAdminId = adminData.id; // Armazenar o ID do admin logado
+            hideLoading();
+            loadInitialData();
+        }
+
+        async function logout() {
+            showLoading();
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                showToast('Erro ao sair: ' + error.message, 'danger');
+            } else {
+                window.location.href = '/admin/login.html';
+            }
+            hideLoading();
+        }
+
+        document.getElementById('logout-button').addEventListener('click', logout);
+
+        // --- Sidebar Toggle ---
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+            document.getElementById('main-content').classList.toggle('collapsed');
+        });
+
+        // --- Tab Switching ---
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(this.dataset.tab).classList.add('active');
+                loadTabContent(this.dataset.tab);
+            });
+        });
+
+        function loadTabContent(tabName) {
+            switch (tabName) {
+                case 'dashboard': loadDashboardData(); break;
+                case 'parceiros': loadParceiros(); break;
+                case 'igrejas': loadIgrejas(); break;
+                case 'produtos': loadProdutos(); break;
+                case 'vendas': loadVendas(); break;
+                case 'saques': loadSaques('pendente'); break; // Default to pending
+                case 'upload-arquivos': loadFiles(); break;
+                case 'comprovantes': loadComprovantes(); break;
+                case 'configuracoes': loadConfiguracoes(); break;
+            }
+        }
+
+        // --- Dashboard Data ---
+        let salesChartInstance = null;
+        async function loadDashboardData() {
+            showLoading();
+            // Parceiros e Igrejas
+            const { count: parceirosCount, error: pError } = await supabase.from('parceiros').select('id', { count: 'exact' }).in('tipo_parceiro', ['pessoa_fisica', 'pessoa_juridica']).eq('status', 'ativo');
+            const { count: igrejasCount, error: iError } = await supabase.from('parceiros').select('id', { count: 'exact' }).eq('tipo_parceiro', 'igreja').eq('status', 'ativo');
+            document.getElementById('dashboard-parceiros').textContent = pError ? 'Erro' : parceirosCount;
+            document.getElementById('dashboard-igrejas').textContent = iError ? 'Erro' : igrejasCount;
+
+            // Vendas Totais (exemplo, ajuste sua tabela de vendas)
+            const { data: vendasData, error: vError } = await supabase.from('vendas').select('valor_total');
+            const totalVendas = vError ? 0 : vendasData.reduce((sum, venda) => sum + venda.valor_total, 0);
+            document.getElementById('dashboard-vendas').textContent = formatCurrency(totalVendas);
+
+            // Saques Pendentes
+            const { count: saquesCount, error: sError } = await supabase.from('solicitacoes_saque').select('id', { count: 'exact' }).eq('status', 'pendente');
+            document.getElementById('dashboard-saques').textContent = sError ? 'Erro' : saquesCount;
+
+            // Gráfico de Vendas (dados mockados ou reais)
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            if (salesChartInstance) {
+                salesChartInstance.destroy();
+            }
+            salesChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'], // Ajuste para meses reais
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: [1200, 1900, 3000, 5000, 2300, 6000], // Dados de exemplo
+                        backgroundColor: 'rgba(142, 45, 226, 0.2)',
+                        borderColor: '#8e2de2',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Últimas Atividades (exemplo, ajuste para sua tabela de logs/atividades)
+            const { data: activities, error: actError } = await supabase
+                .from('logs_atividades') // Substitua pela sua tabela de logs
+                .select('descricao, created_at')
+                .order('created_at', { ascending: false })
+                .limit(5);
+            const activitiesList = document.getElementById('latest-activities');
+            activitiesList.innerHTML = '';
+            if (actError || activities.length === 0) {
+                activitiesList.innerHTML = '<li class="flex items-center"><i class="fas fa-circle text-xs text-blue-500 mr-3"></i><span>Nenhuma atividade recente.</span></li>';
+            } else {
+                activities.forEach(activity => {
+                    activitiesList.innerHTML += `<li class="flex items-center"><i class="fas fa-circle text-xs text-blue-500 mr-3"></i><span>${activity.descricao} - ${formatDate(activity.created_at)}</span></li>`;
+                });
+            }
+
+            hideLoading();
+        }
+
+        // --- Gerenciar Parceiros ---
+        async function loadParceiros() {
+            showLoading();
+            const search = document.getElementById('parceiros-search').value.toLowerCase();
+            const statusFilter = document.getElementById('parceiros-status-filter').value;
+            const tipoFilter = document.getElementById('parceiros-tipo-filter').value;
+
+            let query = supabase.from('parceiros').select('*').in('tipo_parceiro', ['pessoa_fisica', 'pessoa_juridica']);
+
+            if (statusFilter) query = query.eq('status', statusFilter);
+            if (tipoFilter) query = query.eq('tipo_parceiro', tipoFilter);
+
+            const { data, error } = await query;
+
+            const parceirosList = document.getElementById('parceiros-list');
+            parceirosList.innerHTML = '';
+
+            if (error) {
+                showToast('Erro ao carregar parceiros: ' + error.message, 'danger');
+                parceirosList.innerHTML = `<tr><td colspan="5" class="py-3 px-6 text-center text-red-500">${error.message}</td></tr>`;
+            } else if (data.length === 0) {
+                parceirosList.innerHTML = `<tr><td colspan="5" class="py-3 px-6 text-center">Nenhum parceiro encontrado.</td></tr>`;
+            } else {
+                const filteredData = data.filter(p => 
+                    p.nome_completo.toLowerCase().includes(search) || 
+                    p.email.toLowerCase().includes(search) ||
+                    (p.cpf_cnpj && p.cpf_cnpj.toLowerCase().includes(search))
+                );
+                filteredData.forEach(parceiro => {
+                    parceirosList.innerHTML += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left whitespace-nowrap">${parceiro.nome_completo}</td>
+                            <td class="py-3 px-6 text-left">${parceiro.email}</td>
+                            <td class="py-3 px-6 text-left">${parceiro.tipo_parceiro === 'pessoa_fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'}</td>
+                            <td class="py-3 px-6 text-left"><span class="badge ${getBadgeClass(parceiro.status)}">${parceiro.status}</span></td>
+                            <td class="py-3 px-6 text-center">
+                                <div class="flex item-center justify-center space-x-2">
+                                    ${parceiro.status === 'pendente' ? `<button onclick="aprovarParceiro('${parceiro.id}')" class="text-green-500 hover:text-green-700"><i class="fas fa-check"></i></button>` : ''}
+                                    <button onclick="editarParceiro('${parceiro.id}')" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                                    ${parceiro.status !== 'inativo' ? `<button onclick="desativarParceiro('${parceiro.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-ban"></i></button>` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            hideLoading();
+        }
+
+        async function aprovarParceiro(id) {
+            if (!confirm('Tem certeza que deseja aprovar este parceiro?')) return;
+            showLoading();
+            const { error } = await supabase.from('parceiros').update({ status: 'ativo', aprovado_em: new Date().toISOString(), aprovado_por: currentAdminId }).eq('id', id);
+            if (error) {
+                showToast('Erro ao aprovar parceiro: ' + error.message, 'danger');
+            } else {
+                showToast('Parceiro aprovado com sucesso!');
+                loadParceiros();
+            }
+            hideLoading();
+        }
+
+        async function editarParceiro(id) {
+            showLoading();
+            const { data, error } = await supabase.from('parceiros').select('*').eq('id', id).single();
+            if (error) {
+                showToast('Erro ao carregar dados do parceiro: ' + error.message, 'danger');
+                hideLoading();
+                return;
+            }
+            document.getElementById('edit-parceiro-id').value = data.id;
+            document.getElementById('edit-parceiro-nome').value = data.nome_completo;
+            document.getElementById('edit-parceiro-email').value = data.email;
+            document.getElementById('edit-parceiro-cpfcnpj').value = data.cpf_cnpj || '';
+            document.getElementById('edit-parceiro-telefone').value = data.telefone || '';
+            document.getElementById('edit-parceiro-tipo').value = data.tipo_parceiro;
+            document.getElementById('edit-parceiro-status').value = data.status;
+            document.getElementById('edit-parceiro-comissao').value = data.comissao_padrao || 0;
+            document.getElementById('edit-parceiro-produtos-permitidos').value = data.produtos_permitidos ? data.produtos_permitidos.join(',') : '';
+            document.getElementById('edit-parceiro-banco').value = data.banco || '';
+            document.getElementById('edit-parceiro-agencia').value = data.agencia || '';
+            document.getElementById('edit-parceiro-conta').value = data.conta || '';
+            document.getElementById('edit-parceiro-pix').value = data.pix_chave || '';
+            openModal('editParceiroModal');
+            hideLoading();
+        }
+
+        document.getElementById('editParceiroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+            const id = document.getElementById('edit-parceiro-id').value;
+            const updates = {
+                nome_completo: document.getElementById('edit-parceiro-nome').value,
+                email: document.getElementById('edit-parceiro-email').value,
+                cpf_cnpj: document.getElementById('edit-parceiro-cpfcnpj').value,
+                telefone: document.getElementById('edit-parceiro-telefone').value,
+                tipo_parceiro: document.getElementById('edit-parceiro-tipo').value,
+                status: document.getElementById('edit-parceiro-status').value,
+                comissao_padrao: parseFloat(document.getElementById('edit-parceiro-comissao').value),
+                produtos_permitidos: document.getElementById('edit-parceiro-produtos-permitidos').value.split(',').map(s => s.trim()).filter(s => s),
+                banco: document.getElementById('edit-parceiro-banco').value,
+                agencia: document.getElementById('edit-parceiro-agencia').value,
+                conta: document.getElementById('edit-parceiro-conta').value,
+                pix_chave: document.getElementById('edit-parceiro-pix').value,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase.from('parceiros').update(updates).eq('id', id);
+            if (error) {
+                showToast('Erro ao salvar parceiro: ' + error.message, 'danger');
+            } else {
+                showToast('Parceiro atualizado com sucesso!');
+                closeModal('editParceiroModal');
+                loadParceiros();
+            }
+            hideLoading();
+        });
+
+        async function desativarParceiro(id) {
+            if (!confirm('Tem certeza que deseja desativar este parceiro?')) return;
+            showLoading();
+            const { error } = await supabase.from('parceiros').update({ status: 'inativo', updated_at: new Date().toISOString() }).eq('id', id);
+            if (error) {
+                showToast('Erro ao desativar parceiro: ' + error.message, 'danger');
+            } else {
+                showToast('Parceiro desativado com sucesso!');
+                loadParceiros();
+            }
+            hideLoading();
+        }
+
+        // --- Gerenciar Igrejas ---
+        async function loadIgrejas() {
+            showLoading();
+            const search = document.getElementById('igrejas-search').value.toLowerCase();
+            const statusFilter = document.getElementById('igrejas-status-filter').value;
+
+            let query = supabase.from('parceiros').select('*').eq('tipo_parceiro', 'igreja');
+
+            if (statusFilter) query = query.eq('status', statusFilter);
+
+            const { data, error } = await query;
+
+            const igrejasList = document.getElementById('igrejas-list');
+            igrejasList.innerHTML = '';
+
+            if (error) {
+                showToast('Erro ao carregar igrejas: ' + error.message, 'danger');
+                igrejasList.innerHTML = `<tr><td colspan="5" class="py-3 px-6 text-center text-red-500">${error.message}</td></tr>`;
+            } else if (data.length === 0) {
+                igrejasList.innerHTML = `<tr><td colspan="5" class="py-3 px-6 text-center">Nenhuma igreja encontrada.</td></tr>`;
+            } else {
+                const filteredData = data.filter(i => 
+                    (i.nome_igreja && i.nome_igreja.toLowerCase().includes(search)) || 
+                    (i.responsavel_igreja && i.responsavel_igreja.toLowerCase().includes(search)) ||
+                    (i.email && i.email.toLowerCase().includes(search))
+                );
+                filteredData.forEach(igreja => {
+                    igrejasList.innerHTML += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left whitespace-nowrap">${igreja.nome_igreja || 'N/A'}</td>
+                            <td class="py-3 px-6 text-left">${igreja.responsavel_igreja || 'N/A'}</td>
+                            <td class="py-3 px-6 text-left">${igreja.email}</td>
+                            <td class="py-3 px-6 text-left"><span class="badge ${getBadgeClass(igreja.status)}">${igreja.status}</span></td>
+                            <td class="py-3 px-6 text-center">
+                                <div class="flex item-center justify-center space-x-2">
+                                    ${igreja.status === 'pendente' ? `<button onclick="aprovarIgreja('${igreja.id}')" class="text-green-500 hover:text-green-700"><i class="fas fa-check"></i></button>` : ''}
+                                    <button onclick="editarIgreja('${igreja.id}')" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                                    ${igreja.status !== 'inativo' ? `<button onclick="desativarIgreja('${igreja.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-ban"></i></button>` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            hideLoading();
+        }
+
+        async function aprovarIgreja(id) {
+            if (!confirm('Tem certeza que deseja aprovar esta igreja?')) return;
+            showLoading();
+            const { error } = await supabase.from('parceiros').update({ status: 'ativo', aprovado_em: new Date().toISOString(), aprovado_por: currentAdminId }).eq('id', id);
+            if (error) {
+                showToast('Erro ao aprovar igreja: ' + error.message, 'danger');
+            } else {
+                showToast('Igreja aprovada com sucesso!');
+                loadIgrejas();
+            }
+            hideLoading();
+        }
+
+        async function editarIgreja(id) {
+            showLoading();
+            const { data, error } = await supabase.from('parceiros').select('*').eq('id', id).single();
+            if (error) {
+                showToast('Erro ao carregar dados da igreja: ' + error.message, 'danger');
+                hideLoading();
+                return;
+            }
+            document.getElementById('edit-igreja-id').value = data.id;
+            document.getElementById('edit-igreja-nome-igreja').value = data.nome_igreja || '';
+            document.getElementById('edit-igreja-responsavel').value = data.responsavel_igreja || '';
+            document.getElementById('edit-igreja-email').value = data.email;
+            document.getElementById('edit-igreja-cpfcnpj').value = data.cpf_cnpj || ''; // CNPJ da igreja
+            document.getElementById('edit-igreja-telefone').value = data.telefone || '';
+            document.getElementById('edit-igreja-status').value = data.status;
+            document.getElementById('edit-igreja-comissao').value = data.comissao_padrao || 0;
+            document.getElementById('edit-igreja-banco').value = data.banco || '';
+            document.getElementById('edit-igreja-agencia').value = data.agencia || '';
+            document.getElementById('edit-igreja-conta').value = data.conta || '';
+            document.getElementById('edit-igreja-pix').value = data.pix_chave || '';
+            openModal('editIgrejaModal');
+            hideLoading();
+        }
+
+        document.getElementById('editIgrejaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+            const id = document.getElementById('edit-igreja-id').value;
+            const updates = {
+                nome_igreja: document.getElementById('edit-igreja-nome-igreja').value,
+                responsavel_igreja: document.getElementById('edit-igreja-responsavel').value,
+                email: document.getElementById('edit-igreja-email').value,
+                cpf_cnpj: document.getElementById('edit-igreja-cpfcnpj').value,
+                telefone: document.getElementById('edit-igreja-telefone').value,
+                status: document.getElementById('edit-igreja-status').value,
+                comissao_padrao: parseFloat(document.getElementById('edit-igreja-comissao').value),
+                banco: document.getElementById('edit-igreja-banco').value,
+                agencia: document.getElementById('edit-igreja-agencia').value,
+                conta: document.getElementById('edit-igreja-conta').value,
+                pix_chave: document.getElementById('edit-igreja-pix').value,
+                updated_at: new Date().toISOString()
+            };
+            const { error } = await supabase.from('parceiros').update(updates).eq('id', id);
+            if (error) {
+                showToast('Erro ao salvar igreja: ' + error.message, 'danger');
+            } else {
+                showToast('Igreja atualizada com sucesso!');
+                closeModal('editIgrejaModal');
+                loadIgrejas();
+            }
+            hideLoading();
+        });
+
+        async function desativarIgreja(id) {
+            if (!confirm('Tem certeza que deseja desativar esta igreja?')) return;
+            showLoading();
+            const { error } = await supabase.from('parceiros').update({ status: 'inativo', updated_at: new Date().toISOString() }).eq('id', id);
+            if (error) {
+                showToast('Erro ao desativar igreja: ' + error.message, 'danger');
+            } else {
+                showToast('Igreja desativada com sucesso!');
+                loadIgrejas();
+            }
+            hideLoading();
+        }
+
+        // --- Gerenciar Produtos ---
+        async function loadProdutos() {
+            showLoading();
+            const { data, error } = await supabase.from('produtos').select('*');
+            const produtosList = document.getElementById('produtos-list');
+            produtosList.innerHTML = '';
+
+            if (error) {
+                showToast('Erro ao carregar produtos: ' + error.message, 'danger');
+                produtosList.innerHTML = `<tr><td colspan="7" class="py-3 px-6 text-center text-red-500">${error.message}</td></tr>`;
+            } else if (data.length === 0) {
+                produtosList.innerHTML = `<tr><td colspan="7" class="py-3 px-6 text-center">Nenhum produto encontrado.</td></tr>`;
+            } else {
+                data.forEach(produto => {
+                    produtosList.innerHTML += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left whitespace-nowrap">${produto.nome}</td>
+                            <td class="py-3 px-6 text-left">${formatCurrency(produto.preco)}</td>
+                            <td class="py-3 px-6 text-left">${produto.comissao_percentual}%</td>
+                            <td class="py-3 px-6 text-left">${produto.categoria}</td>
+                            <td class="py-3 px-6 text-left">${produto.disponivel_para ? produto.disponivel_para.join(', ') : 'N/A'}</td>
+                            <td class="py-3 px-6 text-left"><span class="badge ${getBadgeClass(produto.status)}">${produto.status}</span></td>
+                            <td class="py-3 px-6 text-center">
+                                <div class="flex item-center justify-center space-x-2">
+                                    <button onclick="editProduto('${produto.id}')" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteProduto('${produto.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            hideLoading();
+        }
+
+        function openAddProdutoModal() {
+            document.getElementById('produto-modal-title').textContent = 'Adicionar Produto';
+            document.getElementById('produtoForm').reset();
+            document.getElementById('produto-id').value = '';
+            openModal('produtoModal');
+        }
+
+        async function editProduto(id) {
+            showLoading();
+            const { data, error } = await supabase.from('produtos').select('*').eq('id', id).single();
+            if (error) {
+                showToast('Erro ao carregar dados do produto: ' + error.message, 'danger');
+                hideLoading();
+                return;
+            }
+            document.getElementById('produto-modal-title').textContent = 'Editar Produto';
+            document.getElementById('produto-id').value = data.id;
+            document.getElementById('produto-nome').value = data.nome;
+            document.getElementById('produto-preco').value = data.preco;
+            document.getElementById('produto-comissao').value = data.comissao_percentual;
+            document.getElementById('produto-categoria').value = data.categoria;
+            document.getElementById('produto-status').value = data.status;
+            document.getElementById('produto-descricao').value = data.descricao || '';
+            document.getElementById('produto-imagem-url').value = data.imagem_url || '';
+            document.getElementById('produto-link-checkout').value = data.link_checkout || '';
+
+            // Selecionar múltiplos na lista de "disponível para"
+            const disponivelParaSelect = document.getElementById('produto-disponivel-para');
+            Array.from(disponivelParaSelect.options).forEach(option => {
+                option.selected = data.disponivel_para && data.disponivel_para.includes(option.value);
+            });
+
+            openModal('produtoModal');
+            hideLoading();
+        }
+
+        document.getElementById('produtoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+            const id = document.getElementById('produto-id').value;
+            const disponivelPara = Array.from(document.getElementById('produto-disponivel-para').selectedOptions).map(option => option.value);
+
+            const productData = {
+                nome: document.getElementById('produto-nome').value,
+                preco: parseFloat(document.getElementById('produto-preco').value),
+                comissao_percentual: parseFloat(document.getElementById('produto-comissao').value),
+                categoria: document.getElementById('produto-categoria').value,
+                status: document.getElementById('produto-status').value,
+                descricao: document.getElementById('produto-descricao').value,
+                imagem_url: document.getElementById('produto-imagem-url').value,
+                link_checkout: document.getElementById('produto-link-checkout').value,
+                disponivel_para: disponivelPara,
+                updated_at: new Date().toISOString()
+            };
+
+            let error;
+            if (id) {
+                // Update existing product
+                ({ error } = await supabase.from('produtos').update(productData).eq('id', id));
+            } else {
+                // Add new product
+                productData.created_by = currentUser.id; // Assuming admin is the creator
+                ({ error } = await supabase.from('produtos').insert([productData]));
+            }
+
+            if (error) {
+                showToast('Erro ao salvar produto: ' + error.message, 'danger');
+            } else {
+                showToast('Produto salvo com sucesso!');
+                closeModal('produtoModal');
+                loadProdutos();
+            }
+            hideLoading();
+        });
+
+        async function deleteProduto(id) {
+            if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+            showLoading();
+            const { error } = await supabase.from('produtos').delete().eq('id', id);
+            if (error) {
+                showToast('Erro ao excluir produto: ' + error.message, 'danger');
+            } else {
+                showToast('Produto excluído com sucesso!');
+                loadProdutos();
+            }
+            hideLoading();
+        }
+
+        // --- Gerenciar Vendas ---
+        async function loadVendas() {
+            showLoading();
+            const startDate = document.getElementById('vendas-start-date').value;
+            const endDate = document.getElementById('vendas-end-date').value;
+            const statusFilter = document.getElementById('vendas-status-filter').value;
+
+            let query = supabase.from('vendas').select('*, parceiros(nome_completo, nome_igreja, tipo_parceiro), produtos(nome)');
+
+            if (startDate) query = query.gte('data_venda', startDate);
+            if (endDate) query = query.lte('data_venda', endDate);
+            if (statusFilter) query = query.eq('status', statusFilter);
+
+            const { data, error } = await query.order('data_venda', { ascending: false });
+
+            const vendasList = document.getElementById('vendas-list');
+            vendasList.innerHTML = '';
+
+            if (error) {
+                showToast('Erro ao carregar vendas: ' + error.message, 'danger');
+                vendasList.innerHTML = `<tr><td colspan="7" class="py-3 px-6 text-center text-red-500">${error.message}</td></tr>`;
+            } else if (data.length === 0) {
+                vendasList.innerHTML = `<tr><td colspan="7" class="py-3 px-6 text-center">Nenhuma venda encontrada.</td></tr>`;
+            } else {
+                data.forEach(venda => {
+                    const vendedorNome = venda.parceiros ? (venda.parceiros.tipo_parceiro === 'igreja' ? venda.parceiros.nome_igreja : venda.parceiros.nome_completo) : 'N/A';
+                    const produtoNome = venda.produtos ? venda.produtos.nome : 'N/A';
+                    vendasList.innerHTML += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left">${venda.id.substring(0, 8)}...</td>
+                            <td class="py-3 px-6 text-left">${produtoNome}</td>
+                            <td class="py-3 px-6 text-left">${vendedorNome}</td>
+                            <td class="py-3 px-6 text-left">${formatCurrency(venda.valor_total)}</td>
+                            <td class="py-3 px-6 text-left">${formatCurrency(venda.valor_comissao)}</td>
+                            <td class="py-3 px-6 text-left">${formatDate(venda.data_venda)}</td>
+                            <td class="py-3 px-6 text-left"><span class="badge ${getBadgeClass(venda.status)}">${venda.status}</span></td>
+                        </tr>
+                    `;
+                });
+            }
+            hideLoading();
+        }
+
+        // --- Aprovar Saques ---
+        document.querySelectorAll('.saques-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.saques-tab-btn').forEach(b => b.classList.remove('active', 'border-purple-500'));
+                this.classList.add('active', 'border-purple-500');
+                loadSaques(this.dataset.saqueStatus);
+            });
+        });
+
+        async function loadSaques(statusFilter) {
+            showLoading();
+            let query = supabase.from('solicitacoes_saque').select('*, parceiros(nome_completo, nome_igreja, tipo_parceiro)');
+
+            if (statusFilter) query = query.eq('status', statusFilter);
+
+            const { data, error } = await query.order('data_solicitacao', { ascending: false });
+
+            const saquesList = document.getElementById('saques-list');
+            saquesList.innerHTML = '';
+
+            if (error) {
+                showToast('Erro ao carregar saques: ' + error.message, 'danger');
+                saquesList.innerHTML = `<tr><td colspan="6" class="py-3 px-6 text-center text-red-500">${error.message}</td></tr>`;
+            } else if (data.length === 0) {
+                saquesList.innerHTML = `<tr><td colspan="6" class="py-3 px-6 text-center">Nenhum saque encontrado com este status.</td></tr>`;
+            } else {
+                data.forEach(saque => {
+                    const parceiroNome = saque.parceiros ? (saque.parceiros.tipo_parceiro === 'igreja' ? saque.parceiros.nome_igreja : saque.parceiros.nome_completo) : 'N/A';
+                    saquesList.innerHTML += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left">${saque.id.substring(0, 8)}...</td>
+                            <td class="py-3 px-6 text-left">${parceiroNome}</td>
+                            <td class="py-3 px-6 text-left">${formatCurrency(saque.valor)}</td>
+                            <td class="py-3 px-6 text-left">${formatDate(saque.data_solicitacao)}</td>
+                            <td class="py-3 px-6 text-left"><span class="badge ${getBadgeClass(saque.status)}">${saque.status}</span></td>
+                            <td class="py-3 px-6 text-center">
+                                <div class="flex item-center justify-center space-x-2">
+                                    <button onclick="openSaqueDetailsModal('${saque.id}')" class="text-purple-500 hover:text-purple-700"><i class="fas fa-info-circle"></i></button>
+                                    ${saque.status === 'pendente' ? `
+                                        <button onclick="aprovarSaque('${saque.id}')" class="text-green-500 hover:text-green-700"><i class="fas fa-check"></i></button>
+                                        <button onclick="rejeitarSaque('${saque.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-times"></i></button>
+                                    ` : ''}
+                                    ${saque.status === 'aprovado' ? `<button onclick="marcarSaquePago('${saque.id}')" class="text-blue-500 hover:text-blue-700"><i class="fas fa-money-check-alt"></i></button>` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            hideLoading();
+        }
+
+        async function openSaqueDetailsModal(id) {
+            showLoading();
+            const { data: saque, error } = await supabase.from('solicitacoes_saque').select('*, parceiros(*)').eq('id', id).single();
+            if (error) {
+                showToast('Erro ao carregar detalhes do saque: ' + error.message, 'danger');
+                hideLoading();
+                return;
+            }
+
+            const parceiro = saque.parceiros;
+            const parceiroNome = parceiro ? (parceiro.tipo_parceiro === 'igreja' ? parceiro.nome_igreja : parceiro.nome_completo) : 'N/A';
+            const parceiroDoc = parceiro ? parceiro.cpf_cnpj : 'N/A';
+            const parceiroEmail = parceiro ? parceiro.email : 'N/A';
+
+            document.getElementById('saque-details-content').innerHTML = `
+                <p><strong>ID Saque:</strong> ${saque.id}</p>
+                <p><strong>Parceiro:</strong> ${parceiroNome} (${parceiroDoc})</p>
+                <p><strong>Email:</strong> ${parceiroEmail}</p>
+                <p><strong>Valor:</strong> ${formatCurrency(saque.valor)}</p>
+                <p><strong>Status:</strong> <span class="badge ${getBadgeClass(saque.status)}">${saque.status}</span></p>
+                <p><strong>Data Solicitação:</strong> ${formatDate(saque.data_solicitacao)}</p>
+                <p><strong>Dados Bancários:</strong> ${dadosBancarios}</p>
+                <p><strong>Observações:</strong> ${saque.observacoes || 'N/A'}</p>
+            `;
+
+            const saqueActions = document.getElementById('saque-actions');
+            saqueActions.innerHTML = '';
+            if (saque.status === 'pendente') {
+                saqueActions.innerHTML += `
+                    <button onclick="aprovarSaque('${saque.id}'); closeModal('saqueDetailsModal');" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-check mr-2"></i>Aprovar</button>
+                    <button onclick="rejeitarSaque('${saque.id}'); closeModal('saqueDetailsModal');" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-times mr-2"></i>Rejeitar</button>
+                `;
+            } else if (saque.status === 'aprovado') {
+                saqueActions.innerHTML += `
+                    <button onclick="marcarSaquePago('${saque.id}'); closeModal('saqueDetailsModal');" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition duration-200"><i class="fas fa-money-check-alt mr-2"></i>Marcar como Pago</button>
+                `;
+            }
+            saqueActions.innerHTML += `<button type="button" onclick="closeModal('saqueDetailsModal')" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md transition duration-200">Fechar</button>`;
+
+            openModal('saqueDetailsModal');
+            hideLoading();
+        }
+
+        async function updateSaqueStatus(id, newStatus) {
+            showLoading();
+            const { error } = await supabase.from('solicitacoes_saque').update({ status: newStatus, data_processamento: new Date().toISOString() }).eq('id', id);
+            if (error) {
+                showToast(`Erro ao ${newStatus} saque: ` + error.message, 'danger');
+            } else {
+                showToast(`Saque ${newStatus} com sucesso!`);
+                loadSaques(document.querySelector('.saques-tab-btn.active').dataset.saqueStatus);
+            }
+            hideLoading();
+        }
+
+        function aprovarSaque(id) {
+            if (!confirm('Tem certeza que deseja aprovar este saque?')) return;
+            updateSaqueStatus(id, 'aprovado');
+        }
+
+        function rejeitarSaque(id) {
+            if (!confirm('Tem certeza que deseja rejeitar este saque?')) return;
+            updateSaqueStatus(id, 'rejeitado');
+        }
+
+        function marcarSaquePago(id) {
+            if (!confirm('Tem certeza que deseja marcar este saque como PAGO?')) return;
+            updateSaqueStatus(id, 'pago');
+        }
+
+        // --- Upload de Arquivos (Supabase Storage) ---
+        const BUCKET_NAME = 'public-files'; // Substitua pelo nome do seu bucket no Supabase Storage
+
+        async function uploadFile() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
+            if (!file) {
+                showToast('Por favor, selecione um arquivo para upload.', 'danger');
+                return;
+            }
+
+            showLoading();
+            const filePath = `${currentUser.id}/${file.name}`; // Exemplo: user_id/nome_do_arquivo.ext
+            const { data, error } = await supabase.storage.from(BUCKET_NAME).upload(filePath, file);
+
+            if (error) {
+                showToast('Erro ao fazer upload: ' + error.message, 'danger');
+                document.getElementById('upload-status').textContent = 'Erro no upload: ' + error.message;
+            } else {
+                showToast('Arquivo enviado com sucesso!');
+                document.getElementById('upload-status').textContent = 'Upload concluído: ' + data.path;
+                fileInput.value = ''; // Limpar input
+                loadFiles();
+            }
+            hideLoading();
+        }
+
+        async function loadFiles() {
+            showLoading();
+            const { data, error } = await supabase.storage.from(BUCKET_NAME).list(currentUser.id + '/', {
+                limit: 100,
+                offset: 0,
+                sortBy: { column: 'name', order: 'asc' },
+            });
+
+            const fileListElement = document.getElementById('file-list');
+            fileListElement.innerHTML = '';
+
+            if (error) {
+                showToast('Erro ao listar arquivos: ' + error.message, 'danger');
+                fileListElement.innerHTML = `<li>Erro ao carregar arquivos: ${error.message}</li>`;
+            } else if (data.length === 0) {
+                fileListElement.innerHTML = `<li>Nenhum arquivo encontrado.</li>`;
+            } else {
+                for (const file of data) {
+                    const { data: publicUrlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(`${currentUser.id}/${file.name}`);
+                    fileListElement.innerHTML += `
+                        <li class="flex items-center justify-between p-2 bg-gray-50 rounded-md">
+                            <span>${file.name}</span>
+                            <div class="space-x-2">
+                                <a href="${publicUrlData.publicUrl}" target="_blank" class="text-blue-500 hover:text-blue-700"><i class="fas fa-eye"></i></a>
+                                <button onclick="deleteFile('${file.name}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </li>
+                    `;
+                }
+            }
+            hideLoading();
+        }
+
+        async function deleteFile(fileName) {
+            if (!confirm(`Tem certeza que deseja excluir o arquivo "${fileName}"?`)) return;
+            showLoading();
+            const filePath = `${currentUser.id}/${fileName}`;
+            const { error } = await supabase.storage.from(BUCKET_NAME).remove([filePath]);
+
+            if (error) {
+                showToast('Erro ao excluir arquivo: ' + error.message, 'danger');
+            } else {
+                showToast('Arquivo excluído com sucesso!');
+                loadFiles();
+            }
+            hideLoading();
+        }
+
+        document.getElementById('upload-button').addEventListener('click', uploadFile);
+
+        // --- Gerenciar Comprovantes (Exemplo, ajuste para sua tabela de comprovantes) ---
+        async function loadComprovantes() {
+            showLoading();
+            // Exemplo: Substitua 'comprovantes_table' pela sua tabela real
+            const { data, error } = await supabase.from('comprovantes_table').select('*').order('data', { ascending: false });
+
+            const comprovantesList = document.getElementById('comprovantes-list');
+            comprovantesList.innerHTML = '';
+
+            if (error) {
+                showToast('Erro ao carregar comprovantes: ' + error.message, 'danger');
+                comprovantesList.innerHTML = `<tr><td colspan="5" class="py-3 px-6 text-center text-red-500">${error.message}</td></tr>`;
+            } else if (data.length === 0) {
+                comprovantesList.innerHTML = `<tr><td colspan="5" class="py-3 px-6 text-center">Nenhum comprovante encontrado.</td></tr>`;
+            } else {
+                data.forEach(comprovante => {
+                    comprovantesList.innerHTML += `
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left">${comprovante.id.substring(0, 8)}...</td>
+                            <td class="py-3 px-6 text-left">${comprovante.referencia || 'N/A'}</td>
+                            <td class="py-3 px-6 text-left">${formatCurrency(comprovante.valor)}</td>
+                            <td class="py-3 px-6 text-left">${formatDate(comprovante.data)}</td>
+                            <td class="py-3 px-6 text-center">
+                                <div class="flex item-center justify-center space-x-2">
+                                    <button onclick="viewComprovante('${comprovante.id}')" class="text-blue-500 hover:text-blue-700"><i class="fas fa-eye"></i></button>
+                                    <button onclick="deleteComprovante('${comprovante.id}')" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            hideLoading();
+        }
+
+        function viewComprovante(id) {
+            showToast('Funcionalidade de visualizar comprovante (ID: ' + id + ')', 'info');
+            // Implementar lógica para abrir modal ou nova aba com o comprovante
+        }
+
+        async function deleteComprovante(id) {
+            if (!confirm('Tem certeza que deseja excluir este comprovante?')) return;
+            showLoading();
+            // Exemplo: Substitua 'comprovantes_table' pela sua tabela real
+            const { error } = await supabase.from('comprovantes_table').delete().eq('id', id);
+            if (error) {
+                showToast('Erro ao excluir comprovante: ' + error.message, 'danger');
+            } else {
+                showToast('Comprovante excluído com sucesso!');
+                loadComprovantes();
+            }
+            hideLoading();
+        }
+
+        // --- Configurações (Exemplo) ---
+        async function loadConfiguracoes() {
+            showLoading();
+            // Exemplo: Carregar configurações de uma tabela 'configuracoes'
+            const { data, error } = await supabase.from('configuracoes').select('*').single();
+            if (!error && data) {
+                document.getElementById('site-name').value = data.site_name || '';
+                document.getElementById('default-commission').value = data.default_commission || 0;
+            }
+            hideLoading();
+        }
+
+        document.querySelector('#configuracoes form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+            const siteName = document.getElementById('site-name').value;
+            const defaultCommission = parseFloat(document.getElementById('default-commission').value);
+
+            // Exemplo: Atualizar configurações na tabela 'configuracoes'
+            const { error } = await supabase.from('configuracoes').upsert({ id: 1, site_name: siteName, default_commission: defaultCommission }, { onConflict: 'id' });
+            if (error) {
+                showToast('Erro ao salvar configurações: ' + error.message, 'danger');
+            } else {
+                showToast('Configurações salvas com sucesso!');
+            }
+            hideLoading();
+        });
+
+        // --- Initial Load ---
+        async function loadInitialData() {
+            // Load dashboard data by default
+            await loadDashboardData();
+        }
+
+        // Run authentication check on page load
+        checkAuth();
+    </script>
+</body>
+</html>
