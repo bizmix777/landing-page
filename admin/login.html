@@ -3,328 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - Somos Todos Um</title>
-    <meta name="robots" content="noindex, nofollow">
+    <title>Login - BizMix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        * {
+        /* Reset básico */
+        body, h1, p, form, input, button {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Gradiente azul para roxo */
+            color: #333;
+            line-height: 1.6;
         }
 
         .login-container {
-            background: white;
+            background-color: #ffffff;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             max-width: 400px;
-            width: 100%;
-        }
-
-        .login-header {
+            width: 90%;
             text-align: center;
-            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out;
         }
 
-        .login-header h1 {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
             color: #333;
-            margin-bottom: 10px;
-        }
-
-        .login-header p {
-            color: #666;
-            font-size: 0.9rem;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            font-weight: 600;
         }
 
         .form-group {
             margin-bottom: 20px;
+            text-align: left;
         }
 
-        .form-group label {
+        label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
             font-weight: 600;
+            color: #555;
         }
 
-        .form-group input {
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
+            padding: 14px 18px;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .form-group input:focus {
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #2575fc;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .btn-login {
+        button {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: 15px 20px;
+            background-color: #2575fc;
+            color: #ffffff;
             border: none;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1.1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-login:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-login:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            display: none;
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .back-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .back-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .back-link a:hover {
-            text-decoration: underline;
-        }
-
-        .loading {
-            text-align: center;
-            color: #667eea;
-            font-size: 14px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             margin-top: 10px;
-            display: none;
+        }
+
+        button:hover {
+            background-color: #1a5edb;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .error-message, .loading-message {
+            background-color: #f44336;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none; /* Escondido por padrão */
+            font-size: 0.95em;
+            text-align: center;
+        }
+
+        .loading-message {
+            background-color: #2196f3;
+        }
+
+        /* Responsividade */
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 30px 20px;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 25px;
+            }
+
+            input[type="email"],
+            input[type="password"],
+            button {
+                padding: 12px 15px;
+                font-size: 1em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-header">
-            <h1>🔐 Login Admin</h1>
-            <p>Acesse o painel administrativo</p>
-        </div>
-
-        <div id="errorMessage" class="alert alert-error"></div>
-        <div id="successMessage" class="alert alert-success"></div>
-
+        <h1>Login - BizMix</h1>
         <form id="loginForm">
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    required 
-                    placeholder="seu@email.com"
-                    autocomplete="email"
-                >
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="seu@email.com" required>
             </div>
-
             <div class="form-group">
-                <label for="password">Senha:</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    required 
-                    placeholder="••••••••"
-                    autocomplete="current-password"
-                >
+                <label for="password">Senha</label>
+                <input type="password" id="password" placeholder="Sua senha" required>
             </div>
-
-            <button type="submit" class="btn-login" id="btnLogin">
-                Entrar
-            </button>
+            <button type="submit">Entrar</button>
         </form>
-
-        <div id="loadingMessage" class="loading">
-            Autenticando...
-        </div>
-
-        <div class="back-link">
-            <a href="/">← Voltar para o site</a>
-        </div>
+        <div id="errorMessage" class="error-message"></div>
+        <div id="loadingMessage" class="loading-message">Carregando...</div>
     </div>
 
-    <!-- Supabase JS -->
+    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <script>
-        console.log('🔐 Página de Login Admin Carregada');
-
-        // ========================================
-        // CONFIGURAÇÃO DO SUPABASE
-        // ========================================
+        // Supabase Configuration
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        
-        // Inicializar Supabase
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        console.log('✅ Supabase inicializado');
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY4NzE5NjcsImV4cCI6MjA1MjQ0Nzk2N30.4yKEOCmKyHqXxKCN0JoLZLDqWNZQHVVMXJGPnfLkruI';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // ========================================
-        // ELEMENTOS DO DOM
-        // ========================================
+        // Get DOM elements
         const loginForm = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const loginBtn = document.getElementById('btnLogin');
-        const errorMessage = document.getElementById('errorMessage');
-        const successMessage = document.getElementById('successMessage');
-        const loadingMessage = document.getElementById('loadingMessage');
-        
-        // ========================================
-        // FUNÇÕES AUXILIARES
-        // ========================================
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.classList.add('show');
-            successMessage.classList.remove('show');
-            setTimeout(() => {
-                errorMessage.classList.remove('show');
-            }, 5000);
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const loadingMessageDiv = document.getElementById('loadingMessage');
+
+        // Function to display error message
+        function showErrorMessage(message) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.style.display = 'block';
+            loadingMessageDiv.style.display = 'none';
         }
-        
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.classList.add('show');
-            errorMessage.classList.remove('show');
+
+        // Function to display loading message
+        function showLoadingMessage() {
+            loadingMessageDiv.textContent = 'Carregando...';
+            loadingMessageDiv.style.display = 'block';
+            errorMessageDiv.style.display = 'none';
         }
-        
-        function setLoading(isLoading) {
-            loginBtn.disabled = isLoading;
-            loginBtn.textContent = isLoading ? '⏳ Verificando...' : 'Entrar';
-            loadingMessage.style.display = isLoading ? 'block' : 'none';
+
+        // Function to hide messages
+        function hideMessages() {
+            errorMessageDiv.style.display = 'none';
+            loadingMessageDiv.style.display = 'none';
         }
-        
-        // ========================================
-        // VERIFICAR SE JÁ ESTÁ LOGADO
-        // ========================================
-        async function checkAuth() {
-            console.log('🔍 Verificando autenticação...');
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                console.log('✅ Usuário já está logado - redirecionando');
-                window.location.href = '/admin/index.html';
-            } else {
-                console.log('ℹ️ Usuário não está logado');
-            }
-        }
-        
-        // ========================================
-        // FUNÇÃO DE LOGIN
-        // ========================================
-        async function handleLogin(e) {
-            e.preventDefault();
-            
+
+        // Handle form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
             const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            
-            console.log('🔐 Tentando login com:', email);
-            
-            // Validação básica
+            const password = passwordInput.value.trim();
+
             if (!email || !password) {
-                showError('❌ Por favor, preencha todos os campos.');
+                showErrorMessage('Por favor, preencha todos os campos.');
                 return;
             }
-            
-            setLoading(true);
-            
+
+            showLoadingMessage();
+
             try {
-                // Tentar fazer login com Supabase
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                // 1. Authenticate with Supabase Auth
+                const { data, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password,
                 });
-                
-                if (error) {
-                    throw error;
+
+                if (authError) {
+                    console.error('Erro de autenticação Supabase:', authError);
+                    let userFriendlyMessage = 'Erro ao fazer login. Verifique seu email e senha.';
+                    if (authError.message.includes('Invalid login credentials')) {
+                        userFriendlyMessage = 'Credenciais de login inválidas.';
+                    }
+                    showErrorMessage(userFriendlyMessage);
+                    return;
                 }
-                
-                if (data.session) {
-                    console.log('✅ Login realizado com sucesso!');
-                    showSuccess('✅ Login realizado com sucesso! Redirecionando...');
+
+                if (data && data.user) {
+                    console.log('Usuário autenticado:', data.user);
+
+                    // 2. Query the "parceiros" table to get user data
+                    const { data: parceiroData, error: parceiroError } = await supabase
+                        .from('parceiros')
+                        .select('tipo_parceiro')
+                        .eq('email', email)
+                        .single();
+
+                    if (parceiroError) {
+                        console.error('Erro ao buscar tipo de parceiro:', parceiroError);
+                        showErrorMessage('Erro ao obter informações do usuário. Tente novamente.');
+                        // Even if there's an error fetching parceiro data, we might still redirect to a default dashboard
+                        window.location.href = '/admin/dashboard-parceiro.html'; // Default redirect on error
+                        return;
+                    }
+
+                    // 3. Check the "tipo_parceiro" field and redirect
+                    const tipo_parceiro = parceiroData ? parceiroData.tipo_parceiro : null;
+                    let redirectPath = '/admin/dashboard-parceiro.html'; // Default redirect
+
+                    if (tipo_parceiro === 'admin') {
+                        redirectPath = '/admin/super-admin.html';
+                    } else if (tipo_parceiro === 'parceiro') {
+                        redirectPath = '/admin/dashboard-parceiro.html';
+                    } else if (tipo_parceiro === 'igreja') {
+                        redirectPath = '/admin/dashboard-igreja.html';
+                    }
                     
-                    // Redirecionar após 1 segundo
-                    setTimeout(() => {
-                        console.log('🔄 Redirecionando para dashboard...');
-                        window.location.href = '/admin/index.html';
-                    }, 1000);
+                    console.log(`Redirecionando para: ${redirectPath}`);
+                    window.location.href = redirectPath;
+
+                } else {
+                    // This case should ideally be caught by authError, but as a fallback
+                    showErrorMessage('Ocorreu um erro inesperado. Tente novamente.');
                 }
-                
+
             } catch (error) {
-                console.error('❌ Erro no login:', error);
-                
-                // Mensagens de erro amigáveis
-                let errorMsg = '❌ Erro ao fazer login. Tente novamente.';
-                
-                if (error.message.includes('Invalid login credentials')) {
-                    errorMsg = '❌ Email ou senha incorretos.';
-                } else if (error.message.includes('Email not confirmed')) {
-                    errorMsg = '❌ Email não confirmado. Verifique sua caixa de entrada.';
-                } else if (error.message.includes('Network')) {
-                    errorMsg = '❌ Erro de conexão. Verifique sua internet.';
-                }
-                
-                showError(errorMsg);
-                setLoading(false);
+                console.error('Erro inesperado durante o login:', error);
+                showErrorMessage('Ocorreu um erro inesperado. Tente novamente.');
+            } finally {
+                hideMessages(); // Hide loading/error messages after attempt
             }
-        }
-        
-        // ========================================
-        // EVENT LISTENERS
-        // ========================================
-        loginForm.addEventListener('submit', handleLogin);
-        
-        // Verificar autenticação ao carregar a página
-        checkAuth();
+        });
     </script>
 </body>
 </html>
