@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Super Admin - BizMix</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -212,75 +215,6 @@
             font-size: 20px;
         }
 
-        /* Filters */
-        .filters {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .filter-group input,
-        .filter-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary-color);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning-color);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger-color);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
         /* Table */
         .table-container {
             overflow-x: auto;
@@ -340,6 +274,36 @@
         .badge-info {
             background: #dbeafe;
             color: #1e40af;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
         }
 
         /* Modal */
@@ -412,36 +376,10 @@
             font-size: 14px;
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            border: 4px solid var(--border-color);
-            border-top: 4px solid var(--primary-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         /* Mobile */
@@ -480,10 +418,6 @@
                 grid-template-columns: 1fr;
             }
 
-            .filters {
-                flex-direction: column;
-            }
-
             .form-row {
                 grid-template-columns: 1fr;
             }
@@ -517,25 +451,31 @@
                     <li class="nav-item">
                         <a class="nav-link" data-section="partners">
                             <span>👥</span>
-                            <span>Gestão de Parceiros</span>
+                            <span>Parceiros</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="churches">
+                            <span>⛪</span>
+                            <span>Igrejas</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-section="sales">
                             <span>💳</span>
-                            <span>Gestão de Vendas</span>
+                            <span>Vendas</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-section="withdrawals">
                             <span>💸</span>
-                            <span>Gestão de Saques</span>
+                            <span>Saques</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-section="reports">
-                            <span>📈</span>
-                            <span>Relatórios</span>
+                        <a class="nav-link" data-section="settings">
+                            <span>⚙️</span>
+                            <span>Configurações</span>
                         </a>
                     </li>
                 </ul>
@@ -559,16 +499,16 @@
                         <div class="value" id="totalPartners">0</div>
                     </div>
                     <div class="stat-card">
-                        <h3>Parceiros Ativos</h3>
-                        <div class="value" id="activePartners">0</div>
+                        <h3>Total de Igrejas</h3>
+                        <div class="value" id="totalChurches">0</div>
                     </div>
                     <div class="stat-card">
                         <h3>Total de Vendas</h3>
-                        <div class="value" id="totalSales">R$ 0</div>
+                        <div class="value" id="totalSales">0</div>
                     </div>
                     <div class="stat-card">
-                        <h3>Comissões Pagas</h3>
-                        <div class="value" id="totalCommissions">R$ 0</div>
+                        <h3>Receita Total</h3>
+                        <div class="value" id="totalRevenue">R$ 0,00</div>
                     </div>
                 </div>
 
@@ -587,7 +527,7 @@
                                     <th>Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="recentActivity">
+                            <tbody id="recentActivityTable">
                                 <tr>
                                     <td colspan="5" style="text-align: center;">Carregando...</td>
                                 </tr>
@@ -596,7 +536,8 @@
                     </div>
                 </div>
             </section>
-                        <!-- Partners Section -->
+
+            <!-- Partners Section -->
             <section class="section" id="partners">
                 <div class="page-header">
                     <h1>Gestão de Parceiros</h1>
@@ -605,39 +546,8 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>Filtros</h2>
-                    </div>
-                    <div class="filters">
-                        <div class="filter-group">
-                            <label>Buscar</label>
-                            <input type="text" id="searchPartner" placeholder="Nome, email ou código">
-                        </div>
-                        <div class="filter-group">
-                            <label>Status</label>
-                            <select id="filterPartnerStatus">
-                                <option value="">Todos</option>
-                                <option value="ativo">Ativo</option>
-                                <option value="pendente">Pendente</option>
-                                <option value="inativo">Inativo</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Tipo</label>
-                            <select id="filterPartnerType">
-                                <option value="">Todos</option>
-                                <option value="parceiro">Parceiro</option>
-                                <option value="igreja">Igreja</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="display: flex; align-items: flex-end;">
-                            <button class="btn btn-primary" id="applyPartnerFilters">Aplicar Filtros</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
                         <h2>Lista de Parceiros</h2>
+                        <button class="btn btn-success" id="addPartnerBtn">➕ Adicionar Parceiro</button>
                     </div>
                     <div class="table-container">
                         <table>
@@ -646,13 +556,48 @@
                                     <th>Código</th>
                                     <th>Nome</th>
                                     <th>Email</th>
-                                    <th>Tipo</th>
+                                    <th>Telefone</th>
                                     <th>Status</th>
-                                    <th>Data Cadastro</th>
+                                    <th>Saldo</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="partnersTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Churches Section -->
+            <section class="section" id="churches">
+                <div class="page-header">
+                    <h1>Gestão de Igrejas</h1>
+                    <p>Gerencie todas as igrejas parceiras</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Lista de Igrejas</h2>
+                        <button class="btn btn-success" id="addChurchBtn">➕ Adicionar Igreja</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Telefone</th>
+                                    <th>Status</th>
+                                    <th>Saldo</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="churchesTable">
                                 <tr>
                                     <td colspan="7" style="text-align: center;">Carregando...</td>
                                 </tr>
@@ -671,59 +616,26 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>Filtros</h2>
-                    </div>
-                    <div class="filters">
-                        <div class="filter-group">
-                            <label>Data Início</label>
-                            <input type="date" id="filterSalesDateStart">
-                        </div>
-                        <div class="filter-group">
-                            <label>Data Fim</label>
-                            <input type="date" id="filterSalesDateEnd">
-                        </div>
-                        <div class="filter-group">
-                            <label>Status</label>
-                            <select id="filterSalesStatus">
-                                <option value="">Todos</option>
-                                <option value="aprovada">Aprovada</option>
-                                <option value="pendente">Pendente</option>
-                                <option value="cancelada">Cancelada</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Parceiro</label>
-                            <input type="text" id="filterSalesPartner" placeholder="Nome ou código">
-                        </div>
-                        <div class="filter-group" style="display: flex; align-items: flex-end; gap: 10px;">
-                            <button class="btn btn-primary" id="applySalesFilters">Aplicar Filtros</button>
-                            <button class="btn btn-success" id="exportSalesCSV">Exportar CSV</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Lista de Vendas</h2>
+                        <h2>Todas as Vendas</h2>
+                        <button class="btn btn-success" id="addSaleBtn">➕ Registrar Venda</button>
                     </div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Data</th>
-                                    <th>Comprador</th>
-                                    <th>Email</th>
                                     <th>Parceiro</th>
-                                    <th>Código Parceiro</th>
+                                    <th>Comprador</th>
                                     <th>Valor Total</th>
                                     <th>Comissão</th>
                                     <th>Status</th>
-                                    <th>Comissão Paga</th>
+                                    <th>Paga</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="salesTable">
                                 <tr>
-                                    <td colspan="9" style="text-align: center;">Carregando...</td>
+                                    <td colspan="8" style="text-align: center;">Carregando...</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -735,66 +647,26 @@
             <section class="section" id="withdrawals">
                 <div class="page-header">
                     <h1>Gestão de Saques</h1>
-                    <p>Processe e gerencie solicitações de saque</p>
+                    <p>Aprove ou rejeite solicitações de saque</p>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>Saques Pendentes</h2>
+                        <h2>Solicitações de Saque</h2>
                     </div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Data Solicitação</th>
-                                    <th>Parceiro</th>
-                                    <th>Código</th>
-                                    <th>Valor Solicitado</th>
-                                    <th>Saldo Disponível</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pendingWithdrawalsTable">
-                                <tr>
-                                    <td colspan="7" style="text-align: center;">Carregando...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Histórico de Saques</h2>
-                    </div>
-                    <div class="filters">
-                        <div class="filter-group">
-                            <label>Status</label>
-                            <select id="filterWithdrawalStatus">
-                                <option value="">Todos</option>
-                                <option value="aprovado">Aprovado</option>
-                                <option value="rejeitado">Rejeitado</option>
-                                <option value="pago">Pago</option>
-                            </select>
-                        </div>
-                        <div class="filter-group" style="display: flex; align-items: flex-end;">
-                            <button class="btn btn-primary" id="applyWithdrawalFilters">Aplicar Filtros</button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Data Solicitação</th>
-                                    <th>Data Processamento</th>
                                     <th>Parceiro</th>
                                     <th>Valor</th>
                                     <th>Status</th>
-                                    <th>Observações</th>
+                                    <th>Dados Bancários</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="withdrawalsHistoryTable">
+                            <tbody id="withdrawalsTable">
                                 <tr>
                                     <td colspan="6" style="text-align: center;">Carregando...</td>
                                 </tr>
@@ -804,114 +676,74 @@
                 </div>
             </section>
 
-            <!-- Reports Section -->
-            <section class="section" id="reports">
+            <!-- Settings Section -->
+            <section class="section" id="settings">
                 <div class="page-header">
-                    <h1>Relatórios</h1>
-                    <p>Análises e estatísticas do sistema</p>
+                    <h1>Configurações do Sistema</h1>
+                    <p>Configure parâmetros gerais</p>
                 </div>
 
                 <div class="card">
                     <div class="card-header">
-                        <h2>Ranking de Parceiros</h2>
-                        <button class="btn btn-success" id="exportReportCSV">Exportar CSV</button>
+                        <h2>Configurações de Comissão</h2>
                     </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Posição</th>
-                                    <th>Parceiro</th>
-                                    <th>Código</th>
-                                    <th>Total Vendas</th>
-                                    <th>Total Comissões</th>
-                                    <th>Comissões Pagas</th>
-                                    <th>Comissões Pendentes</th>
-                                </tr>
-                            </thead>
-                            <tbody id="rankingTable">
-                                <tr>
-                                    <td colspan="7" style="text-align: center;">Carregando...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Resumo de Comissões</h2>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>Total de Comissões</h3>
-                            <div class="value" id="reportTotalCommissions">R$ 0</div>
+                    <form id="settingsForm">
+                        <div class="form-group">
+                            <label>Percentual de Comissão Padrão (%)</label>
+                            <input type="number" id="defaultCommission" step="0.01" min="0" max="100" value="10">
                         </div>
-                        <div class="stat-card">
-                            <h3>Comissões Pagas</h3>
-                            <div class="value" id="reportPaidCommissions">R$ 0</div>
+                        <div class="form-group">
+                            <label>Valor Mínimo de Saque (R$)</label>
+                            <input type="number" id="minWithdrawal" step="0.01" min="0" value="50">
                         </div>
-                        <div class="stat-card">
-                            <h3>Comissões Pendentes</h3>
-                            <div class="value" id="reportPendingCommissions">R$ 0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Vendas por Período</h2>
-                    </div>
-                    <canvas id="salesChart" style="max-height: 400px;"></canvas>
+                        <button type="submit" class="btn btn-success">Salvar Configurações</button>
+                    </form>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Modal Edit Partner -->
-    <div class="modal" id="editPartnerModal">
+    <!-- Modal Add/Edit Partner -->
+    <div class="modal" id="partnerModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Editar Parceiro</h2>
-                <button class="close-modal" onclick="closeModal('editPartnerModal')">&times;</button>
+                <h2 id="partnerModalTitle">Adicionar Parceiro</h2>
+                <button class="close-modal" onclick="closeModal('partnerModal')">&times;</button>
             </div>
-            <form id="editPartnerForm">
-                <input type="hidden" id="editPartnerId">
+            <form id="partnerForm">
+                <input type="hidden" id="partnerId">
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Nome Completo *</label>
-                        <input type="text" id="editPartnerName" required>
+                        <input type="text" id="partnerName" required>
                     </div>
                     <div class="form-group">
                         <label>Email *</label>
-                        <input type="email" id="editPartnerEmail" required>
+                        <input type="email" id="partnerEmail" required>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Telefone</label>
-                        <input type="tel" id="editPartnerPhone">
+                        <input type="tel" id="partnerPhone">
                     </div>
                     <div class="form-group">
                         <label>CPF/CNPJ</label>
-                        <input type="text" id="editPartnerDocument">
+                        <input type="text" id="partnerDocument">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Tipo *</label>
-                        <select id="editPartnerType" required>
-                            <option value="parceiro">Parceiro</option>
-                            <option value="igreja">Igreja</option>
-                            <option value="admin">Admin</option>
-                        </select>
+                        <label>Senha *</label>
+                        <input type="password" id="partnerPassword" minlength="6">
+                        <small style="color: #6b7280;">Mínimo 6 caracteres</small>
                     </div>
                     <div class="form-group">
                         <label>Status *</label>
-                        <select id="editPartnerStatus" required>
+                        <select id="partnerStatus" required>
                             <option value="ativo">Ativo</option>
                             <option value="pendente">Pendente</option>
                             <option value="inativo">Inativo</option>
@@ -920,96 +752,162 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Endereço</label>
-                    <input type="text" id="editPartnerAddress">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Cidade</label>
-                        <input type="text" id="editPartnerCity">
-                    </div>
-                    <div class="form-group">
-                        <label>Estado</label>
-                        <input type="text" id="editPartnerState" maxlength="2">
-                    </div>
-                </div>
-
-                <div class="form-group">
                     <label>Dados Bancários</label>
-                    <textarea id="editPartnerBankData" placeholder="Banco, Agência, Conta, Tipo de Conta"></textarea>
+                    <textarea id="partnerBankData" rows="3" placeholder="Banco, Agência, Conta"></textarea>
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                    <button type="button" class="btn btn-danger" onclick="closeModal('editPartnerModal')">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Salvar Alterações</button>
+                    <button type="button" class="btn" style="background: #ef4444; color: white;" onclick="closeModal('partnerModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Process Withdrawal -->
-    <div class="modal" id="processWithdrawalModal">
+    <!-- Modal Add/Edit Church -->
+    <div class="modal" id="churchModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Processar Saque</h2>
-                <button class="close-modal" onclick="closeModal('processWithdrawalModal')">&times;</button>
+                <h2 id="churchModalTitle">Adicionar Igreja</h2>
+                <button class="close-modal" onclick="closeModal('churchModal')">&times;</button>
             </div>
-            <form id="processWithdrawalForm">
-                <input type="hidden" id="processWithdrawalId">
+            <form id="churchForm">
+                <input type="hidden" id="churchId">
                 
-                <div class="form-group">
-                    <label>Parceiro</label>
-                    <input type="text" id="processWithdrawalPartner" readonly>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome da Igreja *</label>
+                        <input type="text" id="churchName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="churchEmail" required>
+                    </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Valor Solicitado</label>
-                        <input type="text" id="processWithdrawalAmount" readonly>
+                        <label>Telefone</label>
+                        <input type="tel" id="churchPhone">
                     </div>
                     <div class="form-group">
-                        <label>Saldo Disponível</label>
-                        <input type="text" id="processWithdrawalBalance" readonly>
+                        <label>CNPJ</label>
+                        <input type="text" id="churchDocument">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <input type="text" id="churchAddress">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Senha *</label>
+                        <input type="password" id="churchPassword" minlength="6">
+                        <small style="color: #6b7280;">Mínimo 6 caracteres</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select id="churchStatus" required>
+                            <option value="ativo">Ativo</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label>Dados Bancários</label>
-                    <textarea id="processWithdrawalBankData" readonly></textarea>
+                    <textarea id="churchBankData" rows="3" placeholder="Banco, Agência, Conta"></textarea>
                 </div>
 
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn" style="background: #ef4444; color: white;" onclick="closeModal('churchModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Add/Edit Sale -->
+    <div class="modal" id="saleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="saleModalTitle">Registrar Venda</h2>
+                <button class="close-modal" onclick="closeModal('saleModal')">&times;</button>
+            </div>
+            <form id="saleForm">
+                <input type="hidden" id="saleId">
+                
                 <div class="form-group">
-                    <label>Ação *</label>
-                    <select id="processWithdrawalAction" required>
-                        <option value="">Selecione uma ação</option>
-                        <option value="aprovado">Aprovar</option>
-                        <option value="rejeitado">Rejeitar</option>
-                        <option value="pago">Marcar como Pago</option>
+                    <label>Parceiro *</label>
+                    <select id="salePartner" required>
+                        <option value="">Selecione um parceiro</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label>Observações</label>
-                    <textarea id="processWithdrawalNotes" placeholder="Adicione observações sobre o processamento"></textarea>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome do Comprador *</label>
+                        <input type="text" id="saleBuyerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email do Comprador *</label>
+                        <input type="email" id="saleBuyerEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Valor Total (R$) *</label>
+                        <input type="number" id="saleTotal" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Comissão (%) *</label>
+                        <input type="number" id="saleCommission" step="0.01" min="0" max="100" value="10" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select id="saleStatus" required>
+                            <option value="pendente">Pendente</option>
+                            <option value="aprovada">Aprovada</option>
+                            <option value="cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Comissão Paga?</label>
+                        <select id="saleCommissionPaid">
+                            <option value="false">Não</option>
+                            <option value="true">Sim</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                    <button type="button" class="btn btn-danger" onclick="closeModal('processWithdrawalModal')">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Processar</button>
+                    <button type="button" class="btn" style="background: #ef4444; color: white;" onclick="closeModal('saleModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
                 </div>
             </form>
         </div>
     </div>
-
-    <script>
+        <script>
         // ✅ CONFIGURAÇÃO DO SUPABASE - DECLARADA APENAS UMA VEZ
-        const supabaseUrl = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const SUPABASE_URL = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentUser = null;
-        let currentSection = 'dashboard';
+
+        // ✅ CORREÇÃO: Caminhos relativos corretos a partir de /admin/super-admin/
+        const PATHS = {
+            login: '../login.html',  // Volta para /admin/login.html
+            dashboard_parceiro: '../../painel-acesso/index.html',  // Vai para /painel-acesso/index.html
+            dashboard_igreja: '../../somos-todos-um/igrejas.html'  // Vai para /somos-todos-um/igrejas.html
+        };
 
         // Verificar autenticação
         async function checkAuth() {
@@ -1017,7 +915,7 @@
                 const { data: { session } } = await supabase.auth.getSession();
                 
                 if (!session) {
-                    window.location.href = '/admin/login.html';
+                    window.location.href = PATHS.login;
                     return;
                 }
 
@@ -1030,13 +928,14 @@
                 if (error || !userData) {
                     alert('Erro ao carregar dados do usuário.');
                     await supabase.auth.signOut();
-                    window.location.href = '/admin/login.html';
+                    window.location.href = PATHS.login;
                     return;
                 }
 
                 if (userData.tipo_parceiro !== 'admin') {
-                    alert('Acesso negado. Apenas administradores podem acessar esta página.');
-                    window.location.href = '/admin/login.html';
+                    alert('Acesso negado. Esta área é exclusiva para administradores.');
+                    await supabase.auth.signOut();
+                    window.location.href = PATHS.login;
                     return;
                 }
 
@@ -1047,96 +946,65 @@
                 loadDashboard();
             } catch (error) {
                 console.error('Erro na autenticação:', error);
-                window.location.href = '/admin/login.html';
+                window.location.href = PATHS.login;
             }
         }
 
         // Carregar Dashboard
         async function loadDashboard() {
             try {
-                // Total de parceiros
-                const { count: totalPartners } = await supabase
+                // Contar parceiros
+                const { count: partnersCount } = await supabase
                     .from('parceiros')
                     .select('*', { count: 'exact', head: true })
-                    .neq('tipo_parceiro', 'admin');
+                    .eq('tipo_parceiro', 'parceiro');
 
-                document.getElementById('totalPartners').textContent = totalPartners || 0;
-
-                // Parceiros ativos
-                const { count: activePartners } = await supabase
+                // Contar igrejas
+                const { count: churchesCount } = await supabase
                     .from('parceiros')
                     .select('*', { count: 'exact', head: true })
-                    .eq('status', 'ativo')
-                    .neq('tipo_parceiro', 'admin');
+                    .eq('tipo_parceiro', 'igreja');
 
-                document.getElementById('activePartners').textContent = activePartners || 0;
-
-                // Total de vendas
-                const { data: salesData } = await supabase
+                // Contar vendas
+                const { data: sales, count: salesCount } = await supabase
                     .from('vendas')
-                    .select('valor_total');
+                    .select('*', { count: 'exact' });
 
-                const totalSales = salesData?.reduce((sum, sale) => sum + (sale.valor_total || 0), 0) || 0;
-                document.getElementById('totalSales').textContent = formatCurrency(totalSales);
+                // Calcular receita total
+                const totalRevenue = sales?.reduce((sum, sale) => sum + (sale.valor_total || 0), 0) || 0;
 
-                // Comissões pagas
-                const { data: commissionsData } = await supabase
-                    .from('vendas')
-                    .select('valor_comissao')
-                    .eq('comissao_paga', true);
+                document.getElementById('totalPartners').textContent = partnersCount || 0;
+                document.getElementById('totalChurches').textContent = churchesCount || 0;
+                document.getElementById('totalSales').textContent = salesCount || 0;
+                document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
 
-                const totalCommissions = commissionsData?.reduce((sum, sale) => sum + (sale.valor_comissao || 0), 0) || 0;
-                document.getElementById('totalCommissions').textContent = formatCurrency(totalCommissions);
-
-                // Atividade recente
-                const { data: recentSales } = await supabase
-                    .from('vendas')
-                    .select('*, parceiros(nome_completo)')
-                    .order('data_venda', { ascending: false })
-                    .limit(5);
-
-                const activityHtml = recentSales?.map(sale => `
+                // Atividade recente (últimas 10 vendas)
+                const recentSales = sales?.slice(0, 10) || [];
+                const activityHtml = recentSales.map(sale => `
                     <tr>
                         <td>${formatDate(sale.data_venda)}</td>
                         <td>Venda</td>
-                        <td>${sale.parceiros?.nome_completo || 'N/A'} - ${sale.nome_comprador}</td>
+                        <td>${sale.nome_comprador}</td>
                         <td>${formatCurrency(sale.valor_total)}</td>
                         <td><span class="badge badge-${getStatusBadge(sale.status_venda)}">${sale.status_venda}</span></td>
                     </tr>
                 `).join('') || '<tr><td colspan="5" style="text-align: center;">Nenhuma atividade recente</td></tr>';
 
-                document.getElementById('recentActivity').innerHTML = activityHtml;
+                document.getElementById('recentActivityTable').innerHTML = activityHtml;
 
             } catch (error) {
                 console.error('Erro ao carregar dashboard:', error);
             }
         }
-                // Carregar Parceiros
+
+        // Carregar parceiros
         async function loadPartners() {
             try {
-                const search = document.getElementById('searchPartner').value;
-                const status = document.getElementById('filterPartnerStatus').value;
-                const type = document.getElementById('filterPartnerType').value;
-
-                let query = supabase
+                const { data: partners, error } = await supabase
                     .from('parceiros')
                     .select('*')
-                    .neq('tipo_parceiro', 'admin')
+                    .eq('tipo_parceiro', 'parceiro')
                     .order('created_at', { ascending: false });
-
-                if (search) {
-                    query = query.or(`nome_completo.ilike.%${search}%,email.ilike.%${search}%,codigo_parceiro.ilike.%${search}%`);
-                }
-
-                if (status) {
-                    query = query.eq('status', status);
-                }
-
-                if (type) {
-                    query = query.eq('tipo_parceiro', type);
-                }
-
-                const { data: partners, error } = await query;
 
                 if (error) throw error;
 
@@ -1145,14 +1013,14 @@
                         <td>${partner.codigo_parceiro || 'N/A'}</td>
                         <td>${partner.nome_completo}</td>
                         <td>${partner.email}</td>
-                        <td><span class="badge badge-info">${partner.tipo_parceiro}</span></td>
+                        <td>${partner.telefone || '-'}</td>
                         <td><span class="badge badge-${getStatusBadge(partner.status)}">${partner.status}</span></td>
-                        <td>${formatDate(partner.created_at)}</td>
+                        <td>${formatCurrency(partner.saldo_disponivel || 0)}</td>
                         <td>
                             <button class="btn btn-primary btn-sm" onclick="editPartner('${partner.id}')">Editar</button>
-                            ${partner.status === 'pendente' ? `<button class="btn btn-success btn-sm" onclick="approvePartner('${partner.id}')">Aprovar</button>` : ''}
-                            ${partner.status === 'ativo' ? `<button class="btn btn-warning btn-sm" onclick="togglePartnerStatus('${partner.id}', 'inativo')">Desativar</button>` : ''}
-                            ${partner.status === 'inativo' ? `<button class="btn btn-success btn-sm" onclick="togglePartnerStatus('${partner.id}', 'ativo')">Ativar</button>` : ''}
+                            <button class="btn btn-sm" style="background: #f59e0b; color: white;" onclick="toggleStatus('${partner.id}', 'parceiro', '${partner.status}')">
+                                ${partner.status === 'ativo' ? 'Desativar' : 'Ativar'}
+                            </button>
                         </td>
                     </tr>
                 `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum parceiro encontrado</td></tr>';
@@ -1161,11 +1029,138 @@
 
             } catch (error) {
                 console.error('Erro ao carregar parceiros:', error);
-                alert('Erro ao carregar parceiros.');
             }
         }
 
-        // Editar Parceiro
+        // Carregar igrejas
+        async function loadChurches() {
+            try {
+                const { data: churches, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('tipo_parceiro', 'igreja')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                const tableHtml = churches?.map(church => `
+                    <tr>
+                        <td>${church.codigo_parceiro || 'N/A'}</td>
+                        <td>${church.nome_completo}</td>
+                        <td>${church.email}</td>
+                        <td>${church.telefone || '-'}</td>
+                        <td><span class="badge badge-${getStatusBadge(church.status)}">${church.status}</span></td>
+                        <td>${formatCurrency(church.saldo_disponivel || 0)}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editChurch('${church.id}')">Editar</button>
+                            <button class="btn btn-sm" style="background: #f59e0b; color: white;" onclick="toggleStatus('${church.id}', 'igreja', '${church.status}')">
+                                ${church.status === 'ativo' ? 'Desativar' : 'Ativar'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhuma igreja encontrada</td></tr>';
+
+                document.getElementById('churchesTable').innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar igrejas:', error);
+            }
+        }
+
+        // Carregar vendas
+        async function loadSales() {
+            try {
+                const { data: sales, error } = await supabase
+                    .from('vendas')
+                    .select(`
+                        *,
+                        parceiros!vendas_parceiro_id_fkey(nome_completo)
+                    `)
+                    .order('data_venda', { ascending: false });
+
+                if (error) throw error;
+
+                const tableHtml = sales?.map(sale => `
+                    <tr>
+                        <td>${formatDate(sale.data_venda)}</td>
+                        <td>${sale.parceiros?.nome_completo || 'N/A'}</td>
+                        <td>${sale.nome_comprador}</td>
+                        <td>${formatCurrency(sale.valor_total)}</td>
+                        <td>${formatCurrency(sale.valor_comissao)}</td>
+                        <td><span class="badge badge-${getStatusBadge(sale.status_venda)}">${sale.status_venda}</span></td>
+                        <td><span class="badge badge-${sale.comissao_paga ? 'success' : 'warning'}">${sale.comissao_paga ? 'Sim' : 'Não'}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editSale('${sale.id}')">Editar</button>
+                            ${!sale.comissao_paga ? `<button class="btn btn-success btn-sm" onclick="markAsPaid('${sale.id}')">Pagar</button>` : ''}
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="8" style="text-align: center;">Nenhuma venda encontrada</td></tr>';
+
+                document.getElementById('salesTable').innerHTML = tableHtml;
+
+                // Carregar parceiros no select do modal de vendas
+                const { data: partners } = await supabase
+                    .from('parceiros')
+                    .select('id, nome_completo, codigo_parceiro')
+                    .in('tipo_parceiro', ['parceiro', 'igreja'])
+                    .eq('status', 'ativo');
+
+                const selectHtml = '<option value="">Selecione um parceiro</option>' + 
+                    partners?.map(p => `<option value="${p.id}">${p.nome_completo} (${p.codigo_parceiro})</option>`).join('');
+                
+                document.getElementById('salePartner').innerHTML = selectHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar vendas:', error);
+            }
+        }
+
+        // Carregar saques
+        async function loadWithdrawals() {
+            try {
+                const { data: withdrawals, error } = await supabase
+                    .from('saques')
+                    .select(`
+                        *,
+                        parceiros!saques_parceiro_id_fkey(nome_completo, dados_bancarios)
+                    `)
+                    .order('data_solicitacao', { ascending: false });
+
+                if (error) throw error;
+
+                const tableHtml = withdrawals?.map(w => `
+                    <tr>
+                        <td>${formatDate(w.data_solicitacao)}</td>
+                        <td>${w.parceiros?.nome_completo || 'N/A'}</td>
+                        <td>${formatCurrency(w.valor_solicitado)}</td>
+                        <td><span class="badge badge-${getStatusBadge(w.status)}">${w.status}</span></td>
+                        <td>${w.parceiros?.dados_bancarios || 'Não informado'}</td>
+                        <td>
+                            ${w.status === 'pendente' ? `
+                                <button class="btn btn-success btn-sm" onclick="approveWithdrawal('${w.id}')">Aprovar</button>
+                                <button class="btn btn-sm" style="background: #ef4444; color: white;" onclick="rejectWithdrawal('${w.id}')">Rejeitar</button>
+                            ` : '-'}
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="6" style="text-align: center;">Nenhuma solicitação de saque</td></tr>';
+
+                document.getElementById('withdrawalsTable').innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar saques:', error);
+            }
+        }
+
+        // Adicionar parceiro
+        document.getElementById('addPartnerBtn').addEventListener('click', () => {
+            document.getElementById('partnerModalTitle').textContent = 'Adicionar Parceiro';
+            document.getElementById('partnerForm').reset();
+            document.getElementById('partnerId').value = '';
+            document.getElementById('partnerPassword').required = true;
+            openModal('partnerModal');
+        });
+
+        // Editar parceiro
         async function editPartner(partnerId) {
             try {
                 const { data: partner, error } = await supabase
@@ -1176,394 +1171,415 @@
 
                 if (error) throw error;
 
-                document.getElementById('editPartnerId').value = partner.id;
-                document.getElementById('editPartnerName').value = partner.nome_completo || '';
-                document.getElementById('editPartnerEmail').value = partner.email || '';
-                document.getElementById('editPartnerPhone').value = partner.telefone || '';
-                document.getElementById('editPartnerDocument').value = partner.cpf_cnpj || '';
-                document.getElementById('editPartnerType').value = partner.tipo_parceiro || 'parceiro';
-                document.getElementById('editPartnerStatus').value = partner.status || 'pendente';
-                document.getElementById('editPartnerAddress').value = partner.endereco || '';
-                document.getElementById('editPartnerCity').value = partner.cidade || '';
-                document.getElementById('editPartnerState').value = partner.estado || '';
-                document.getElementById('editPartnerBankData').value = partner.dados_bancarios || '';
+                document.getElementById('partnerModalTitle').textContent = 'Editar Parceiro';
+                document.getElementById('partnerId').value = partner.id;
+                document.getElementById('partnerName').value = partner.nome_completo || '';
+                document.getElementById('partnerEmail').value = partner.email || '';
+                document.getElementById('partnerPhone').value = partner.telefone || '';
+                document.getElementById('partnerDocument').value = partner.cpf_cnpj || '';
+                document.getElementById('partnerStatus').value = partner.status || 'ativo';
+                document.getElementById('partnerBankData').value = partner.dados_bancarios || '';
+                document.getElementById('partnerPassword').required = false;
+                document.getElementById('partnerPassword').value = '';
 
-                openModal('editPartnerModal');
+                openModal('partnerModal');
             } catch (error) {
                 console.error('Erro ao carregar parceiro:', error);
                 alert('Erro ao carregar dados do parceiro.');
             }
         }
 
-        // Salvar Parceiro
-        document.getElementById('editPartnerForm').addEventListener('submit', async (e) => {
+        // Salvar parceiro
+        document.getElementById('partnerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             try {
-                const partnerId = document.getElementById('editPartnerId').value;
-                
-                const updates = {
-                    nome_completo: document.getElementById('editPartnerName').value,
-                    email: document.getElementById('editPartnerEmail').value,
-                    telefone: document.getElementById('editPartnerPhone').value,
-                    cpf_cnpj: document.getElementById('editPartnerDocument').value,
-                    tipo_parceiro: document.getElementById('editPartnerType').value,
-                    status: document.getElementById('editPartnerStatus').value,
-                    endereco: document.getElementById('editPartnerAddress').value,
-                    cidade: document.getElementById('editPartnerCity').value,
-                    estado: document.getElementById('editPartnerState').value,
-                    dados_bancarios: document.getElementById('editPartnerBankData').value
+                const partnerId = document.getElementById('partnerId').value;
+                const email = document.getElementById('partnerEmail').value;
+                const password = document.getElementById('partnerPassword').value;
+
+                const partnerData = {
+                    nome_completo: document.getElementById('partnerName').value,
+                    email: email,
+                    telefone: document.getElementById('partnerPhone').value,
+                    cpf_cnpj: document.getElementById('partnerDocument').value,
+                    status: document.getElementById('partnerStatus').value,
+                    dados_bancarios: document.getElementById('partnerBankData').value,
+                    tipo_parceiro: 'parceiro'
                 };
 
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update(updates)
-                    .eq('id', partnerId);
+                if (partnerId) {
+                    // Atualizar
+                    const { error } = await supabase
+                        .from('parceiros')
+                        .update(partnerData)
+                        .eq('id', partnerId);
 
-                if (error) throw error;
+                    if (error) throw error;
 
-                alert('Parceiro atualizado com sucesso!');
-                closeModal('editPartnerModal');
+                    alert('Parceiro atualizado com sucesso!');
+                } else {
+                    // Criar novo
+                    if (!password) {
+                        alert('Senha é obrigatória para novos parceiros.');
+                        return;
+                    }
+
+                    // Criar usuário no Supabase Auth
+                    const { data: authData, error: authError } = await supabase.auth.signUp({
+                        email: email,
+                        password: password
+                    });
+
+                    if (authError) throw authError;
+
+                    // Gerar código do parceiro
+                    partnerData.codigo_parceiro = 'PARC' + Date.now().toString().slice(-6);
+                    partnerData.saldo_disponivel = 0;
+
+                    // Criar registro na tabela parceiros
+                    const { error: insertError } = await supabase
+                        .from('parceiros')
+                        .insert(partnerData);
+
+                    if (insertError) throw insertError;
+
+                    alert('Parceiro adicionado com sucesso!');
+                }
+
+                closeModal('partnerModal');
                 loadPartners();
+
             } catch (error) {
                 console.error('Erro ao salvar parceiro:', error);
-                alert('Erro ao salvar alterações.');
+                alert('Erro ao salvar parceiro: ' + error.message);
             }
         });
 
-        // Aprovar Parceiro
-        async function approvePartner(partnerId) {
-            if (!confirm('Deseja aprovar este parceiro?')) return;
+        // Adicionar igreja
+        document.getElementById('addChurchBtn').addEventListener('click', () => {
+            document.getElementById('churchModalTitle').textContent = 'Adicionar Igreja';
+            document.getElementById('churchForm').reset();
+            document.getElementById('churchId').value = '';
+            document.getElementById('churchPassword').required = true;
+            openModal('churchModal');
+        });
 
+        // Editar igreja
+        async function editChurch(churchId) {
             try {
-                const { error } = await supabase
+                const { data: church, error } = await supabase
                     .from('parceiros')
-                    .update({ status: 'ativo' })
-                    .eq('id', partnerId);
+                    .select('*')
+                    .eq('id', churchId)
+                    .single();
 
                 if (error) throw error;
 
-                alert('Parceiro aprovado com sucesso!');
-                loadPartners();
+                document.getElementById('churchModalTitle').textContent = 'Editar Igreja';
+                document.getElementById('churchId').value = church.id;
+                document.getElementById('churchName').value = church.nome_completo || '';
+                document.getElementById('churchEmail').value = church.email || '';
+                document.getElementById('churchPhone').value = church.telefone || '';
+                document.getElementById('churchDocument').value = church.cpf_cnpj || '';
+                document.getElementById('churchAddress').value = church.endereco || '';
+                document.getElementById('churchStatus').value = church.status || 'ativo';
+                document.getElementById('churchBankData').value = church.dados_bancarios || '';
+                document.getElementById('churchPassword').required = false;
+                document.getElementById('churchPassword').value = '';
+
+                openModal('churchModal');
             } catch (error) {
-                console.error('Erro ao aprovar parceiro:', error);
-                alert('Erro ao aprovar parceiro.');
+                console.error('Erro ao carregar igreja:', error);
+                alert('Erro ao carregar dados da igreja.');
             }
         }
 
-        // Alternar Status do Parceiro
-        async function togglePartnerStatus(partnerId, newStatus) {
-            if (!confirm(`Deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este parceiro?`)) return;
+        // Salvar igreja
+        document.getElementById('churchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                const churchId = document.getElementById('churchId').value;
+                const email = document.getElementById('churchEmail').value;
+                const password = document.getElementById('churchPassword').value;
+
+                const churchData = {
+                    nome_completo: document.getElementById('churchName').value,
+                    email: email,
+                    telefone: document.getElementById('churchPhone').value,
+                    cpf_cnpj: document.getElementById('churchDocument').value,
+                    endereco: document.getElementById('churchAddress').value,
+                    status: document.getElementById('churchStatus').value,
+                    dados_bancarios: document.getElementById('churchBankData').value,
+                    tipo_parceiro: 'igreja'
+                };
+
+                if (churchId) {
+                    // Atualizar
+                    const { error } = await supabase
+                        .from('parceiros')
+                        .update(churchData)
+                        .eq('id', churchId);
+
+                    if (error) throw error;
+
+                    alert('Igreja atualizada com sucesso!');
+                } else {
+                    // Criar nova
+                    if (!password) {
+                        alert('Senha é obrigatória para novas igrejas.');
+                        return;
+                    }
+
+                    // Criar usuário no Supabase Auth
+                    const { data: authData, error: authError } = await supabase.auth.signUp({
+                        email: email,
+                        password: password
+                    });
+
+                    if (authError) throw authError;
+
+                    // Gerar código da igreja
+                    churchData.codigo_parceiro = 'IGR' + Date.now().toString().slice(-6);
+                    churchData.saldo_disponivel = 0;
+
+                    // Criar registro na tabela parceiros
+                    const { error: insertError } = await supabase
+                        .from('parceiros')
+                        .insert(churchData);
+
+                    if (insertError) throw insertError;
+
+                    alert('Igreja adicionada com sucesso!');
+                }
+
+                closeModal('churchModal');
+                loadChurches();
+
+            } catch (error) {
+                console.error('Erro ao salvar igreja:', error);
+                alert('Erro ao salvar igreja: ' + error.message);
+            }
+        });
+
+        // Adicionar venda
+        document.getElementById('addSaleBtn').addEventListener('click', () => {
+            document.getElementById('saleModalTitle').textContent = 'Registrar Venda';
+            document.getElementById('saleForm').reset();
+            document.getElementById('saleId').value = '';
+            openModal('saleModal');
+        });
+
+        // Editar venda
+        async function editSale(saleId) {
+            try {
+                const { data: sale, error } = await supabase
+                    .from('vendas')
+                    .select('*')
+                    .eq('id', saleId)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('saleModalTitle').textContent = 'Editar Venda';
+                document.getElementById('saleId').value = sale.id;
+                document.getElementById('salePartner').value = sale.parceiro_id || '';
+                document.getElementById('saleBuyerName').value = sale.nome_comprador || '';
+                document.getElementById('saleBuyerEmail').value = sale.email_comprador || '';
+                document.getElementById('saleTotal').value = sale.valor_total || '';
+                document.getElementById('saleCommission').value = sale.percentual_comissao || 10;
+                document.getElementById('saleStatus').value = sale.status_venda || 'pendente';
+                document.getElementById('saleCommissionPaid').value = sale.comissao_paga ? 'true' : 'false';
+
+                openModal('saleModal');
+            } catch (error) {
+                console.error('Erro ao carregar venda:', error);
+                alert('Erro ao carregar dados da venda.');
+            }
+        }
+
+        // Salvar venda
+        document.getElementById('saleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                const saleId = document.getElementById('saleId').value;
+                const valorTotal = parseFloat(document.getElementById('saleTotal').value);
+                const percentualComissao = parseFloat(document.getElementById('saleCommission').value);
+                const valorComissao = (valorTotal * percentualComissao) / 100;
+
+                const saleData = {
+                    parceiro_id: document.getElementById('salePartner').value,
+                    nome_comprador: document.getElementById('saleBuyerName').value,
+                    email_comprador: document.getElementById('saleBuyerEmail').value,
+                    valor_total: valorTotal,
+                    percentual_comissao: percentualComissao,
+                    valor_comissao: valorComissao,
+                    status_venda: document.getElementById('saleStatus').value,
+                    comissao_paga: document.getElementById('saleCommissionPaid').value === 'true',
+                    data_venda: new Date().toISOString()
+                };
+
+                if (saleId) {
+                    // Atualizar
+                    const { error } = await supabase
+                        .from('vendas')
+                        .update(saleData)
+                        .eq('id', saleId);
+
+                    if (error) throw error;
+
+                    alert('Venda atualizada com sucesso!');
+                } else {
+                    // Criar nova
+                    const { error: insertError } = await supabase
+                        .from('vendas')
+                        .insert(saleData);
+
+                    if (insertError) throw insertError;
+
+                    alert('Venda registrada com sucesso!');
+                }
+
+                closeModal('saleModal');
+                loadSales();
+                loadDashboard();
+
+            } catch (error) {
+                console.error('Erro ao salvar venda:', error);
+                alert('Erro ao salvar venda: ' + error.message);
+            }
+        });
+
+        // Marcar comissão como paga
+        async function markAsPaid(saleId) {
+            if (!confirm('Confirma o pagamento desta comissão?')) return;
+
+            try {
+                // Buscar dados da venda
+                const { data: sale, error: saleError } = await supabase
+                    .from('vendas')
+                    .select('*, parceiros!vendas_parceiro_id_fkey(saldo_disponivel)')
+                    .eq('id', saleId)
+                    .single();
+
+                if (saleError) throw saleError;
+
+                // Atualizar venda como paga
+                const { error: updateError } = await supabase
+                    .from('vendas')
+                    .update({ 
+                        comissao_paga: true,
+                        data_pagamento: new Date().toISOString()
+                    })
+                    .eq('id', saleId);
+
+                if (updateError) throw updateError;
+
+                // Atualizar saldo do parceiro
+                const novoSaldo = (sale.parceiros.saldo_disponivel || 0) + sale.valor_comissao;
+                const { error: balanceError } = await supabase
+                    .from('parceiros')
+                    .update({ saldo_disponivel: novoSaldo })
+                    .eq('id', sale.parceiro_id);
+
+                if (balanceError) throw balanceError;
+
+                alert('Comissão marcada como paga e saldo atualizado!');
+                loadSales();
+
+            } catch (error) {
+                console.error('Erro ao marcar como paga:', error);
+                alert('Erro ao processar pagamento: ' + error.message);
+            }
+        }
+
+        // Aprovar saque
+        async function approveWithdrawal(withdrawalId) {
+            if (!confirm('Confirma a aprovação deste saque?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('saques')
+                    .update({ 
+                        status: 'aprovado',
+                        data_processamento: new Date().toISOString()
+                    })
+                    .eq('id', withdrawalId);
+
+                if (error) throw error;
+
+                alert('Saque aprovado com sucesso!');
+                loadWithdrawals();
+
+            } catch (error) {
+                console.error('Erro ao aprovar saque:', error);
+                alert('Erro ao aprovar saque: ' + error.message);
+            }
+        }
+
+        // Rejeitar saque
+        async function rejectWithdrawal(withdrawalId) {
+            const motivo = prompt('Motivo da rejeição:');
+            if (!motivo) return;
+
+            try {
+                const { error } = await supabase
+                    .from('saques')
+                    .update({ 
+                        status: 'rejeitado',
+                        data_processamento: new Date().toISOString(),
+                        observacoes: motivo
+                    })
+                    .eq('id', withdrawalId);
+
+                if (error) throw error;
+
+                alert('Saque rejeitado.');
+                loadWithdrawals();
+
+            } catch (error) {
+                console.error('Erro ao rejeitar saque:', error);
+                alert('Erro ao rejeitar saque: ' + error.message);
+            }
+        }
+
+        // Alternar status
+        async function toggleStatus(id, tipo, currentStatus) {
+            const newStatus = currentStatus === 'ativo' ? 'inativo' : 'ativo';
+            
+            if (!confirm(`Deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este ${tipo}?`)) return;
 
             try {
                 const { error } = await supabase
                     .from('parceiros')
                     .update({ status: newStatus })
-                    .eq('id', partnerId);
+                    .eq('id', id);
 
                 if (error) throw error;
 
                 alert('Status atualizado com sucesso!');
-                loadPartners();
+                
+                if (tipo === 'parceiro') {
+                    loadPartners();
+                } else {
+                    loadChurches();
+                }
+
             } catch (error) {
                 console.error('Erro ao atualizar status:', error);
                 alert('Erro ao atualizar status.');
             }
         }
 
-        // Carregar Vendas
-        async function loadSales() {
-            try {
-                const dateStart = document.getElementById('filterSalesDateStart').value;
-                const dateEnd = document.getElementById('filterSalesDateEnd').value;
-                const status = document.getElementById('filterSalesStatus').value;
-                const partner = document.getElementById('filterSalesPartner').value;
-
-                let query = supabase
-                    .from('vendas')
-                    .select('*, parceiros(nome_completo, codigo_parceiro)')
-                    .order('data_venda', { ascending: false });
-
-                if (dateStart) {
-                    query = query.gte('data_venda', dateStart);
-                }
-
-                if (dateEnd) {
-                    query = query.lte('data_venda', dateEnd);
-                }
-
-                if (status) {
-                    query = query.eq('status_venda', status);
-                }
-
-                const { data: sales, error } = await query;
-
-                if (error) throw error;
-
-                let filteredSales = sales;
-
-                if (partner) {
-                    filteredSales = sales.filter(sale => 
-                        sale.parceiros?.nome_completo?.toLowerCase().includes(partner.toLowerCase()) ||
-                        sale.parceiros?.codigo_parceiro?.toLowerCase().includes(partner.toLowerCase())
-                    );
-                }
-
-                const tableHtml = filteredSales?.map(sale => `
-                    <tr>
-                        <td>${formatDate(sale.data_venda)}</td>
-                        <td>${sale.nome_comprador}</td>
-                        <td>${sale.email_comprador}</td>
-                        <td>${sale.parceiros?.nome_completo || 'N/A'}</td>
-                        <td>${sale.parceiros?.codigo_parceiro || 'N/A'}</td>
-                        <td>${formatCurrency(sale.valor_total)}</td>
-                        <td>${formatCurrency(sale.valor_comissao)}</td>
-                        <td><span class="badge badge-${getStatusBadge(sale.status_venda)}">${sale.status_venda}</span></td>
-                        <td><span class="badge badge-${sale.comissao_paga ? 'success' : 'warning'}">${sale.comissao_paga ? 'Sim' : 'Não'}</span></td>
-                    </tr>
-                `).join('') || '<tr><td colspan="9" style="text-align: center;">Nenhuma venda encontrada</td></tr>';
-
-                document.getElementById('salesTable').innerHTML = tableHtml;
-
-            } catch (error) {
-                console.error('Erro ao carregar vendas:', error);
-                alert('Erro ao carregar vendas.');
-            }
+        // Modal
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
         }
 
-        // Exportar Vendas CSV
-        async function exportSalesCSV() {
-            try {
-                const { data: sales, error } = await supabase
-                    .from('vendas')
-                    .select('*, parceiros(nome_completo, codigo_parceiro)')
-                    .order('data_venda', { ascending: false });
-
-                if (error) throw error;
-
-                const headers = ['Data Venda', 'Comprador', 'Email Comprador', 'Parceiro', 'Código Parceiro', 'Valor Total', 'Valor Comissão', 'Status Venda', 'Comissão Paga'];
-                const rows = sales.map(s => [
-                    formatDate(s.data_venda),
-                    s.nome_comprador,
-                    s.email_comprador,
-                    s.parceiros ? s.parceiros.nome_completo : 'N/A',
-                    s.parceiros ? s.parceiros.codigo_parceiro : 'N/A',
-                    s.valor_total,
-                    s.valor_comissao,
-                    s.status_venda,
-                    s.comissao_paga ? 'Sim' : 'Não'
-                ]);
-
-                downloadCSV('vendas.csv', [headers, ...rows]);
-            } catch (error) {
-                console.error('Erro ao exportar vendas:', error);
-                alert('Erro ao exportar vendas.');
-            }
-        }
-
-        // Carregar Saques
-        async function loadWithdrawals() {
-            try {
-                // Saques pendentes
-                const { data: pendingWithdrawals, error: pendingError } = await supabase
-                    .from('saques')
-                    .select('*, parceiros(nome_completo, codigo_parceiro, saldo_disponivel, dados_bancarios)')
-                    .eq('status', 'pendente')
-                    .order('data_solicitacao', { ascending: true });
-
-                if (pendingError) throw pendingError;
-
-                const pendingHtml = pendingWithdrawals?.map(withdrawal => `
-                    <tr>
-                        <td>${formatDate(withdrawal.data_solicitacao)}</td>
-                        <td>${withdrawal.parceiros?.nome_completo || 'N/A'}</td>
-                        <td>${withdrawal.parceiros?.codigo_parceiro || 'N/A'}</td>
-                        <td>${formatCurrency(withdrawal.valor_solicitado)}</td>
-                        <td>${formatCurrency(withdrawal.parceiros?.saldo_disponivel || 0)}</td>
-                        <td><span class="badge badge-warning">${withdrawal.status}</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="processWithdrawal('${withdrawal.id}')">Processar</button>
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum saque pendente</td></tr>';
-
-                document.getElementById('pendingWithdrawalsTable').innerHTML = pendingHtml;
-
-                // Histórico de saques
-                const filterStatus = document.getElementById('filterWithdrawalStatus').value;
-
-                let historyQuery = supabase
-                    .from('saques')
-                    .select('*, parceiros(nome_completo)')
-                    .neq('status', 'pendente')
-                    .order('data_processamento', { ascending: false });
-
-                if (filterStatus) {
-                    historyQuery = historyQuery.eq('status', filterStatus);
-                }
-
-                const { data: historyWithdrawals, error: historyError } = await historyQuery;
-
-                if (historyError) throw historyError;
-
-                const historyHtml = historyWithdrawals?.map(withdrawal => `
-                    <tr>
-                        <td>${formatDate(withdrawal.data_solicitacao)}</td>
-                        <td>${formatDate(withdrawal.data_processamento)}</td>
-                        <td>${withdrawal.parceiros?.nome_completo || 'N/A'}</td>
-                        <td>${formatCurrency(withdrawal.valor_solicitado)}</td>
-                        <td><span class="badge badge-${getStatusBadge(withdrawal.status)}">${withdrawal.status}</span></td>
-                        <td>${withdrawal.observacoes || '-'}</td>
-                    </tr>
-                `).join('') || '<tr><td colspan="6" style="text-align: center;">Nenhum histórico encontrado</td></tr>';
-
-                document.getElementById('withdrawalsHistoryTable').innerHTML = historyHtml;
-
-            } catch (error) {
-                console.error('Erro ao carregar saques:', error);
-                alert('Erro ao carregar saques.');
-            }
-        }
-
-        // Processar Saque
-        async function processWithdrawal(withdrawalId) {
-            try {
-                const { data: withdrawal, error } = await supabase
-                    .from('saques')
-                    .select('*, parceiros(nome_completo, saldo_disponivel, dados_bancarios)')
-                    .eq('id', withdrawalId)
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('processWithdrawalId').value = withdrawal.id;
-                document.getElementById('processWithdrawalPartner').value = withdrawal.parceiros?.nome_completo || 'N/A';
-                document.getElementById('processWithdrawalAmount').value = formatCurrency(withdrawal.valor_solicitado);
-                document.getElementById('processWithdrawalBalance').value = formatCurrency(withdrawal.parceiros?.saldo_disponivel || 0);
-                document.getElementById('processWithdrawalBankData').value = withdrawal.parceiros?.dados_bancarios || 'Não informado';
-
-                openModal('processWithdrawalModal');
-            } catch (error) {
-                console.error('Erro ao carregar saque:', error);
-                alert('Erro ao carregar dados do saque.');
-            }
-        }
-
-        // Salvar Processamento de Saque
-        document.getElementById('processWithdrawalForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            try {
-                const withdrawalId = document.getElementById('processWithdrawalId').value;
-                const action = document.getElementById('processWithdrawalAction').value;
-                const notes = document.getElementById('processWithdrawalNotes').value;
-
-                if (!action) {
-                    alert('Por favor, selecione uma ação.');
-                    return;
-                }
-
-                const updates = {
-                    status: action,
-                    data_processamento: new Date().toISOString(),
-                    observacoes: notes
-                };
-
-                const { error } = await supabase
-                    .from('saques')
-                    .update(updates)
-                    .eq('id', withdrawalId);
-
-                if (error) throw error;
-
-                alert('Saque processado com sucesso!');
-                closeModal('processWithdrawalModal');
-                loadWithdrawals();
-            } catch (error) {
-                console.error('Erro ao processar saque:', error);
-                alert('Erro ao processar saque.');
-            }
-        });
-
-        // Carregar Relatórios
-        async function loadReports() {
-            try {
-                // Ranking de parceiros
-                const { data: partners, error: partnersError } = await supabase
-                    .from('parceiros')
-                    .select('id, nome_completo, codigo_parceiro')
-                    .neq('tipo_parceiro', 'admin');
-
-                if (partnersError) throw partnersError;
-
-                const { data: sales, error: salesError } = await supabase
-                    .from('vendas')
-                    .select('parceiro_id, valor_total, valor_comissao, comissao_paga');
-
-                if (salesError) throw salesError;
-
-                const ranking = partners.map(partner => {
-                    const partnerSales = sales.filter(s => s.parceiro_id === partner.id);
-                    const totalSales = partnerSales.reduce((sum, s) => sum + (s.valor_total || 0), 0);
-                    const totalCommissions = partnerSales.reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
-                    const paidCommissions = partnerSales.filter(s => s.comissao_paga).reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
-                    const pendingCommissions = totalCommissions - paidCommissions;
-
-                    return {
-                        ...partner,
-                        totalSales,
-                        totalCommissions,
-                        paidCommissions,
-                        pendingCommissions
-                    };
-                }).sort((a, b) => b.totalCommissions - a.totalCommissions).slice(0, 10);
-
-                const rankingHtml = ranking.map((partner, index) => `
-                    <tr>
-                        <td>${index + 1}º</td>
-                        <td>${partner.nome_completo}</td>
-                        <td>${partner.codigo_parceiro || 'N/A'}</td>
-                        <td>${formatCurrency(partner.totalSales)}</td>
-                        <td>${formatCurrency(partner.totalCommissions)}</td>
-                        <td>${formatCurrency(partner.paidCommissions)}</td>
-                        <td>${formatCurrency(partner.pendingCommissions)}</td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum dado disponível</td></tr>';
-
-                document.getElementById('rankingTable').innerHTML = rankingHtml;
-
-                // Resumo de comissões
-                const totalCommissions = sales.reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
-                const paidCommissions = sales.filter(s => s.comissao_paga).reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
-                const pendingCommissions = totalCommissions - paidCommissions;
-
-                document.getElementById('reportTotalCommissions').textContent = formatCurrency(totalCommissions);
-                document.getElementById('reportPaidCommissions').textContent = formatCurrency(paidCommissions);
-                document.getElementById('reportPendingCommissions').textContent = formatCurrency(pendingCommissions);
-
-            } catch (error) {
-                console.error('Erro ao carregar relatórios:', error);
-                alert('Erro ao carregar relatórios.');
-            }
-        }
-
-        // Exportar Relatório CSV
-        async function exportReportCSV() {
-            try {
-                const table = document.getElementById('rankingTable');
-                const rows = Array.from(table.querySelectorAll('tr'));
-                
-                const headers = ['Posição', 'Parceiro', 'Código', 'Total Vendas', 'Total Comissões', 'Comissões Pagas', 'Comissões Pendentes'];
-                const data = rows.map(row => {
-                    const cells = Array.from(row.querySelectorAll('td'));
-                    return cells.map(cell => cell.textContent);
-                });
-
-                downloadCSV('ranking-parceiros.csv', [headers, ...data]);
-            } catch (error) {
-                console.error('Erro ao exportar relatório:', error);
-                alert('Erro ao exportar relatório.');
-            }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
         }
 
         // Funções auxiliares
@@ -1576,8 +1592,7 @@
 
         function formatDate(dateString) {
             if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR');
+            return new Date(dateString).toLocaleDateString('pt-BR');
         }
 
         function getStatusBadge(status) {
@@ -1594,27 +1609,6 @@
             return badges[status] || 'info';
         }
 
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('show');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-        }
-
-        function downloadCSV(filename, rows) {
-            const csvContent = rows.map(row => row.join(',')).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
         // Navegação
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function() {
@@ -1625,28 +1619,19 @@
                 
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
                 document.getElementById(section).classList.add('active');
-                
-                currentSection = section;
 
                 if (section === 'partners') loadPartners();
+                if (section === 'churches') loadChurches();
                 if (section === 'sales') loadSales();
                 if (section === 'withdrawals') loadWithdrawals();
-                if (section === 'reports') loadReports();
             });
         });
 
-        // Event Listeners
-        document.getElementById('applyPartnerFilters').addEventListener('click', loadPartners);
-        document.getElementById('applySalesFilters').addEventListener('click', loadSales);
-        document.getElementById('exportSalesCSV').addEventListener('click', exportSalesCSV);
-        document.getElementById('applyWithdrawalFilters').addEventListener('click', loadWithdrawals);
-        document.getElementById('exportReportCSV').addEventListener('click', exportReportCSV);
-
         // Logout
         document.getElementById('logoutBtn').addEventListener('click', async () => {
-            if (confirm('Deseja realmente sair?')) {
+            if (confirm('Deseja sair?')) {
                 await supabase.auth.signOut();
-                window.location.href = '/admin/login.html';
+                window.location.href = PATHS.login;
             }
         });
 
@@ -1655,7 +1640,13 @@
             document.getElementById('sidebar').classList.toggle('show');
         });
 
-        // Initialize application
+        // Salvar configurações
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            alert('Configurações salvas! (Implementar salvamento no banco de dados)');
+        });
+
+        // Initialize
         checkAuth();
     </script>
 </body>
