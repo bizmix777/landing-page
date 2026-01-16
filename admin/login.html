@@ -198,17 +198,17 @@
     </div>
 
     <script>
-        // Configuração do Supabase
-        const supabaseUrl = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        // ✅ CONFIGURAÇÃO DO SUPABASE - DECLARADA APENAS UMA VEZ
+        const SUPABASE_URL = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
         const loading = document.getElementById('loading');
         const btnLogin = document.getElementById('btnLogin');
 
-        // Ler credenciais da URL (se existirem)
+        // Ler credenciais da URL
         const urlParams = new URLSearchParams(window.location.search);
         const emailFromUrl = urlParams.get('email');
         const passwordFromUrl = urlParams.get('password');
@@ -221,12 +221,11 @@
             document.getElementById('password').value = passwordFromUrl;
         }
 
-        // Verifica se já está logado
+        // Verificar sessão existente
         async function checkExistingSession() {
             const { data: { session } } = await supabase.auth.getSession();
             
             if (session) {
-                // Busca dados do usuário
                 const { data: userData } = await supabase
                     .from('parceiros')
                     .select('tipo_parceiro')
@@ -239,20 +238,20 @@
             }
         }
 
-        // Função de redirecionamento - CORRIGIDA!
+        // Redirecionamento
         function redirectToDashboard(tipoParceiro) {
             if (tipoParceiro === 'admin') {
-                window.location.href = '/admin/super-admin/index.html';  // ✅ CAMINHO CORRETO!
+                window.location.href = '/admin/super-admin/index.html';
             } else if (tipoParceiro === 'parceiro') {
-                window.location.href = '/admin/dashboard-parceiro.html';
+                window.location.href = '/painel-acesso/index.html';
             } else if (tipoParceiro === 'igreja') {
-                window.location.href = '/admin/dashboard-igreja.html';
+                window.location.href = '/somos-todos-um/igrejas.html';
             } else {
                 showError('Tipo de usuário não reconhecido.');
             }
         }
 
-        // Função para mostrar erro
+        // Mostrar erro
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.classList.add('show');
@@ -268,19 +267,16 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            // Validação básica
             if (!email || !password) {
                 showError('Por favor, preencha todos os campos.');
                 return;
             }
 
-            // Mostrar loading
             loading.classList.add('show');
             btnLogin.disabled = true;
             errorMessage.classList.remove('show');
 
             try {
-                // Autenticar com Supabase
                 const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
@@ -290,7 +286,6 @@
                     throw new Error('Email ou senha incorretos.');
                 }
 
-                // Buscar dados do parceiro
                 const { data: userData, error: userError } = await supabase
                     .from('parceiros')
                     .select('tipo_parceiro, status')
@@ -301,13 +296,11 @@
                     throw new Error('Usuário não encontrado no sistema.');
                 }
 
-                // Verificar status
                 if (userData.status !== 'ativo') {
                     await supabase.auth.signOut();
                     throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
                 }
 
-                // Redirecionar baseado no tipo
                 redirectToDashboard(userData.tipo_parceiro);
 
             } catch (error) {
@@ -317,7 +310,7 @@
             }
         });
 
-        // Esqueci minha senha
+        // Esqueci senha
         document.getElementById('forgotPassword').addEventListener('click', async (e) => {
             e.preventDefault();
             
@@ -341,14 +334,14 @@
             }
         });
 
-        // Auto-submit se credenciais vieram da URL
+        // Auto-submit
         if (emailFromUrl && passwordFromUrl) {
             setTimeout(() => {
                 loginForm.dispatchEvent(new Event('submit'));
             }, 500);
         }
 
-        // Verificar sessão ao carregar
+        // Verificar sessão
         checkExistingSession();
     </script>
 </body>
