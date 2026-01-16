@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -198,7 +198,7 @@
     </div>
 
     <script>
-        // Configuração do Supabase - DECLARADA APENAS UMA VEZ
+        // Configuração do Supabase
         const supabaseUrl = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
@@ -239,10 +239,10 @@
             }
         }
 
-        // Função de redirecionamento
+        // Função de redirecionamento - CORRIGIDA!
         function redirectToDashboard(tipoParceiro) {
             if (tipoParceiro === 'admin') {
-                window.location.href = '/admin/super-admin.html';
+                window.location.href = '/admin/super-admin/index.html';  // ✅ CAMINHO CORRETO!
             } else if (tipoParceiro === 'parceiro') {
                 window.location.href = '/admin/dashboard-parceiro.html';
             } else if (tipoParceiro === 'igreja') {
