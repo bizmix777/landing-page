@@ -3,182 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin - Bizmix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Super Admin - BizMix</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary-color: #6a0dad; /* Purple */
-            --primary-light: #8a2be2; /* Blue Violet */
-            --secondary-color: #ff6f61; /* Coral */
-            --background-color: #f4f7f6;
-            --card-background: #ffffff;
-            --text-color: #333333;
-            --text-light: #666666;
-            --border-color: #e0e0e0;
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-            --gradient-start: #6a0dad;
-            --gradient-end: #8a2be2;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+            --border-color: #e5e7eb;
         }
 
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .container {
             display: flex;
             min-height: 100vh;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            overflow-x: hidden;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 250px;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            color: #ffffff;
+            width: 260px;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             position: fixed;
-            height: 100%;
-            transition: transform 0.3s ease-in-out;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s;
             z-index: 1000;
         }
 
-        .sidebar.hidden {
-            transform: translateX(-250px);
-        }
-
         .sidebar-header {
-            text-align: center;
-            margin-bottom: 30px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
         }
 
-        .sidebar-header .logo {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #ffffff;
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.8;
         }
 
         .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-info h3 {
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 5px;
         }
 
-        .user-info strong {
-            display: block;
-            font-size: 16px;
-            margin-top: 5px;
-            color: #ffffff;
+        .user-info p {
+            font-size: 12px;
+            opacity: 0.8;
         }
 
-        .sidebar-menu {
-            flex-grow: 1;
+        .nav-menu {
             list-style: none;
         }
 
-        .sidebar-menu li {
-            margin-bottom: 10px;
+        .nav-item {
+            margin-bottom: 5px;
         }
 
-        .sidebar-menu a {
+        .nav-link {
             display: flex;
             align-items: center;
             padding: 12px 15px;
-            color: rgba(255, 255, 255, 0.9);
+            color: white;
             text-decoration: none;
             border-radius: 8px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: all 0.3s;
+            cursor: pointer;
         }
 
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .sidebar-menu a i {
-            margin-right: 10px;
-            font-size: 18px;
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        .nav-link span {
+            margin-left: 10px;
         }
 
-        .sidebar-footer button {
+        .logout-btn {
+            margin-top: 20px;
             width: 100%;
-            padding: 12px 15px;
-            background-color: var(--secondary-color);
-            color: #ffffff;
-            border: none;
+            padding: 12px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: white;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s;
         }
 
-        .sidebar-footer button:hover {
-            background-color: #e05a4e;
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
         }
 
         /* Main Content */
         .main-content {
-            flex-grow: 1;
-            margin-left: 250px;
-            padding: 20px;
-            transition: margin-left 0.3s ease-in-out;
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px;
         }
 
-        .main-content.expanded {
-            margin-left: 0;
+        .page-header {
+            margin-bottom: 30px;
         }
 
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            margin-bottom: 20px;
-            background-color: var(--card-background);
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            padding: 15px 20px;
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
         }
 
-        .topbar h1 {
-            font-size: 24px;
-            color: var(--primary-color);
+        .page-header p {
+            color: #6b7280;
         }
 
-        .hamburger-menu {
+        /* Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+
+        /* Sections */
+        .section {
             display: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--primary-color);
+            animation: fadeIn 0.3s;
         }
 
-        /* Section Styling */
-        .content-section {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .content-section.active {
+        .section.active {
             display: block;
         }
 
@@ -187,148 +191,155 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Cards */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
         .card {
-            background-color: var(--card-background);
+            background: white;
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.2s ease-in-out;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
         }
 
-        .card:hover {
-            transform: translateY(-5px);
+        .card-header h2 {
+            font-size: 20px;
         }
 
-        .card-title {
-            font-size: 16px;
-            color: var(--text-light);
-            margin-bottom: 10px;
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .card-value {
-            font-size: 32px;
-            font-weight: 600;
-            color: var(--primary-color);
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
         }
 
-        /* Table Styling */
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Table */
         .table-container {
-            background-color: var(--card-background);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
         }
 
-        table th, table td {
-            padding: 12px 15px;
+        table th,
+        table td {
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--border-color);
         }
 
         table th {
-            background-color: var(--background-color);
+            background: var(--light-color);
             font-weight: 600;
-            color: var(--text-color);
-            text-transform: uppercase;
-            font-size: 13px;
+            font-size: 14px;
+            color: var(--dark-color);
         }
 
-        table tbody tr:hover {
-            background-color: #f9f9f9;
+        table td {
+            font-size: 14px;
         }
 
+        table tr:hover {
+            background: var(--light-color);
+        }
+
+        /* Status Badges */
         .badge {
             display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 12px;
             font-weight: 500;
-            text-transform: capitalize;
         }
 
-        .badge.success { background-color: var(--success-color); color: #ffffff; }
-        .badge.danger { background-color: var(--danger-color); color: #ffffff; }
-        .badge.warning { background-color: var(--warning-color); color: #ffffff; }
-        .badge.info { background-color: var(--info-color); color: #ffffff; }
-        .badge.primary { background-color: var(--primary-color); color: #ffffff; }
-
-        /* Forms and Filters */
-        .filter-controls, .form-group {
-            margin-bottom: 15px;
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
         }
 
-        .filter-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-            background-color: var(--card-background);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
         }
 
-        .filter-controls input,
-        .filter-controls select,
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 14px;
-            color: var(--text-color);
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 300px;
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
-        .filter-controls button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-primary { background-color: var(--primary-color); color: #ffffff; }
-        .btn-primary:hover { background-color: var(--primary-light); }
-        .btn-secondary { background-color: var(--text-light); color: #ffffff; }
-        .btn-secondary:hover { background-color: #555555; }
-        .btn-success { background-color: var(--success-color); color: #ffffff; }
-        .btn-success:hover { background-color: #218838; }
-        .btn-danger { background-color: var(--danger-color); color: #ffffff; }
-        .btn-danger:hover { background-color: #c82333; }
-        .btn-warning { background-color: var(--warning-color); color: #333333; }
-        .btn-warning:hover { background-color: #e0a800; }
-        .btn-info { background-color: var(--info-color); color: #ffffff; }
-        .btn-info:hover { background-color: #138496; }
-
-        .action-buttons button {
-            margin-right: 5px;
-            padding: 8px 12px;
-            font-size: 13px;
-            border-radius: 5px;
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
         }
 
         /* Pagination */
@@ -336,613 +347,1265 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
             gap: 10px;
+            margin-top: 20px;
         }
 
         .pagination button {
             padding: 8px 12px;
             border: 1px solid var(--border-color);
-            background-color: var(--card-background);
-            border-radius: 5px;
+            background: white;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
         }
 
-        .pagination button:hover:not(:disabled) {
-            background-color: var(--background-color);
+        .pagination button:hover {
+            background: var(--light-color);
         }
 
         .pagination button:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
         .pagination span {
             font-size: 14px;
-            color: var(--text-light);
         }
 
-        /* Modals */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1001;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
             align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
         }
 
         .modal-content {
-            background-color: var(--card-background);
-            margin: auto;
+            background: white;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            max-width: 600px;
             width: 90%;
-            max-width: 700px;
-            position: relative;
-            animation: slideIn 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
-        @keyframes slideIn {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .close-button {
-            color: var(--text-light);
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            cursor: pointer;
-            transition: color 0.3s ease;
-        }
-
-        .close-button:hover,
-        .close-button:focus {
-            color: var(--danger-color);
-            text-decoration: none;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            color: var(--primary-color);
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 5px;
+            font-size: 14px;
             font-weight: 500;
-            color: var(--text-color);
         }
 
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        /* Loading and Alerts */
-        .loading-overlay {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            z-index: 1002;
-            font-size: 24px;
-            color: var(--primary-color);
-            flex-direction: column;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
         }
 
         .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--primary-color);
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
-            margin-bottom: 15px;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
+        /* Mobile Menu */
+        .mobile-menu-btn {
             display: none;
-        }
-
-        .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .alert.danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .alert.warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-
-        /* Chart Styling */
-        #salesChart {
-            max-height: 400px;
-            width: 100%;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-250px);
-                box-shadow: none;
+                transform: translateX(-100%);
             }
-            .sidebar.visible {
+
+            .sidebar.show {
                 transform: translateX(0);
-                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             }
+
             .main-content {
                 margin-left: 0;
             }
-            .hamburger-menu {
+
+            .mobile-menu-btn {
                 display: block;
             }
-            .card-grid {
+
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
-            .filter-controls {
+
+            .filters {
                 flex-direction: column;
             }
-            .filter-controls input,
-            .filter-controls select,
-            .filter-controls button {
-                max-width: 100%;
-            }
-            .form-grid {
+
+            .form-row {
                 grid-template-columns: 1fr;
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">Bizmix</div>
-            <div class="user-info">
-                Bem-vindo, <strong id="adminUserName">Admin</strong>
-                <span id="adminUserEmail">admin@bizmix.com.br</span>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰ Menu</button>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>🔐 BizMix</h2>
+                <p>Super Admin</p>
             </div>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="#" data-section="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-            <li><a href="#" data-section="partners"><i class="fas fa-handshake"></i> Gestão de Parceiros</a></li>
-            <li><a href="#" data-section="sales"><i class="fas fa-shopping-cart"></i> Gestão de Vendas</a></li>
-            <li><a href="#" data-section="withdrawals"><i class="fas fa-money-bill-wave"></i> Gestão de Saques</a></li>
-            <li><a href="#" data-section="reports"><i class="fas fa-chart-line"></i> Relatórios</a></li>
-        </ul>
-        <div class="sidebar-footer">
-            <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
-        </div>
-    </aside>
 
-    <main class="main-content" id="mainContent">
-        <div class="topbar">
-            <i class="fas fa-bars hamburger-menu" id="hamburgerMenu"></i>
-            <h1 id="currentSectionTitle">Dashboard</h1>
-        </div>
+            <div class="user-info" id="userInfo">
+                <h3 id="userName">Carregando...</h3>
+                <p id="userEmail">...</p>
+            </div>
 
-        <!-- Loading Overlay -->
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="spinner"></div>
-            <span>Carregando...</span>
-        </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-section="dashboard">
+                            <span>📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="partners">
+                            <span>👥</span>
+                            <span>Gestão de Parceiros</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="sales">
+                            <span>💳</span>
+                            <span>Gestão de Vendas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="withdrawals">
+                            <span>💸</span>
+                            <span>Gestão de Saques</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="reports">
+                            <span>📈</span>
+                            <span>Relatórios</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
 
-        <!-- Dashboard Section -->
-        <section id="dashboard" class="content-section active">
-            <div class="card-grid">
+            <button class="logout-btn" id="logoutBtn">🚪 Sair</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section class="section active" id="dashboard">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Visão geral do sistema</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total de Parceiros</h3>
+                        <div class="value" id="totalPartners">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Parceiros Ativos</h3>
+                        <div class="value" id="activePartners">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total de Vendas</h3>
+                        <div class="value" id="totalSales">R$ 0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Comissões Pagas</h3>
+                        <div class="value" id="totalCommissions">R$ 0</div>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <div class="card-title">Total Parceiros</div>
-                    <div class="card-value" id="totalPartners">0</div>
+                    <div class="card-header">
+                        <h2>Atividade Recente</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Tipo</th>
+                                    <th>Descrição</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentActivity">
+                                <tr>
+                                    <td colspan="5" style="text-align: center;">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+            </section>
+
+            <!-- Partners Section -->
+            <section class="section" id="partners">
+                <div class="page-header">
+                    <h1>Gestão de Parceiros</h1>
+                    <p>Gerencie todos os parceiros do sistema</p>
+                </div>
+
                 <div class="card">
-                    <div class="card-title">Parceiros Ativos</div>
-                    <div class="card-value" id="activePartners">0</div>
+                    <div class="card-header">
+                        <h2>Filtros</h2>
+                    </div>
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label>Buscar</label>
+                            <input type="text" id="searchPartner" placeholder="Nome, email ou código">
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="filterPartnerStatus">
+                                <option value="">Todos</option>
+                                <option value="ativo">Ativo</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="inativo">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Tipo</label>
+                            <select id="filterPartnerType">
+                                <option value="">Todos</option>
+                                <option value="parceiro">Parceiro</option>
+                                <option value="igreja">Igreja</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="display: flex; align-items: flex-end;">
+                            <button class="btn btn-primary" id="applyPartnerFilters">Aplicar Filtros</button>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="card">
-                    <div class="card-title">Total Vendas</div>
-                    <div class="card-value" id="totalSales">R$ 0,00</div>
+                    <div class="card-header">
+                        <h2>Lista de Parceiros</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Tipo</th>
+                                    <th>Status</th>
+                                    <th>Data Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="partnersTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="partnersPagination"></div>
                 </div>
+            </section>
+                        <!-- Sales Section -->
+            <section class="section" id="sales">
+                <div class="page-header">
+                    <h1>Gestão de Vendas</h1>
+                    <p>Visualize e gerencie todas as vendas</p>
+                </div>
+
                 <div class="card">
-                    <div class="card-title">Comissões Pagas</div>
-                    <div class="card-value" id="paidCommissions">R$ 0,00</div>
+                    <div class="card-header">
+                        <h2>Filtros</h2>
+                    </div>
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label>Data Início</label>
+                            <input type="date" id="filterSalesDateStart">
+                        </div>
+                        <div class="filter-group">
+                            <label>Data Fim</label>
+                            <input type="date" id="filterSalesDateEnd">
+                        </div>
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="filterSalesStatus">
+                                <option value="">Todos</option>
+                                <option value="aprovada">Aprovada</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Parceiro</label>
+                            <input type="text" id="filterSalesPartner" placeholder="Nome ou código">
+                        </div>
+                        <div class="filter-group" style="display: flex; align-items: flex-end; gap: 10px;">
+                            <button class="btn btn-primary" id="applySalesFilters">Aplicar Filtros</button>
+                            <button class="btn btn-success" id="exportSalesCSV">Exportar CSV</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="table-container">
-                <h2>Atividade Recente</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Descrição</th>
-                            <th>Valor</th>
-                            <th>Data</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentActivityTableBody">
-                        <tr><td colspan="4">Nenhuma atividade recente.</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Gestão de Parceiros Section -->
-        <section id="partners" class="content-section">
-            <div class="filter-controls">
-                <input type="text" id="partnerSearchName" placeholder="Nome do Parceiro">
-                <input type="text" id="partnerSearchEmail" placeholder="Email">
-                <input type="text" id="partnerSearchCode" placeholder="Código">
-                <select id="partnerSearchStatus">
-                    <option value="">Status</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="aprovado">Aprovado</option>
-                    <option value="desativado">Desativado</option>
-                </select>
-                <select id="partnerSearchType">
-                    <option value="">Tipo</option>
-                    <option value="parceiro">Parceiro</option>
-                    <option value="igreja">Igreja</option>
-                </select>
-                <button class="btn-primary" onclick="loadPartners()">Buscar</button>
-            </div>
-
-            <div class="table-container">
-                <h2>Lista de Parceiros</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Código</th>
-                            <th>Tipo</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="partnersTableBody">
-                        <tr><td colspan="6">Carregando parceiros...</td></tr>
-                    </tbody>
-                </table>
-                <div class="pagination">
-                    <button id="partnersPrevPage" onclick="changePage('partners', -1)" disabled><i class="fas fa-chevron-left"></i></button>
-                    <span id="partnersCurrentPage">Página 1</span>
-                    <button id="partnersNextPage" onclick="changePage('partners', 1)" disabled><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gestão de Vendas Section -->
-        <section id="sales" class="content-section">
-            <div class="filter-controls">
-                <input type="date" id="salesFilterStartDate">
-                <input type="date" id="salesFilterEndDate">
-                <select id="salesFilterStatus">
-                    <option value="">Status</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="concluido">Concluído</option>
-                    <option value="cancelado">Cancelado</option>
-                </select>
-                <input type="text" id="salesFilterPartner" placeholder="ID ou Nome do Parceiro">
-                <button class="btn-primary" onclick="loadSales()">Buscar</button>
-                <button class="btn-success" onclick="exportSalesCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-            </div>
-
-            <div class="table-container">
-                <h2>Lista de Vendas</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Data</th>
-                            <th>Comprador</th>
-                            <th>Parceiro</th>
-                            <th>Valor Total</th>
-                            <th>Comissão</th>
-                            <th>Status</th>
-                            <th>Comissão Paga</th>
-                        </tr>
-                    </thead>
-                    <tbody id="salesTableBody">
-                        <tr><td colspan="8">Carregando vendas...</td></tr>
-                    </tbody>
-                </table>
-                <div class="pagination">
-                    <button id="salesPrevPage" onclick="changePage('sales', -1)" disabled><i class="fas fa-chevron-left"></i></button>
-                    <span id="salesCurrentPage">Página 1</span>
-                    <button id="salesNextPage" onclick="changePage('sales', 1)" disabled><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gestão de Saques Section -->
-        <section id="withdrawals" class="content-section">
-            <div class="filter-controls">
-                <input type="date" id="withdrawalsFilterStartDate">
-                <input type="date" id="withdrawalsFilterEndDate">
-                <select id="withdrawalsFilterStatus">
-                    <option value="">Status</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="aprovado">Aprovado</option>
-                    <option value="rejeitado">Rejeitado</option>
-                    <option value="pago">Pago</option>
-                </select>
-                <input type="text" id="withdrawalsFilterPartner" placeholder="ID ou Nome do Parceiro">
-                <button class="btn-primary" onclick="loadWithdrawals()">Buscar</button>
-            </div>
-
-            <div class="table-container">
-                <h2>Saques Pendentes</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Parceiro</th>
-                            <th>Valor</th>
-                            <th>Data Solicitação</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="pendingWithdrawalsTableBody">
-                        <tr><td colspan="6">Nenhum saque pendente.</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-container" style="margin-top: 30px;">
-                <h2>Histórico de Saques Processados</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Parceiro</th>
-                            <th>Valor</th>
-                            <th>Data Solicitação</th>
-                            <th>Data Processamento</th>
-                            <th>Status</th>
-                            <th>Comprovante</th>
-                        </tr>
-                    </thead>
-                    <tbody id="processedWithdrawalsTableBody">
-                        <tr><td colspan="7">Nenhum histórico de saque.</td></tr>
-                    </tbody>
-                </table>
-                <div class="pagination">
-                    <button id="withdrawalsPrevPage" onclick="changePage('withdrawals', -1)" disabled><i class="fas fa-chevron-left"></i></button>
-                    <span id="withdrawalsCurrentPage">Página 1</span>
-                    <button id="withdrawalsNextPage" onclick="changePage('withdrawals', 1)" disabled><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Relatórios Section -->
-        <section id="reports" class="content-section">
-            <div class="filter-controls">
-                <input type="date" id="reportsFilterStartDate">
-                <input type="date" id="reportsFilterEndDate">
-                <button class="btn-primary" onclick="loadReports()">Gerar Relatório</button>
-                <button class="btn-success" onclick="exportReportCSV()"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-            </div>
-
-            <div class="card-grid">
                 <div class="card">
-                    <div class="card-title">Comissão Total Gerada</div>
-                    <div class="card-value" id="reportTotalCommission">R$ 0,00</div>
+                    <div class="card-header">
+                        <h2>Lista de Vendas</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Comprador</th>
+                                    <th>Email</th>
+                                    <th>Parceiro</th>
+                                    <th>Código Parceiro</th>
+                                    <th>Valor Total</th>
+                                    <th>Comissão</th>
+                                    <th>Status</th>
+                                    <th>Comissão Paga</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesTable">
+                                <tr>
+                                    <td colspan="9" style="text-align: center;">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="salesPagination"></div>
                 </div>
+            </section>
+
+            <!-- Withdrawals Section -->
+            <section class="section" id="withdrawals">
+                <div class="page-header">
+                    <h1>Gestão de Saques</h1>
+                    <p>Processe e gerencie solicitações de saque</p>
+                </div>
+
                 <div class="card">
-                    <div class="card-title">Comissão Paga</div>
-                    <div class="card-value" id="reportPaidCommission">R$ 0,00</div>
+                    <div class="card-header">
+                        <h2>Saques Pendentes</h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data Solicitação</th>
+                                    <th>Parceiro</th>
+                                    <th>Código</th>
+                                    <th>Valor Solicitado</th>
+                                    <th>Saldo Disponível</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingWithdrawalsTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
                 <div class="card">
-                    <div class="card-title">Comissão Pendente</div>
-                    <div class="card-value" id="reportPendingCommission">R$ 0,00</div>
+                    <div class="card-header">
+                        <h2>Histórico de Saques</h2>
+                    </div>
+                    <div class="filters">
+                        <div class="filter-group">
+                            <label>Status</label>
+                            <select id="filterWithdrawalStatus">
+                                <option value="">Todos</option>
+                                <option value="aprovado">Aprovado</option>
+                                <option value="rejeitado">Rejeitado</option>
+                                <option value="pago">Pago</option>
+                            </select>
+                        </div>
+                        <div class="filter-group" style="display: flex; align-items: flex-end;">
+                            <button class="btn btn-primary" id="applyWithdrawalFilters">Aplicar Filtros</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data Solicitação</th>
+                                    <th>Data Processamento</th>
+                                    <th>Parceiro</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                    <th>Observações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdrawalsHistoryTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="withdrawalsPagination"></div>
                 </div>
-            </div>
+            </section>
 
-            <div class="table-container" style="margin-bottom: 30px;">
-                <h2>Ranking Top 10 Parceiros por Comissão</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Posição</th>
-                            <th>Parceiro</th>
-                            <th>Comissão Gerada</th>
-                        </tr>
-                    </thead>
-                    <tbody id="topPartnersTableBody">
-                        <tr><td colspan="3">Nenhum parceiro no ranking.</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- Reports Section -->
+            <section class="section" id="reports">
+                <div class="page-header">
+                    <h1>Relatórios</h1>
+                    <p>Análises e estatísticas do sistema</p>
+                </div>
 
-            <div class="table-container">
-                <h2>Gráfico de Vendas por Período</h2>
-                <canvas id="salesChart"></canvas>
-            </div>
-        </section>
-    </main>
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Ranking de Parceiros</h2>
+                        <button class="btn btn-success" id="exportReportCSV">Exportar CSV</button>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Posição</th>
+                                    <th>Parceiro</th>
+                                    <th>Código</th>
+                                    <th>Total Vendas</th>
+                                    <th>Total Comissões</th>
+                                    <th>Comissões Pagas</th>
+                                    <th>Comissões Pendentes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rankingTable">
+                                <tr>
+                                    <td colspan="7" style="text-align: center;">Carregando...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    <!-- Edit Partner Modal -->
-    <div id="editPartnerModal" class="modal">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Resumo de Comissões</h2>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total de Comissões</h3>
+                            <div class="value" id="reportTotalCommissions">R$ 0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Comissões Pagas</h3>
+                            <div class="value" id="reportPaidCommissions">R$ 0</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Comissões Pendentes</h3>
+                            <div class="value" id="reportPendingCommissions">R$ 0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Vendas por Período</h2>
+                    </div>
+                    <canvas id="salesChart" style="max-height: 400px;"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Edit Partner -->
+    <div class="modal" id="editPartnerModal">
         <div class="modal-content">
-            <span class="close-button" onclick="closeModal('editPartnerModal')">&times;</span>
-            <h2 class="modal-title">Editar Parceiro</h2>
+            <div class="modal-header">
+                <h2>Editar Parceiro</h2>
+                <button class="close-modal" onclick="closeModal('editPartnerModal')">&times;</button>
+            </div>
             <form id="editPartnerForm">
                 <input type="hidden" id="editPartnerId">
-                <div class="form-grid">
+                
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="editNomeCompleto">Nome Completo</label>
-                        <input type="text" id="editNomeCompleto" required>
+                        <label>Nome Completo *</label>
+                        <input type="text" id="editPartnerName" required>
                     </div>
                     <div class="form-group">
-                        <label for="editEmail">Email</label>
-                        <input type="email" id="editEmail" required>
+                        <label>Email *</label>
+                        <input type="email" id="editPartnerEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="tel" id="editPartnerPhone">
                     </div>
                     <div class="form-group">
-                        <label for="editTipoParceiro">Tipo de Parceiro</label>
-                        <select id="editTipoParceiro" required>
+                        <label>CPF/CNPJ</label>
+                        <input type="text" id="editPartnerDocument">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tipo *</label>
+                        <select id="editPartnerType" required>
                             <option value="parceiro">Parceiro</option>
                             <option value="igreja">Igreja</option>
                             <option value="admin">Admin</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="editStatus">Status</label>
-                        <select id="editStatus" required>
+                        <label>Status *</label>
+                        <select id="editPartnerStatus" required>
+                            <option value="ativo">Ativo</option>
                             <option value="pendente">Pendente</option>
-                            <option value="aprovado">Aprovado</option>
-                            <option value="desativado">Desativado</option>
+                            <option value="inativo">Inativo</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <input type="text" id="editPartnerAddress">
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="editCodigoParceiro">Código Parceiro</label>
-                        <input type="text" id="editCodigoParceiro">
+                        <label>Cidade</label>
+                        <input type="text" id="editPartnerCity">
                     </div>
                     <div class="form-group">
-                        <label for="editTelefone">Telefone</label>
-                        <input type="text" id="editTelefone">
-                    </div>
-                    <div class="form-group">
-                        <label for="editCpf">CPF</label>
-                        <input type="text" id="editCpf">
-                    </div>
-                    <div class="form-group">
-                        <label for="editEndereco">Endereço</label>
-                        <input type="text" id="editEndereco">
-                    </div>
-                    <div class="form-group">
-                        <label for="editCidade">Cidade</label>
-                        <input type="text" id="editCidade">
-                    </div>
-                    <div class="form-group">
-                        <label for="editEstado">Estado</label>
-                        <input type="text" id="editEstado">
-                    </div>
-                    <div class="form-group">
-                        <label for="editCep">CEP</label>
-                        <input type="text" id="editCep">
-                    </div>
-                    <div class="form-group">
-                        <label for="editBanco">Banco</label>
-                        <input type="text" id="editBanco">
-                    </div>
-                    <div class="form-group">
-                        <label for="editAgencia">Agência</label>
-                        <input type="text" id="editAgencia">
-                    </div>
-                    <div class="form-group">
-                        <label for="editConta">Conta</label>
-                        <input type="text" id="editConta">
-                    </div>
-                    <div class="form-group">
-                        <label for="editPix">PIX</label>
-                        <input type="text" id="editPix">
+                        <label>Estado</label>
+                        <input type="text" id="editPartnerState" maxlength="2">
                     </div>
                 </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" onclick="closeModal('editPartnerModal')">Cancelar</button>
-                    <button type="submit" class="btn-primary">Salvar Alterações</button>
+
+                <div class="form-group">
+                    <label>Dados Bancários</label>
+                    <textarea id="editPartnerBankData" placeholder="Banco, Agência, Conta, Tipo de Conta"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('editPartnerModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar Alterações</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Process Withdrawal Modal -->
-    <div id="processWithdrawalModal" class="modal">
+    <!-- Modal Process Withdrawal -->
+    <div class="modal" id="processWithdrawalModal">
         <div class="modal-content">
-            <span class="close-button" onclick="closeModal('processWithdrawalModal')">&times;</span>
-            <h2 class="modal-title">Processar Saque</h2>
+            <div class="modal-header">
+                <h2>Processar Saque</h2>
+                <button class="close-modal" onclick="closeModal('processWithdrawalModal')">&times;</button>
+            </div>
             <form id="processWithdrawalForm">
                 <input type="hidden" id="processWithdrawalId">
+                
                 <div class="form-group">
-                    <label for="processWithdrawalPartner">Parceiro</label>
+                    <label>Parceiro</label>
                     <input type="text" id="processWithdrawalPartner" readonly>
                 </div>
-                <div class="form-group">
-                    <label for="processWithdrawalValue">Valor</label>
-                    <input type="text" id="processWithdrawalValue" readonly>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Valor Solicitado</label>
+                        <input type="text" id="processWithdrawalAmount" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Saldo Disponível</label>
+                        <input type="text" id="processWithdrawalBalance" readonly>
+                    </div>
                 </div>
+
                 <div class="form-group">
-                    <label for="processWithdrawalStatus">Status</label>
-                    <select id="processWithdrawalStatus" required>
-                        <option value="aprovado">Aprovado</option>
-                        <option value="rejeitado">Rejeitado</option>
-                        <option value="pago">Pago</option>
+                    <label>Dados Bancários</label>
+                    <textarea id="processWithdrawalBankData" readonly></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ação *</label>
+                    <select id="processWithdrawalAction" required>
+                        <option value="">Selecione uma ação</option>
+                        <option value="aprovado">Aprovar</option>
+                        <option value="rejeitado">Rejeitar</option>
+                        <option value="pago">Marcar como Pago</option>
                     </select>
                 </div>
+
                 <div class="form-group">
-                    <label for="processWithdrawalComprovante">Comprovante (URL)</label>
-                    <input type="text" id="processWithdrawalComprovante" placeholder="URL do comprovante de pagamento (opcional)">
+                    <label>Observações</label>
+                    <textarea id="processWithdrawalNotes" placeholder="Adicione observações sobre o processamento"></textarea>
                 </div>
-                <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" onclick="closeModal('processWithdrawalModal')">Cancelar</button>
-                    <button type="submit" class="btn-primary">Salvar</button>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-danger" onclick="closeModal('processWithdrawalModal')">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Processar</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NjQ4NTQsImV4cCI6MjA1MjU0MDg1NH0.VYPs3XWRsZJKN7fCNPuBvVRPzjqEXUZHhsOXqHmELvg';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Configuração do Supabase
+        const supabaseUrl = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        let currentUser = null;
         let currentSection = 'dashboard';
-        let partnersCurrentPage = 1;
-        let salesCurrentPage = 1;
-        let withdrawalsCurrentPage = 1;
-        const itemsPerPage = 10;
-        let salesChartInstance;
 
-        // Utility Functions
-        function showLoading() {
-            document.getElementById('loadingOverlay').style.display = 'flex';
+        // Verificar autenticação
+        async function checkAuth() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (!session) {
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+
+                const { data: userData, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', session.user.email)
+                    .single();
+
+                if (error || !userData) {
+                    alert('Erro ao carregar dados do usuário.');
+                    await supabase.auth.signOut();
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+
+                if (userData.tipo_parceiro !== 'admin') {
+                    alert('Acesso negado. Apenas administradores podem acessar esta página.');
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+
+                currentUser = userData;
+                document.getElementById('userName').textContent = userData.nome_completo;
+                document.getElementById('userEmail').textContent = userData.email;
+
+                loadDashboard();
+            } catch (error) {
+                console.error('Erro na autenticação:', error);
+                window.location.href = '/admin/login.html';
+            }
         }
 
-        function hideLoading() {
-            document.getElementById('loadingOverlay').style.display = 'none';
+        // Carregar Dashboard
+        async function loadDashboard() {
+            try {
+                // Total de parceiros
+                const { count: totalPartners } = await supabase
+                    .from('parceiros')
+                    .select('*', { count: 'exact', head: true })
+                    .neq('tipo_parceiro', 'admin');
+
+                document.getElementById('totalPartners').textContent = totalPartners || 0;
+
+                // Parceiros ativos
+                const { count: activePartners } = await supabase
+                    .from('parceiros')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('status', 'ativo')
+                    .neq('tipo_parceiro', 'admin');
+
+                document.getElementById('activePartners').textContent = activePartners || 0;
+
+                // Total de vendas
+                const { data: salesData } = await supabase
+                    .from('vendas')
+                    .select('valor_total');
+
+                const totalSales = salesData?.reduce((sum, sale) => sum + (sale.valor_total || 0), 0) || 0;
+                document.getElementById('totalSales').textContent = formatCurrency(totalSales);
+
+                // Comissões pagas
+                const { data: commissionsData } = await supabase
+                    .from('vendas')
+                    .select('valor_comissao')
+                    .eq('comissao_paga', true);
+
+                const totalCommissions = commissionsData?.reduce((sum, sale) => sum + (sale.valor_comissao || 0), 0) || 0;
+                document.getElementById('totalCommissions').textContent = formatCurrency(totalCommissions);
+
+                // Atividade recente
+                const { data: recentSales } = await supabase
+                    .from('vendas')
+                    .select('*, parceiros(nome_completo)')
+                    .order('data_venda', { ascending: false })
+                    .limit(5);
+
+                const activityHtml = recentSales?.map(sale => `
+                    <tr>
+                        <td>${formatDate(sale.data_venda)}</td>
+                        <td>Venda</td>
+                        <td>${sale.parceiros?.nome_completo || 'N/A'} - ${sale.nome_comprador}</td>
+                        <td>${formatCurrency(sale.valor_total)}</td>
+                        <td><span class="badge badge-${getStatusBadge(sale.status_venda)}">${sale.status_venda}</span></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="5" style="text-align: center;">Nenhuma atividade recente</td></tr>';
+
+                document.getElementById('recentActivity').innerHTML = activityHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
         }
 
-        function showAlert(message, type = 'info') {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert ${type}`;
-            alertDiv.textContent = message;
-            document.querySelector('.main-content').prepend(alertDiv);
-            alertDiv.style.display = 'block';
-            setTimeout(() => {
-                alertDiv.style.display = 'none';
-                alertDiv.remove();
-            }, 5000);
+        // Carregar Parceiros
+        async function loadPartners() {
+            try {
+                const search = document.getElementById('searchPartner').value;
+                const status = document.getElementById('filterPartnerStatus').value;
+                const type = document.getElementById('filterPartnerType').value;
+
+                let query = supabase
+                    .from('parceiros')
+                    .select('*')
+                    .neq('tipo_parceiro', 'admin')
+                    .order('created_at', { ascending: false });
+
+                if (search) {
+                    query = query.or(`nome_completo.ilike.%${search}%,email.ilike.%${search}%,codigo_parceiro.ilike.%${search}%`);
+                }
+
+                if (status) {
+                    query = query.eq('status', status);
+                }
+
+                if (type) {
+                    query = query.eq('tipo_parceiro', type);
+                }
+
+                const { data: partners, error } = await query;
+
+                if (error) throw error;
+
+                const tableHtml = partners?.map(partner => `
+                    <tr>
+                        <td>${partner.codigo_parceiro || 'N/A'}</td>
+                        <td>${partner.nome_completo}</td>
+                        <td>${partner.email}</td>
+                        <td><span class="badge badge-info">${partner.tipo_parceiro}</span></td>
+                        <td><span class="badge badge-${getStatusBadge(partner.status)}">${partner.status}</span></td>
+                        <td>${formatDate(partner.created_at)}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editPartner('${partner.id}')">Editar</button>
+                            ${partner.status === 'pendente' ? `<button class="btn btn-success btn-sm" onclick="approvePartner('${partner.id}')">Aprovar</button>` : ''}
+                            ${partner.status === 'ativo' ? `<button class="btn btn-warning btn-sm" onclick="togglePartnerStatus('${partner.id}', 'inativo')">Desativar</button>` : ''}
+                            ${partner.status === 'inativo' ? `<button class="btn btn-success btn-sm" onclick="togglePartnerStatus('${partner.id}', 'ativo')">Ativar</button>` : ''}
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum parceiro encontrado</td></tr>';
+
+                document.getElementById('partnersTable').innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar parceiros:', error);
+                alert('Erro ao carregar parceiros.');
+            }
+        }
+                // Editar Parceiro
+        async function editPartner(partnerId) {
+            try {
+                const { data: partner, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('id', partnerId)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('editPartnerId').value = partner.id;
+                document.getElementById('editPartnerName').value = partner.nome_completo || '';
+                document.getElementById('editPartnerEmail').value = partner.email || '';
+                document.getElementById('editPartnerPhone').value = partner.telefone || '';
+                document.getElementById('editPartnerDocument').value = partner.cpf_cnpj || '';
+                document.getElementById('editPartnerType').value = partner.tipo_parceiro || 'parceiro';
+                document.getElementById('editPartnerStatus').value = partner.status || 'pendente';
+                document.getElementById('editPartnerAddress').value = partner.endereco || '';
+                document.getElementById('editPartnerCity').value = partner.cidade || '';
+                document.getElementById('editPartnerState').value = partner.estado || '';
+                document.getElementById('editPartnerBankData').value = partner.dados_bancarios || '';
+
+                openModal('editPartnerModal');
+            } catch (error) {
+                console.error('Erro ao carregar parceiro:', error);
+                alert('Erro ao carregar dados do parceiro.');
+            }
+        }
+
+        // Salvar Parceiro
+        document.getElementById('editPartnerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                const partnerId = document.getElementById('editPartnerId').value;
+                
+                const updates = {
+                    nome_completo: document.getElementById('editPartnerName').value,
+                    email: document.getElementById('editPartnerEmail').value,
+                    telefone: document.getElementById('editPartnerPhone').value,
+                    cpf_cnpj: document.getElementById('editPartnerDocument').value,
+                    tipo_parceiro: document.getElementById('editPartnerType').value,
+                    status: document.getElementById('editPartnerStatus').value,
+                    endereco: document.getElementById('editPartnerAddress').value,
+                    cidade: document.getElementById('editPartnerCity').value,
+                    estado: document.getElementById('editPartnerState').value,
+                    dados_bancarios: document.getElementById('editPartnerBankData').value
+                };
+
+                const { error } = await supabase
+                    .from('parceiros')
+                    .update(updates)
+                    .eq('id', partnerId);
+
+                if (error) throw error;
+
+                alert('Parceiro atualizado com sucesso!');
+                closeModal('editPartnerModal');
+                loadPartners();
+            } catch (error) {
+                console.error('Erro ao salvar parceiro:', error);
+                alert('Erro ao salvar alterações.');
+            }
+        });
+
+        // Aprovar Parceiro
+        async function approvePartner(partnerId) {
+            if (!confirm('Deseja aprovar este parceiro?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('parceiros')
+                    .update({ status: 'ativo' })
+                    .eq('id', partnerId);
+
+                if (error) throw error;
+
+                alert('Parceiro aprovado com sucesso!');
+                loadPartners();
+            } catch (error) {
+                console.error('Erro ao aprovar parceiro:', error);
+                alert('Erro ao aprovar parceiro.');
+            }
+        }
+
+        // Alternar Status do Parceiro
+        async function togglePartnerStatus(partnerId, newStatus) {
+            if (!confirm(`Deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este parceiro?`)) return;
+
+            try {
+                const { error } = await supabase
+                    .from('parceiros')
+                    .update({ status: newStatus })
+                    .eq('id', partnerId);
+
+                if (error) throw error;
+
+                alert('Status atualizado com sucesso!');
+                loadPartners();
+            } catch (error) {
+                console.error('Erro ao atualizar status:', error);
+                alert('Erro ao atualizar status.');
+            }
+        }
+
+        // Carregar Vendas
+        async function loadSales() {
+            try {
+                const dateStart = document.getElementById('filterSalesDateStart').value;
+                const dateEnd = document.getElementById('filterSalesDateEnd').value;
+                const status = document.getElementById('filterSalesStatus').value;
+                const partner = document.getElementById('filterSalesPartner').value;
+
+                let query = supabase
+                    .from('vendas')
+                    .select('*, parceiros(nome_completo, codigo_parceiro)')
+                    .order('data_venda', { ascending: false });
+
+                if (dateStart) {
+                    query = query.gte('data_venda', dateStart);
+                }
+
+                if (dateEnd) {
+                    query = query.lte('data_venda', dateEnd);
+                }
+
+                if (status) {
+                    query = query.eq('status_venda', status);
+                }
+
+                const { data: sales, error } = await query;
+
+                if (error) throw error;
+
+                let filteredSales = sales;
+
+                if (partner) {
+                    filteredSales = sales.filter(sale => 
+                        sale.parceiros?.nome_completo?.toLowerCase().includes(partner.toLowerCase()) ||
+                        sale.parceiros?.codigo_parceiro?.toLowerCase().includes(partner.toLowerCase())
+                    );
+                }
+
+                const tableHtml = filteredSales?.map(sale => `
+                    <tr>
+                        <td>${formatDate(sale.data_venda)}</td>
+                        <td>${sale.nome_comprador}</td>
+                        <td>${sale.email_comprador}</td>
+                        <td>${sale.parceiros?.nome_completo || 'N/A'}</td>
+                        <td>${sale.parceiros?.codigo_parceiro || 'N/A'}</td>
+                        <td>${formatCurrency(sale.valor_total)}</td>
+                        <td>${formatCurrency(sale.valor_comissao)}</td>
+                        <td><span class="badge badge-${getStatusBadge(sale.status_venda)}">${sale.status_venda}</span></td>
+                        <td><span class="badge badge-${sale.comissao_paga ? 'success' : 'warning'}">${sale.comissao_paga ? 'Sim' : 'Não'}</span></td>
+                    </tr>
+                `).join('') || '<tr><td colspan="9" style="text-align: center;">Nenhuma venda encontrada</td></tr>';
+
+                document.getElementById('salesTable').innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar vendas:', error);
+                alert('Erro ao carregar vendas.');
+            }
+        }
+
+        // Exportar Vendas CSV
+        async function exportSalesCSV() {
+            try {
+                const { data: sales, error } = await supabase
+                    .from('vendas')
+                    .select('*, parceiros(nome_completo, codigo_parceiro)')
+                    .order('data_venda', { ascending: false });
+
+                if (error) throw error;
+
+                const headers = ['Data Venda', 'Comprador', 'Email Comprador', 'Parceiro', 'Código Parceiro', 'Valor Total', 'Valor Comissão', 'Status Venda', 'Comissão Paga'];
+                const rows = sales.map(s => [
+                    formatDate(s.data_venda),
+                    s.nome_comprador,
+                    s.email_comprador,
+                    s.parceiros ? s.parceiros.nome_completo : 'N/A',
+                    s.parceiros ? s.parceiros.codigo_parceiro : 'N/A',
+                    s.valor_total,
+                    s.valor_comissao,
+                    s.status_venda,
+                    s.comissao_paga ? 'Sim' : 'Não'
+                ]);
+
+                downloadCSV('vendas.csv', [headers, ...rows]);
+            } catch (error) {
+                console.error('Erro ao exportar vendas:', error);
+                alert('Erro ao exportar vendas.');
+            }
+        }
+
+        // Carregar Saques
+        async function loadWithdrawals() {
+            try {
+                // Saques pendentes
+                const { data: pendingWithdrawals, error: pendingError } = await supabase
+                    .from('saques')
+                    .select('*, parceiros(nome_completo, codigo_parceiro, saldo_disponivel, dados_bancarios)')
+                    .eq('status', 'pendente')
+                    .order('data_solicitacao', { ascending: true });
+
+                if (pendingError) throw pendingError;
+
+                const pendingHtml = pendingWithdrawals?.map(withdrawal => `
+                    <tr>
+                        <td>${formatDate(withdrawal.data_solicitacao)}</td>
+                        <td>${withdrawal.parceiros?.nome_completo || 'N/A'}</td>
+                        <td>${withdrawal.parceiros?.codigo_parceiro || 'N/A'}</td>
+                        <td>${formatCurrency(withdrawal.valor_solicitado)}</td>
+                        <td>${formatCurrency(withdrawal.parceiros?.saldo_disponivel || 0)}</td>
+                        <td><span class="badge badge-warning">${withdrawal.status}</span></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="processWithdrawal('${withdrawal.id}')">Processar</button>
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum saque pendente</td></tr>';
+
+                document.getElementById('pendingWithdrawalsTable').innerHTML = pendingHtml;
+
+                // Histórico de saques
+                const filterStatus = document.getElementById('filterWithdrawalStatus').value;
+
+                let historyQuery = supabase
+                    .from('saques')
+                    .select('*, parceiros(nome_completo)')
+                    .neq('status', 'pendente')
+                    .order('data_processamento', { ascending: false });
+
+                if (filterStatus) {
+                    historyQuery = historyQuery.eq('status', filterStatus);
+                }
+
+                const { data: historyWithdrawals, error: historyError } = await historyQuery;
+
+                if (historyError) throw historyError;
+
+                const historyHtml = historyWithdrawals?.map(withdrawal => `
+                    <tr>
+                        <td>${formatDate(withdrawal.data_solicitacao)}</td>
+                        <td>${formatDate(withdrawal.data_processamento)}</td>
+                        <td>${withdrawal.parceiros?.nome_completo || 'N/A'}</td>
+                        <td>${formatCurrency(withdrawal.valor_solicitado)}</td>
+                        <td><span class="badge badge-${getStatusBadge(withdrawal.status)}">${withdrawal.status}</span></td>
+                        <td>${withdrawal.observacoes || '-'}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="6" style="text-align: center;">Nenhum histórico encontrado</td></tr>';
+
+                document.getElementById('withdrawalsHistoryTable').innerHTML = historyHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar saques:', error);
+                alert('Erro ao carregar saques.');
+            }
+        }
+
+        // Processar Saque
+        async function processWithdrawal(withdrawalId) {
+            try {
+                const { data: withdrawal, error } = await supabase
+                    .from('saques')
+                    .select('*, parceiros(nome_completo, saldo_disponivel, dados_bancarios)')
+                    .eq('id', withdrawalId)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('processWithdrawalId').value = withdrawal.id;
+                document.getElementById('processWithdrawalPartner').value = withdrawal.parceiros?.nome_completo || 'N/A';
+                document.getElementById('processWithdrawalAmount').value = formatCurrency(withdrawal.valor_solicitado);
+                document.getElementById('processWithdrawalBalance').value = formatCurrency(withdrawal.parceiros?.saldo_disponivel || 0);
+                document.getElementById('processWithdrawalBankData').value = withdrawal.parceiros?.dados_bancarios || 'Não informado';
+
+                openModal('processWithdrawalModal');
+            } catch (error) {
+                console.error('Erro ao carregar saque:', error);
+                alert('Erro ao carregar dados do saque.');
+            }
+        }
+
+        // Salvar Processamento de Saque
+        document.getElementById('processWithdrawalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                const withdrawalId = document.getElementById('processWithdrawalId').value;
+                const action = document.getElementById('processWithdrawalAction').value;
+                const notes = document.getElementById('processWithdrawalNotes').value;
+
+                if (!action) {
+                    alert('Por favor, selecione uma ação.');
+                    return;
+                }
+
+                const updates = {
+                    status: action,
+                    data_processamento: new Date().toISOString(),
+                    observacoes: notes
+                };
+
+                const { error } = await supabase
+                    .from('saques')
+                    .update(updates)
+                    .eq('id', withdrawalId);
+
+                if (error) throw error;
+
+                alert('Saque processado com sucesso!');
+                closeModal('processWithdrawalModal');
+                loadWithdrawals();
+            } catch (error) {
+                console.error('Erro ao processar saque:', error);
+                alert('Erro ao processar saque.');
+            }
+        });
+
+        // Carregar Relatórios
+        async function loadReports() {
+            try {
+                // Ranking de parceiros
+                const { data: partners, error: partnersError } = await supabase
+                    .from('parceiros')
+                    .select('id, nome_completo, codigo_parceiro')
+                    .neq('tipo_parceiro', 'admin');
+
+                if (partnersError) throw partnersError;
+
+                const { data: sales, error: salesError } = await supabase
+                    .from('vendas')
+                    .select('parceiro_id, valor_total, valor_comissao, comissao_paga');
+
+                if (salesError) throw salesError;
+
+                const ranking = partners.map(partner => {
+                    const partnerSales = sales.filter(s => s.parceiro_id === partner.id);
+                    const totalSales = partnerSales.reduce((sum, s) => sum + (s.valor_total || 0), 0);
+                    const totalCommissions = partnerSales.reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
+                    const paidCommissions = partnerSales.filter(s => s.comissao_paga).reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
+                    const pendingCommissions = totalCommissions - paidCommissions;
+
+                    return {
+                        ...partner,
+                        totalSales,
+                        totalCommissions,
+                        paidCommissions,
+                        pendingCommissions
+                    };
+                }).sort((a, b) => b.totalCommissions - a.totalCommissions).slice(0, 10);
+
+                const rankingHtml = ranking.map((partner, index) => `
+                    <tr>
+                        <td>${index + 1}º</td>
+                        <td>${partner.nome_completo}</td>
+                        <td>${partner.codigo_parceiro || 'N/A'}</td>
+                        <td>${formatCurrency(partner.totalSales)}</td>
+                        <td>${formatCurrency(partner.totalCommissions)}</td>
+                        <td>${formatCurrency(partner.paidCommissions)}</td>
+                        <td>${formatCurrency(partner.pendingCommissions)}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum dado disponível</td></tr>';
+
+                document.getElementById('rankingTable').innerHTML = rankingHtml;
+
+                // Resumo de comissões
+                const totalCommissions = sales.reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
+                const paidCommissions = sales.filter(s => s.comissao_paga).reduce((sum, s) => sum + (s.valor_comissao || 0), 0);
+                const pendingCommissions = totalCommissions - paidCommissions;
+
+                document.getElementById('reportTotalCommissions').textContent = formatCurrency(totalCommissions);
+                document.getElementById('reportPaidCommissions').textContent = formatCurrency(paidCommissions);
+                document.getElementById('reportPendingCommissions').textContent = formatCurrency(pendingCommissions);
+
+            } catch (error) {
+                console.error('Erro ao carregar relatórios:', error);
+                alert('Erro ao carregar relatórios.');
+            }
+        }
+
+        // Exportar Relatório CSV
+        async function exportReportCSV() {
+            try {
+                const table = document.getElementById('rankingTable');
+                const rows = Array.from(table.querySelectorAll('tr'));
+                
+                const headers = ['Posição', 'Parceiro', 'Código', 'Total Vendas', 'Total Comissões', 'Comissões Pagas', 'Comissões Pendentes'];
+                const data = rows.map(row => {
+                    const cells = Array.from(row.querySelectorAll('td'));
+                    return cells.map(cell => cell.textContent);
+                });
+
+                downloadCSV('ranking-parceiros.csv', [headers, ...data]);
+            } catch (error) {
+                console.error('Erro ao exportar relatório:', error);
+                alert('Erro ao exportar relatório.');
+            }
+        }
+
+        // Funções auxiliares
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(value || 0);
         }
 
         function formatDate(dateString) {
@@ -951,869 +1614,79 @@
             return date.toLocaleDateString('pt-BR');
         }
 
-        function formatCurrency(value) {
-            if (value === null || value === undefined) return 'R$ 0,00';
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-        }
-
-        function showSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-            document.getElementById('currentSectionTitle').textContent = document.querySelector(`[data-section="${sectionId}"]`).textContent;
-
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
-
-            currentSection = sectionId;
-            // Load data for the active section
-            switch (sectionId) {
-                case 'dashboard':
-                    loadDashboard();
-                    break;
-                case 'partners':
-                    loadPartners();
-                    break;
-                case 'sales':
-                    loadSales();
-                    break;
-                case 'withdrawals':
-                    loadWithdrawals();
-                    loadWithdrawalsHistory();
-                    break;
-                case 'reports':
-                    loadReports();
-                    break;
-            }
-            // Hide sidebar on mobile after selection
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('visible');
-            }
+        function getStatusBadge(status) {
+            const badges = {
+                'ativo': 'success',
+                'aprovada': 'success',
+                'aprovado': 'success',
+                'pago': 'success',
+                'pendente': 'warning',
+                'inativo': 'danger',
+                'cancelada': 'danger',
+                'rejeitado': 'danger'
+            };
+            return badges[status] || 'info';
         }
 
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
+            document.getElementById(modalId).classList.add('show');
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+            document.getElementById(modalId).classList.remove('show');
         }
 
-        // Authentication
-        async function checkAuth() {
-            showLoading();
-            const { data: { session } } = await supabase.auth.getSession();
-
-            if (!session) {
-                window.location.href = '/admin/login.html';
-                return;
-            }
-
-            const { data: user, error: userError } = await supabase
-                .from('parceiros')
-                .select('nome_completo, email, tipo_parceiro')
-                .eq('email', session.user.email)
-                .single();
-
-            if (userError || !user || user.tipo_parceiro !== 'admin') {
-                showAlert('Acesso negado. Você não tem permissão de administrador.', 'danger');
-                await supabase.auth.signOut();
-                window.location.href = '/admin/login.html';
-                return;
-            }
-
-            document.getElementById('adminUserName').textContent = user.nome_completo || 'Admin';
-            document.getElementById('adminUserEmail').textContent = user.email;
-            hideLoading();
-            showSection('dashboard'); // Load dashboard after successful auth
+        function downloadCSV(filename, rows) {
+            const csvContent = rows.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
-        async function logout() {
-            showLoading();
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                showAlert('Erro ao fazer logout: ' + error.message, 'danger');
-            } else {
-                window.location.href = '/admin/login.html';
-            }
-            hideLoading();
-        }
-
-        // Dashboard Functions
-        async function loadDashboard() {
-            showLoading();
-            try {
-                // Total Parceiros
-                const { count: totalPartnersCount, error: partnersError } = await supabase
-                    .from('parceiros')
-                    .select('*', { count: 'exact' });
-                if (partnersError) throw partnersError;
-                document.getElementById('totalPartners').textContent = totalPartnersCount;
-
-                // Parceiros Ativos (aprovados)
-                const { count: activePartnersCount, error: activePartnersError } = await supabase
-                    .from('parceiros')
-                    .select('*', { count: 'exact' })
-                    .eq('status', 'aprovado');
-                if (activePartnersError) throw activePartnersError;
-                document.getElementById('activePartners').textContent = activePartnersCount;
-
-                // Total Vendas
-                const { data: salesData, error: salesError } = await supabase
-                    .from('vendas')
-                    .select('valor_total');
-                if (salesError) throw salesError;
-                const totalSalesValue = salesData.reduce((sum, sale) => sum + sale.valor_total, 0);
-                document.getElementById('totalSales').textContent = formatCurrency(totalSalesValue);
-
-                // Comissões Pagas
-                const { data: paidCommissionsData, error: paidCommissionsError } = await supabase
-                    .from('vendas')
-                    .select('valor_comissao')
-                    .eq('comissao_paga', true);
-                if (paidCommissionsError) throw paidCommissionsError;
-                const totalPaidCommissions = paidCommissionsData.reduce((sum, sale) => sum + sale.valor_comissao, 0);
-                document.getElementById('paidCommissions').textContent = formatCurrency(totalPaidCommissions);
-
-                // Recent Activity (last 5 sales and withdrawals)
-                const { data: recentSales, error: recentSalesError } = await supabase
-                    .from('vendas')
-                    .select('*, parceiros(nome_completo)')
-                    .order('data_venda', { ascending: false })
-                    .limit(5);
-                if (recentSalesError) throw recentSalesError;
-
-                const { data: recentWithdrawals, error: recentWithdrawalsError } = await supabase
-                    .from('solicitacoes_saque')
-                    .select('*, parceiros(nome_completo)')
-                    .order('data_solicitacao', { ascending: false })
-                    .limit(5);
-                if (recentWithdrawalsError) throw recentWithdrawalsError;
-
-                const activity = [];
-                recentSales.forEach(s => activity.push({
-                    type: 'Venda',
-                    description: `Venda de ${formatCurrency(s.valor_total)} para ${s.nome_comprador} (Parceiro: ${s.parceiros ? s.parceiros.nome_completo : 'N/A'})`,
-                    value: s.valor_total,
-                    date: s.data_venda
-                }));
-                recentWithdrawals.forEach(w => activity.push({
-                    type: 'Saque',
-                    description: `Saque de ${formatCurrency(w.valor)} solicitado por ${w.parceiros ? w.parceiros.nome_completo : 'N/A'}`,
-                    value: w.valor,
-                    date: w.data_solicitacao
-                }));
-
-                activity.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                const activityTableBody = document.getElementById('recentActivityTableBody');
-                activityTableBody.innerHTML = '';
-                if (activity.length === 0) {
-                    activityTableBody.innerHTML = '<tr><td colspan="4">Nenhuma atividade recente.</td></tr>';
-                } else {
-                    activity.slice(0, 5).forEach(item => {
-                        const row = activityTableBody.insertRow();
-                        row.innerHTML = `
-                            <td>${item.type}</td>
-                            <td>${item.description}</td>
-                            <td>${formatCurrency(item.value)}</td>
-                            <td>${formatDate(item.date)}</td>
-                        `;
-                    });
-                }
-
-            } catch (error) {
-                showAlert('Erro ao carregar dashboard: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Partners Management Functions
-        async function loadPartners() {
-            showLoading();
-            try {
-                const name = document.getElementById('partnerSearchName').value;
-                const email = document.getElementById('partnerSearchEmail').value;
-                const code = document.getElementById('partnerSearchCode').value;
-                const status = document.getElementById('partnerSearchStatus').value;
-                const type = document.getElementById('partnerSearchType').value;
-
-                let query = supabase.from('parceiros').select('*', { count: 'exact' });
-
-                if (name) query = query.ilike('nome_completo', `%${name}%`);
-                if (email) query = query.ilike('email', `%${email}%`);
-                if (code) query = query.ilike('codigo_parceiro', `%${code}%`);
-                if (status) query = query.eq('status', status);
-                if (type) query = query.eq('tipo_parceiro', type);
-
-                const offset = (partnersCurrentPage - 1) * itemsPerPage;
-                const { data: partners, count, error } = await query
-                    .order('nome_completo', { ascending: true })
-                    .range(offset, offset + itemsPerPage - 1);
-
-                if (error) throw error;
-
-                const partnersTableBody = document.getElementById('partnersTableBody');
-                partnersTableBody.innerHTML = '';
-                if (partners.length === 0) {
-                    partnersTableBody.innerHTML = '<tr><td colspan="6">Nenhum parceiro encontrado.</td></tr>';
-                } else {
-                    partners.forEach(partner => {
-                        const row = partnersTableBody.insertRow();
-                        row.innerHTML = `
-                            <td>${partner.nome_completo}</td>
-                            <td>${partner.email}</td>
-                            <td>${partner.codigo_parceiro || 'N/A'}</td>
-                            <td>${partner.tipo_parceiro}</td>
-                            <td><span class="badge ${partner.status === 'aprovado' ? 'success' : partner.status === 'pendente' ? 'warning' : 'danger'}">${partner.status}</span></td>
-                            <td class="action-buttons">
-                                <button class="btn-info" onclick="editPartner('${partner.id}')"><i class="fas fa-edit"></i> Editar</button>
-                                ${partner.status === 'pendente' ? `<button class="btn-success" onclick="approvePartner('${partner.id}')"><i class="fas fa-check"></i> Aprovar</button>` : ''}
-                                <button class="btn-${partner.status === 'desativado' ? 'success' : 'danger'}" onclick="togglePartnerStatus('${partner.id}', '${partner.status}')">
-                                    <i class="fas fa-${partner.status === 'desativado' ? 'check' : 'times'}"></i> ${partner.status === 'desativado' ? 'Ativar' : 'Desativar'}
-                                </button>
-                            </td>
-                        `;
-                    });
-                }
-
-                document.getElementById('partnersCurrentPage').textContent = `Página ${partnersCurrentPage}`;
-                document.getElementById('partnersPrevPage').disabled = partnersCurrentPage === 1;
-                document.getElementById('partnersNextPage').disabled = offset + itemsPerPage >= count;
-
-            } catch (error) {
-                showAlert('Erro ao carregar parceiros: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function editPartner(id) {
-            showLoading();
-            try {
-                const { data: partner, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('id', id)
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('editPartnerId').value = partner.id;
-                document.getElementById('editNomeCompleto').value = partner.nome_completo;
-                document.getElementById('editEmail').value = partner.email;
-                document.getElementById('editTipoParceiro').value = partner.tipo_parceiro;
-                document.getElementById('editStatus').value = partner.status;
-                document.getElementById('editCodigoParceiro').value = partner.codigo_parceiro || '';
-                document.getElementById('editTelefone').value = partner.telefone || '';
-                document.getElementById('editCpf').value = partner.cpf || '';
-                document.getElementById('editEndereco').value = partner.endereco || '';
-                document.getElementById('editCidade').value = partner.cidade || '';
-                document.getElementById('editEstado').value = partner.estado || '';
-                document.getElementById('editCep').value = partner.cep || '';
-                document.getElementById('editBanco').value = partner.banco || '';
-                document.getElementById('editAgencia').value = partner.agencia || '';
-                document.getElementById('editConta').value = partner.conta || '';
-                document.getElementById('editPix').value = partner.pix || '';
-
-                openModal('editPartnerModal');
-            } catch (error) {
-                showAlert('Erro ao carregar dados do parceiro: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        document.getElementById('editPartnerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            try {
-                const id = document.getElementById('editPartnerId').value;
-                const updates = {
-                    nome_completo: document.getElementById('editNomeCompleto').value,
-                    email: document.getElementById('editEmail').value,
-                    tipo_parceiro: document.getElementById('editTipoParceiro').value,
-                    status: document.getElementById('editStatus').value,
-                    codigo_parceiro: document.getElementById('editCodigoParceiro').value,
-                    telefone: document.getElementById('editTelefone').value,
-                    cpf: document.getElementById('editCpf').value,
-                    endereco: document.getElementById('editEndereco').value,
-                    cidade: document.getElementById('editCidade').value,
-                    estado: document.getElementById('editEstado').value,
-                    cep: document.getElementById('editCep').value,
-                    banco: document.getElementById('editBanco').value,
-                    agencia: document.getElementById('editAgencia').value,
-                    conta: document.getElementById('editConta').value,
-                    pix: document.getElementById('editPix').value,
-                };
-
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update(updates)
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                showAlert('Parceiro atualizado com sucesso!', 'success');
-                closeModal('editPartnerModal');
-                loadPartners();
-            } catch (error) {
-                showAlert('Erro ao salvar parceiro: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        });
-
-        async function approvePartner(id) {
-            if (!confirm('Tem certeza que deseja aprovar este parceiro?')) return;
-            showLoading();
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({ status: 'aprovado' })
-                    .eq('id', id);
-
-                if (error) throw error;
-                showAlert('Parceiro aprovado com sucesso!', 'success');
-                loadPartners();
-            } catch (error) {
-                showAlert('Erro ao aprovar parceiro: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function togglePartnerStatus(id, currentStatus) {
-            const newStatus = currentStatus === 'desativado' ? 'aprovado' : 'desativado';
-            if (!confirm(`Tem certeza que deseja ${newStatus === 'desativado' ? 'desativar' : 'ativar'} este parceiro?`)) return;
-            showLoading();
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({ status: newStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-                showAlert(`Parceiro ${newStatus} com sucesso!`, 'success');
-                loadPartners();
-            } catch (error) {
-                showAlert('Erro ao alterar status do parceiro: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Sales Management Functions
-        async function loadSales() {
-            showLoading();
-            try {
-                const startDate = document.getElementById('salesFilterStartDate').value;
-                const endDate = document.getElementById('salesFilterEndDate').value;
-                const status = document.getElementById('salesFilterStatus').value;
-                const partnerIdOrName = document.getElementById('salesFilterPartner').value;
-
-                let query = supabase.from('vendas').select('*, parceiros(nome_completo, codigo_parceiro)', { count: 'exact' });
-
-                if (startDate) query = query.gte('data_venda', startDate);
-                if (endDate) query = query.lte('data_venda', endDate);
-                if (status) query = query.eq('status', status);
-
-                if (partnerIdOrName) {
-                    const { data: partners, error: partnerError } = await supabase
-                        .from('parceiros')
-                        .select('id')
-                        .ilike('nome_completo', `%${partnerIdOrName}%`);
-                    if (partnerError) throw partnerError;
-                    const partnerIds = partners.map(p => p.id);
-                    query = query.in('parceiro_id', partnerIds);
-                }
-
-                const offset = (salesCurrentPage - 1) * itemsPerPage;
-                const { data: sales, count, error } = await query
-                    .order('data_venda', { ascending: false })
-                    .range(offset, offset + itemsPerPage - 1);
-
-                if (error) throw error;
-
-                const salesTableBody = document.getElementById('salesTableBody');
-                salesTableBody.innerHTML = '';
-                if (sales.length === 0) {
-                    salesTableBody.innerHTML = '<tr><td colspan="8">Nenhuma venda encontrada.</td></tr>';
-                } else {
-                    sales.forEach(sale => {
-                        const row = salesTableBody.insertRow();
-                        row.innerHTML = `
-                            <td>${sale.id}</td>
-                            <td>${formatDate(sale.data_venda)}</td>
-                            <td>${sale.nome_comprador} (${sale.email_comprador})</td>
-                            <td>${sale.parceiros ? sale.parceiros.nome_completo : 'N/A'}</td>
-                            <td>${formatCurrency(sale.valor_total)}</td>
-                            <td>${formatCurrency(sale.valor_comissao)}</td>
-                            <td><span class="badge ${sale.status === 'concluido' ? 'success' : sale.status === 'pendente' ? 'warning' : 'danger'}">${sale.status}</span></td>
-                            <td><span class="badge ${sale.comissao_paga ? 'success' : 'warning'}">${sale.comissao_paga ? 'Paga' : 'Pendente'}</span></td>
-                        `;
-                    });
-                }
-
-                document.getElementById('salesCurrentPage').textContent = `Página ${salesCurrentPage}`;
-                document.getElementById('salesPrevPage').disabled = salesCurrentPage === 1;
-                document.getElementById('salesNextPage').disabled = offset + itemsPerPage >= count;
-
-            } catch (error) {
-                showAlert('Erro ao carregar vendas: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function exportSalesCSV() {
-            showLoading();
-            try {
-                const startDate = document.getElementById('salesFilterStartDate').value;
-                const endDate = document.getElementById('salesFilterEndDate').value;
-                const status = document.getElementById('salesFilterStatus').value;
-                const partnerIdOrName = document.getElementById('salesFilterPartner').value;
-
-                let query = supabase.from('vendas').select('*, parceiros(nome_completo, codigo_parceiro)');
-
-                if (startDate) query = query.gte('data_venda', startDate);
-                if (endDate) query = query.lte('data_venda', endDate);
-                if (status) query = query.eq('status', status);
-
-                if (partnerIdOrName) {
-                    const { data: partners, error: partnerError } = await supabase
-                        .from('parceiros')
-                        .select('id')
-                        .ilike('nome_completo', `%${partnerIdOrName}%`);
-                    if (partnerError) throw partnerError;
-                    const partnerIds = partners.map(p => p.id);
-                    query = query.in('parceiro_id', partnerIds);
-                }
-
-                const { data: sales, error } = await query.order('data_venda', { ascending: false });
-                if (error) throw error;
-
-                if (sales.length === 0) {
-                    showAlert('Nenhuma venda para exportar.', 'warning');
-                    return;
-                }
-
-                const headers = ['ID Venda', 'Data Venda', 'Comprador', 'Email Comprador', 'Parceiro', 'Código Parceiro', 'Valor Total', 'Valor Comissão', 'Status Venda', 'Comissão Paga'];
-                const rows = sales.map(s => [
-                    s.id,
-                    formatDate(s.data_venda),
-                    s.nome_comprador,
-                    s.email_comprador,
-                    s.parceiros ? s.parceiros.nome_completo : 'N/A',
-                    s.parceiros ? s.parceiros.codigo_parceiro : 'N/A',
-                    formatCurrency(s.valor_total),
-                    formatCurrency(s.valor_comissao),
-                    s.status,
-                    s.comissao_paga ? 'Sim' : 'Não'
-                ]);
-
-                let csvContent = headers.join(';') + '\n';
-                rows.forEach(row => {
-                    csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(';') + '\n';
-                });
-
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.setAttribute('download', 'vendas_bizmix.csv');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showAlert('Vendas exportadas com sucesso!', 'success');
-
-            } catch (error) {
-                showAlert('Erro ao exportar vendas: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Withdrawals Management Functions
-        async function loadWithdrawals() {
-            showLoading();
-            try {
-                const startDate = document.getElementById('withdrawalsFilterStartDate').value;
-                const endDate = document.getElementById('withdrawalsFilterEndDate').value;
-                const status = document.getElementById('withdrawalsFilterStatus').value;
-                const partnerIdOrName = document.getElementById('withdrawalsFilterPartner').value;
-
-                let query = supabase.from('solicitacoes_saque').select('*, parceiros(nome_completo)', { count: 'exact' });
-                query = query.eq('status', 'pendente'); // Only pending for this table
-
-                if (startDate) query = query.gte('data_solicitacao', startDate);
-                if (endDate) query = query.lte('data_solicitacao', endDate);
-                if (status && status !== 'pendente') query = query.eq('status', status); // Filter for pending table
-
-                if (partnerIdOrName) {
-                    const { data: partners, error: partnerError } = await supabase
-                        .from('parceiros')
-                        .select('id')
-                        .ilike('nome_completo', `%${partnerIdOrName}%`);
-                    if (partnerError) throw partnerError;
-                    const partnerIds = partners.map(p => p.id);
-                    query = query.in('parceiro_id', partnerIds);
-                }
-
-                const { data: withdrawals, error } = await query
-                    .order('data_solicitacao', { ascending: false });
-
-                if (error) throw error;
-
-                const pendingWithdrawalsTableBody = document.getElementById('pendingWithdrawalsTableBody');
-                pendingWithdrawalsTableBody.innerHTML = '';
-                if (withdrawals.length === 0) {
-                    pendingWithdrawalsTableBody.innerHTML = '<tr><td colspan="6">Nenhum saque pendente.</td></tr>';
-                } else {
-                    withdrawals.forEach(withdrawal => {
-                        const row = pendingWithdrawalsTableBody.insertRow();
-                        row.innerHTML = `
-                            <td>${withdrawal.id}</td>
-                            <td>${withdrawal.parceiros ? withdrawal.parceiros.nome_completo : 'N/A'}</td>
-                            <td>${formatCurrency(withdrawal.valor)}</td>
-                            <td>${formatDate(withdrawal.data_solicitacao)}</td>
-                            <td><span class="badge warning">${withdrawal.status}</span></td>
-                            <td class="action-buttons">
-                                <button class="btn-primary" onclick="processWithdrawal('${withdrawal.id}')"><i class="fas fa-cogs"></i> Processar</button>
-                            </td>
-                        `;
-                    });
-                }
-            } catch (error) {
-                showAlert('Erro ao carregar saques pendentes: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function loadWithdrawalsHistory() {
-            showLoading();
-            try {
-                const startDate = document.getElementById('withdrawalsFilterStartDate').value;
-                const endDate = document.getElementById('withdrawalsFilterEndDate').value;
-                const status = document.getElementById('withdrawalsFilterStatus').value;
-                const partnerIdOrName = document.getElementById('withdrawalsFilterPartner').value;
-
-                let query = supabase.from('solicitacoes_saque').select('*, parceiros(nome_completo)', { count: 'exact' });
-                query = query.neq('status', 'pendente'); // Only processed for this table
-
-                if (startDate) query = query.gte('data_solicitacao', startDate);
-                if (endDate) query = query.lte('data_solicitacao', endDate);
-                if (status && status !== 'pendente') query = query.eq('status', status);
-
-                if (partnerIdOrName) {
-                    const { data: partners, error: partnerError } = await supabase
-                        .from('parceiros')
-                        .select('id')
-                        .ilike('nome_completo', `%${partnerIdOrName}%`);
-                    if (partnerError) throw partnerError;
-                    const partnerIds = partners.map(p => p.id);
-                    query = query.in('parceiro_id', partnerIds);
-                }
-
-                const offset = (withdrawalsCurrentPage - 1) * itemsPerPage;
-                const { data: withdrawals, count, error } = await query
-                    .order('data_solicitacao', { ascending: false })
-                    .range(offset, offset + itemsPerPage - 1);
-
-                if (error) throw error;
-
-                const processedWithdrawalsTableBody = document.getElementById('processedWithdrawalsTableBody');
-                processedWithdrawalsTableBody.innerHTML = '';
-                if (withdrawals.length === 0) {
-                    processedWithdrawalsTableBody.innerHTML = '<tr><td colspan="7">Nenhum histórico de saque.</td></tr>';
-                } else {
-                    withdrawals.forEach(withdrawal => {
-                        const row = processedWithdrawalsTableBody.insertRow();
-                        const statusClass = withdrawal.status === 'pago' ? 'success' : withdrawal.status === 'aprovado' ? 'info' : 'danger';
-                        row.innerHTML = `
-                            <td>${withdrawal.id}</td>
-                            <td>${withdrawal.parceiros ? withdrawal.parceiros.nome_completo : 'N/A'}</td>
-                            <td>${formatCurrency(withdrawal.valor)}</td>
-                            <td>${formatDate(withdrawal.data_solicitacao)}</td>
-                            <td>${formatDate(withdrawal.data_processamento)}</td>
-                            <td><span class="badge ${statusClass}">${withdrawal.status}</span></td>
-                            <td>${withdrawal.comprovante_url ? `<a href="${withdrawal.comprovante_url}" target="_blank">Ver Comprovante</a>` : 'N/A'}</td>
-                        `;
-                    });
-                }
-
-                document.getElementById('withdrawalsCurrentPage').textContent = `Página ${withdrawalsCurrentPage}`;
-                document.getElementById('withdrawalsPrevPage').disabled = withdrawalsCurrentPage === 1;
-                document.getElementById('withdrawalsNextPage').disabled = offset + itemsPerPage >= count;
-
-            } catch (error) {
-                showAlert('Erro ao carregar histórico de saques: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function processWithdrawal(id) {
-            showLoading();
-            try {
-                const { data: withdrawal, error } = await supabase
-                    .from('solicitacoes_saque')
-                    .select('*, parceiros(nome_completo)')
-                    .eq('id', id)
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('processWithdrawalId').value = withdrawal.id;
-                document.getElementById('processWithdrawalPartner').value = withdrawal.parceiros ? withdrawal.parceiros.nome_completo : 'N/A';
-                document.getElementById('processWithdrawalValue').value = formatCurrency(withdrawal.valor);
-                document.getElementById('processWithdrawalStatus').value = withdrawal.status;
-                document.getElementById('processWithdrawalComprovante').value = withdrawal.comprovante_url || '';
-
-                openModal('processWithdrawalModal');
-            } catch (error) {
-                showAlert('Erro ao carregar dados do saque: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        document.getElementById('processWithdrawalForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            showLoading();
-            try {
-                const id = document.getElementById('processWithdrawalId').value;
-                const status = document.getElementById('processWithdrawalStatus').value;
-                const comprovante_url = document.getElementById('processWithdrawalComprovante').value;
-
-                const updates = {
-                    status: status,
-                    data_processamento: new Date().toISOString(),
-                    comprovante_url: comprovante_url || null
-                };
-
-                const { error } = await supabase
-                    .from('solicitacoes_saque')
-                    .update(updates)
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                showAlert('Saque processado com sucesso!', 'success');
-                closeModal('processWithdrawalModal');
-                loadWithdrawals();
-                loadWithdrawalsHistory();
-            } catch (error) {
-                showAlert('Erro ao processar saque: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        });
-
-        // Reports Functions
-        async function loadReports() {
-            showLoading();
-            try {
-                const startDate = document.getElementById('reportsFilterStartDate').value;
-                const endDate = document.getElementById('reportsFilterEndDate').value;
-
-                let salesQuery = supabase.from('vendas').select('valor_total, valor_comissao, comissao_paga, parceiro_id', { count: 'exact' });
-                if (startDate) salesQuery = salesQuery.gte('data_venda', startDate);
-                if (endDate) salesQuery = salesQuery.lte('data_venda', endDate);
-                const { data: sales, error: salesError } = await salesQuery;
-                if (salesError) throw salesError;
-
-                let totalCommission = 0;
-                let paidCommission = 0;
-                let pendingCommission = 0;
-                const partnerCommissions = {}; // { partner_id: total_commission }
-
-                for (const sale of sales) {
-                    totalCommission += sale.valor_comissao;
-                    if (sale.comissao_paga) {
-                        paidCommission += sale.valor_comissao;
-                    } else {
-                        pendingCommission += sale.valor_comissao;
-                    }
-                    if (sale.parceiro_id) {
-                        partnerCommissions[sale.parceiro_id] = (partnerCommissions[sale.parceiro_id] || 0) + sale.valor_comissao;
-                    }
-                }
-
-                document.getElementById('reportTotalCommission').textContent = formatCurrency(totalCommission);
-                document.getElementById('reportPaidCommission').textContent = formatCurrency(paidCommission);
-                document.getElementById('reportPendingCommission').textContent = formatCurrency(pendingCommission);
-
-                // Top 10 Partners
-                const sortedPartners = Object.entries(partnerCommissions)
-                    .sort(([, a], [, b]) => b - a)
-                    .slice(0, 10);
-
-                const topPartnersTableBody = document.getElementById('topPartnersTableBody');
-                topPartnersTableBody.innerHTML = '';
-                if (sortedPartners.length === 0) {
-                    topPartnersTableBody.innerHTML = '<tr><td colspan="3">Nenhum parceiro no ranking.</td></tr>';
-                } else {
-                    for (let i = 0; i < sortedPartners.length; i++) {
-                        const [partnerId, commission] = sortedPartners[i];
-                        const { data: partner, error: partnerError } = await supabase
-                            .from('parceiros')
-                            .select('nome_completo')
-                            .eq('id', partnerId)
-                            .single();
-                        if (partnerError) throw partnerError;
-
-                        const row = topPartnersTableBody.insertRow();
-                        row.innerHTML = `
-                            <td>${i + 1}º</td>
-                            <td>${partner ? partner.nome_completo : 'N/A'}</td>
-                            <td>${formatCurrency(commission)}</td>
-                        `;
-                    }
-                }
-
-                // Sales Chart
-                if (salesChartInstance) {
-                    salesChartInstance.destroy();
-                }
-
-                const salesByDate = {};
-                sales.forEach(sale => {
-                    const date = formatDate(sale.data_venda);
-                    salesByDate[date] = (salesByDate[date] || 0) + sale.valor_total;
-                });
-
-                const chartLabels = Object.keys(salesByDate).sort((a, b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-')));
-                const chartData = chartLabels.map(label => salesByDate[label]);
-
-                const ctx = document.getElementById('salesChart').getContext('2d');
-                salesChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: chartLabels,
-                        datasets: [{
-                            label: 'Vendas Totais',
-                            data: chartData,
-                            borderColor: var(--primary-color),
-                            backgroundColor: 'rgba(106, 13, 173, 0.2)',
-                            tension: 0.3,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return formatCurrency(value);
-                                    }
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return context.dataset.label + ': ' + formatCurrency(context.raw);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-
-            } catch (error) {
-                showAlert('Erro ao carregar relatórios: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function exportReportCSV() {
-            showLoading();
-            try {
-                const startDate = document.getElementById('reportsFilterStartDate').value;
-                const endDate = document.getElementById('reportsFilterEndDate').value;
-
-                let salesQuery = supabase.from('vendas').select('valor_total, valor_comissao, comissao_paga, data_venda, parceiros(nome_completo, codigo_parceiro)');
-                if (startDate) salesQuery = salesQuery.gte('data_venda', startDate);
-                if (endDate) salesQuery = salesQuery.lte('data_venda', endDate);
-                const { data: sales, error: salesError } = await salesQuery;
-                if (salesError) throw salesError;
-
-                if (sales.length === 0) {
-                    showAlert('Nenhum dado para exportar no relatório.', 'warning');
-                    return;
-                }
-
-                const headers = ['Data Venda', 'Parceiro', 'Código Parceiro', 'Valor Total Venda', 'Valor Comissão', 'Comissão Paga'];
-                const rows = sales.map(s => [
-                    formatDate(s.data_venda),
-                    s.parceiros ? s.parceiros.nome_completo : 'N/A',
-                    s.parceiros ? s.parceiros.codigo_parceiro : 'N/A',
-                    formatCurrency(s.valor_total),
-                    formatCurrency(s.valor_comissao),
-                    s.comissao_paga ? 'Sim' : 'Não'
-                ]);
-
-                let csvContent = headers.join(';') + '\n';
-                rows.forEach(row => {
-                    csvContent += row.map(item => `"${String(item).replace(/"/g, '""')}"`).join(';') + '\n';
-                });
-
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.setAttribute('download', 'relatorio_bizmix.csv');
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showAlert('Relatório exportado com sucesso!', 'success');
-
-            } catch (error) {
-                showAlert('Erro ao exportar relatório: ' + error.message, 'danger');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Pagination Helper
-        async function changePage(section, direction) {
-            if (section === 'partners') {
-                partnersCurrentPage += direction;
-                await loadPartners();
-            } else if (section === 'sales') {
-                salesCurrentPage += direction;
-                await loadSales();
-            } else if (section === 'withdrawals') {
-                withdrawalsCurrentPage += direction;
-                await loadWithdrawalsHistory(); // Only history has pagination
-            }
-        }
-
-        // Event Listeners
-        document.querySelectorAll('.sidebar-menu a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                showSection(e.target.dataset.section);
+        // Navegação
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const section = this.getAttribute('data-section');
+                
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+                
+                currentSection = section;
+
+                if (section === 'partners') loadPartners();
+                if (section === 'sales') loadSales();
+                if (section === 'withdrawals') loadWithdrawals();
+                if (section === 'reports') loadReports();
             });
         });
 
-        document.getElementById('hamburgerMenu').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('visible');
+        // Event Listeners
+        document.getElementById('applyPartnerFilters').addEventListener('click', loadPartners);
+        document.getElementById('applySalesFilters').addEventListener('click', loadSales);
+        document.getElementById('exportSalesCSV').addEventListener('click', exportSalesCSV);
+        document.getElementById('applyWithdrawalFilters').addEventListener('click', loadWithdrawals);
+        document.getElementById('exportReportCSV').addEventListener('click', exportReportCSV);
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            if (confirm('Deseja realmente sair?')) {
+                await supabase.auth.signOut();
+                window.location.href = '/admin/login.html';
+            }
         });
 
-        window.addEventListener('click', (event) => {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
+        // Mobile Menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
         });
 
         // Initialize application
