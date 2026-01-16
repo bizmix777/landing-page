@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BizMix</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .error.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>🔐 BizMix Login</h1>
+        <div class="error" id="error"></div>
+        <form id="form">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        // Configuração Supabase
+        const sb = window.supabase.createClient(
+            'https://pjzaabuqzgvwrfgqzgzm.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk'
+        );
+
+        // Ler URL
+        const params = new URLSearchParams(window.location.search);
+        const emailUrl = params.get('email');
+        const passUrl = params.get('password');
+
+        if (emailUrl) document.getElementById('email').value = emailUrl;
+        if (passUrl) document.getElementById('password').value = passUrl;
+
+        // Login
+        document.getElementById('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+
+            try {
+                // Autenticar
+                const { data: auth, error: authError } = await sb.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (authError) throw new Error('Email ou senha incorretos');
+
+                // Buscar tipo
+                const { data: user, error: userError } = await sb
+                    .from('parceiros')
+                    .select('tipo_parceiro, status')
+                    .eq('email', email)
+                    .single();
+
+                if (userError || !user) throw new Error('Usuário não encontrado');
+                if (user.status !== 'ativo') throw new Error('Conta inativa');
+
+                // Redirecionar
+                if (user.tipo_parceiro === 'admin') {
+                    window.location.href = '/admin/super-admin.html';
+                } else if (user.tipo_parceiro === 'parceiro') {
+                    window.location.href = '/admin/dashboard-parceiro.html';
+                } else if (user.tipo_parceiro === 'igreja') {
+                    window.location.href = '/admin/dashboard-igreja.html';
+                }
+
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+            }
+        });
+
+        // Auto-submit
+        if (emailUrl && passUrl) {
+            setTimeout(() => {
+                document.getElementById('form').dispatchEvent(new Event('submit'));
+            }, 500);
+        }
+    </script>
+</body>
+</html>
