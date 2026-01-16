@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Igrejas Parceiras - Somos Todos Um</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Parceiros da Igreja - BizMix</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -12,279 +12,850 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f9fafb;
+            --border-color: #e5e7eb;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            background: var(--light-color);
+            color: var(--dark-color);
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            display: flex;
+            min-height: 100vh;
         }
 
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-            text-align: center;
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s;
+            z-index: 1000;
         }
 
-        .header h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2rem;
+        .sidebar-header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
         }
 
-        .btn-back {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background: #f0f0f0;
-            color: #333;
+        .sidebar-header h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-info h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
             text-decoration: none;
             border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
+            cursor: pointer;
         }
 
-        .btn-back:hover {
-            background: #e0e0e0;
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .search-box {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        .search-box input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
+        .nav-link span {
+            margin-left: 10px;
         }
 
-        .search-box input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .igrejas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-
-        .igreja-card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .igreja-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-
-        .igreja-card h3 {
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .igreja-info {
-            margin-bottom: 15px;
-            color: #666;
-        }
-
-        .igreja-info p {
-            margin-bottom: 8px;
-        }
-
-        .btn-comprar {
-            display: block;
+        .logout-btn {
+            margin-top: 20px;
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
             color: white;
-            text-align: center;
-            text-decoration: none;
             border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .btn-comprar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
         }
 
-        .loading {
-            text-align: center;
-            padding: 50px;
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+        }
+
+        /* Cards */
+        .card {
             background: white;
-            border-radius: 15px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
-        .error-box {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .card-header h2 {
+            font-size: 20px;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        table th {
+            background: var(--light-color);
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark-color);
+        }
+
+        table td {
+            font-size: 14px;
+        }
+
+        table tr:hover {
+            background: var(--light-color);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Mobile */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
-            .igrejas-grid {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .form-row {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
+    <button class="mobile-menu-btn" id="mobileMenuBtn">☰ Menu</button>
+
     <div class="container">
-        <div class="header">
-            <h1>⛪ Igrejas Parceiras</h1>
-            <p>Escolha sua igreja e ajude-a a ganhar comissão com sua compra!</p>
-            <a href="/index.html" class="btn-back">← Voltar para Página Inicial</a>
-        </div>
-
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar igreja por nome, cidade ou pastor...">
-        </div>
-
-        <div id="igrejasContainer">
-            <div class="loading">
-                <p>Carregando igrejas parceiras...</p>
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>⛪ BizMix</h2>
+                <p>Gestão de Parceiros</p>
             </div>
+
+            <div class="user-info" id="userInfo">
+                <h3 id="userName">Carregando...</h3>
+                <p id="userEmail">...</p>
+            </div>
+
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a class="nav-link" href="igrejas.html">
+                            <span>📊</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="ig-parceiras.html">
+                            <span>👥</span>
+                            <span>Parceiros</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="igrejas.html#sales">
+                            <span>💳</span>
+                            <span>Vendas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="igrejas.html#withdrawals">
+                            <span>💸</span>
+                            <span>Saques</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="igrejas.html#profile">
+                            <span>⛪</span>
+                            <span>Perfil</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <button class="logout-btn" id="logoutBtn">🚪 Sair</button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1>Gestão de Parceiros</h1>
+                <p>Gerencie os parceiros vinculados à sua igreja</p>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Filtros</h2>
+                    <button class="btn btn-success" id="addPartnerBtn">➕ Adicionar Parceiro</button>
+                </div>
+                <div class="filters">
+                    <div class="filter-group">
+                        <label>Buscar</label>
+                        <input type="text" id="searchPartner" placeholder="Nome, email ou código">
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select id="filterStatus">
+                            <option value="">Todos</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                    <div class="filter-group" style="display: flex; align-items: flex-end;">
+                        <button class="btn btn-primary" id="applyFilters">Aplicar Filtros</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2>Lista de Parceiros</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                                <th>Status</th>
+                                <th>Data Cadastro</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="partnersTable">
+                            <tr>
+                                <td colspan="7" style="text-align: center;">Carregando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Add/Edit Partner -->
+    <div class="modal" id="partnerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Adicionar Parceiro</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="partnerForm">
+                <input type="hidden" id="partnerId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome Completo *</label>
+                        <input type="text" id="partnerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="partnerEmail" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="tel" id="partnerPhone">
+                    </div>
+                    <div class="form-group">
+                        <label>CPF/CNPJ</label>
+                        <input type="text" id="partnerDocument">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Senha *</label>
+                        <input type="password" id="partnerPassword" minlength="6">
+                        <small style="color: #6b7280;">Mínimo 6 caracteres (deixe em branco para manter a senha atual)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Status *</label>
+                        <select id="partnerStatus" required>
+                            <option value="ativo">Ativo</option>
+                            <option value="pendente">Pendente</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Dados Bancários</label>
+                    <textarea id="partnerBankData" rows="3" placeholder="Banco, Agência, Conta"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        console.log('🚀 INÍCIO DO SCRIPT');
+        // ✅ CONFIGURAÇÃO DO SUPABASE - CHAVE CORRETA
+        const supabaseUrl = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        let todasIgrejas = [];
+        let currentUser = null;
+        let editingPartnerId = null;
 
-        setTimeout(function() {
-            console.log('⏱️ Iniciando carregamento após 1 segundo...');
+        // Verificar autenticação
+        async function checkAuth() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                
+                if (!session) {
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
 
-            if (!window.supabase) {
-                console.error('❌ ERRO: Supabase não carregou');
-                document.getElementById('igrejasContainer').innerHTML = '<div class="error-box"><p>❌ Erro ao carregar biblioteca Supabase</p></div>';
-                return;
+                const { data: userData, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', session.user.email)
+                    .single();
+
+                if (error || !userData) {
+                    alert('Erro ao carregar dados do usuário.');
+                    await supabase.auth.signOut();
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+
+                if (userData.tipo_parceiro !== 'igreja') {
+                    alert('Acesso negado. Esta área é exclusiva para igrejas.');
+                    window.location.href = '/admin/login.html';
+                    return;
+                }
+
+                currentUser = userData;
+                document.getElementById('userName').textContent = userData.nome_completo;
+                document.getElementById('userEmail').textContent = userData.email;
+
+                loadPartners();
+            } catch (error) {
+                console.error('Erro na autenticação:', error);
+                window.location.href = '/admin/login.html';
             }
+        }
 
-            const { createClient } = window.supabase;
-            const supabase = createClient(
-                'https://zofxhfbjgvpbqjtlkbbk.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
-            );
+        // Carregar parceiros
+        async function loadPartners() {
+            try {
+                const search = document.getElementById('searchPartner').value;
+                const status = document.getElementById('filterStatus').value;
 
-            console.log('✅ Supabase client criado');
+                let query = supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('igreja_vinculada_id', currentUser.id)
+                    .eq('tipo_parceiro', 'parceiro')
+                    .order('created_at', { ascending: false });
 
-            // ✅ REMOVIDO O FILTRO .eq('ativa', true)
-            supabase
-                .from('igrejas')
-                .select('*')
-                .order('nome')
-                .then(function(response) {
-                    console.log('📊 RESPOSTA COMPLETA:', response);
+                if (search) {
+                    query = query.or(`nome_completo.ilike.%${search}%,email.ilike.%${search}%,codigo_parceiro.ilike.%${search}%`);
+                }
 
-                    if (response.error) {
-                        console.error('❌ ERRO:', response.error);
-                        document.getElementById('igrejasContainer').innerHTML = '<div class="error-box"><p>❌ Erro: ' + response.error.message + '</p></div>';
+                if (status) {
+                    query = query.eq('status', status);
+                }
+
+                const { data: partners, error } = await query;
+
+                if (error) throw error;
+
+                const tableHtml = partners?.map(partner => `
+                    <tr>
+                        <td>${partner.codigo_parceiro || 'N/A'}</td>
+                        <td>${partner.nome_completo}</td>
+                        <td>${partner.email}</td>
+                        <td>${partner.telefone || '-'}</td>
+                        <td><span class="badge badge-${getStatusBadge(partner.status)}">${partner.status}</span></td>
+                        <td>${formatDate(partner.created_at)}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="editPartner('${partner.id}')">Editar</button>
+                            ${partner.status === 'ativo' ? 
+                                `<button class="btn btn-sm" style="background: #f59e0b; color: white;" onclick="toggleStatus('${partner.id}', 'inativo')">Desativar</button>` : 
+                                `<button class="btn btn-success btn-sm" onclick="toggleStatus('${partner.id}', 'ativo')">Ativar</button>`
+                            }
+                        </td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum parceiro encontrado</td></tr>';
+
+                document.getElementById('partnersTable').innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error('Erro ao carregar parceiros:', error);
+                alert('Erro ao carregar parceiros.');
+            }
+        }
+
+        // Adicionar parceiro
+        document.getElementById('addPartnerBtn').addEventListener('click', () => {
+            editingPartnerId = null;
+            document.getElementById('modalTitle').textContent = 'Adicionar Parceiro';
+            document.getElementById('partnerForm').reset();
+            document.getElementById('partnerId').value = '';
+            document.getElementById('partnerPassword').required = true;
+            openModal();
+        });
+
+        // Editar parceiro
+        async function editPartner(partnerId) {
+            try {
+                const { data: partner, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('id', partnerId)
+                    .single();
+
+                if (error) throw error;
+
+                editingPartnerId = partnerId;
+                document.getElementById('modalTitle').textContent = 'Editar Parceiro';
+                document.getElementById('partnerId').value = partner.id;
+                document.getElementById('partnerName').value = partner.nome_completo || '';
+                document.getElementById('partnerEmail').value = partner.email || '';
+                document.getElementById('partnerPhone').value = partner.telefone || '';
+                document.getElementById('partnerDocument').value = partner.cpf_cnpj || '';
+                document.getElementById('partnerStatus').value = partner.status || 'ativo';
+                document.getElementById('partnerBankData').value = partner.dados_bancarios || '';
+                document.getElementById('partnerPassword').required = false;
+                document.getElementById('partnerPassword').value = '';
+
+                openModal();
+            } catch (error) {
+                console.error('Erro ao carregar parceiro:', error);
+                alert('Erro ao carregar dados do parceiro.');
+            }
+        }
+
+        // Salvar parceiro
+        document.getElementById('partnerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                const partnerId = document.getElementById('partnerId').value;
+                const email = document.getElementById('partnerEmail').value;
+                const password = document.getElementById('partnerPassword').value;
+
+                const partnerData = {
+                    nome_completo: document.getElementById('partnerName').value,
+                    email: email,
+                    telefone: document.getElementById('partnerPhone').value,
+                    cpf_cnpj: document.getElementById('partnerDocument').value,
+                    status: document.getElementById('partnerStatus').value,
+                    dados_bancarios: document.getElementById('partnerBankData').value,
+                    tipo_parceiro: 'parceiro',
+                    igreja_vinculada_id: currentUser.id
+                };
+
+                if (partnerId) {
+                    // Atualizar
+                    const { error } = await supabase
+                        .from('parceiros')
+                        .update(partnerData)
+                        .eq('id', partnerId);
+
+                    if (error) throw error;
+
+                    // Atualizar senha se fornecida
+                    if (password) {
+                        // Implementar atualização de senha via Supabase Auth
+                    }
+
+                    alert('Parceiro atualizado com sucesso!');
+                } else {
+                    // Criar novo
+                    if (!password) {
+                        alert('Senha é obrigatória para novos parceiros.');
                         return;
                     }
 
-                    const igrejas = response.data;
-                    console.log('✅ IGREJAS RECEBIDAS:', igrejas);
-                    console.log('📊 TOTAL:', igrejas.length);
-
-                    if (!igrejas || igrejas.length === 0) {
-                        document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>⚠️ Nenhuma igreja encontrada</p></div>';
-                        return;
-                    }
-
-                    todasIgrejas = igrejas;
-                    renderizarIgrejas(igrejas);
-
-                    // Adicionar busca
-                    document.getElementById('searchInput').addEventListener('input', function() {
-                        const termo = this.value.toLowerCase().trim();
-                        
-                        if (!termo) {
-                            renderizarIgrejas(todasIgrejas);
-                            return;
-                        }
-
-                        const filtradas = todasIgrejas.filter(function(i) {
-                            return (
-                                (i.nome && i.nome.toLowerCase().includes(termo)) ||
-                                (i.cidade && i.cidade.toLowerCase().includes(termo)) ||
-                                (i.estado && i.estado.toLowerCase().includes(termo)) ||
-                                (i.pastor && i.pastor.toLowerCase().includes(termo))
-                            );
-                        });
-
-                        renderizarIgrejas(filtradas);
+                    // Criar usuário no Supabase Auth
+                    const { data: authData, error: authError } = await supabase.auth.signUp({
+                        email: email,
+                        password: password
                     });
 
-                    console.log('✅ RENDERIZADO COM SUCESSO');
-                })
-                .catch(function(error) {
-                    console.error('❌ ERRO CATCH:', error);
-                    document.getElementById('igrejasContainer').innerHTML = '<div class="error-box"><p>❌ Erro: ' + error.message + '</p></div>';
-                });
+                    if (authError) throw authError;
 
-        }, 1000);
+                    // Gerar código do parceiro
+                    partnerData.codigo_parceiro = 'PARC' + Date.now().toString().slice(-6);
 
-        function renderizarIgrejas(igrejas) {
-            console.log('🎨 Renderizando', igrejas.length, 'igrejas');
+                    // Criar registro na tabela parceiros
+                    const { error: insertError } = await supabase
+                        .from('parceiros')
+                        .insert(partnerData);
 
-            if (!igrejas || igrejas.length === 0) {
-                document.getElementById('igrejasContainer').innerHTML = '<div class="loading"><p>⚠️ Nenhuma igreja encontrada com esse filtro</p></div>';
-                return;
-            }
+                    if (insertError) throw insertError;
 
-            let html = '<div class="igrejas-grid">';
-
-            for (let i = 0; i < igrejas.length; i++) {
-                const igreja = igrejas[i];
-                html += '<div class="igreja-card">';
-                html += '<h3>⛪ ' + igreja.nome + '</h3>';
-                html += '<div class="igreja-info">';
-                
-                if (igreja.cidade) {
-                    html += '<p>📍 ' + igreja.cidade;
-                    if (igreja.estado) html += ', ' + igreja.estado;
-                    html += '</p>';
+                    alert('Parceiro adicionado com sucesso!');
                 }
-                
-                if (igreja.pastor) html += '<p>👤 Pastor: ' + igreja.pastor + '</p>';
-                if (igreja.telefone) html += '<p>📞 ' + igreja.telefone + '</p>';
-                if (igreja.email) html += '<p>✉️ ' + igreja.email + '</p>';
-                if (igreja.percentual_comissao) html += '<p>💰 Comissão: ' + igreja.percentual_comissao + '%</p>';
-                
-                html += '</div>';
-                html += '<a href="/admin/venda.html?igreja=' + igreja.id + '" class="btn-comprar">🛒 Comprar e Ajudar Esta Igreja</a>';
-                html += '</div>';
+
+                closeModal();
+                loadPartners();
+
+            } catch (error) {
+                console.error('Erro ao salvar parceiro:', error);
+                alert('Erro ao salvar parceiro: ' + error.message);
             }
+        });
 
-            html += '</div>';
+        // Alternar status
+        async function toggleStatus(partnerId, newStatus) {
+            if (!confirm(`Deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este parceiro?`)) return;
 
-            document.getElementById('igrejasContainer').innerHTML = html;
-            console.log('✅ Renderização completa');
+            try {
+                const { error } = await supabase
+                    .from('parceiros')
+                    .update({ status: newStatus })
+                    .eq('id', partnerId);
+
+                if (error) throw error;
+
+                alert('Status atualizado com sucesso!');
+                loadPartners();
+            } catch (error) {
+                console.error('Erro ao atualizar status:', error);
+                alert('Erro ao atualizar status.');
+            }
         }
+
+        // Modal
+        function openModal() {
+            document.getElementById('partnerModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('partnerModal').classList.remove('show');
+        }
+
+        // Funções auxiliares
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('pt-BR');
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                'ativo': 'success',
+                'pendente': 'warning',
+                'inativo': 'danger'
+            };
+            return badges[status] || 'info';
+        }
+
+        // Event Listeners
+        document.getElementById('applyFilters').addEventListener('click', loadPartners);
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            if (confirm('Deseja sair?')) {
+                await supabase.auth.signOut();
+                window.location.href = '/admin/login.html';
+            }
+        });
+
+        // Mobile Menu
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+
+        // Initialize
+        checkAuth();
     </script>
 </body>
 </html>
