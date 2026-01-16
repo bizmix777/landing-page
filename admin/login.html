@@ -3,267 +3,333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - BizMix</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <title>Login - Painel Administrativo BizMix</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Reset básico */
-        body, h1, p, form, input, button {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Gradiente azul para roxo */
-            color: #333;
-            line-height: 1.6;
+            padding: 20px;
         }
 
         .login-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
             max-width: 400px;
-            width: 90%;
+            width: 100%;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
             text-align: center;
-            animation: fadeIn 0.8s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .login-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.2em;
-            font-weight: 600;
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .login-form {
+            padding: 40px 30px;
         }
 
         .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+            margin-bottom: 25px;
         }
 
-        label {
+        .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
         }
 
-        input[type="email"],
-        input[type="password"] {
+        .form-group input {
             width: 100%;
-            padding: 14px 18px;
-            border: 1px solid #ddd;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            font-size: 14px;
+            transition: all 0.3s;
         }
 
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            border-color: #2575fc;
-            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+        .form-group input:focus {
             outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        button {
+        .btn-login {
             width: 100%;
-            padding: 15px 20px;
-            background-color: #2575fc;
-            color: #ffffff;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             border: none;
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        button:hover {
-            background-color: #1a5edb;
+        .btn-login:hover {
             transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        button:active {
+        .btn-login:active {
             transform: translateY(0);
         }
 
-        .error-message, .loading-message {
-            background-color: #f44336;
-            color: white;
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
             padding: 12px;
             border-radius: 8px;
-            margin-top: 20px;
-            display: none; /* Escondido por padrão */
-            font-size: 0.95em;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .loading {
+            display: none;
             text-align: center;
+            padding: 20px;
         }
 
-        .loading-message {
-            background-color: #2196f3;
+        .loading.show {
+            display: block;
         }
 
-        /* Responsividade */
-        @media (max-width: 600px) {
-            .login-container {
-                padding: 30px 20px;
-                width: 95%;
-            }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
 
-            h1 {
-                font-size: 1.8em;
-                margin-bottom: 25px;
-            }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-            input[type="email"],
-            input[type="password"],
-            button {
-                padding: 12px 15px;
-                font-size: 1em;
-            }
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <h1>Login - BizMix</h1>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" placeholder="seu@email.com" required>
+        <div class="login-header">
+            <h1>🔐 BizMix</h1>
+            <p>Painel Administrativo</p>
+        </div>
+        
+        <div class="login-form">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #666;">Autenticando...</p>
             </div>
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" placeholder="Sua senha" required>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
+            </form>
+
+            <div class="forgot-password">
+                <a href="#" id="forgotPassword">Esqueceu sua senha?</a>
             </div>
-            <button type="submit">Entrar</button>
-        </form>
-        <div id="errorMessage" class="error-message"></div>
-        <div id="loadingMessage" class="loading-message">Carregando...</div>
+        </div>
     </div>
 
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY4NzE5NjcsImV4cCI6MjA1MjQ0Nzk2N30.4yKEOCmKyHqXxKCN0JoLZLDqWNZQHVVMXJGPnfLkruI';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Configuração do Supabase
+        const supabaseUrl = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // Get DOM elements
         const loginForm = document.getElementById('loginForm');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const errorMessageDiv = document.getElementById('errorMessage');
-        const loadingMessageDiv = document.getElementById('loadingMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const btnLogin = document.getElementById('btnLogin');
 
-        // Function to display error message
-        function showErrorMessage(message) {
-            errorMessageDiv.textContent = message;
-            errorMessageDiv.style.display = 'block';
-            loadingMessageDiv.style.display = 'none';
+        // Verifica se já está logado
+        async function checkExistingSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                // Busca dados do usuário
+                const { data: userData } = await supabase
+                    .from('parceiros')
+                    .select('tipo_parceiro')
+                    .eq('email', session.user.email)
+                    .single();
+
+                if (userData) {
+                    redirectToDashboard(userData.tipo_parceiro);
+                }
+            }
         }
 
-        // Function to display loading message
-        function showLoadingMessage() {
-            loadingMessageDiv.textContent = 'Carregando...';
-            loadingMessageDiv.style.display = 'block';
-            errorMessageDiv.style.display = 'none';
+        // Função de redirecionamento
+        function redirectToDashboard(tipoParceiro) {
+            if (tipoParceiro === 'admin') {
+                window.location.href = '/admin/super-admin.html';
+            } else if (tipoParceiro === 'parceiro') {
+                window.location.href = '/admin/dashboard-parceiro.html';
+            } else if (tipoParceiro === 'igreja') {
+                window.location.href = '/admin/dashboard-igreja.html';
+            } else {
+                showError('Tipo de usuário não reconhecido.');
+            }
         }
 
-        // Function to hide messages
-        function hideMessages() {
-            errorMessageDiv.style.display = 'none';
-            loadingMessageDiv.style.display = 'none';
+        // Função para mostrar erro
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
         }
 
-        // Handle form submission
+        // Login
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevent default form submission
+            e.preventDefault();
 
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
+            // Validação básica
             if (!email || !password) {
-                showErrorMessage('Por favor, preencha todos os campos.');
+                showError('Por favor, preencha todos os campos.');
                 return;
             }
 
-            showLoadingMessage();
+            // Mostrar loading
+            loading.classList.add('show');
+            btnLogin.disabled = true;
+            errorMessage.classList.remove('show');
 
             try {
-                // 1. Authenticate with Supabase Auth
-                const { data, error: authError } = await supabase.auth.signInWithPassword({
+                // Autenticar com Supabase
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                     email: email,
-                    password: password,
+                    password: password
                 });
 
                 if (authError) {
-                    console.error('Erro de autenticação Supabase:', authError);
-                    let userFriendlyMessage = 'Erro ao fazer login. Verifique seu email e senha.';
-                    if (authError.message.includes('Invalid login credentials')) {
-                        userFriendlyMessage = 'Credenciais de login inválidas.';
-                    }
-                    showErrorMessage(userFriendlyMessage);
-                    return;
+                    throw new Error('Email ou senha incorretos.');
                 }
 
-                if (data && data.user) {
-                    console.log('Usuário autenticado:', data.user);
+                // Buscar dados do parceiro
+                const { data: userData, error: userError } = await supabase
+                    .from('parceiros')
+                    .select('tipo_parceiro, status')
+                    .eq('email', email)
+                    .single();
 
-                    // 2. Query the "parceiros" table to get user data
-                    const { data: parceiroData, error: parceiroError } = await supabase
-                        .from('parceiros')
-                        .select('tipo_parceiro')
-                        .eq('email', email)
-                        .single();
-
-                    if (parceiroError) {
-                        console.error('Erro ao buscar tipo de parceiro:', parceiroError);
-                        showErrorMessage('Erro ao obter informações do usuário. Tente novamente.');
-                        // Even if there's an error fetching parceiro data, we might still redirect to a default dashboard
-                        window.location.href = '/admin/dashboard-parceiro.html'; // Default redirect on error
-                        return;
-                    }
-
-                    // 3. Check the "tipo_parceiro" field and redirect
-                    const tipo_parceiro = parceiroData ? parceiroData.tipo_parceiro : null;
-                    let redirectPath = '/admin/dashboard-parceiro.html'; // Default redirect
-
-                    if (tipo_parceiro === 'admin') {
-                        redirectPath = '/admin/super-admin.html';
-                    } else if (tipo_parceiro === 'parceiro') {
-                        redirectPath = '/admin/dashboard-parceiro.html';
-                    } else if (tipo_parceiro === 'igreja') {
-                        redirectPath = '/admin/dashboard-igreja.html';
-                    }
-                    
-                    console.log(`Redirecionando para: ${redirectPath}`);
-                    window.location.href = redirectPath;
-
-                } else {
-                    // This case should ideally be caught by authError, but as a fallback
-                    showErrorMessage('Ocorreu um erro inesperado. Tente novamente.');
+                if (userError || !userData) {
+                    throw new Error('Usuário não encontrado no sistema.');
                 }
+
+                // Verificar status
+                if (userData.status !== 'ativo') {
+                    await supabase.auth.signOut();
+                    throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
+                }
+
+                // Redirecionar baseado no tipo
+                redirectToDashboard(userData.tipo_parceiro);
 
             } catch (error) {
-                console.error('Erro inesperado durante o login:', error);
-                showErrorMessage('Ocorreu um erro inesperado. Tente novamente.');
-            } finally {
-                hideMessages(); // Hide loading/error messages after attempt
+                loading.classList.remove('show');
+                btnLogin.disabled = false;
+                showError(error.message);
             }
         });
+
+        // Esqueci minha senha
+        document.getElementById('forgotPassword').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email) {
+                showError('Por favor, digite seu email no campo acima.');
+                return;
+            }
+
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/admin/reset-password.html'
+                });
+
+                if (error) throw error;
+
+                alert('Email de recuperação enviado! Verifique sua caixa de entrada.');
+            } catch (error) {
+                showError('Erro ao enviar email de recuperação: ' + error.message);
+            }
+        });
+
+        // Verificar sessão ao carregar
+        checkExistingSession();
     </script>
 </body>
 </html>
