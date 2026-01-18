@@ -209,6 +209,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .table-header h2 {
@@ -220,6 +222,22 @@
         .table-actions {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-container input,
+        .filter-container select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
         }
 
         table {
@@ -278,6 +296,11 @@
         .badge-info {
             background: #d1ecf1;
             color: #0c5460;
+        }
+
+        .badge-primary {
+            background: #cfe2ff;
+            color: #084298;
         }
 
         /* Buttons */
@@ -387,6 +410,37 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .loading-spinner i {
+            font-size: 50px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
         /* Error */
         .error-message {
             background: #f8d7da;
@@ -395,6 +449,74 @@
             border-radius: 8px;
             margin: 20px 0;
             border: 1px solid #f5c6cb;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+
+        .toast {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .toast.error {
+            border-left: 4px solid #f44336;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #ff9800;
+        }
+
+        .toast.info {
+            border-left: 4px solid #2196F3;
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .toast.success i {
+            color: #4CAF50;
+        }
+
+        .toast.error i {
+            color: #f44336;
+        }
+
+        .toast.warning i {
+            color: #ff9800;
+        }
+
+        .toast.info i {
+            color: #2196F3;
         }
 
         /* Modal */
@@ -553,10 +675,36 @@
             .table-container {
                 overflow-x: auto;
             }
+
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-container {
+                width: 100%;
+            }
+
+            .filter-container input,
+            .filter-container select {
+                flex: 1;
+                min-width: 150px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <div id="app-container">
         <!-- Sidebar -->
         <aside id="sidebar">
@@ -606,10 +754,12 @@
                 <div class="user-info">
                     Bem-vindo, <span id="userName">Carregando...</span>
                 </div>
-                <button class="btn btn-outline-danger btn-sm" id="logout-button-header"><i class="fas fa-sign-out-alt me-2"></i>Sair</button>
+                <button class="btn btn-outline-danger btn-sm" id="logout-button-header">
+                    <i class="fas fa-sign-out-alt"></i>Sair
+                </button>
             </header>
             <div id="content-area">
-                
+                         
                 <!-- Dashboard Section -->
                 <section id="dashboard" class="content-section active">
                     <h1 style="margin-bottom: 30px; color: #333;">Dashboard</h1>
@@ -667,6 +817,15 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="filter-container">
+                            <input type="text" id="filterParceirosNome" placeholder="Buscar por nome..." onkeyup="filterParceiros()">
+                            <select id="filterParceirosTipo" onchange="filterParceiros()">
+                                <option value="">Todos os tipos</option>
+                                <option value="pessoa_fisica">Pessoa Física</option>
+                                <option value="igreja">Igreja</option>
+                                <option value="empresa">Empresa</option>
+                            </select>
+                        </div>
                         <div id="parceirosTableContainer">
                             <div class="loading">
                                 <i class="fas fa-spinner fa-spin"></i>
@@ -689,6 +848,12 @@
                                     <i class="fas fa-download"></i> Exportar CSV
                                 </button>
                             </div>
+                        </div>
+                        <div class="filter-container">
+                            <input type="text" id="filterIgrejasNome" placeholder="Buscar por nome..." onkeyup="filterIgrejas()">
+                            <select id="filterIgrejasEstado" onchange="filterIgrejas()">
+                                <option value="">Todos os estados</option>
+                            </select>
                         </div>
                         <div id="igrejasTableContainer">
                             <div class="loading">
@@ -713,6 +878,14 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="filter-container">
+                            <input type="text" id="filterProdutosNome" placeholder="Buscar por nome..." onkeyup="filterProdutos()">
+                            <select id="filterProdutosStatus" onchange="filterProdutos()">
+                                <option value="">Todos os status</option>
+                                <option value="true">Ativos</option>
+                                <option value="false">Inativos</option>
+                            </select>
+                        </div>
                         <div id="produtosTableContainer">
                             <div class="loading">
                                 <i class="fas fa-spinner fa-spin"></i>
@@ -733,6 +906,17 @@
                                 </button>
                             </div>
                         </div>
+                        <div class="filter-container">
+                            <input type="text" id="filterVendasParceiro" placeholder="Buscar por parceiro..." onkeyup="filterVendas()">
+                            <select id="filterVendasStatus" onchange="filterVendas()">
+                                <option value="">Todos os status</option>
+                                <option value="approved">Aprovado</option>
+                                <option value="pending">Pendente</option>
+                                <option value="rejected">Rejeitado</option>
+                            </select>
+                            <input type="date" id="filterVendasDataInicio" onchange="filterVendas()">
+                            <input type="date" id="filterVendasDataFim" onchange="filterVendas()">
+                        </div>
                         <div id="vendasTableContainer">
                             <div class="loading">
                                 <i class="fas fa-spinner fa-spin"></i>
@@ -752,6 +936,18 @@
                                     <i class="fas fa-download"></i> Exportar CSV
                                 </button>
                             </div>
+                        </div>
+                        <div class="filter-container">
+                            <input type="text" id="filterSaquesParceiro" placeholder="Buscar por parceiro..." onkeyup="filterSaques()">
+                            <select id="filterSaquesStatus" onchange="filterSaques()">
+                                <option value="">Todos os status</option>
+                                <option value="pendente">Pendente</option>
+                                <option value="aprovado">Aprovado</option>
+                                <option value="rejeitado">Rejeitado</option>
+                                <option value="pago">Pago</option>
+                            </select>
+                            <input type="date" id="filterSaquesDataInicio" onchange="filterSaques()">
+                            <input type="date" id="filterSaquesDataFim" onchange="filterSaques()">
                         </div>
                         <div id="saquesTableContainer">
                             <div class="loading">
@@ -777,8 +973,200 @@
         </div>
     </div>
 
+    <!-- Modal Parceiro -->
+    <div id="parceiroModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="parceiroModalTitle">Adicionar Parceiro</h2>
+                <button class="close-modal" onclick="closeParceiroModal()">&times;</button>
+            </div>
+            <form id="parceiroForm">
+                <input type="hidden" id="parceiroId">
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" id="parceiroNome" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="parceiroEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Parceiro *</label>
+                    <select id="parceiroTipo" required>
+                        <option value="">Selecione...</option>
+                        <option value="pessoa_fisica">Pessoa Física</option>
+                        <option value="igreja">Igreja</option>
+                        <option value="empresa">Empresa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>CPF/CNPJ</label>
+                    <input type="text" id="parceiroCpfCnpj">
+                </div>
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="text" id="parceiroTelefone">
+                </div>
+                <div class="form-group">
+                    <label>Comissão Personalizada (%)</label>
+                    <input type="number" id="parceiroComissao" min="0" max="100" step="0.01">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeParceiroModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Igreja -->
+    <div id="igrejaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="igrejaModalTitle">Adicionar Igreja</h2>
+                <button class="close-modal" onclick="closeIgrejaModal()">&times;</button>
+            </div>
+            <form id="igrejaForm">
+                <input type="hidden" id="igrejaId">
+                <div class="form-group">
+                    <label>Nome da Igreja *</label>
+                    <input type="text" id="igrejaNome" required>
+                </div>
+                <div class="form-group">
+                    <label>CNPJ</label>
+                    <input type="text" id="igrejaCnpj">
+                </div>
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <input type="text" id="igrejaEndereco">
+                </div>
+                <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" id="igrejaCidade">
+                </div>
+                <div class="form-group">
+                    <label>Estado</label>
+                    <select id="igrejaEstado">
+                        <option value="">Selecione...</option>
+                        <option value="AC">Acre</option>
+                        <option value="AL">Alagoas</option>
+                        <option value="AP">Amapá</option>
+                        <option value="AM">Amazonas</option>
+                        <option value="BA">Bahia</option>
+                        <option value="CE">Ceará</option>
+                        <option value="DF">Distrito Federal</option>
+                        <option value="ES">Espírito Santo</option>
+                        <option value="GO">Goiás</option>
+                        <option value="MA">Maranhão</option>
+                        <option value="MT">Mato Grosso</option>
+                        <option value="MS">Mato Grosso do Sul</option>
+                        <option value="MG">Minas Gerais</option>
+                        <option value="PA">Pará</option>
+                        <option value="PB">Paraíba</option>
+                        <option value="PR">Paraná</option>
+                        <option value="PE">Pernambuco</option>
+                        <option value="PI">Piauí</option>
+                        <option value="RJ">Rio de Janeiro</option>
+                        <option value="RN">Rio Grande do Norte</option>
+                        <option value="RS">Rio Grande do Sul</option>
+                        <option value="RO">Rondônia</option>
+                        <option value="RR">Roraima</option>
+                        <option value="SC">Santa Catarina</option>
+                        <option value="SP">São Paulo</option>
+                        <option value="SE">Sergipe</option>
+                        <option value="TO">Tocantins</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>CEP</label>
+                    <input type="text" id="igrejaCep">
+                </div>
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="text" id="igrejaTelefone">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="igrejaEmail">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeIgrejaModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Produto -->
+    <div id="produtoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="produtoModalTitle">Adicionar Produto</h2>
+                <button class="close-modal" onclick="closeProdutoModal()">&times;</button>
+            </div>
+            <form id="produtoForm">
+                <input type="hidden" id="produtoId">
+                <div class="form-group">
+                    <label>Nome do Produto *</label>
+                    <input type="text" id="produtoNome" required>
+                </div>
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <textarea id="produtoDescricao"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Preço (R$) *</label>
+                    <input type="number" id="produtoPreco" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Comissão (%) *</label>
+                    <input type="number" id="produtoComissao" min="0" max="100" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="produtoAtivo">
+                        <option value="true">Ativo</option>
+                        <option value="false">Inativo</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="closeProdutoModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes Venda -->
+    <div id="vendaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detalhes da Venda</h2>
+                <button class="close-modal" onclick="closeVendaModal()">&times;</button>
+            </div>
+            <div id="vendaDetalhes"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeVendaModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes Saque -->
+    <div id="saqueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detalhes do Saque</h2>
+                <button class="close-modal" onclick="closeSaqueModal()">&times;</button>
+            </div>
+            <div id="saqueDetalhes"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="closeSaqueModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // CRITICAL: Definir variáveis globais ANTES de qualquer função
+            // CRITICAL: Definir variáveis globais ANTES de qualquer função
         console.log('🚀 Admin Dashboard Initializing...');
         
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
@@ -792,6 +1180,11 @@
         let currentUser = null;
         let salesChart = null;
         let partnersChart = null;
+        let allParceiros = [];
+        let allIgrejas = [];
+        let allProdutos = [];
+        let allVendas = [];
+        let allSaques = [];
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', async function() {
@@ -857,6 +1250,11 @@
             // Logout buttons
             document.getElementById('logout-button-header').addEventListener('click', handleLogout);
             document.getElementById('logout-button-sidebar').addEventListener('click', handleLogout);
+
+            // Form submissions
+            document.getElementById('parceiroForm').addEventListener('submit', handleParceiroSubmit);
+            document.getElementById('igrejaForm').addEventListener('submit', handleIgrejaSubmit);
+            document.getElementById('produtoForm').addEventListener('submit', handleProdutoSubmit);
         }
 
         // Show section
@@ -916,6 +1314,37 @@
             console.log('🚪 Logging out...');
             await supabase.auth.signOut();
             window.location.href = '../login.html';
+        }
+
+        // Toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? 'fa-check-circle' : 
+                        type === 'error' ? 'fa-exclamation-circle' :
+                        type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Show/Hide loading overlay
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
         }
 
         // Load Dashboard
@@ -1005,29 +1434,57 @@
 
                 if (error) throw error;
 
-                let html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Tipo</th>
-                                <th>Comissão</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+                allParceiros = data;
+                renderParceiros(data);
 
+                console.log('✅ Parceiros loaded');
+            } catch (error) {
+                console.error('❌ Error loading parceiros:', error);
+                container.innerHTML = `<div class="error-message">Erro ao carregar parceiros: ${error.message}</div>`;
+            }
+        }
+
+        function renderParceiros(data) {
+            const container = document.getElementById('parceirosTableContainer');
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Tipo</th>
+                            <th>CPF/CNPJ</th>
+                            <th>Telefone</th>
+                            <th>Comissão</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (data.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
+                            <p style="color: #999;">Nenhum parceiro encontrado</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
                 data.forEach(parceiro => {
+                    const tipoBadge = parceiro.tipo_parceiro === 'pessoa_fisica' ? 'primary' :
+                                     parceiro.tipo_parceiro === 'igreja' ? 'info' : 'warning';
+                    
                     html += `
                         <tr>
                             <td>${parceiro.nome_completo}</td>
                             <td>${parceiro.email}</td>
-                            <td><span class="badge badge-info">${parceiro.tipo_parceiro}</span></td>
+                            <td><span class="badge badge-${tipoBadge}">${parceiro.tipo_parceiro}</span></td>
+                            <td>${parceiro.cpf_cnpj || 'N/A'}</td>
+                            <td>${parceiro.telefone || 'N/A'}</td>
                             <td>${parceiro.comissao_personalizada || 10}%</td>
-                            <td><span class="badge badge-success">Ativo</span></td>
                             <td>
                                 <button class="btn btn-sm btn-warning" onclick="editParceiro('${parceiro.id}')">
                                     <i class="fas fa-edit"></i>
@@ -1039,18 +1496,27 @@
                         </tr>
                     `;
                 });
-
-                html += `
-                        </tbody>
-                    </table>
-                `;
-
-                container.innerHTML = html;
-                console.log('✅ Parceiros loaded');
-            } catch (error) {
-                console.error('❌ Error loading parceiros:', error);
-                container.innerHTML = `<div class="error-message">Erro ao carregar parceiros: ${error.message}</div>`;
             }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function filterParceiros() {
+            const nomeFilter = document.getElementById('filterParceirosNome').value.toLowerCase();
+            const tipoFilter = document.getElementById('filterParceirosTipo').value;
+
+            const filtered = allParceiros.filter(p => {
+                const matchNome = p.nome_completo.toLowerCase().includes(nomeFilter);
+                const matchTipo = !tipoFilter || p.tipo_parceiro === tipoFilter;
+                return matchNome && matchTipo;
+            });
+
+            renderParceiros(filtered);
         }
 
         // Load Igrejas
@@ -1066,21 +1532,55 @@
 
                 if (error) throw error;
 
-                let html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>CNPJ</th>
-                                <th>Cidade</th>
-                                <th>Estado</th>
-                                <th>Contato</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+                allIgrejas = data;
+                renderIgrejas(data);
 
+                // Populate estado filter
+                const estados = [...new Set(data.map(i => i.estado).filter(e => e))];
+                const estadoFilter = document.getElementById('filterIgrejasEstado');
+                estados.forEach(estado => {
+                    const option = document.createElement('option');
+                    option.value = estado;
+                    option.textContent = estado;
+                    estadoFilter.appendChild(option);
+                });
+
+                console.log('✅ Igrejas loaded');
+            } catch (error) {
+                console.error('❌ Error loading igrejas:', error);
+                container.innerHTML = `<div class="error-message">Erro ao carregar igrejas: ${error.message}</div>`;
+            }
+        }
+
+        function renderIgrejas(data) {
+            const container = document.getElementById('igrejasTableContainer');
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CNPJ</th>
+                            <th>Cidade</th>
+                            <th>Estado</th>
+                            <th>Telefone</th>
+                            <th>Email</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (data.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
+                            <p style="color: #999;">Nenhuma igreja encontrada</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
                 data.forEach(igreja => {
                     html += `
                         <tr>
@@ -1089,6 +1589,7 @@
                             <td>${igreja.cidade || 'N/A'}</td>
                             <td>${igreja.estado || 'N/A'}</td>
                             <td>${igreja.telefone || 'N/A'}</td>
+                            <td>${igreja.email || 'N/A'}</td>
                             <td>
                                 <button class="btn btn-sm btn-warning" onclick="editIgreja('${igreja.id}')">
                                     <i class="fas fa-edit"></i>
@@ -1100,18 +1601,27 @@
                         </tr>
                     `;
                 });
-
-                html += `
-                        </tbody>
-                    </table>
-                `;
-
-                container.innerHTML = html;
-                console.log('✅ Igrejas loaded');
-            } catch (error) {
-                console.error('❌ Error loading igrejas:', error);
-                container.innerHTML = `<div class="error-message">Erro ao carregar igrejas: ${error.message}</div>`;
             }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function filterIgrejas() {
+            const nomeFilter = document.getElementById('filterIgrejasNome').value.toLowerCase();
+            const estadoFilter = document.getElementById('filterIgrejasEstado').value;
+
+            const filtered = allIgrejas.filter(i => {
+                const matchNome = i.nome.toLowerCase().includes(nomeFilter);
+                const matchEstado = !estadoFilter || i.estado === estadoFilter;
+                return matchNome && matchEstado;
+            });
+
+            renderIgrejas(filtered);
         }
 
         // Load Produtos
@@ -1127,27 +1637,52 @@
 
                 if (error) throw error;
 
-                let html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Preço</th>
-                                <th>Comissão</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+                allProdutos = data;
+                renderProdutos(data);
 
+                console.log('✅ Produtos loaded');
+            } catch (error) {
+                console.error('❌ Error loading produtos:', error);
+                container.innerHTML = `<div class="error-message">Erro ao carregar produtos: ${error.message}</div>`;
+            }
+        }
+
+        function renderProdutos(data) {
+            const container = document.getElementById('produtosTableContainer');
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Preço</th>
+                            <th>Comissão</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (data.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
+                            <p style="color: #999;">Nenhum produto encontrado</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
                 data.forEach(produto => {
                     html += `
                         <tr>
                             <td>${produto.nome}</td>
+                            <td>${produto.descricao || 'N/A'}</td>
                             <td>R$ ${parseFloat(produto.preco).toFixed(2)}</td>
                             <td>${produto.comissao_percentual}%</td>
-                            <td><span class="badge badge-success">${produto.ativo ? 'Ativo' : 'Inativo'}</span></td>
+                            <td><span class="badge badge-${produto.ativo ? 'success' : 'danger'}">${produto.ativo ? 'Ativo' : 'Inativo'}</span></td>
                             <td>
                                 <button class="btn btn-sm btn-warning" onclick="editProduto('${produto.id}')">
                                     <i class="fas fa-edit"></i>
@@ -1159,18 +1694,27 @@
                         </tr>
                     `;
                 });
-
-                html += `
-                        </tbody>
-                    </table>
-                `;
-
-                container.innerHTML = html;
-                console.log('✅ Produtos loaded');
-            } catch (error) {
-                console.error('❌ Error loading produtos:', error);
-                container.innerHTML = `<div class="error-message">Erro ao carregar produtos: ${error.message}</div>`;
             }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function filterProdutos() {
+            const nomeFilter = document.getElementById('filterProdutosNome').value.toLowerCase();
+            const statusFilter = document.getElementById('filterProdutosStatus').value;
+
+            const filtered = allProdutos.filter(p => {
+                const matchNome = p.nome.toLowerCase().includes(nomeFilter);
+                const matchStatus = !statusFilter || p.ativo.toString() === statusFilter;
+                return matchNome && matchStatus;
+            });
+
+            renderProdutos(filtered);
         }
 
         // Load Vendas
@@ -1190,21 +1734,45 @@
 
                 if (error) throw error;
 
-                let html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Parceiro</th>
-                                <th>Produto</th>
-                                <th>Valor</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+                allVendas = data;
+                renderVendas(data);
 
+                console.log('✅ Vendas loaded');
+            } catch (error) {
+                console.error('❌ Error loading vendas:', error);
+                container.innerHTML = `<div class="error-message">Erro ao carregar vendas: ${error.message}</div>`;
+            }
+        }
+
+        function renderVendas(data) {
+            const container = document.getElementById('vendasTableContainer');
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Parceiro</th>
+                            <th>Produto</th>
+                            <th>Valor</th>
+                            <th>Comissão</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (data.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
+                            <p style="color: #999;">Nenhuma venda encontrada</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
                 data.forEach(venda => {
                     const statusBadge = venda.status_pagamento === 'approved' ? 'success' : 
                                        venda.status_pagamento === 'pending' ? 'warning' : 'danger';
@@ -1215,6 +1783,7 @@
                             <td>${venda.parceiro?.nome_completo || 'N/A'}</td>
                             <td>${venda.produto?.nome || 'N/A'}</td>
                             <td>R$ ${parseFloat(venda.valor_total).toFixed(2)}</td>
+                            <td>R$ ${parseFloat(venda.comissao_valor).toFixed(2)}</td>
                             <td><span class="badge badge-${statusBadge}">${venda.status_pagamento}</span></td>
                             <td>
                                 <button class="btn btn-sm btn-primary" onclick="viewVenda('${venda.id}')">
@@ -1224,20 +1793,40 @@
                         </tr>
                     `;
                 });
-
-                html += `
-                        </tbody>
-                    </table>
-                `;
-
-                container.innerHTML = html;
-                console.log('✅ Vendas loaded');
-            } catch (error) {
-                console.error('❌ Error loading vendas:', error);
-                container.innerHTML = `<div class="error-message">Erro ao carregar vendas: ${error.message}</div>`;
             }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
         }
-                // Load Saques - CORRIGIDO com campos corretos
+
+        function filterVendas() {
+            const parceiroFilter = document.getElementById('filterVendasParceiro').value.toLowerCase();
+            const statusFilter = document.getElementById('filterVendasStatus').value;
+            const dataInicio = document.getElementById('filterVendasDataInicio').value;
+            const dataFim = document.getElementById('filterVendasDataFim').value;
+
+            const filtered = allVendas.filter(v => {
+                const matchParceiro = !parceiroFilter || v.parceiro?.nome_completo.toLowerCase().includes(parceiroFilter);
+                const matchStatus = !statusFilter || v.status_pagamento === statusFilter;
+                
+                let matchData = true;
+                if (dataInicio || dataFim) {
+                    const vendaData = new Date(v.created_at).toISOString().split('T')[0];
+                    if (dataInicio) matchData = matchData && vendaData >= dataInicio;
+                    if (dataFim) matchData = matchData && vendaData <= dataFim;
+                }
+                
+                return matchParceiro && matchStatus && matchData;
+            });
+
+            renderVendas(filtered);
+        }
+
+        // Load Saques - CORRIGIDO COM CAMPOS CORRETOS
         async function loadSaques() {
             console.log('💰 Loading saques...');
             const container = document.getElementById('saquesTableContainer');
@@ -1257,73 +1846,191 @@
 
                 if (error) throw error;
 
-                let html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Parceiro</th>
-                                <th>Valor</th>
-                                <th>Método</th>
-                                <th>Detalhes</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
+                allSaques = data;
+                renderSaques(data);
 
-                if (data.length === 0) {
-                    html += `
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px;">
-                                <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
-                                <p style="color: #999;">Nenhuma solicitação de saque encontrada</p>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    data.forEach(saque => {
-                        const statusBadge = saque.status === 'aprovado' ? 'success' : 
-                                           saque.status === 'pendente' ? 'warning' : 'danger';
-                        
-                        html += `
-                            <tr>
-                                <td>${new Date(saque.data_solicitacao).toLocaleDateString('pt-BR')}</td>
-                                <td>${saque.parceiro?.nome_completo || 'N/A'}</td>
-                                <td>R$ ${parseFloat(saque.valor).toFixed(2)}</td>
-                                <td>${saque.metodo_pagamento || 'N/A'}</td>
-                                <td>${saque.detalhes_pagamento || 'N/A'}</td>
-                                <td><span class="badge badge-${statusBadge}">${saque.status}</span></td>
-                                <td>
-                                    ${saque.status === 'pendente' ? `
-                                        <button class="btn btn-sm btn-success" onclick="aprovarSaque('${saque.id}')">
-                                            <i class="fas fa-check"></i> Aprovar
-                                        </button>
-                                        <button class="btn btn-sm btn-danger" onclick="rejeitarSaque('${saque.id}')">
-                                            <i class="fas fa-times"></i> Rejeitar
-                                        </button>
-                                    ` : `
-                                        <button class="btn btn-sm btn-primary" onclick="viewSaque('${saque.id}')">
-                                            <i class="fas fa-eye"></i> Ver
-                                        </button>
-                                    `}
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
-
-                html += `
-                        </tbody>
-                    </table>
-                `;
-
-                container.innerHTML = html;
                 console.log('✅ Saques loaded');
             } catch (error) {
                 console.error('❌ Error loading saques:', error);
                 container.innerHTML = `<div class="error-message">Erro ao carregar saques: ${error.message}</div>`;
+            }
+        }
+
+        function renderSaques(data) {
+            const container = document.getElementById('saquesTableContainer');
+            
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Parceiro</th>
+                            <th>Valor</th>
+                            <th>Método</th>
+                            <th>Detalhes</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (data.length === 0) {
+                html += `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">
+                            <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
+                            <p style="color: #999;">Nenhuma solicitação de saque encontrada</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                data.forEach(saque => {
+                    const statusBadge = saque.status === 'aprovado' ? 'success' : 
+                                       saque.status === 'pendente' ? 'warning' : 
+                                       saque.status === 'pago' ? 'info' : 'danger';
+                    
+                    html += `
+                        <tr>
+                            <td>${new Date(saque.data_solicitacao).toLocaleDateString('pt-BR')}</td>
+                            <td>${saque.parceiro?.nome_completo || 'N/A'}</td>
+                            <td>R$ ${parseFloat(saque.valor).toFixed(2)}</td>
+                            <td>${saque.metodo_pagamento || 'N/A'}</td>
+                            <td>${saque.detalhes_pagamento || 'N/A'}</td>
+                            <td><span class="badge badge-${statusBadge}">${saque.status}</span></td>
+                            <td>
+                                ${saque.status === 'pendente' ? `
+                                    <button class="btn btn-sm btn-success" onclick="aprovarSaque('${saque.id}')">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="rejeitarSaque('${saque.id}')">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                ` : saque.status === 'aprovado' ? `
+                                    <button class="btn btn-sm btn-primary" onclick="marcarSaquePago('${saque.id}')">
+                                        <i class="fas fa-dollar-sign"></i> Pago
+                                    </button>
+                                ` : `
+                                    <button class="btn btn-sm btn-primary" onclick="viewSaque('${saque.id}')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                `}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function filterSaques() {
+            const parceiroFilter = document.getElementById('filterSaquesParceiro').value.toLowerCase();
+            const statusFilter = document.getElementById('filterSaquesStatus').value;
+            const dataInicio = document.getElementById('filterSaquesDataInicio').value;
+            const dataFim = document.getElementById('filterSaquesDataFim').value;
+
+            const filtered = allSaques.filter(s => {
+                const matchParceiro = !parceiroFilter || s.parceiro?.nome_completo.toLowerCase().includes(parceiroFilter);
+                const matchStatus = !statusFilter || s.status === statusFilter;
+                
+                let matchData = true;
+                if (dataInicio || dataFim) {
+                    const saqueData = new Date(s.data_solicitacao).toISOString().split('T')[0];
+                    if (dataInicio) matchData = matchData && saqueData >= dataInicio;
+                    if (dataFim) matchData = matchData && saqueData <= dataFim;
+                }
+                
+                return matchParceiro && matchStatus && matchData;
+            });
+
+            renderSaques(filtered);
+        }
+
+        // Aprovar Saque - CORRIGIDO
+        async function aprovarSaque(id) {
+            if (!confirm('Deseja aprovar este saque?')) return;
+
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('solicitacoes_saque')
+                    .update({ 
+                        status: 'aprovado',
+                        data_processamento: new Date().toISOString(),
+                        processado_por: currentUser.id
+                    })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showToast('Saque aprovado com sucesso!', 'success');
+                loadSaques();
+            } catch (error) {
+                console.error('❌ Error approving saque:', error);
+                showToast('Erro ao aprovar saque: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Rejeitar Saque - CORRIGIDO
+        async function rejeitarSaque(id) {
+            const motivo = prompt('Motivo da rejeição:');
+            if (!motivo) return;
+
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('solicitacoes_saque')
+                    .update({ 
+                        status: 'rejeitado',
+                        observacoes: motivo,
+                        data_processamento: new Date().toISOString(),
+                        processado_por: currentUser.id
+                    })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showToast('Saque rejeitado com sucesso!', 'success');
+                loadSaques();
+            } catch (error) {
+                console.error('❌ Error rejecting saque:', error);
+                showToast('Erro ao rejeitar saque: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Marcar Saque como Pago
+        async function marcarSaquePago(id) {
+            if (!confirm('Confirmar que o saque foi pago?')) return;
+
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('solicitacoes_saque')
+                    .update({ 
+                        status: 'pago',
+                        data_processamento: new Date().toISOString()
+                    })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showToast('Saque marcado como pago!', 'success');
+                loadSaques();
+            } catch (error) {
+                console.error('❌ Error marking saque as paid:', error);
+                showToast('Erro ao marcar saque como pago: ' + error.message, 'error');
+            } finally {
+                hideLoading();
             }
         }
 
@@ -1389,6 +2096,7 @@
                 valor = input.value;
             }
 
+            showLoading();
             try {
                 const { error } = await supabase
                     .from('configuracoes')
@@ -1397,83 +2105,441 @@
 
                 if (error) throw error;
 
-                alert('Configuração salva com sucesso!');
+                showToast('Configuração salva com sucesso!', 'success');
                 console.log('✅ Config saved:', chave, valor);
             } catch (error) {
                 console.error('❌ Error saving config:', error);
-                alert('Erro ao salvar configuração: ' + error.message);
-            }
-        }
-
-        // Aprovar Saque - CORRIGIDO
-        async function aprovarSaque(id) {
-            if (!confirm('Deseja aprovar este saque?')) return;
-
-            try {
-                const { error } = await supabase
-                    .from('solicitacoes_saque')
-                    .update({ 
-                        status: 'aprovado',
-                        data_processamento: new Date().toISOString()
-                    })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                alert('Saque aprovado com sucesso!');
-                loadSaques();
-            } catch (error) {
-                console.error('❌ Error approving saque:', error);
-                alert('Erro ao aprovar saque: ' + error.message);
-            }
-        }
-
-        // Rejeitar Saque - CORRIGIDO
-        async function rejeitarSaque(id) {
-            const motivo = prompt('Motivo da rejeição:');
-            if (!motivo) return;
-
-            try {
-                const { error } = await supabase
-                    .from('solicitacoes_saque')
-                    .update({ 
-                        status: 'rejeitado',
-                        observacoes: motivo,
-                        data_processamento: new Date().toISOString()
-                    })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                alert('Saque rejeitado com sucesso!');
-                loadSaques();
-            } catch (error) {
-                console.error('❌ Error rejecting saque:', error);
-                alert('Erro ao rejeitar saque: ' + error.message);
+                showToast('Erro ao salvar configuração: ' + error.message, 'error');
+            } finally {
+                hideLoading();
             }
         }
 
         // Export to CSV
         function exportToCSV(type) {
-            alert(`Exportando ${type} para CSV...`);
-            console.log('📥 Exporting to CSV:', type);
+            let data, filename, headers;
+
+            switch(type) {
+                case 'parceiros':
+                    data = allParceiros;
+                    filename = 'parceiros.csv';
+                    headers = ['Nome', 'Email', 'Tipo', 'CPF/CNPJ', 'Telefone', 'Comissão'];
+                    break;
+                case 'igrejas':
+                    data = allIgrejas;
+                    filename = 'igrejas.csv';
+                    headers = ['Nome', 'CNPJ', 'Cidade', 'Estado', 'Telefone', 'Email'];
+                    break;
+                case 'produtos':
+                    data = allProdutos;
+                    filename = 'produtos.csv';
+                    headers = ['Nome', 'Descrição', 'Preço', 'Comissão', 'Status'];
+                    break;
+                case 'vendas':
+                    data = allVendas;
+                    filename = 'vendas.csv';
+                    headers = ['Data', 'Parceiro', 'Produto', 'Valor', 'Comissão', 'Status'];
+                    break;
+                case 'saques':
+                    data = allSaques;
+                    filename = 'saques.csv';
+                    headers = ['Data', 'Parceiro', 'Valor', 'Método', 'Detalhes', 'Status'];
+                    break;
+            }
+
+            if (!data || data.length === 0) {
+                showToast('Nenhum dado para exportar', 'warning');
+                return;
+            }
+
+            let csv = headers.join(',') + '\n';
+
+            data.forEach(row => {
+                let values = [];
+                switch(type) {
+                    case 'parceiros':
+                        values = [row.nome_completo, row.email, row.tipo_parceiro, row.cpf_cnpj || '', row.telefone || '', row.comissao_personalizada || 10];
+                        break;
+                    case 'igrejas':
+                        values = [row.nome, row.cnpj || '', row.cidade || '', row.estado || '', row.telefone || '', row.email || ''];
+                        break;
+                    case 'produtos':
+                        values = [row.nome, row.descricao || '', row.preco, row.comissao_percentual, row.ativo ? 'Ativo' : 'Inativo'];
+                        break;
+                    case 'vendas':
+                        values = [
+                            new Date(row.created_at).toLocaleDateString('pt-BR'),
+                            row.parceiro?.nome_completo || '',
+                            row.produto?.nome || '',
+                            row.valor_total,
+                            row.comissao_valor,
+                            row.status_pagamento
+                        ];
+                        break;
+                    case 'saques':
+                        values = [
+                            new Date(row.data_solicitacao).toLocaleDateString('pt-BR'),
+                            row.parceiro?.nome_completo || '',
+                            row.valor,
+                            row.metodo_pagamento || '',
+                            row.detalhes_pagamento || '',
+                            row.status
+                        ];
+                        break;
+                }
+                csv += values.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+
+            showToast('Arquivo CSV exportado com sucesso!', 'success');
         }
 
-        // Placeholder functions for CRUD operations
-        function openAddParceiroModal() { alert('Adicionar Parceiro - Em desenvolvimento'); }
-        function editParceiro(id) { alert('Editar Parceiro: ' + id); }
-        function deleteParceiro(id) { if(confirm('Deletar parceiro?')) alert('Deletado: ' + id); }
-        
-        function openAddIgrejaModal() { alert('Adicionar Igreja - Em desenvolvimento'); }
-        function editIgreja(id) { alert('Editar Igreja: ' + id); }
-        function deleteIgreja(id) { if(confirm('Deletar igreja?')) alert('Deletado: ' + id); }
-        
-        function openAddProdutoModal() { alert('Adicionar Produto - Em desenvolvimento'); }
-        function editProduto(id) { alert('Editar Produto: ' + id); }
-        function deleteProduto(id) { if(confirm('Deletar produto?')) alert('Deletado: ' + id); }
-        
-        function viewVenda(id) { alert('Ver Venda: ' + id); }
-        function viewSaque(id) { alert('Ver Saque: ' + id); }
+        // Modal functions
+        function openAddParceiroModal() {
+            document.getElementById('parceiroModalTitle').textContent = 'Adicionar Parceiro';
+            document.getElementById('parceiroForm').reset();
+            document.getElementById('parceiroId').value = '';
+            document.getElementById('parceiroModal').classList.add('active');
+        }
+
+        function closeParceiroModal() {
+            document.getElementById('parceiroModal').classList.remove('active');
+        }
+
+        async function editParceiro(id) {
+            const parceiro = allParceiros.find(p => p.id === id);
+            if (!parceiro) return;
+
+            document.getElementById('parceiroModalTitle').textContent = 'Editar Parceiro';
+            document.getElementById('parceiroId').value = parceiro.id;
+            document.getElementById('parceiroNome').value = parceiro.nome_completo;
+            document.getElementById('parceiroEmail').value = parceiro.email;
+            document.getElementById('parceiroTipo').value = parceiro.tipo_parceiro;
+            document.getElementById('parceiroCpfCnpj').value = parceiro.cpf_cnpj || '';
+            document.getElementById('parceiroTelefone').value = parceiro.telefone || '';
+            document.getElementById('parceiroComissao').value = parceiro.comissao_personalizada || '';
+            document.getElementById('parceiroModal').classList.add('active');
+        }
+
+        async function deleteParceiro(id) {
+            if (!confirm('Tem certeza que deseja excluir este parceiro?')) return;
+
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('parceiros')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showToast('Parceiro excluído com sucesso!', 'success');
+                loadParceiros();
+            } catch (error) {
+                console.error('❌ Error deleting parceiro:', error);
+                showToast('Erro ao excluir parceiro: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handleParceiroSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('parceiroId').value;
+            const data = {
+                nome_completo: document.getElementById('parceiroNome').value,
+                email: document.getElementById('parceiroEmail').value,
+                tipo_parceiro: document.getElementById('parceiroTipo').value,
+                cpf_cnpj: document.getElementById('parceiroCpfCnpj').value || null,
+                telefone: document.getElementById('parceiroTelefone').value || null,
+                comissao_personalizada: document.getElementById('parceiroComissao').value || null
+            };
+
+            showLoading();
+            try {
+                let error;
+                if (id) {
+                    ({ error } = await supabase.from('parceiros').update(data).eq('id', id));
+                } else {
+                    ({ error } = await supabase.from('parceiros').insert([data]));
+                }
+
+                if (error) throw error;
+
+                showToast(`Parceiro ${id ? 'atualizado' : 'adicionado'} com sucesso!`, 'success');
+                closeParceiroModal();
+                loadParceiros();
+            } catch (error) {
+                console.error('❌ Error saving parceiro:', error);
+                showToast('Erro ao salvar parceiro: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function openAddIgrejaModal() {
+            document.getElementById('igrejaModalTitle').textContent = 'Adicionar Igreja';
+            document.getElementById('igrejaForm').reset();
+            document.getElementById('igrejaId').value = '';
+            document.getElementById('igrejaModal').classList.add('active');
+        }
+
+        function closeIgrejaModal() {
+            document.getElementById('igrejaModal').classList.remove('active');
+        }
+
+        async function editIgreja(id) {
+            const igreja = allIgrejas.find(i => i.id === id);
+            if (!igreja) return;
+
+            document.getElementById('igrejaModalTitle').textContent = 'Editar Igreja';
+            document.getElementById('igrejaId').value = igreja.id;
+            document.getElementById('igrejaNome').value = igreja.nome;
+            document.getElementById('igrejaCnpj').value = igreja.cnpj || '';
+            document.getElementById('igrejaEndereco').value = igreja.endereco || '';
+            document.getElementById('igrejaCidade').value = igreja.cidade || '';
+            document.getElementById('igrejaEstado').value = igreja.estado || '';
+            document.getElementById('igrejaCep').value = igreja.cep || '';
+            document.getElementById('igrejaTelefone').value = igreja.telefone || '';
+            document.getElementById('igrejaEmail').value = igreja.email || '';
+            document.getElementById('igrejaModal').classList.add('active');
+        }
+
+        async function deleteIgreja(id) {
+            if (!confirm('Tem certeza que deseja excluir esta igreja?')) return;
+
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('igrejas')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showToast('Igreja excluída com sucesso!', 'success');
+                loadIgrejas();
+            } catch (error) {
+                console.error('❌ Error deleting igreja:', error);
+                showToast('Erro ao excluir igreja: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handleIgrejaSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('igrejaId').value;
+            const data = {
+                nome: document.getElementById('igrejaNome').value,
+                cnpj: document.getElementById('igrejaCnpj').value || null,
+                endereco: document.getElementById('igrejaEndereco').value || null,
+                cidade: document.getElementById('igrejaCidade').value || null,
+                estado: document.getElementById('igrejaEstado').value || null,
+                cep: document.getElementById('igrejaCep').value || null,
+                telefone: document.getElementById('igrejaTelefone').value || null,
+                email: document.getElementById('igrejaEmail').value || null
+            };
+
+            showLoading();
+            try {
+                let error;
+                if (id) {
+                    ({ error } = await supabase.from('igrejas').update(data).eq('id', id));
+                } else {
+                    ({ error } = await supabase.from('igrejas').insert([data]));
+                }
+
+                if (error) throw error;
+
+                showToast(`Igreja ${id ? 'atualizada' : 'adicionada'} com sucesso!`, 'success');
+                closeIgrejaModal();
+                loadIgrejas();
+            } catch (error) {
+                console.error('❌ Error saving igreja:', error);
+                showToast('Erro ao salvar igreja: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function openAddProdutoModal() {
+            document.getElementById('produtoModalTitle').textContent = 'Adicionar Produto';
+            document.getElementById('produtoForm').reset();
+            document.getElementById('produtoId').value = '';
+            document.getElementById('produtoModal').classList.add('active');
+        }
+
+        function closeProdutoModal() {
+            document.getElementById('produtoModal').classList.remove('active');
+        }
+
+        async function editProduto(id) {
+            const produto = allProdutos.find(p => p.id === id);
+            if (!produto) return;
+
+            document.getElementById('produtoModalTitle').textContent = 'Editar Produto';
+            document.getElementById('produtoId').value = produto.id;
+            document.getElementById('produtoNome').value = produto.nome;
+            document.getElementById('produtoDescricao').value = produto.descricao || '';
+            document.getElementById('produtoPreco').value = produto.preco;
+            document.getElementById('produtoComissao').value = produto.comissao_percentual;
+            document.getElementById('produtoAtivo').value = produto.ativo.toString();
+            document.getElementById('produtoModal').classList.add('active');
+        }
+
+        async function deleteProduto(id) {
+            if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+
+            showLoading();
+            try {
+                const { error } = await supabase
+                    .from('produtos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showToast('Produto excluído com sucesso!', 'success');
+                loadProdutos();
+            } catch (error) {
+                console.error('❌ Error deleting produto:', error);
+                showToast('Erro ao excluir produto: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function handleProdutoSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('produtoId').value;
+            const data = {
+                nome: document.getElementById('produtoNome').value,
+                descricao: document.getElementById('produtoDescricao').value || null,
+                preco: parseFloat(document.getElementById('produtoPreco').value),
+                comissao_percentual: parseFloat(document.getElementById('produtoComissao').value),
+                ativo: document.getElementById('produtoAtivo').value === 'true'
+            };
+
+            showLoading();
+            try {
+                let error;
+                if (id) {
+                    ({ error } = await supabase.from('produtos').update(data).eq('id', id));
+                } else {
+                    ({ error } = await supabase.from('produtos').insert([data]));
+                }
+
+                if (error) throw error;
+
+                showToast(`Produto ${id ? 'atualizado' : 'adicionado'} com sucesso!`, 'success');
+                closeProdutoModal();
+                loadProdutos();
+            } catch (error) {
+                console.error('❌ Error saving produto:', error);
+                showToast('Erro ao salvar produto: ' + error.message, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function viewVenda(id) {
+            const venda = allVendas.find(v => v.id === id);
+            if (!venda) return;
+
+            const detalhes = document.getElementById('vendaDetalhes');
+            detalhes.innerHTML = `
+                <div class="form-group">
+                    <label>Data:</label>
+                    <p>${new Date(venda.created_at).toLocaleString('pt-BR')}</p>
+                </div>
+                <div class="form-group">
+                    <label>Parceiro:</label>
+                    <p>${venda.parceiro?.nome_completo || 'N/A'}</p>
+                </div>
+                <div class="form-group">
+                    <label>Produto:</label>
+                    <p>${venda.produto?.nome || 'N/A'}</p>
+                </div>
+                <div class="form-group">
+                    <label>Valor Total:</label>
+                    <p>R$ ${parseFloat(venda.valor_total).toFixed(2)}</p>
+                </div>
+                <div class="form-group">
+                    <label>Comissão:</label>
+                    <p>R$ ${parseFloat(venda.comissao_valor).toFixed(2)}</p>
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <p><span class="badge badge-${venda.status_pagamento === 'approved' ? 'success' : 'warning'}">${venda.status_pagamento}</span></p>
+                </div>
+            `;
+
+            document.getElementById('vendaModal').classList.add('active');
+        }
+
+        function closeVendaModal() {
+            document.getElementById('vendaModal').classList.remove('active');
+        }
+
+        async function viewSaque(id) {
+            const saque = allSaques.find(s => s.id === id);
+            if (!saque) return;
+
+            const detalhes = document.getElementById('saqueDetalhes');
+            detalhes.innerHTML = `
+                <div class="form-group">
+                    <label>Data Solicitação:</label>
+                    <p>${new Date(saque.data_solicitacao).toLocaleString('pt-BR')}</p>
+                </div>
+                <div class="form-group">
+                    <label>Parceiro:</label>
+                    <p>${saque.parceiro?.nome_completo || 'N/A'}</p>
+                </div>
+                <div class="form-group">
+                    <label>Valor:</label>
+                    <p>R$ ${parseFloat(saque.valor).toFixed(2)}</p>
+                </div>
+                <div class="form-group">
+                    <label>Método de Pagamento:</label>
+                    <p>${saque.metodo_pagamento || 'N/A'}</p>
+                </div>
+                <div class="form-group">
+                    <label>Detalhes de Pagamento:</label>
+                    <p>${saque.detalhes_pagamento || 'N/A'}</p>
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <p><span class="badge badge-${saque.status === 'aprovado' ? 'success' : saque.status === 'pendente' ? 'warning' : 'danger'}">${saque.status}</span></p>
+                </div>
+                ${saque.observacoes ? `
+                    <div class="form-group">
+                        <label>Observações:</label>
+                        <p>${saque.observacoes}</p>
+                    </div>
+                ` : ''}
+                ${saque.data_processamento ? `
+                    <div class="form-group">
+                        <label>Data Processamento:</label>
+                        <p>${new Date(saque.data_processamento).toLocaleString('pt-BR')}</p>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('saqueModal').classList.add('active');
+        }
+
+        function closeSaqueModal() {
+            document.getElementById('saqueModal').classList.remove('active');
+        }
 
     </script>
 </body>
