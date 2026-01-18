@@ -268,6 +268,11 @@
             color: #721c24;
         }
 
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
         .btn {
             padding: 10px 20px;
             border: none;
@@ -294,6 +299,27 @@
             text-align: center;
             padding: 40px;
             color: #999;
+        }
+
+        .link-compartilhamento {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+        }
+
+        .link-compartilhamento input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .link-compartilhamento button {
+            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
@@ -324,6 +350,12 @@
                 <a class="nav-link active" data-section="dashboard">
                     <i class="fas fa-chart-line"></i>
                     <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-section="link">
+                    <i class="fas fa-link"></i>
+                    <span>Meu Link</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -407,6 +439,33 @@
                 <h2 class="section-title">Últimas Vendas</h2>
                 <div id="ultimasVendasContainer">
                     <div class="loading">Carregando vendas...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Link Section -->
+        <section id="link" class="content-section">
+            <div class="section-card">
+                <h2 class="section-title">Meu Link de Afiliado</h2>
+                <p style="color: #666; margin-bottom: 20px;">Compartilhe este link para receber comissões pelas vendas realizadas através dele:</p>
+                
+                <div class="link-compartilhamento">
+                    <label style="font-weight: 600; margin-bottom: 10px; display: block;">Seu Link Exclusivo:</label>
+                    <input type="text" id="linkAfiliado" readonly value="Carregando...">
+                    <button class="btn btn-primary" onclick="copiarLink()">
+                        <i class="fas fa-copy"></i> Copiar Link
+                    </button>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="font-size: 18px; margin-bottom: 15px;">Como usar seu link:</h3>
+                    <ul style="color: #666; line-height: 2;">
+                        <li>Compartilhe em suas redes sociais</li>
+                        <li>Envie por WhatsApp, email ou SMS</li>
+                        <li>Adicione em seu site ou blog</li>
+                        <li>Divulgue nos eventos e cultos da igreja</li>
+                        <li>Todas as vendas através deste link geram comissão para sua igreja!</li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -502,6 +561,10 @@
             document.getElementById('userName').textContent = firstName;
             document.getElementById('userAvatar').textContent = firstName.charAt(0).toUpperCase();
             document.getElementById('churchName').textContent = currentUser.nome;
+
+            // Generate affiliate link
+            const linkAfiliado = `https://bizmix.com.br/comprar.html?ref=${currentUser.userId}`;
+            document.getElementById('linkAfiliado').value = linkAfiliado;
         }
 
         // Setup Event Listeners
@@ -546,6 +609,7 @@
             // Update section title
             const sectionTitles = {
                 'dashboard': 'Dashboard',
+                'link': 'Meu Link de Afiliado',
                 'vendas': 'Minhas Vendas',
                 'comissoes': 'Comissões',
                 'saques': 'Solicitar Saque',
@@ -568,6 +632,15 @@
                     loadPerfil();
                     break;
             }
+        }
+
+        // Copy Link
+        function copiarLink() {
+            const linkInput = document.getElementById('linkAfiliado');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            alert('Link copiado para a área de transferência!');
         }
 
         // Load Dashboard
