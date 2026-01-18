@@ -1237,8 +1237,7 @@
                 container.innerHTML = `<div class="error-message">Erro ao carregar vendas: ${error.message}</div>`;
             }
         }
-
-        // Load Saques - CORRIGIDO para usar solicitacoes_saque
+                // Load Saques - CORRIGIDO com campos corretos
         async function loadSaques() {
             console.log('💰 Loading saques...');
             const container = document.getElementById('saquesTableContainer');
@@ -1254,7 +1253,7 @@
                             tipo_parceiro
                         )
                     `)
-                    .order('solicitado_em', { ascending: false });
+                    .order('data_solicitacao', { ascending: false });
 
                 if (error) throw error;
 
@@ -1265,7 +1264,8 @@
                                 <th>Data</th>
                                 <th>Parceiro</th>
                                 <th>Valor</th>
-                                <th>Chave PIX</th>
+                                <th>Método</th>
+                                <th>Detalhes</th>
                                 <th>Status</th>
                                 <th>Ações</th>
                             </tr>
@@ -1276,7 +1276,7 @@
                 if (data.length === 0) {
                     html += `
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
+                            <td colspan="7" style="text-align: center; padding: 40px;">
                                 <i class="fas fa-inbox" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
                                 <p style="color: #999;">Nenhuma solicitação de saque encontrada</p>
                             </td>
@@ -1289,10 +1289,11 @@
                         
                         html += `
                             <tr>
-                                <td>${new Date(saque.solicitado_em).toLocaleDateString('pt-BR')}</td>
+                                <td>${new Date(saque.data_solicitacao).toLocaleDateString('pt-BR')}</td>
                                 <td>${saque.parceiro?.nome_completo || 'N/A'}</td>
                                 <td>R$ ${parseFloat(saque.valor).toFixed(2)}</td>
-                                <td>${saque.chave_pix || 'N/A'}</td>
+                                <td>${saque.metodo_pagamento || 'N/A'}</td>
+                                <td>${saque.detalhes_pagamento || 'N/A'}</td>
                                 <td><span class="badge badge-${statusBadge}">${saque.status}</span></td>
                                 <td>
                                     ${saque.status === 'pendente' ? `
@@ -1326,7 +1327,7 @@
             }
         }
 
-        // Load Configurações - CORRIGIDO para usar tabela configuracoes
+        // Load Configurações
         async function loadConfiguracoes() {
             console.log('⚙️ Loading configurações...');
             const container = document.getElementById('configuracoesContainer');
@@ -1404,7 +1405,7 @@
             }
         }
 
-        // Aprovar Saque
+        // Aprovar Saque - CORRIGIDO
         async function aprovarSaque(id) {
             if (!confirm('Deseja aprovar este saque?')) return;
 
@@ -1413,7 +1414,7 @@
                     .from('solicitacoes_saque')
                     .update({ 
                         status: 'aprovado',
-                        processado_em: new Date().toISOString()
+                        data_processamento: new Date().toISOString()
                     })
                     .eq('id', id);
 
@@ -1427,7 +1428,7 @@
             }
         }
 
-        // Rejeitar Saque
+        // Rejeitar Saque - CORRIGIDO
         async function rejeitarSaque(id) {
             const motivo = prompt('Motivo da rejeição:');
             if (!motivo) return;
@@ -1438,7 +1439,7 @@
                     .update({ 
                         status: 'rejeitado',
                         observacoes: motivo,
-                        processado_em: new Date().toISOString()
+                        data_processamento: new Date().toISOString()
                     })
                     .eq('id', id);
 
