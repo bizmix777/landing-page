@@ -46,6 +46,7 @@
             height: 100vh;
             overflow-y: auto;
             z-index: 1000;
+            transition: transform 0.3s ease;
         }
 
         .sidebar-header {
@@ -143,56 +144,103 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Cards */
-        .stats-grid {
+        /* Dashboard Cards com círculos */
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
         }
 
-        .stat-card {
+        .dashboard-card {
             background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .stat-card:hover {
+        .dashboard-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
 
-        .stat-card h3 {
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            opacity: 0.1;
+        }
+
+        .dashboard-card.purple::before {
+            background: #667eea;
+        }
+
+        .dashboard-card.blue::before {
+            background: #4facfe;
+        }
+
+        .dashboard-card.green::before {
+            background: #43e97b;
+        }
+
+        .dashboard-card.orange::before {
+            background: #fa709a;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .dashboard-card.purple .card-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .dashboard-card.blue .card-icon {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .dashboard-card.green .card-icon {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .dashboard-card.orange .card-icon {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .card-title {
             font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
+            color: #8e8e93;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
 
-        .stat-card .value {
-            font-size: 32px;
+        .card-value {
+            font-size: 36px;
             font-weight: 700;
-            color: #333;
-            margin-bottom: 5px;
+            color: #1d1d1f;
+            margin-bottom: 10px;
         }
 
-        .stat-card .change {
+        .card-subtitle {
             font-size: 13px;
-            color: #4CAF50;
-        }
-
-        .stat-card .change.negative {
-            color: #f44336;
-        }
-
-        .stat-card i {
-            font-size: 40px;
-            opacity: 0.2;
-            float: right;
-            margin-top: -50px;
+            color: #8e8e93;
         }
 
         /* Tables */
@@ -626,45 +674,21 @@
             border-top: 1px solid #f0f0f0;
         }
 
-        /* Config Section Styles */
-        .config-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .config-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .config-card h4 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .config-card h4 i {
-            color: #667eea;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
             #sidebar {
-                width: 0;
                 transform: translateX(-100%);
+            }
+
+            #sidebar.active {
+                transform: translateX(0);
             }
 
             #main-content {
                 margin-left: 0;
             }
 
-            .stats-grid {
+            .dashboard-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -759,35 +783,46 @@
                 </button>
             </header>
             <div id="content-area">
-                         
+                
                 <!-- Dashboard Section -->
                 <section id="dashboard" class="content-section active">
                     <h1 style="margin-bottom: 30px; color: #333;">Dashboard</h1>
                     
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <h3>Total de Parceiros</h3>
-                            <div class="value" id="totalParceiros">0</div>
-                            <div class="change"><i class="fas fa-arrow-up"></i> Ativos</div>
-                            <i class="fas fa-users"></i>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card purple">
+                            <div class="card-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="card-title">Total de Parceiros</div>
+                            <div class="card-value" id="totalParceiros">0</div>
+                            <div class="card-subtitle">Parceiros ativos no sistema</div>
                         </div>
-                        <div class="stat-card">
-                            <h3>Total de Igrejas</h3>
-                            <div class="value" id="totalIgrejas">0</div>
-                            <div class="change"><i class="fas fa-arrow-up"></i> Cadastradas</div>
-                            <i class="fas fa-church"></i>
+
+                        <div class="dashboard-card blue">
+                            <div class="card-icon">
+                                <i class="fas fa-church"></i>
+                            </div>
+                            <div class="card-title">Total de Igrejas</div>
+                            <div class="card-value" id="totalIgrejas">0</div>
+                            <div class="card-subtitle">Igrejas cadastradas</div>
                         </div>
-                        <div class="stat-card">
-                            <h3>Total de Produtos</h3>
-                            <div class="value" id="totalProdutos">0</div>
-                            <div class="change"><i class="fas fa-arrow-up"></i> Disponíveis</div>
-                            <i class="fas fa-box"></i>
+
+                        <div class="dashboard-card green">
+                            <div class="card-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="card-title">Total de Produtos</div>
+                            <div class="card-value" id="totalProdutos">0</div>
+                            <div class="card-subtitle">Produtos disponíveis</div>
                         </div>
-                        <div class="stat-card">
-                            <h3>Total de Vendas</h3>
-                            <div class="value" id="totalVendas">R$ 0,00</div>
-                            <div class="change"><i class="fas fa-arrow-up"></i> Este mês</div>
-                            <i class="fas fa-shopping-cart"></i>
+
+                        <div class="dashboard-card orange">
+                            <div class="card-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="card-title">Saques Pendentes</div>
+                            <div class="card-value" id="totalSaquesPendentes">0</div>
+                            <div class="card-subtitle">Aguardando aprovação</div>
                         </div>
                     </div>
 
@@ -802,8 +837,7 @@
                         </div>
                     </div>
                 </section>
-
-                <!-- Parceiros Section -->
+                                <!-- Parceiros Section -->
                 <section id="parceiros" class="content-section">
                     <div class="table-container">
                         <div class="table-header">
@@ -1166,7 +1200,7 @@
     </div>
 
     <script>
-            // CRITICAL: Definir variáveis globais ANTES de qualquer função
+        // CRITICAL: Definir variáveis globais ANTES de qualquer função
         console.log('🚀 Admin Dashboard Initializing...');
         
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
@@ -1352,19 +1386,17 @@
             console.log('📊 Loading dashboard...');
             try {
                 // Load stats
-                const [parceiros, igrejas, produtos, vendas] = await Promise.all([
+                const [parceiros, igrejas, produtos, saquesPendentes] = await Promise.all([
                     supabase.from('parceiros').select('id', { count: 'exact', head: true }),
                     supabase.from('igrejas').select('id', { count: 'exact', head: true }),
                     supabase.from('produtos').select('id', { count: 'exact', head: true }),
-                    supabase.from('vendas').select('valor_total')
+                    supabase.from('solicitacoes_saque').select('id', { count: 'exact', head: true }).eq('status', 'pendente')
                 ]);
 
                 document.getElementById('totalParceiros').textContent = parceiros.count || 0;
                 document.getElementById('totalIgrejas').textContent = igrejas.count || 0;
                 document.getElementById('totalProdutos').textContent = produtos.count || 0;
-
-                const totalVendas = vendas.data?.reduce((sum, v) => sum + (parseFloat(v.valor_total) || 0), 0) || 0;
-                document.getElementById('totalVendas').textContent = `R$ ${totalVendas.toFixed(2)}`;
+                document.getElementById('totalSaquesPendentes').textContent = saquesPendentes.count || 0;
 
                 // Load charts
                 await loadCharts();
@@ -1420,8 +1452,7 @@
                 }
             });
         }
-
-        // Load Parceiros
+                // Load Parceiros
         async function loadParceiros() {
             console.log('👥 Loading parceiros...');
             const container = document.getElementById('parceirosTableContainer');
@@ -1538,6 +1569,7 @@
                 // Populate estado filter
                 const estados = [...new Set(data.map(i => i.estado).filter(e => e))];
                 const estadoFilter = document.getElementById('filterIgrejasEstado');
+                estadoFilter.innerHTML = '<option value="">Todos os estados</option>';
                 estados.forEach(estado => {
                     const option = document.createElement('option');
                     option.value = estado;
@@ -1826,7 +1858,7 @@
             renderVendas(filtered);
         }
 
-        // Load Saques - CORRIGIDO COM CAMPOS CORRETOS
+        // Load Saques - CORRIGIDO COM CAMPOS CORRETOS DA TABELA
         async function loadSaques() {
             console.log('💰 Loading saques...');
             const container = document.getElementById('saquesTableContainer');
@@ -1971,6 +2003,7 @@
 
                 showToast('Saque aprovado com sucesso!', 'success');
                 loadSaques();
+                loadDashboard(); // Atualizar contador
             } catch (error) {
                 console.error('❌ Error approving saque:', error);
                 showToast('Erro ao aprovar saque: ' + error.message, 'error');
@@ -2000,6 +2033,7 @@
 
                 showToast('Saque rejeitado com sucesso!', 'success');
                 loadSaques();
+                loadDashboard(); // Atualizar contador
             } catch (error) {
                 console.error('❌ Error rejecting saque:', error);
                 showToast('Erro ao rejeitar saque: ' + error.message, 'error');
@@ -2047,7 +2081,7 @@
 
                 if (error) throw error;
 
-                let html = '<div class="config-grid">';
+                let html = '<div class="dashboard-grid">';
 
                 data.forEach(config => {
                     const icon = config.chave.includes('comissao') ? 'fa-percentage' :
@@ -2056,19 +2090,21 @@
                                 config.chave.includes('sistema') ? 'fa-power-off' : 'fa-cog';
 
                     html += `
-                        <div class="config-card">
-                            <h4><i class="fas ${icon}"></i> ${config.descricao}</h4>
-                            <div class="form-group">
-                                <label>${config.chave}</label>
+                        <div class="dashboard-card purple">
+                            <div class="card-icon">
+                                <i class="fas ${icon}"></i>
+                            </div>
+                            <div class="card-title">${config.descricao}</div>
+                            <div class="form-group" style="margin-top: 15px;">
                                 <input 
                                     type="${config.tipo === 'number' ? 'number' : config.tipo === 'boolean' ? 'checkbox' : 'text'}" 
                                     id="config_${config.chave}" 
                                     value="${config.valor}"
                                     ${config.tipo === 'boolean' && config.valor === 'true' ? 'checked' : ''}
-                                    class="form-control"
+                                    style="width: 100%;"
                                 >
                             </div>
-                            <button class="btn btn-primary btn-sm" onclick="saveConfig('${config.id}', '${config.chave}', '${config.tipo}')">
+                            <button class="btn btn-primary btn-sm" onclick="saveConfig('${config.id}', '${config.chave}', '${config.tipo}')" style="margin-top: 10px;">
                                 <i class="fas fa-save"></i> Salvar
                             </button>
                         </div>
