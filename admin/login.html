@@ -204,13 +204,14 @@
         if (!window.loginInitialized) {
             window.loginInitialized = true;
 
-            // ✅ CONFIGURAÇÃO DO SUPABASE
-            const SUPABASE_URL = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
+            // ✅ CONFIGURAÇÃO DO SUPABASE - CREDENCIAIS CORRETAS
+            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
             
             const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
             console.log('✅ Sistema de login inicializado');
+            console.log('🔗 Supabase URL:', SUPABASE_URL);
 
             // ✅ FUNÇÕES AUXILIARES
             function showError(message) {
