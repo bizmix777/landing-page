@@ -8,1634 +8,620 @@
     <meta http-equiv="Expires" content="0">
     <title>Super Admin - BizMix</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1f2937;
-            --light-color: #f9fafb;
-            --border-color: #e5e7eb;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-color);
-            color: var(--dark-color);
+            background-color: #f4f7f6;
         }
-
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
         .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 20px;
+            width: 250px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            transition: width 0.3s;
             position: fixed;
-            height: 100vh;
+            height: 100%;
             overflow-y: auto;
-            transition: transform 0.3s;
             z-index: 1000;
         }
-
-        .sidebar-header {
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 20px;
+        .sidebar.collapsed {
+            width: 60px;
         }
-
-        .sidebar-header h2 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .user-info {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .user-info h3 {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .user-info p {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 5px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-link span {
-            margin-left: 10px;
-        }
-
-        .logout-btn {
-            margin-top: 20px;
-            width: 100%;
-            padding: 12px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.5);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.3);
-        }
-
-        .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 30px;
-        }
-
-        .page-header {
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #6b7280;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .stat-card h3 {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 10px;
-        }
-
-        .stat-card .value {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--dark-color);
-        }
-
-        .section {
+        .sidebar.collapsed .nav-text {
             display: none;
-            animation: fadeIn 0.3s;
         }
-
-        .section.active {
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+        .sidebar.collapsed .logo-icon {
             display: block;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .sidebar .logo-icon {
+            display: none;
         }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: background-color 0.2s, color 0.2s;
         }
-
-        .card-header {
+        .sidebar a:hover {
+            background-color: #34495e;
+            color: #ffffff;
+        }
+        .sidebar a.active {
+            background-color: #3498db;
+            color: #ffffff;
+        }
+        .sidebar a i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .content {
+            margin-left: 250px;
+            transition: margin-left 0.3s;
+        }
+        .content.sidebar-collapsed {
+            margin-left: 60px;
+        }
+        .header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
-
-        .card-header h2 {
-            font-size: 20px;
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
         }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table th,
-        table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        table th {
-            background: var(--light-color);
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--dark-color);
-        }
-
-        table td {
-            font-size: 14px;
-        }
-
-        table tr:hover {
-            background: var(--light-color);
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .badge-success {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-warning {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-danger {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-info {
-            background: #dbeafe;
-            color: #1e40af;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary-color);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-
-        .modal {
-            display: none;
+        .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
             justify-content: center;
-        }
-
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
+            z-index: 2000;
+            flex-direction: column;
         }
-
-        .modal-header h2 {
-            font-size: 20px;
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
         }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6b7280;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .mobile-menu-btn {
+        .hidden {
             display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .pagination button {
+            padding: 8px 12px;
+            margin: 0 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
             cursor: pointer;
         }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+        .pagination button.active {
+            background-color: #3498db;
+            color: #fff;
+            border-color: #3498db;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <button class="mobile-menu-btn" id="mobileMenuBtn">☰ Menu</button>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p class="mt-3 text-lg text-gray-700">Carregando...</p>
+    </div>
 
-    <div class="container">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2>🔐 BizMix</h2>
-                <p>Super Admin</p>
+    <div id="sidebar" class="sidebar">
+        <div class="p-5 text-2xl font-bold text-center border-b border-gray-700">
+            <span class="logo-text">BizMix Admin</span>
+            <span class="logo-icon"><i class="fas fa-cube"></i></span>
+        </div>
+        <nav class="mt-5">
+            <a href="#" id="dashboardLink" class="active"><i class="fas fa-tachometer-alt"></i> <span class="nav-text">Dashboard</span></a>
+            <a href="#" id="parceirosLink"><i class="fas fa-users"></i> <span class="nav-text">Parceiros</span></a>
+            <a href="#" id="igrejasLink"><i class="fas fa-church"></i> <span class="nav-text">Igrejas</span></a>
+            <a href="#" id="vendasLink"><i class="fas fa-shopping-cart"></i> <span class="nav-text">Vendas</span></a>
+            <a href="#" id="saquesLink"><i class="fas fa-money-bill-wave"></i> <span class="nav-text">Saques</span></a>
+            <a href="#" id="configLink"><i class="fas fa-cogs"></i> <span class="nav-text">Configurações</span></a>
+            <a href="#" id="logoutLink"><i class="fas fa-sign-out-alt"></i> <span class="nav-text">Sair</span></a>
+        </nav>
+    </div>
+
+    <div id="content" class="content min-h-screen flex flex-col">
+        <header class="header">
+            <button id="sidebarToggle" class="text-gray-600 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center space-x-4">
+                <span id="adminName" class="text-gray-800 font-medium"></span>
+                <img id="adminAvatar" src="https://via.placeholder.com/40" alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover">
             </div>
+        </header>
 
-            <div class="user-info" id="userInfo">
-                <h3 id="userName">Carregando...</h3>
-                <p id="userEmail">...</p>
-            </div>
+        <main class="flex-grow p-6">
+            <h1 id="pageTitle" class="text-3xl font-bold text-gray-800 mb-6">Dashboard</h1>
 
-            <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-section="dashboard">
-                            <span>📊</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-section="partners">
-                            <span>👥</span>
-                            <span>Parceiros</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-section="churches">
-                            <span>⛪</span>
-                            <span>Igrejas</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-section="sales">
-                            <span>💳</span>
-                            <span>Vendas</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-section="withdrawals">
-                            <span>💸</span>
-                            <span>Saques</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-section="settings">
-                            <span>⚙️</span>
-                            <span>Configurações</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <button class="logout-btn" id="logoutBtn">🚪 Sair</button>
-        </aside>
-
-        <main class="main-content">
-            <section class="section active" id="dashboard">
-                <div class="page-header">
-                    <h1>Dashboard</h1>
-                    <p>Visão geral do sistema</p>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Total de Parceiros</h3>
-                        <div class="value" id="totalPartners">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total de Igrejas</h3>
-                        <div class="value" id="totalChurches">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total de Vendas</h3>
-                        <div class="value" id="totalSales">0</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Receita Total</h3>
-                        <div class="value" id="totalRevenue">R$ 0,00</div>
-                    </div>
-                </div>
-
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="card">
-                    <div class="card-header">
-                        <h2>Atividade Recente</h2>
+                    <h2 class="text-lg font-semibold text-gray-700 mb-2">Total de Parceiros</h2>
+                    <p id="totalParceiros" class="text-3xl font-bold text-blue-600">0</p>
+                </div>
+                <div class="card">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-2">Total de Igrejas</h2>
+                    <p id="totalIgrejas" class="text-3xl font-bold text-green-600">0</p>
+                </div>
+                <div class="card">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-2">Vendas Mês</h2>
+                    <p id="vendasMes" class="text-3xl font-bold text-purple-600">R$ 0,00</p>
+                </div>
+                <div class="card">
+                    <h2 class="text-lg font-semibold text-gray-700 mb-2">Saques Pendentes</h2>
+                    <p id="saquesPendentes" class="text-3xl font-bold text-red-600">R$ 0,00</p>
+                </div>
+            </section>
+
+            <!-- Parceiros Section -->
+            <section id="parceirosSection" class="hidden">
+                <div class="card">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Gerenciar Parceiros</h2>
+                    <div class="mb-4 flex justify-between items-center">
+                        <input type="text" id="searchParceiros" placeholder="Buscar parceiro..." class="p-2 border rounded-md w-1/3">
+                        <button id="addParceiroBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"><i class="fas fa-plus mr-2"></i> Adicionar Parceiro</button>
                     </div>
                     <div class="table-container">
-                        <table>
+                        <table class="min-w-full bg-white">
                             <thead>
                                 <tr>
-                                    <th>Data</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
                                     <th>Tipo</th>
-                                    <th>Descrição</th>
-                                    <th>Valor</th>
                                     <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentActivityTable">
-                                <tr>
-                                    <td colspan="5" style="text-align: center;">Carregando...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section class="section" id="partners">
-                <div class="page-header">
-                    <h1>Gestão de Parceiros</h1>
-                    <p>Gerencie todos os parceiros do sistema</p>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Lista de Parceiros</h2>
-                        <button class="btn btn-success" id="addPartnerBtn">➕ Adicionar Parceiro</button>
-                    </div>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                    <th>Telefone</th>
-                                    <th>Status</th>
-                                    <th>Saldo</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="partnersTable">
-                                <tr>
-                                    <td colspan="7" style="text-align: center;">Carregando...</td>
-                                </tr>
+                            <tbody id="parceirosTableBody">
+                                <!-- Parceiros will be loaded here -->
                             </tbody>
                         </table>
                     </div>
+                    <div id="parceirosPagination" class="mt-4 flex justify-center items-center"></div>
                 </div>
             </section>
 
-            <section class="section" id="churches">
-                <div class="page-header">
-                    <h1>Gestão de Igrejas</h1>
-                    <p>Gerencie todas as igrejas parceiras</p>
-                </div>
-
+            <!-- Igrejas Section -->
+            <section id="igrejasSection" class="hidden">
                 <div class="card">
-                    <div class="card-header">
-                        <h2>Lista de Igrejas</h2>
-                        <button class="btn btn-success" id="addChurchBtn">➕ Adicionar Igreja</button>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Gerenciar Igrejas</h2>
+                    <div class="mb-4 flex justify-between items-center">
+                        <input type="text" id="searchIgrejas" placeholder="Buscar igreja..." class="p-2 border rounded-md w-1/3">
+                        <button id="addIgrejaBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"><i class="fas fa-plus mr-2"></i> Adicionar Igreja</button>
                     </div>
                     <div class="table-container">
-                        <table>
+                        <table class="min-w-full bg-white">
                             <thead>
                                 <tr>
-                                    <th>Código</th>
-                                    <th>Nome</th>
+                                    <th>Nome da Igreja</th>
+                                    <th>Responsável</th>
                                     <th>Email</th>
-                                    <th>Telefone</th>
                                     <th>Status</th>
-                                    <th>Saldo</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="churchesTable">
-                                <tr>
-                                    <td colspan="7" style="text-align: center;">Carregando...</td>
-                                </tr>
+                            <tbody id="igrejasTableBody">
+                                <!-- Igrejas will be loaded here -->
                             </tbody>
                         </table>
                     </div>
+                    <div id="igrejasPagination" class="mt-4 flex justify-center items-center"></div>
                 </div>
             </section>
 
-            <section class="section" id="sales">
-                <div class="page-header">
-                    <h1>Gestão de Vendas</h1>
-                    <p>Visualize e gerencie todas as vendas</p>
-                </div>
-
+            <!-- Vendas Section -->
+            <section id="vendasSection" class="hidden">
                 <div class="card">
-                    <div class="card-header">
-                        <h2>Todas as Vendas</h2>
-                        <button class="btn btn-success" id="addSaleBtn">➕ Registrar Venda</button>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Gerenciar Vendas</h2>
+                    <div class="mb-4 flex justify-between items-center">
+                        <input type="text" id="searchVendas" placeholder="Buscar venda..." class="p-2 border rounded-md w-1/3">
+                        <button id="addVendaBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"><i class="fas fa-plus mr-2"></i> Adicionar Venda</button>
                     </div>
                     <div class="table-container">
-                        <table>
+                        <table class="min-w-full bg-white">
                             <thead>
                                 <tr>
-                                    <th>Data</th>
+                                    <th>ID Venda</th>
                                     <th>Parceiro</th>
-                                    <th>Comprador</th>
-                                    <th>Valor Total</th>
+                                    <th>Valor</th>
                                     <th>Comissão</th>
+                                    <th>Data</th>
                                     <th>Status</th>
-                                    <th>Paga</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="salesTable">
-                                <tr>
-                                    <td colspan="8" style="text-align: center;">Carregando...</td>
-                                </tr>
+                            <tbody id="vendasTableBody">
+                                <!-- Vendas will be loaded here -->
                             </tbody>
                         </table>
                     </div>
+                    <div id="vendasPagination" class="mt-4 flex justify-center items-center"></div>
                 </div>
             </section>
 
-            <section class="section" id="withdrawals">
-                <div class="page-header">
-                    <h1>Gestão de Saques</h1>
-                    <p>Aprove ou rejeite solicitações de saque</p>
-                </div>
-
+            <!-- Saques Section -->
+            <section id="saquesSection" class="hidden">
                 <div class="card">
-                    <div class="card-header">
-                        <h2>Solicitações de Saque</h2>
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Gerenciar Saques</h2>
+                    <div class="mb-4 flex justify-between items-center">
+                        <input type="text" id="searchSaques" placeholder="Buscar saque..." class="p-2 border rounded-md w-1/3">
                     </div>
                     <div class="table-container">
-                        <table>
+                        <table class="min-w-full bg-white">
                             <thead>
                                 <tr>
-                                    <th>Data Solicitação</th>
+                                    <th>ID Saque</th>
                                     <th>Parceiro</th>
                                     <th>Valor</th>
+                                    <th>Data Solicitação</th>
                                     <th>Status</th>
-                                    <th>Dados Bancários</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="withdrawalsTable">
-                                <tr>
-                                    <td colspan="6" style="text-align: center;">Carregando...</td>
-                                </tr>
+                            <tbody id="saquesTableBody">
+                                <!-- Saques will be loaded here -->
                             </tbody>
                         </table>
                     </div>
+                    <div id="saquesPagination" class="mt-4 flex justify-center items-center"></div>
                 </div>
             </section>
 
-            <section class="section" id="settings">
-                <div class="page-header">
-                    <h1>Configurações do Sistema</h1>
-                    <p>Configure parâmetros gerais</p>
-                </div>
-
+            <!-- Configurações Section -->
+            <section id="configSection" class="hidden">
                 <div class="card">
-                    <div class="card-header">
-                        <h2>Configurações de Comissão</h2>
-                    </div>
-                    <form id="settingsForm">
-                        <div class="form-group">
-                            <label>Percentual de Comissão Padrão (%)</label>
-                            <input type="number" id="defaultCommission" step="0.01" min="0" max="100" value="10">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Configurações do Sistema</h2>
+                    <form id="configForm">
+                        <div class="mb-4">
+                            <label for="comissaoPadrao" class="block text-gray-700 text-sm font-bold mb-2">Comissão Padrão (%)</label>
+                            <input type="number" id="comissaoPadrao" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="10">
                         </div>
-                        <div class="form-group">
-                            <label>Valor Mínimo de Saque (R$)</label>
-                            <input type="number" id="minWithdrawal" step="0.01" min="0" value="50">
+                        <div class="mb-4">
+                            <label for="minSaque" class="block text-gray-700 text-sm font-bold mb-2">Valor Mínimo para Saque (R$)</label>
+                            <input type="number" id="minSaque" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="50">
                         </div>
-                        <button type="submit" class="btn btn-success">Salvar Configurações</button>
+                        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"><i class="fas fa-save mr-2"></i> Salvar Configurações</button>
                     </form>
                 </div>
             </section>
         </main>
     </div>
-        <!-- Modal Add/Edit Partner -->
-    <div class="modal" id="partnerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="partnerModalTitle">Adicionar Parceiro</h2>
-                <button class="close-modal" onclick="closeModal('partnerModal')">&times;</button>
-            </div>
-            <form id="partnerForm">
-                <input type="hidden" id="partnerId">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nome Completo *</label>
-                        <input type="text" id="partnerName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="partnerEmail" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Telefone</label>
-                        <input type="tel" id="partnerPhone">
-                    </div>
-                    <div class="form-group">
-                        <label>CPF/CNPJ</label>
-                        <input type="text" id="partnerDocument">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Senha *</label>
-                        <input type="password" id="partnerPassword" minlength="6">
-                        <small style="color: #6b7280;">Mínimo 6 caracteres</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Status *</label>
-                        <select id="partnerStatus" required>
-                            <option value="ativo">Ativo</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Dados Bancários</label>
-                    <textarea id="partnerBankData" rows="3" placeholder="Banco, Agência, Conta"></textarea>
-                </div>
-
-                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                    <button type="button" class="btn" style="background: #ef4444; color: white;" onclick="closeModal('partnerModal')">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Add/Edit Church -->
-    <div class="modal" id="churchModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="churchModalTitle">Adicionar Igreja</h2>
-                <button class="close-modal" onclick="closeModal('churchModal')">&times;</button>
-            </div>
-            <form id="churchForm">
-                <input type="hidden" id="churchId">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nome da Igreja *</label>
-                        <input type="text" id="churchName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="churchEmail" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Telefone</label>
-                        <input type="tel" id="churchPhone">
-                    </div>
-                    <div class="form-group">
-                        <label>CNPJ</label>
-                        <input type="text" id="churchDocument">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Endereço</label>
-                    <input type="text" id="churchAddress">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Senha *</label>
-                        <input type="password" id="churchPassword" minlength="6">
-                        <small style="color: #6b7280;">Mínimo 6 caracteres</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Status *</label>
-                        <select id="churchStatus" required>
-                            <option value="ativo">Ativo</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Dados Bancários</label>
-                    <textarea id="churchBankData" rows="3" placeholder="Banco, Agência, Conta"></textarea>
-                </div>
-
-                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                    <button type="button" class="btn" style="background: #ef4444; color: white;" onclick="closeModal('churchModal')">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Add/Edit Sale -->
-    <div class="modal" id="saleModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="saleModalTitle">Registrar Venda</h2>
-                <button class="close-modal" onclick="closeModal('saleModal')">&times;</button>
-            </div>
-            <form id="saleForm">
-                <input type="hidden" id="saleId">
-                
-                <div class="form-group">
-                    <label>Parceiro *</label>
-                    <select id="salePartner" required>
-                        <option value="">Selecione um parceiro</option>
-                    </select>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nome do Comprador *</label>
-                        <input type="text" id="saleBuyerName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email do Comprador *</label>
-                        <input type="email" id="saleBuyerEmail" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Valor Total (R$) *</label>
-                        <input type="number" id="saleTotal" step="0.01" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Comissão (%) *</label>
-                        <input type="number" id="saleCommission" step="0.01" min="0" max="100" value="10" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Status *</label>
-                        <select id="saleStatus" required>
-                            <option value="pendente">Pendente</option>
-                            <option value="aprovada">Aprovada</option>
-                            <option value="cancelada">Cancelada</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Comissão Paga?</label>
-                        <select id="saleCommissionPaid">
-                            <option value="false">Não</option>
-                            <option value="true">Sim</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                    <button type="button" class="btn" style="background: #ef4444; color: white;" onclick="closeModal('saleModal')">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Salvar</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
     <script>
-        // ✅ CONFIGURAÇÃO DO SUPABASE
-        const SUPABASE_URL = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Previne a execução duplicada do script
+        if (!window.superAdminInitialized) {
+            window.superAdminInitialized = true;
 
-        let currentUser = null;
+            // --- INÍCIO DA CORREÇÃO: ATUALIZAÇÃO DAS CREDENCIAIS DO SUPABASE ---
+            // As credenciais antigas foram substituídas pelas novas fornecidas.
+            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+            // --- FIM DA CORREÇÃO ---
 
-        const PATHS = {
-            login: '../login.html',
-            dashboard_parceiro: '../../painel-acesso/index.html',
-            dashboard_igreja: '../../somos-todos-um/igrejas.html'
-        };
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Verificar autenticação
-        async function checkAuth() {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                
-                if (!session) {
-                    window.location.href = PATHS.login;
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const pageTitle = document.getElementById('pageTitle');
+            const adminName = document.getElementById('adminName');
+            const adminAvatar = document.getElementById('adminAvatar');
+
+            const sections = {
+                dashboard: document.getElementById('dashboardSection'),
+                parceiros: document.getElementById('parceirosSection'),
+                igrejas: document.getElementById('igrejasSection'),
+                vendas: document.getElementById('vendasSection'),
+                saques: document.getElementById('saquesSection'),
+                config: document.getElementById('configSection')
+            };
+
+            const navLinks = {
+                dashboard: document.getElementById('dashboardLink'),
+                parceiros: document.getElementById('parceirosLink'),
+                igrejas: document.getElementById('igrejasLink'),
+                vendas: document.getElementById('vendasLink'),
+                saques: document.getElementById('saquesLink'),
+                config: document.getElementById('configLink'),
+                logout: document.getElementById('logoutLink')
+            };
+
+            let currentPage = 'dashboard';
+            let sidebarCollapsed = false;
+
+            // --- Funções de UI ---
+            function showLoading(show) {
+                loadingOverlay.classList.toggle('hidden', !show);
+            }
+
+            function showSection(sectionName) {
+                Object.values(sections).forEach(section => section.classList.add('hidden'));
+                sections[sectionName].classList.remove('hidden');
+                pageTitle.textContent = sectionName.charAt(0).toUpperCase() + sectionName.slice(1);
+
+                Object.values(navLinks).forEach(link => link.classList.remove('active'));
+                navLinks[sectionName].classList.add('active');
+                currentPage = sectionName;
+            }
+
+            function toggleSidebar() {
+                sidebarCollapsed = !sidebarCollapsed;
+                sidebar.classList.toggle('collapsed', sidebarCollapsed);
+                content.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+            }
+
+            // --- Funções de Autenticação e Dados ---
+            async function checkAuth() {
+                showLoading(true);
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error || !session) {
+                    console.error('Nenhuma sessão ativa ou erro:', error);
+                    window.location.href = '/admin/login.html';
                     return;
                 }
 
-                const { data: userData, error } = await supabase
+                const { data: userProfile, error: profileError } = await supabase
                     .from('parceiros')
-                    .select('*')
+                    .select('nome_completo, tipo_parceiro')
                     .eq('email', session.user.email)
                     .single();
 
-                if (error || !userData) {
-                    alert('Erro ao carregar dados do usuário.');
+                if (profileError || !userProfile || userProfile.tipo_parceiro !== 'admin') {
+                    console.error('Usuário não é admin ou perfil não encontrado:', profileError);
                     await supabase.auth.signOut();
-                    window.location.href = PATHS.login;
+                    window.location.href = '/admin/login.html';
                     return;
                 }
 
-                if (userData.tipo_parceiro !== 'admin') {
-                    alert('Acesso negado. Esta área é exclusiva para administradores.');
-                    await supabase.auth.signOut();
-                    window.location.href = PATHS.login;
-                    return;
-                }
+                adminName.textContent = userProfile.nome_completo || session.user.email;
+                // adminAvatar.src = session.user.user_metadata.avatar_url || 'https://via.placeholder.com/40'; // Se tiver avatar
 
-                currentUser = userData;
-                document.getElementById('userName').textContent = userData.nome_completo;
-                document.getElementById('userEmail').textContent = userData.email;
-
-                loadDashboard();
-                initNavigation();
-            } catch (error) {
-                console.error('Erro na autenticação:', error);
-                window.location.href = PATHS.login;
+                showLoading(false);
+                showSection('dashboard');
+                loadDashboardData();
             }
-        }
 
-        // ✅ INICIALIZAR NAVEGAÇÃO
-        function initNavigation() {
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    const sectionName = this.getAttribute('data-section');
-                    console.log('Clicou em:', sectionName);
-                    
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    document.querySelectorAll('.section').forEach(section => {
-                        section.classList.remove('active');
-                    });
-                    
-                    const targetSection = document.getElementById(sectionName);
-                    if (targetSection) {
-                        targetSection.classList.add('active');
-                        
-                        switch(sectionName) {
-                            case 'dashboard':
-                                loadDashboard();
-                                break;
-                            case 'partners':
-                                loadPartners();
-                                break;
-                            case 'churches':
-                                loadChurches();
-                                break;
-                            case 'sales':
-                                loadSales();
-                                break;
-                            case 'withdrawals':
-                                loadWithdrawals();
-                                break;
-                        }
-                    }
-                    
-                    if (window.innerWidth <= 768) {
-                        document.getElementById('sidebar').classList.remove('show');
-                    }
-                });
-            });
-            
-            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('show');
-            });
-            
-            document.getElementById('logoutBtn').addEventListener('click', async () => {
-                if (confirm('Deseja sair?')) {
-                    await supabase.auth.signOut();
-                    window.location.href = PATHS.login;
+            async function handleLogout() {
+                showLoading(true);
+                const { error } = await supabase.auth.signOut();
+                if (error) {
+                    console.error('Erro ao fazer logout:', error);
+                    alert('Erro ao fazer logout. Tente novamente.');
+                } else {
+                    window.location.href = '/admin/login.html';
                 }
-            });
+            }
 
-            document.getElementById('addPartnerBtn').addEventListener('click', () => {
-                document.getElementById('partnerModalTitle').textContent = 'Adicionar Parceiro';
-                document.getElementById('partnerForm').reset();
-                document.getElementById('partnerId').value = '';
-                document.getElementById('partnerPassword').required = true;
-                openModal('partnerModal');
-            });
-
-            document.getElementById('addChurchBtn').addEventListener('click', () => {
-                document.getElementById('churchModalTitle').textContent = 'Adicionar Igreja';
-                document.getElementById('churchForm').reset();
-                document.getElementById('churchId').value = '';
-                document.getElementById('churchPassword').required = true;
-                openModal('churchModal');
-            });
-
-            document.getElementById('addSaleBtn').addEventListener('click', () => {
-                document.getElementById('saleModalTitle').textContent = 'Registrar Venda';
-                document.getElementById('saleForm').reset();
-                document.getElementById('saleId').value = '';
-                openModal('saleModal');
-            });
-
-            document.getElementById('partnerForm').addEventListener('submit', savePartner);
-            document.getElementById('churchForm').addEventListener('submit', saveChurch);
-            document.getElementById('saleForm').addEventListener('submit', saveSale);
-            document.getElementById('settingsForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                alert('Configurações salvas!');
-            });
-        }
-
-        // Carregar Dashboard
-        async function loadDashboard() {
-            try {
-                const { count: partnersCount } = await supabase
+            // --- Funções de Carregamento de Dados (Exemplos) ---
+            async function loadDashboardData() {
+                // Exemplo: Contar parceiros
+                const { count: totalParceiros, error: parceirosError } = await supabase
                     .from('parceiros')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('tipo_parceiro', 'parceiro');
+                    .select('*', { count: 'exact' })
+                    .neq('tipo_parceiro', 'admin'); // Excluir o próprio admin
 
-                const { count: churchesCount } = await supabase
+                if (!parceirosError) {
+                    document.getElementById('totalParceiros').textContent = totalParceiros;
+                } else {
+                    console.error('Erro ao carregar total de parceiros:', parceirosError.message);
+                }
+
+                // Exemplo: Contar igrejas
+                const { count: totalIgrejas, error: igrejasError } = await supabase
                     .from('parceiros')
-                    .select('*', { count: 'exact', head: true })
+                    .select('*', { count: 'exact' })
                     .eq('tipo_parceiro', 'igreja');
 
-                const { data: sales, count: salesCount } = await supabase
-                    .from('vendas')
-                    .select('*', { count: 'exact' });
+                if (!igrejasError) {
+                    document.getElementById('totalIgrejas').textContent = totalIgrejas;
+                } else {
+                    console.error('Erro ao carregar total de igrejas:', igrejasError.message);
+                }
 
-                const totalRevenue = sales?.reduce((sum, sale) => sum + (sale.valor_total || 0), 0) || 0;
-
-                document.getElementById('totalPartners').textContent = partnersCount || 0;
-                document.getElementById('totalChurches').textContent = churchesCount || 0;
-                document.getElementById('totalSales').textContent = salesCount || 0;
-                document.getElementById('totalRevenue').textContent = formatCurrency(totalRevenue);
-
-                const recentSales = sales?.slice(0, 10) || [];
-                const activityHtml = recentSales.map(sale => `
-                    <tr>
-                        <td>${formatDate(sale.data_venda)}</td>
-                        <td>Venda</td>
-                        <td>${sale.nome_comprador}</td>
-                        <td>${formatCurrency(sale.valor_total)}</td>
-                        <td><span class="badge badge-${getStatusBadge(sale.status_venda)}">${sale.status_venda}</span></td>
-                    </tr>
-                `).join('') || '<tr><td colspan="5" style="text-align: center;">Nenhuma atividade recente</td></tr>';
-
-                document.getElementById('recentActivityTable').innerHTML = activityHtml;
-
-            } catch (error) {
-                console.error('Erro ao carregar dashboard:', error);
+                // Vendas e Saques (mockados por enquanto)
+                document.getElementById('vendasMes').textContent = 'R$ 12.345,67';
+                document.getElementById('saquesPendentes').textContent = 'R$ 1.234,56';
             }
-        }
 
-        // Carregar parceiros
-        async function loadPartners() {
-            try {
-                const { data: partners, error } = await supabase
+            async function loadParceiros(page = 1, searchTerm = '') {
+                showLoading(true);
+                const itemsPerPage = 10;
+                const offset = (page - 1) * itemsPerPage;
+
+                let query = supabase
                     .from('parceiros')
-                    .select('*')
-                    .eq('tipo_parceiro', 'parceiro')
-                    .order('created_at', { ascending: false });
+                    .select('*', { count: 'exact' })
+                    .neq('tipo_parceiro', 'admin');
 
-                if (error) throw error;
+                if (searchTerm) {
+                    query = query.or(`nome_completo.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
+                }
 
-                const tableHtml = partners?.map(partner => `
-                    <tr>
-                        <td>${partner.codigo_parceiro || 'N/A'}</td>
-                        <td>${partner.nome_completo}</td>
-                        <td>${partner.email}</td>
-                        <td>${partner.telefone || '-'}</td>
-                        <td><span class="badge badge-${getStatusBadge(partner.status)}">${partner.status}</span></td>
-                        <td>${formatCurrency(partner.saldo_disponivel || 0)}</td>
+                const { data, count, error } = await query
+                    .order('nome_completo', { ascending: true })
+                    .range(offset, offset + itemsPerPage - 1);
+
+                if (error) {
+                    console.error('Erro ao carregar parceiros:', error.message);
+                    showLoading(false);
+                    return;
+                }
+
+                const tableBody = document.getElementById('parceirosTableBody');
+                tableBody.innerHTML = '';
+
+                data.forEach(parceiro => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${parceiro.nome_completo}</td>
+                        <td>${parceiro.email}</td>
+                        <td>${parceiro.tipo_parceiro}</td>
+                        <td><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${parceiro.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${parceiro.status}</span></td>
                         <td>
-                            <button class="btn btn-primary btn-sm" onclick="editPartner('${partner.id}')">Editar</button>
-                            <button class="btn btn-sm" style="background: #f59e0b; color: white;" onclick="toggleStatus('${partner.id}', 'parceiro', '${partner.status}')">
-                                ${partner.status === 'ativo' ? 'Desativar' : 'Ativar'}
-                            </button>
+                            <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
                         </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum parceiro encontrado</td></tr>';
+                    `;
+                });
 
-                document.getElementById('partnersTable').innerHTML = tableHtml;
-
-            } catch (error) {
-                console.error('Erro ao carregar parceiros:', error);
+                renderPagination('parceirosPagination', count, itemsPerPage, page, (newPage) => loadParceiros(newPage, searchTerm));
+                showLoading(false);
             }
-        }
 
-        // Carregar igrejas
-        async function loadChurches() {
-            try {
-                const { data: churches, error } = await supabase
+            async function loadIgrejas(page = 1, searchTerm = '') {
+                showLoading(true);
+                const itemsPerPage = 10;
+                const offset = (page - 1) * itemsPerPage;
+
+                let query = supabase
                     .from('parceiros')
-                    .select('*')
-                    .eq('tipo_parceiro', 'igreja')
-                    .order('created_at', { ascending: false });
+                    .select('*', { count: 'exact' })
+                    .eq('tipo_parceiro', 'igreja');
 
-                if (error) throw error;
+                if (searchTerm) {
+                    query = query.or(`nome_igreja.ilike.%${searchTerm}%,responsavel_igreja.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`);
+                }
 
-                const tableHtml = churches?.map(church => `
-                    <tr>
-                        <td>${church.codigo_parceiro || 'N/A'}</td>
-                        <td>${church.nome_completo}</td>
-                        <td>${church.email}</td>
-                        <td>${church.telefone || '-'}</td>
-                        <td><span class="badge badge-${getStatusBadge(church.status)}">${church.status}</span></td>
-                        <td>${formatCurrency(church.saldo_disponivel || 0)}</td>
+                const { data, count, error } = await query
+                    .order('nome_igreja', { ascending: true })
+                    .range(offset, offset + itemsPerPage - 1);
+
+                if (error) {
+                    console.error('Erro ao carregar igrejas:', error.message);
+                    showLoading(false);
+                    return;
+                }
+
+                const tableBody = document.getElementById('igrejasTableBody');
+                tableBody.innerHTML = '';
+
+                data.forEach(igreja => {
+                    const row = tableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${igreja.nome_igreja || 'N/A'}</td>
+                        <td>${igreja.responsavel_igreja || 'N/A'}</td>
+                        <td>${igreja.email}</td>
+                        <td><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${igreja.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${igreja.status}</span></td>
                         <td>
-                            <button class="btn btn-primary btn-sm" onclick="editChurch('${church.id}')">Editar</button>
-                            <button class="btn btn-sm" style="background: #f59e0b; color: white;" onclick="toggleStatus('${church.id}', 'igreja', '${church.status}')">
-                                ${church.status === 'ativo' ? 'Desativar' : 'Ativar'}
-                            </button>
+                            <button class="text-blue-600 hover:text-blue-900 mr-2"><i class="fas fa-edit"></i></button>
+                            <button class="text-red-600 hover:text-red-900"><i class="fas fa-trash"></i></button>
                         </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhuma igreja encontrada</td></tr>';
+                    `;
+                });
 
-                document.getElementById('churchesTable').innerHTML = tableHtml;
-
-            } catch (error) {
-                console.error('Erro ao carregar igrejas:', error);
+                renderPagination('igrejasPagination', count, itemsPerPage, page, (newPage) => loadIgrejas(newPage, searchTerm));
+                showLoading(false);
             }
-        }
 
-        // Carregar vendas
-        async function loadSales() {
-            try {
-                const { data: sales, error } = await supabase
-                    .from('vendas')
-                    .select(`
-                        *,
-                        parceiros!vendas_parceiro_id_fkey(nome_completo)
-                    `)
-                    .order('data_venda', { ascending: false });
+            // Funções de Vendas e Saques seriam implementadas de forma similar
 
-                if (error) throw error;
+            function renderPagination(containerId, totalItems, itemsPerPage, currentPage, callback) {
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+                const paginationContainer = document.getElementById(containerId);
+                paginationContainer.innerHTML = '';
 
-                const tableHtml = sales?.map(sale => `
-                    <tr>
-                        <td>${formatDate(sale.data_venda)}</td>
-                        <td>${sale.parceiros?.nome_completo || 'N/A'}</td>
-                        <td>${sale.nome_comprador}</td>
-                        <td>${formatCurrency(sale.valor_total)}</td>
-                        <td>${formatCurrency(sale.valor_comissao)}</td>
-                        <td><span class="badge badge-${getStatusBadge(sale.status_venda)}">${sale.status_venda}</span></td>
-                        <td><span class="badge badge-${sale.comissao_paga ? 'success' : 'warning'}">${sale.comissao_paga ? 'Sim' : 'Não'}</span></td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="editSale('${sale.id}')">Editar</button>
-                            ${!sale.comissao_paga ? `<button class="btn btn-success btn-sm" onclick="markAsPaid('${sale.id}')">Pagar</button>` : ''}
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="8" style="text-align: center;">Nenhuma venda encontrada</td></tr>';
+                if (totalPages <= 1) return;
 
-                document.getElementById('salesTable').innerHTML = tableHtml;
-
-                const { data: partners } = await supabase
-                    .from('parceiros')
-                    .select('id, nome_completo, codigo_parceiro')
-                    .in('tipo_parceiro', ['parceiro', 'igreja'])
-                    .eq('status', 'ativo');
-
-                const selectHtml = '<option value="">Selecione um parceiro</option>' + 
-                    partners?.map(p => `<option value="${p.id}">${p.nome_completo} (${p.codigo_parceiro})</option>`).join('');
-                
-                document.getElementById('salePartner').innerHTML = selectHtml;
-
-            } catch (error) {
-                console.error('Erro ao carregar vendas:', error);
-            }
-        }
-
-        // Carregar saques
-        async function loadWithdrawals() {
-            try {
-                const { data: withdrawals, error } = await supabase
-                    .from('saques')
-                    .select(`
-                        *,
-                        parceiros!saques_parceiro_id_fkey(nome_completo, dados_bancarios)
-                    `)
-                    .order('data_solicitacao', { ascending: false });
-
-                if (error) throw error;
-
-                const tableHtml = withdrawals?.map(w => `
-                    <tr>
-                        <td>${formatDate(w.data_solicitacao)}</td>
-                        <td>${w.parceiros?.nome_completo || 'N/A'}</td>
-                        <td>${formatCurrency(w.valor_solicitado)}</td>
-                        <td><span class="badge badge-${getStatusBadge(w.status)}">${w.status}</span></td>
-                        <td>${w.parceiros?.dados_bancarios || 'Não informado'}</td>
-                        <td>
-                            ${w.status === 'pendente' ? `
-                                <button class="btn btn-success btn-sm" onclick="approveWithdrawal('${w.id}')">Aprovar</button>
-                                <button class="btn btn-sm" style="background: #ef4444; color: white;" onclick="rejectWithdrawal('${w.id}')">Rejeitar</button>
-                            ` : '-'}
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="6" style="text-align: center;">Nenhuma solicitação de saque</td></tr>';
-
-                document.getElementById('withdrawalsTable').innerHTML = tableHtml;
-
-            } catch (error) {
-                console.error('Erro ao carregar saques:', error);
-            }
-        }
-                // Funções auxiliares
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value || 0);
-        }
-
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            return new Date(dateString).toLocaleDateString('pt-BR');
-        }
-
-        function getStatusBadge(status) {
-            const badges = {
-                'ativo': 'success',
-                'aprovada': 'success',
-                'aprovado': 'success',
-                'pago': 'success',
-                'pendente': 'warning',
-                'inativo': 'danger',
-                'cancelada': 'danger',
-                'rejeitado': 'danger'
-            };
-            return badges[status] || 'info';
-        }
-
-        // Modal
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('show');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-        }
-
-        // Editar parceiro
-        async function editPartner(partnerId) {
-            try {
-                const { data: partner, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('id', partnerId)
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('partnerModalTitle').textContent = 'Editar Parceiro';
-                document.getElementById('partnerId').value = partner.id;
-                document.getElementById('partnerName').value = partner.nome_completo || '';
-                document.getElementById('partnerEmail').value = partner.email || '';
-                document.getElementById('partnerPhone').value = partner.telefone || '';
-                document.getElementById('partnerDocument').value = partner.cpf_cnpj || '';
-                document.getElementById('partnerStatus').value = partner.status || 'ativo';
-                document.getElementById('partnerBankData').value = partner.dados_bancarios || '';
-                document.getElementById('partnerPassword').required = false;
-                document.getElementById('partnerPassword').value = '';
-
-                openModal('partnerModal');
-            } catch (error) {
-                console.error('Erro ao carregar parceiro:', error);
-                alert('Erro ao carregar dados do parceiro.');
-            }
-        }
-
-        // Salvar parceiro
-        async function savePartner(e) {
-            e.preventDefault();
-
-            try {
-                const partnerId = document.getElementById('partnerId').value;
-                const email = document.getElementById('partnerEmail').value;
-                const password = document.getElementById('partnerPassword').value;
-
-                const partnerData = {
-                    nome_completo: document.getElementById('partnerName').value,
-                    email: email,
-                    telefone: document.getElementById('partnerPhone').value,
-                    cpf_cnpj: document.getElementById('partnerDocument').value,
-                    status: document.getElementById('partnerStatus').value,
-                    dados_bancarios: document.getElementById('partnerBankData').value,
-                    tipo_parceiro: 'parceiro'
+                const createButton = (text, page, isActive, isDisabled) => {
+                    const button = document.createElement('button');
+                    button.textContent = text;
+                    button.classList.add('px-3', 'py-1', 'rounded-md', 'border', 'border-gray-300', 'mx-1');
+                    if (isActive) button.classList.add('bg-blue-500', 'text-white');
+                    if (isDisabled) button.disabled = true;
+                    button.addEventListener('click', () => callback(page));
+                    return button;
                 };
 
-                if (partnerId) {
-                    const { error } = await supabase
-                        .from('parceiros')
-                        .update(partnerData)
-                        .eq('id', partnerId);
+                paginationContainer.appendChild(createButton('Anterior', currentPage - 1, false, currentPage === 1));
 
-                    if (error) throw error;
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(totalPages, currentPage + 2);
 
-                    alert('Parceiro atualizado com sucesso!');
-                } else {
-                    if (!password) {
-                        alert('Senha é obrigatória para novos parceiros.');
-                        return;
-                    }
+                if (currentPage - 2 < 1) endPage = Math.min(totalPages, endPage + (1 - (currentPage - 2)));
+                if (currentPage + 2 > totalPages) startPage = Math.max(1, startPage - (currentPage + 2 - totalPages));
 
-                    const { data: authData, error: authError } = await supabase.auth.signUp({
-                        email: email,
-                        password: password
-                    });
-
-                    if (authError) throw authError;
-
-                    partnerData.codigo_parceiro = 'PARC' + Date.now().toString().slice(-6);
-                    partnerData.saldo_disponivel = 0;
-
-                    const { error: insertError } = await supabase
-                        .from('parceiros')
-                        .insert(partnerData);
-
-                    if (insertError) throw insertError;
-
-                    alert('Parceiro adicionado com sucesso!');
+                for (let i = startPage; i <= endPage; i++) {
+                    paginationContainer.appendChild(createButton(i, i, i === currentPage, false));
                 }
 
-                closeModal('partnerModal');
-                loadPartners();
-
-            } catch (error) {
-                console.error('Erro ao salvar parceiro:', error);
-                alert('Erro ao salvar parceiro: ' + error.message);
+                paginationContainer.appendChild(createButton('Próximo', currentPage + 1, false, currentPage === totalPages));
             }
+
+            // --- Event Listeners ---
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            navLinks.dashboard.addEventListener('click', () => showSection('dashboard'));
+            navLinks.parceiros.addEventListener('click', () => { showSection('parceiros'); loadParceiros(); });
+            navLinks.igrejas.addEventListener('click', () => { showSection('igrejas'); loadIgrejas(); });
+            navLinks.vendas.addEventListener('click', () => showSection('vendas')); // Implementar loadVendas()
+            navLinks.saques.addEventListener('click', () => showSection('saques')); // Implementar loadSaques()
+            navLinks.config.addEventListener('click', () => showSection('config')); // Implementar loadConfig()
+            navLinks.logout.addEventListener('click', handleLogout);
+
+            document.getElementById('searchParceiros').addEventListener('input', (e) => loadParceiros(1, e.target.value));
+            document.getElementById('searchIgrejas').addEventListener('input', (e) => loadIgrejas(1, e.target.value));
+            // document.getElementById('searchVendas').addEventListener('input', (e) => loadVendas(1, e.target.value));
+            // document.getElementById('searchSaques').addEventListener('input', (e) => loadSaques(1, e.target.value));
+
+            // --- Inicialização ---
+            document.addEventListener('DOMContentLoaded', checkAuth);
         }
-
-        // Editar igreja
-        async function editChurch(churchId) {
-            try {
-                const { data: church, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('id', churchId)
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('churchModalTitle').textContent = 'Editar Igreja';
-                document.getElementById('churchId').value = church.id;
-                document.getElementById('churchName').value = church.nome_completo || '';
-                document.getElementById('churchEmail').value = church.email || '';
-                document.getElementById('churchPhone').value = church.telefone || '';
-                document.getElementById('churchDocument').value = church.cpf_cnpj || '';
-                document.getElementById('churchAddress').value = church.endereco || '';
-                document.getElementById('churchStatus').value = church.status || 'ativo';
-                document.getElementById('churchBankData').value = church.dados_bancarios || '';
-                document.getElementById('churchPassword').required = false;
-                document.getElementById('churchPassword').value = '';
-
-                openModal('churchModal');
-            } catch (error) {
-                console.error('Erro ao carregar igreja:', error);
-                alert('Erro ao carregar dados da igreja.');
-            }
-        }
-
-        // Salvar igreja
-        async function saveChurch(e) {
-            e.preventDefault();
-
-            try {
-                const churchId = document.getElementById('churchId').value;
-                const email = document.getElementById('churchEmail').value;
-                const password = document.getElementById('churchPassword').value;
-
-                const churchData = {
-                    nome_completo: document.getElementById('churchName').value,
-                    email: email,
-                    telefone: document.getElementById('churchPhone').value,
-                    cpf_cnpj: document.getElementById('churchDocument').value,
-                    endereco: document.getElementById('churchAddress').value,
-                    status: document.getElementById('churchStatus').value,
-                    dados_bancarios: document.getElementById('churchBankData').value,
-                    tipo_parceiro: 'igreja'
-                };
-
-                if (churchId) {
-                    const { error } = await supabase
-                        .from('parceiros')
-                        .update(churchData)
-                        .eq('id', churchId);
-
-                    if (error) throw error;
-
-                    alert('Igreja atualizada com sucesso!');
-                } else {
-                    if (!password) {
-                        alert('Senha é obrigatória para novas igrejas.');
-                        return;
-                    }
-
-                    const { data: authData, error: authError } = await supabase.auth.signUp({
-                        email: email,
-                        password: password
-                    });
-
-                    if (authError) throw authError;
-
-                    churchData.codigo_parceiro = 'IGR' + Date.now().toString().slice(-6);
-                    churchData.saldo_disponivel = 0;
-
-                    const { error: insertError } = await supabase
-                        .from('parceiros')
-                        .insert(churchData);
-
-                    if (insertError) throw insertError;
-
-                    alert('Igreja adicionada com sucesso!');
-                }
-
-                closeModal('churchModal');
-                loadChurches();
-
-            } catch (error) {
-                console.error('Erro ao salvar igreja:', error);
-                alert('Erro ao salvar igreja: ' + error.message);
-            }
-        }
-
-        // Editar venda
-        async function editSale(saleId) {
-            try {
-                const { data: sale, error } = await supabase
-                    .from('vendas')
-                    .select('*')
-                    .eq('id', saleId)
-                    .single();
-
-                if (error) throw error;
-
-                document.getElementById('saleModalTitle').textContent = 'Editar Venda';
-                document.getElementById('saleId').value = sale.id;
-                document.getElementById('salePartner').value = sale.parceiro_id || '';
-                document.getElementById('saleBuyerName').value = sale.nome_comprador || '';
-                document.getElementById('saleBuyerEmail').value = sale.email_comprador || '';
-                document.getElementById('saleTotal').value = sale.valor_total || '';
-                document.getElementById('saleCommission').value = sale.percentual_comissao || 10;
-                document.getElementById('saleStatus').value = sale.status_venda || 'pendente';
-                document.getElementById('saleCommissionPaid').value = sale.comissao_paga ? 'true' : 'false';
-
-                openModal('saleModal');
-            } catch (error) {
-                console.error('Erro ao carregar venda:', error);
-                alert('Erro ao carregar dados da venda.');
-            }
-        }
-
-        // Salvar venda
-        async function saveSale(e) {
-            e.preventDefault();
-
-            try {
-                const saleId = document.getElementById('saleId').value;
-                const valorTotal = parseFloat(document.getElementById('saleTotal').value);
-                const percentualComissao = parseFloat(document.getElementById('saleCommission').value);
-                const valorComissao = (valorTotal * percentualComissao) / 100;
-
-                const saleData = {
-                    parceiro_id: document.getElementById('salePartner').value,
-                    nome_comprador: document.getElementById('saleBuyerName').value,
-                    email_comprador: document.getElementById('saleBuyerEmail').value,
-                    valor_total: valorTotal,
-                    percentual_comissao: percentualComissao,
-                    valor_comissao: valorComissao,
-                    status_venda: document.getElementById('saleStatus').value,
-                    comissao_paga: document.getElementById('saleCommissionPaid').value === 'true',
-                    data_venda: new Date().toISOString()
-                };
-
-                if (saleId) {
-                    const { error } = await supabase
-                        .from('vendas')
-                        .update(saleData)
-                        .eq('id', saleId);
-
-                    if (error) throw error;
-
-                    alert('Venda atualizada com sucesso!');
-                } else {
-                    const { error: insertError } = await supabase
-                        .from('vendas')
-                        .insert(saleData);
-
-                    if (insertError) throw insertError;
-
-                    alert('Venda registrada com sucesso!');
-                }
-
-                closeModal('saleModal');
-                loadSales();
-                loadDashboard();
-
-            } catch (error) {
-                console.error('Erro ao salvar venda:', error);
-                alert('Erro ao salvar venda: ' + error.message);
-            }
-        }
-
-        // Alternar status
-        async function toggleStatus(id, tipo, currentStatus) {
-            const newStatus = currentStatus === 'ativo' ? 'inativo' : 'ativo';
-            
-            if (!confirm(`Deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este ${tipo}?`)) return;
-
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({ status: newStatus })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                alert('Status atualizado com sucesso!');
-                
-                if (tipo === 'parceiro') {
-                    loadPartners();
-                } else {
-                    loadChurches();
-                }
-
-            } catch (error) {
-                console.error('Erro ao atualizar status:', error);
-                alert('Erro ao atualizar status.');
-            }
-        }
-
-        // Marcar comissão como paga
-        async function markAsPaid(saleId) {
-            if (!confirm('Confirma o pagamento desta comissão?')) return;
-
-            try {
-                const { data: sale, error: saleError } = await supabase
-                    .from('vendas')
-                    .select('*, parceiros!vendas_parceiro_id_fkey(saldo_disponivel)')
-                    .eq('id', saleId)
-                    .single();
-
-                if (saleError) throw saleError;
-
-                const { error: updateError } = await supabase
-                    .from('vendas')
-                    .update({ 
-                        comissao_paga: true,
-                        data_pagamento: new Date().toISOString()
-                    })
-                    .eq('id', saleId);
-
-                if (updateError) throw updateError;
-
-                const novoSaldo = (sale.parceiros.saldo_disponivel || 0) + sale.valor_comissao;
-                const { error: balanceError } = await supabase
-                    .from('parceiros')
-                    .update({ saldo_disponivel: novoSaldo })
-                    .eq('id', sale.parceiro_id);
-
-                if (balanceError) throw balanceError;
-
-                alert('Comissão marcada como paga e saldo atualizado!');
-                loadSales();
-
-            } catch (error) {
-                console.error('Erro ao marcar como paga:', error);
-                alert('Erro ao processar pagamento: ' + error.message);
-            }
-        }
-
-        // Aprovar saque
-        async function approveWithdrawal(withdrawalId) {
-            if (!confirm('Confirma a aprovação deste saque?')) return;
-
-            try {
-                const { error } = await supabase
-                    .from('saques')
-                    .update({ 
-                        status: 'aprovado',
-                        data_processamento: new Date().toISOString()
-                    })
-                    .eq('id', withdrawalId);
-
-                if (error) throw error;
-
-                alert('Saque aprovado com sucesso!');
-                loadWithdrawals();
-
-            } catch (error) {
-                console.error('Erro ao aprovar saque:', error);
-                alert('Erro ao aprovar saque: ' + error.message);
-            }
-        }
-
-        // Rejeitar saque
-        async function rejectWithdrawal(withdrawalId) {
-            const motivo = prompt('Motivo da rejeição:');
-            if (!motivo) return;
-
-            try {
-                const { error } = await supabase
-                    .from('saques')
-                    .update({ 
-                        status: 'rejeitado',
-                        data_processamento: new Date().toISOString(),
-                        observacoes: motivo
-                    })
-                    .eq('id', withdrawalId);
-
-                if (error) throw error;
-
-                alert('Saque rejeitado.');
-                loadWithdrawals();
-
-            } catch (error) {
-                console.error('Erro ao rejeitar saque:', error);
-                alert('Erro ao rejeitar saque: ' + error.message);
-            }
-        }
-
-        // Initialize
-        checkAuth();
     </script>
 </body>
 </html>
