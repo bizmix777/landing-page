@@ -1,4 +1,4 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -6,35 +6,11 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Super Admin - BizMix</title>
-
-    <!-- Google Fonts: Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Supabase CDN -->
+    <title>BizMix - Painel Super Admin</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --text-color: #333;
-            --light-text-color: #666;
-            --bg-light: #f4f7f6;
-            --bg-dark: #e0e0e0;
-            --card-bg: #fff;
-            --border-color: #e0e0e0;
-            --shadow-light: rgba(0, 0, 0, 0.05);
-            --shadow-medium: rgba(0, 0, 0, 0.1);
-            --success-color: #28a745;
-            --danger-color: #dc3545;
-            --warning-color: #ffc107;
-            --info-color: #17a2b8;
-        }
-
+        /* Reset e Base */
         * {
             margin: 0;
             padding: 0;
@@ -42,31 +18,32 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
             line-height: 1.6;
             display: flex;
             min-height: 100vh;
         }
 
+        /* Layout Principal */
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
         /* Sidebar */
         .sidebar {
             width: 250px;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: #fff;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 20px;
-            box-shadow: 2px 0 5px var(--shadow-medium);
-            display: flex;
-            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             position: fixed;
             height: 100%;
+            overflow-y: auto;
+            transition: width 0.3s ease;
             z-index: 1000;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-250px);
         }
 
         .sidebar-header {
@@ -77,180 +54,170 @@
         }
 
         .sidebar-header h2 {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: 600;
         }
 
-        .sidebar-header p {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .sidebar-menu {
+        .menu {
             list-style: none;
-            flex-grow: 1;
         }
 
-        .sidebar-menu li {
+        .menu li {
             margin-bottom: 10px;
         }
 
-        .sidebar-menu a {
+        .menu a {
             display: flex;
             align-items: center;
             padding: 12px 15px;
-            color: #fff;
+            color: white;
             text-decoration: none;
             border-radius: 8px;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             font-size: 16px;
+            font-weight: 500;
         }
 
-        .sidebar-menu a i {
-            margin-right: 15px;
-            font-size: 18px;
-        }
-
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
+        .menu a:hover {
             background-color: rgba(255, 255, 255, 0.2);
             transform: translateX(5px);
         }
 
-        .sidebar-footer {
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            text-align: center;
+        .menu a.active {
+            background-color: rgba(255, 255, 255, 0.3);
+            font-weight: 700;
         }
 
-        .sidebar-footer button {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 10px 15px;
-            border-radius: 8px;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar-footer button:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+        .menu a i {
+            margin-right: 10px;
+            font-size: 18px;
         }
 
         /* Main Content */
         .main-content {
-            margin-left: 250px;
+            margin-left: 250px; /* Largura da sidebar */
             flex-grow: 1;
             padding: 20px;
-            transition: margin-left 0.3s ease-in-out;
+            transition: margin-left 0.3s ease;
         }
 
-        .main-content.expanded {
-            margin-left: 0;
-        }
-
+        /* Header */
         .header {
-            background-color: var(--card-bg);
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px var(--shadow-light);
-            margin-bottom: 20px;
+            background-color: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e0e0e0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
         }
 
         .header h1 {
-            font-size: 24px;
-            color: var(--text-color);
+            font-size: 28px;
+            color: #444;
         }
 
-        .header .user-info {
+        .user-info {
             display: flex;
             align-items: center;
         }
 
-        .header .user-info span {
-            margin-right: 10px;
-            font-weight: 500;
+        .user-details {
+            text-align: right;
+            margin-right: 15px;
         }
 
-        .header .user-info button {
-            background-color: var(--danger-color);
-            color: #fff;
+        .user-details span {
+            display: block;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .user-details small {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .btn-logout {
+            background-color: #dc3545;
+            color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
+            padding: 10px 15px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
         }
 
-        .header .user-info button:hover {
+        .btn-logout:hover {
             background-color: #c82333;
         }
 
+        /* Content Sections */
         .content-section {
-            display: none;
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px var(--shadow-light);
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
         }
 
-        .content-section.active {
-            display: block;
+        .content-section h2 {
+            font-size: 24px;
+            color: #444;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
         }
 
         /* Dashboard Cards */
         .dashboard-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .card {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px var(--shadow-light);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
         }
 
-        .card-icon {
-            font-size: 40px;
-            color: var(--primary-color);
+        .card:hover {
+            transform: translateY(-5px);
         }
 
-        .card-info h3 {
+        .card h3 {
             font-size: 18px;
-            color: var(--light-text-color);
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            opacity: 0.9;
         }
 
-        .card-info p {
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--text-color);
+        .card p {
+            font-size: 32px;
+            font-weight: 700;
         }
 
-        /* Charts */
-        .charts-grid {
+        .dashboard-charts {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
         }
 
         .chart-container {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px var(--shadow-light);
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         /* Tables */
@@ -262,84 +229,50 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
-        .data-table th,
-        .data-table td {
-            padding: 12px 15px;
-            border: 1px solid var(--border-color);
+        .data-table th, .data-table td {
+            padding: 15px;
             text-align: left;
-            font-size: 14px;
+            border-bottom: 1px solid #eee;
         }
 
         .data-table th {
-            background-color: var(--bg-dark);
+            background-color: #f8f8f8;
             font-weight: 600;
-            color: var(--text-color);
+            color: #555;
+            text-transform: uppercase;
+            font-size: 13px;
         }
 
-        .data-table tr:nth-child(even) {
-            background-color: var(--bg-light);
+        .data-table tbody tr:hover {
+            background-color: #f0f0f0;
         }
 
-        .data-table tr:hover {
-            background-color: #e9ecef;
-        }
-
-        .btn {
-            padding: 8px 12px;
+        .data-table .actions button {
+            background-color: #007bff;
+            color: white;
             border: none;
+            padding: 8px 12px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
+            font-size: 13px;
             margin-right: 5px;
+            transition: background-color 0.3s ease;
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: #fff;
-        }
+        .data-table .actions button.edit { background-color: #28a745; }
+        .data-table .actions button.delete { background-color: #dc3545; }
+        .data-table .actions button.view { background-color: #17a2b8; }
+        .data-table .actions button.approve { background-color: #28a745; }
+        .data-table .actions button.reject { background-color: #dc3545; }
 
-        .btn-primary:hover {
-            background-color: #5a67d8;
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-            color: #fff;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-
-        .btn-info {
-            background-color: var(--info-color);
-            color: #fff;
-        }
-
-        .btn-info:hover {
-            background-color: #138496;
-        }
-
-        .btn-warning {
-            background-color: var(--warning-color);
-            color: var(--text-color);
-        }
-
-        .btn-warning:hover {
-            background-color: #e0a800;
+        .data-table .actions button:hover {
+            opacity: 0.9;
         }
 
         /* Forms */
@@ -349,8 +282,9 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
         }
 
         .form-group input[type="text"],
@@ -360,98 +294,211 @@
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            font-size: 14px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
         }
 
-        .form-actions {
-            margin-top: 20px;
-            text-align: right;
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #764ba2;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
         }
 
         /* Modals */
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1001;
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top */
             left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
             justify-content: center;
             align-items: center;
         }
 
-        .modal.show {
-            display: flex;
-        }
-
         .modal-content {
-            background-color: var(--card-bg);
+            background-color: #fefefe;
             margin: auto;
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px var(--shadow-medium);
+            border-radius: 12px;
             width: 90%;
             max-width: 600px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             position: relative;
+            animation: fadeIn 0.3s;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
             margin-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
         }
 
-        .modal-header h2 {
+        .modal-header h3 {
             font-size: 22px;
-            color: var(--text-color);
+            color: #444;
         }
 
         .close-button {
-            color: var(--light-text-color);
+            color: #aaa;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: color 0.3s ease;
         }
 
         .close-button:hover,
         .close-button:focus {
-            color: var(--text-color);
+            color: #333;
             text-decoration: none;
         }
 
-        /* Utility */
-        .text-center {
-            text-align: center;
+        .modal-footer {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 20px;
+            text-align: right;
         }
 
-        .loading-spinner {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Alerts and Loading */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
             display: none;
-            text-align: center;
-            padding: 20px;
         }
 
-        .loading-spinner.show {
+        .alert.show {
             display: block;
         }
 
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
         .spinner {
-            border: 4px solid var(--bg-dark);
-            border-top: 4px solid var(--primary-color);
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin-bottom: 15px;
         }
 
         @keyframes spin {
@@ -459,624 +506,628 @@
             100% { transform: rotate(360deg); }
         }
 
-        .error-message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            display: none;
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .error-message.show {
-            display: block;
+        .filters select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
-                width: 200px;
-                transform: translateX(-200px);
+                width: 80px;
+                padding: 15px 10px;
             }
-            .sidebar.collapsed {
-                transform: translateX(0);
+            .sidebar-header h2 {
+                font-size: 18px;
+            }
+            .menu a {
+                justify-content: center;
+                padding: 10px 5px;
+            }
+            .menu a span {
+                display: none;
+            }
+            .menu a i {
+                margin-right: 0;
             }
             .main-content {
-                margin-left: 0;
-            }
-            .main-content.expanded {
-                margin-left: 200px;
-            }
-            .dashboard-cards, .charts-grid {
-                grid-template-columns: 1fr;
+                margin-left: 80px;
             }
             .header {
                 flex-direction: column;
                 align-items: flex-start;
+                padding: 15px 20px;
             }
-            .header .user-info {
-                margin-top: 10px;
+            .header h1 {
+                margin-bottom: 10px;
+                font-size: 24px;
+            }
+            .user-info {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .user-details {
+                text-align: left;
+                margin-right: 0;
+            }
+            .dashboard-cards, .dashboard-charts {
+                grid-template-columns: 1fr;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h2>BizMix</h2>
-            <p>Super Admin</p>
-        </div>
-        <ul class="sidebar-menu">
-            <li><a href="#" data-section="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-            <li><a href="#" data-section="parceiros"><i class="fas fa-handshake"></i> Parceiros</a></li>
-            <li><a href="#" data-section="igrejas"><i class="fas fa-church"></i> Igrejas</a></li>
-            <li><a href="#" data-section="produtos"><i class="fas fa-box"></i> Produtos</a></li>
-            <li><a href="#" data-section="vendas"><i class="fas fa-shopping-cart"></i> Vendas</a></li>
-            <li><a href="#" data-section="saques"><i class="fas fa-money-bill-wave"></i> Saques</a></li>
-            <li><a href="#" data-section="configuracoes"><i class="fas fa-cogs"></i> Configurações</a></li>
-        </ul>
-        <div class="sidebar-footer">
-            <button id="logoutButton"><i class="fas fa-sign-out-alt"></i> Sair</button>
-        </div>
-    </aside>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Carregando...</p>
+    </div>
 
-    <div class="main-content" id="mainContent">
-        <header class="header">
-            <h1 id="currentSectionTitle">Dashboard</h1>
-            <div class="user-info">
-                <span>Bem-vindo, <strong id="adminName">Admin</strong>!</span>
-                <button id="logoutButtonHeader">Sair</button>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h2>🔐 BizMix Admin</h2>
             </div>
-        </header>
+            <ul class="menu">
+                <li><a href="#" class="menu-item active" data-section="dashboard">📊 Dashboard</a></li>
+                <li><a href="#" class="menu-item" data-section="parceiros">👥 Parceiros</a></li>
+                <li><a href="#" class="menu-item" data-section="igrejas">⛪ Igrejas</a></li>
+                <li><a href="#" class="menu-item" data-section="produtos">📦 Produtos</a></li>
+                <li><a href="#" class="menu-item" data-section="vendas">💰 Vendas</a></li>
+                <li><a href="#" class="menu-item" data-section="saques">💸 Saques</a></li>
+                <li><a href="#" class="menu-item" data-section="configuracoes">⚙️ Configurações</a></li>
+                <li><a href="#" class="menu-item" id="logoutBtnMobile">🚪 Sair</a></li>
+            </ul>
+        </nav>
 
-        <div class="loading-spinner" id="mainLoadingSpinner">
-            <div class="spinner"></div>
-            <p style="margin-top: 15px; color: var(--light-text-color);">Carregando...</p>
-        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="user-info">
+                    <div class="user-details">
+                        <span id="userName">Carregando...</span>
+                        <small id="userEmail"></small>
+                    </div>
+                    <button class="btn-logout" id="logoutBtn">Sair</button>
+                </div>
+            </header>
 
-        <!-- Dashboard Section -->
-        <section id="dashboard" class="content-section active">
-            <h2>Visão Geral</h2>
-            <div class="dashboard-cards">
-                <div class="card">
-                    <i class="fas fa-users card-icon"></i>
-                    <div class="card-info">
-                        <h3>Total de Parceiros</h3>
+            <!-- Dashboard Section -->
+            <section id="dashboardSection" class="content-section">
+                <h2>Dashboard</h2>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>Total Parceiros</h3>
                         <p id="totalParceiros">0</p>
                     </div>
-                </div>
-                <div class="card">
-                    <i class="fas fa-church card-icon"></i>
-                    <div class="card-info">
-                        <h3>Total de Igrejas</h3>
+                    <div class="card">
+                        <h3>Total Igrejas</h3>
                         <p id="totalIgrejas">0</p>
                     </div>
-                </div>
-                <div class="card">
-                    <i class="fas fa-box card-icon"></i>
-                    <div class="card-info">
-                        <h3>Total de Produtos</h3>
+                    <div class="card">
+                        <h3>Total Produtos</h3>
                         <p id="totalProdutos">0</p>
                     </div>
-                </div>
-                <div class="card">
-                    <i class="fas fa-dollar-sign card-icon"></i>
-                    <div class="card-info">
-                        <h3>Vendas Mês</h3>
-                        <p id="vendasMes">R$ 0,00</p>
+                    <div class="card">
+                        <h3>Total Vendas</h3>
+                        <p id="totalVendas">R$ 0,00</p>
                     </div>
                 </div>
-            </div>
-
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h3>Vendas por Mês</h3>
-                    <canvas id="salesChart"></canvas>
+                <div class="dashboard-charts">
+                    <div class="chart-container">
+                        <h3>Vendas Mensais</h3>
+                        <canvas id="vendasMensaisChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Parceiros por Tipo</h3>
+                        <canvas id="parceirosPorTipoChart"></canvas>
+                    </div>
                 </div>
-                <div class="chart-container">
-                    <h3>Tipos de Parceiros</h3>
-                    <canvas id="partnerTypeChart"></canvas>
+            </section>
+
+            <!-- Parceiros Section -->
+            <section id="parceirosSection" class="content-section" style="display: none;">
+                <h2>Gerenciar Parceiros</h2>
+                <div class="alert" id="parceirosAlert"></div>
+                <div class="filters">
+                    <select id="filterParceiroTipo">
+                        <option value="">Todos os Tipos</option>
+                        <option value="parceiro">Parceiro</option>
+                        <option value="empresa">Empresa</option>
+                        <option value="igreja">Igreja</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <select id="filterParceiroStatus">
+                        <option value="">Todos os Status</option>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                        <option value="pendente">Pendente</option>
+                    </select>
+                    <button class="btn-primary" id="addParceiroBtn">Adicionar Parceiro</button>
+                    <button class="btn-info" id="exportParceirosCSVBtn">Exportar CSV</button>
                 </div>
-            </div>
-        </section>
+                <div class="table-container">
+                    <table class="data-table" id="parceirosTable">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Parceiros serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- Parceiros Section -->
-        <section id="parceiros" class="content-section">
-            <h2>Gerenciar Parceiros</h2>
-            <div class="error-message" id="parceirosErrorMessage"></div>
-            <div class="loading-spinner" id="parceirosLoadingSpinner">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: var(--light-text-color);">Carregando parceiros...</p>
-            </div>
-            <div class="table-actions" style="margin-bottom: 15px;">
-                <button class="btn btn-primary" id="addParceiroBtn"><i class="fas fa-plus"></i> Adicionar Parceiro</button>
-                <button class="btn btn-info" id="exportParceirosCsvBtn"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="parceirosTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Tipo</th>
-                            <th>Status</th>
-                            <th>Comissão Padrão</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Parceiros serão carregados aqui -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <!-- Igrejas Section -->
+            <section id="igrejasSection" class="content-section" style="display: none;">
+                <h2>Gerenciar Igrejas</h2>
+                <div class="alert" id="igrejasAlert"></div>
+                <div class="filters">
+                    <button class="btn-primary" id="addIgrejaBtn">Adicionar Igreja</button>
+                    <button class="btn-info" id="exportIgrejasCSVBtn">Exportar CSV</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="igrejasTable">
+                        <thead>
+                            <tr>
+                                <th>Nome da Igreja</th>
+                                <th>Responsável</th>
+                                <th>Email</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Igrejas serão carregadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- Igrejas Section -->
-        <section id="igrejas" class="content-section">
-            <h2>Gerenciar Igrejas</h2>
-            <div class="error-message" id="igrejasErrorMessage"></div>
-            <div class="loading-spinner" id="igrejasLoadingSpinner">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: var(--light-text-color);">Carregando igrejas...</p>
-            </div>
-            <div class="table-actions" style="margin-bottom: 15px;">
-                <button class="btn btn-primary" id="addIgrejaBtn"><i class="fas fa-plus"></i> Adicionar Igreja</button>
-                <button class="btn btn-info" id="exportIgrejasCsvBtn"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="igrejasTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome Igreja</th>
-                            <th>Responsável</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Comissão Padrão</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Igrejas serão carregadas aqui -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <!-- Produtos Section -->
+            <section id="produtosSection" class="content-section" style="display: none;">
+                <h2>Gerenciar Produtos</h2>
+                <div class="alert" id="produtosAlert"></div>
+                <div class="filters">
+                    <button class="btn-primary" id="addProdutoBtn">Adicionar Produto</button>
+                    <button class="btn-info" id="exportProdutosCSVBtn">Exportar CSV</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="produtosTable">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Preço</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Produtos serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- Produtos Section -->
-        <section id="produtos" class="content-section">
-            <h2>Gerenciar Produtos</h2>
-            <div class="error-message" id="produtosErrorMessage"></div>
-            <div class="loading-spinner" id="produtosLoadingSpinner">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: var(--light-text-color);">Carregando produtos...</p>
-            </div>
-            <div class="table-actions" style="margin-bottom: 15px;">
-                <button class="btn btn-primary" id="addProdutoBtn"><i class="fas fa-plus"></i> Adicionar Produto</button>
-                <button class="btn btn-info" id="exportProdutosCsvBtn"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="produtosTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Preço</th>
-                            <th>Categoria</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Produtos serão carregados aqui -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <!-- Vendas Section -->
+            <section id="vendasSection" class="content-section" style="display: none;">
+                <h2>Vendas</h2>
+                <div class="alert" id="vendasAlert"></div>
+                <div class="filters">
+                    <button class="btn-info" id="exportVendasCSVBtn">Exportar CSV</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="vendasTable">
+                        <thead>
+                            <tr>
+                                <th>ID Venda</th>
+                                <th>Produto</th>
+                                <th>Parceiro</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Vendas serão carregadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- Vendas Section -->
-        <section id="vendas" class="content-section">
-            <h2>Gerenciar Vendas</h2>
-            <div class="error-message" id="vendasErrorMessage"></div>
-            <div class="loading-spinner" id="vendasLoadingSpinner">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: var(--light-text-color);">Carregando vendas...</p>
-            </div>
-            <div class="table-actions" style="margin-bottom: 15px;">
-                <button class="btn btn-info" id="exportVendasCsvBtn"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="vendasTable">
-                    <thead>
-                        <tr>
-                            <th>ID Venda</th>
-                            <th>Parceiro</th>
-                            <th>Produto</th>
-                            <th>Valor</th>
-                            <th>Comissão</th>
-                            <th>Data</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Vendas serão carregadas aqui -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <!-- Saques Section -->
+            <section id="saquesSection" class="content-section" style="display: none;">
+                <h2>Aprovar Saques</h2>
+                <div class="alert" id="saquesAlert"></div>
+                <div class="filters">
+                    <select id="filterSaqueStatus">
+                        <option value="">Todos os Status</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="aprovado">Aprovado</option>
+                        <option value="rejeitado">Rejeitado</option>
+                    </select>
+                    <button class="btn-info" id="exportSaquesCSVBtn">Exportar CSV</button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table" id="saquesTable">
+                        <thead>
+                            <tr>
+                                <th>ID Saque</th>
+                                <th>Parceiro</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th>Data Solicitação</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Saques serão carregados aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        <!-- Saques Section -->
-        <section id="saques" class="content-section">
-            <h2>Aprovar Saques</h2>
-            <div class="error-message" id="saquesErrorMessage"></div>
-            <div class="loading-spinner" id="saquesLoadingSpinner">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: var(--light-text-color);">Carregando solicitações de saque...</p>
-            </div>
-            <div class="table-actions" style="margin-bottom: 15px;">
-                <button class="btn btn-info" id="exportSaquesCsvBtn"><i class="fas fa-file-csv"></i> Exportar CSV</button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="saquesTable">
-                    <thead>
-                        <tr>
-                            <th>ID Saque</th>
-                            <th>Parceiro</th>
-                            <th>Valor</th>
-                            <th>Data Solicitação</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Saques serão carregados aqui -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <!-- Configurações Section -->
+            <section id="configuracoesSection" class="content-section" style="display: none;">
+                <h2>Configurações do Sistema</h2>
+                <div class="alert" id="configuracoesAlert"></div>
+                <form id="configuracoesForm">
+                    <div class="form-group">
+                        <label for="comissaoPadrao">Comissão Padrão (%)</label>
+                        <input type="number" id="comissaoPadrao" name="comissaoPadrao" min="0" max="100" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valorMinimoSaque">Valor Mínimo de Saque (R$)</label>
+                        <input type="number" id="valorMinimoSaque" name="valorMinimoSaque" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taxaSaque">Taxa de Saque (%)</label>
+                        <input type="number" id="taxaSaque" name="taxaSaque" min="0" max="100" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Salvar Configurações</button>
+                </form>
+            </section>
+        </div>
+    </div>
 
-        <!-- Configurações Section -->
-        <section id="configuracoes" class="content-section">
-            <h2>Configurações do Sistema</h2>
-            <div class="error-message" id="configuracoesErrorMessage"></div>
-            <div class="loading-spinner" id="configuracoesLoadingSpinner">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: var(--light-text-color);">Carregando configurações...</p>
+    <!-- Modals -->
+
+    <!-- Parceiro Modal -->
+    <div id="parceiroModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="parceiroModalTitle">Adicionar Parceiro</h3>
+                <span class="close-button" onclick="closeModal('parceiroModal')">&times;</span>
             </div>
-            <form id="configForm">
+            <div class="alert" id="parceiroModalAlert"></div>
+            <form id="parceiroForm">
+                <input type="hidden" id="parceiroId">
                 <div class="form-group">
-                    <label for="comissaoPadrao">Comissão Padrão (%)</label>
-                    <input type="number" id="comissaoPadrao" min="0" max="100" step="0.01" required>
+                    <label for="parceiroNome">Nome Completo</label>
+                    <input type="text" id="parceiroNome" required>
                 </div>
                 <div class="form-group">
-                    <label for="minSaque">Valor Mínimo para Saque (R$)</label>
-                    <input type="number" id="minSaque" min="0" step="0.01" required>
+                    <label for="parceiroEmail">Email</label>
+                    <input type="email" id="parceiroEmail" required>
                 </div>
                 <div class="form-group">
-                    <label for="taxaSaque">Taxa de Saque (R$)</label>
-                    <input type="number" id="taxaSaque" min="0" step="0.01" required>
+                    <label for="parceiroCpfCnpj">CPF/CNPJ</label>
+                    <input type="text" id="parceiroCpfCnpj" required>
                 </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                <div class="form-group">
+                    <label for="parceiroTelefone">Telefone</label>
+                    <input type="text" id="parceiroTelefone">
+                </div>
+                <div class="form-group">
+                    <label for="parceiroTipo">Tipo de Parceiro</label>
+                    <select id="parceiroTipo" required>
+                        <option value="parceiro">Parceiro</option>
+                        <option value="empresa">Empresa</option>
+                        <option value="igreja">Igreja</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="parceiroStatus">Status</label>
+                    <select id="parceiroStatus" required>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                        <option value="pendente">Pendente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="parceiroComissaoPadrao">Comissão Padrão (%)</label>
+                    <input type="number" id="parceiroComissaoPadrao" min="0" max="100" step="0.01" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-primary">Salvar</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('parceiroModal')">Cancelar</button>
                 </div>
             </form>
-        </section>
+        </div>
+    </div>
 
-        <!-- Modals -->
-        <!-- Parceiro Modal -->
-        <div id="parceiroModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="parceiroModalTitle">Adicionar Parceiro</h2>
-                    <span class="close-button" data-modal="parceiroModal">&times;</span>
+    <!-- Igreja Modal -->
+    <div id="igrejaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="igrejaModalTitle">Adicionar Igreja</h3>
+                <span class="close-button" onclick="closeModal('igrejaModal')">&times;</span>
+            </div>
+            <div class="alert" id="igrejaModalAlert"></div>
+            <form id="igrejaForm">
+                <input type="hidden" id="igrejaId">
+                <div class="form-group">
+                    <label for="igrejaNome">Nome da Igreja</label>
+                    <input type="text" id="igrejaNome" required>
                 </div>
-                <div class="error-message" id="parceiroModalErrorMessage"></div>
-                <form id="parceiroForm">
-                    <input type="hidden" id="parceiroId">
-                    <div class="form-group">
-                        <label for="parceiroNome">Nome Completo</label>
-                        <input type="text" id="parceiroNome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="parceiroEmail">Email</label>
-                        <input type="email" id="parceiroEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="parceiroTipo">Tipo de Parceiro</label>
-                        <select id="parceiroTipo" required>
-                            <option value="">Selecione</option>
-                            <option value="parceiro">Parceiro</option>
-                            <option value="igreja">Igreja</option>
-                            <option value="empresa">Empresa</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="parceiroCpfCnpj">CPF/CNPJ</label>
-                        <input type="text" id="parceiroCpfCnpj" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="parceiroComissao">Comissão Padrão (%)</label>
-                        <input type="number" id="parceiroComissao" min="0" max="100" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="parceiroStatus">Status</label>
-                        <select id="parceiroStatus" required>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                            <option value="pendente">Pendente</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-danger" data-modal="parceiroModal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                    </div>
-                </form>
+                <div class="form-group">
+                    <label for="igrejaResponsavel">Responsável</label>
+                    <input type="text" id="igrejaResponsavel" required>
+                </div>
+                <div class="form-group">
+                    <label for="igrejaEmail">Email</label>
+                    <input type="email" id="igrejaEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="igrejaCpfCnpj">CNPJ</label>
+                    <input type="text" id="igrejaCpfCnpj" required>
+                </div>
+                <div class="form-group">
+                    <label for="igrejaTelefone">Telefone</label>
+                    <input type="text" id="igrejaTelefone">
+                </div>
+                <div class="form-group">
+                    <label for="igrejaStatus">Status</label>
+                    <select id="igrejaStatus" required>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                        <option value="pendente">Pendente</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="igrejaComissaoPadrao">Comissão Padrão (%)</label>
+                    <input type="number" id="igrejaComissaoPadrao" min="0" max="100" step="0.01" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-primary">Salvar</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('igrejaModal')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Produto Modal -->
+    <div id="produtoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="produtoModalTitle">Adicionar Produto</h3>
+                <span class="close-button" onclick="closeModal('produtoModal')">&times;</span>
+            </div>
+            <div class="alert" id="produtoModalAlert"></div>
+            <form id="produtoForm">
+                <input type="hidden" id="produtoId">
+                <div class="form-group">
+                    <label for="produtoNome">Nome do Produto</label>
+                    <input type="text" id="produtoNome" required>
+                </div>
+                <div class="form-group">
+                    <label for="produtoDescricao">Descrição</label>
+                    <textarea id="produtoDescricao" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="produtoPreco">Preço (R$)</label>
+                    <input type="number" id="produtoPreco" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="produtoStatus">Status</label>
+                    <select id="produtoStatus" required>
+                        <option value="ativo">Ativo</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-primary">Salvar</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('produtoModal')">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Venda Detalhes Modal -->
+    <div id="vendaDetalhesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalhes da Venda</h3>
+                <span class="close-button" onclick="closeModal('vendaDetalhesModal')">&times;</span>
+            </div>
+            <div id="vendaDetalhesContent">
+                <!-- Detalhes da venda serão carregados aqui -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('vendaDetalhesModal')">Fechar</button>
             </div>
         </div>
+    </div>
 
-        <!-- Igreja Modal (simplificado, pode ser expandido) -->
-        <div id="igrejaModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="igrejaModalTitle">Adicionar Igreja</h2>
-                    <span class="close-button" data-modal="igrejaModal">&times;</span>
-                </div>
-                <div class="error-message" id="igrejaModalErrorMessage"></div>
-                <form id="igrejaForm">
-                    <input type="hidden" id="igrejaId">
-                    <div class="form-group">
-                        <label for="igrejaNome">Nome da Igreja</label>
-                        <input type="text" id="igrejaNome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="igrejaResponsavel">Responsável</label>
-                        <input type="text" id="igrejaResponsavel" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="igrejaEmail">Email</label>
-                        <input type="email" id="igrejaEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="igrejaCpfCnpj">CNPJ</label>
-                        <input type="text" id="igrejaCpfCnpj" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="igrejaComissao">Comissão Padrão (%)</label>
-                        <input type="number" id="igrejaComissao" min="0" max="100" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="igrejaStatus">Status</label>
-                        <select id="igrejaStatus" required>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                            <option value="pendente">Pendente</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-danger" data-modal="igrejaModal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                    </div>
-                </form>
+    <!-- Saque Detalhes Modal -->
+    <div id="saqueDetalhesModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Detalhes do Saque</h3>
+                <span class="close-button" onclick="closeModal('saqueDetalhesModal')">&times;</span>
+            </div>
+            <div id="saqueDetalhesContent">
+                <!-- Detalhes do saque serão carregados aqui -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('saqueDetalhesModal')">Fechar</button>
             </div>
         </div>
-
-        <!-- Produto Modal -->
-        <div id="produtoModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="produtoModalTitle">Adicionar Produto</h2>
-                    <span class="close-button" data-modal="produtoModal">&times;</span>
-                </div>
-                <div class="error-message" id="produtoModalErrorMessage"></div>
-                <form id="produtoForm">
-                    <input type="hidden" id="produtoId">
-                    <div class="form-group">
-                        <label for="produtoNome">Nome do Produto</label>
-                        <input type="text" id="produtoNome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="produtoDescricao">Descrição</label>
-                        <textarea id="produtoDescricao"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="produtoPreco">Preço (R$)</label>
-                        <input type="number" id="produtoPreco" min="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="produtoCategoria">Categoria</label>
-                        <input type="text" id="produtoCategoria" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="produtoStatus">Status</label>
-                        <select id="produtoStatus" required>
-                            <option value="ativo">Ativo</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-danger" data-modal="produtoModal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Salvar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Detalhes Venda Modal -->
-        <div id="vendaDetalhesModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Detalhes da Venda</h2>
-                    <span class="close-button" data-modal="vendaDetalhesModal">&times;</span>
-                </div>
-                <div id="vendaDetalhesContent">
-                    <!-- Detalhes da venda serão carregados aqui -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Detalhes Saque Modal -->
-        <div id="saqueDetalhesModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>Detalhes do Saque</h2>
-                    <span class="close-button" data-modal="saqueDetalhesModal">&times;</span>
-                </div>
-                <div id="saqueDetalhesContent">
-                    <!-- Detalhes do saque serão carregados aqui -->
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <script>
-        // Supabase Configuration
+        // ✅ SUPABASE CLIENTE
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Global variables for charts
-        let salesChartInstance;
-        let partnerTypeChartInstance;
+        // ✅ VARIÁVEIS GLOBAIS PARA GRÁFICOS
+        let vendasMensaisChartInstance;
+        let parceirosPorTipoChartInstance;
 
-        // --- UI Elements ---
-        const mainLoadingSpinner = document.getElementById('mainLoadingSpinner');
-        const adminNameSpan = document.getElementById('adminName');
-        const logoutButton = document.getElementById('logoutButton');
-        const logoutButtonHeader = document.getElementById('logoutButtonHeader');
-        const sidebarMenuLinks = document.querySelectorAll('.sidebar-menu a');
-        const contentSections = document.querySelectorAll('.content-section');
-        const currentSectionTitle = document.getElementById('currentSectionTitle');
-
-        // --- Modals and Buttons ---
-        const parceiroModal = document.getElementById('parceiroModal');
-        const parceiroForm = document.getElementById('parceiroForm');
-        const addParceiroBtn = document.getElementById('addParceiroBtn');
-        const exportParceirosCsvBtn = document.getElementById('exportParceirosCsvBtn');
-
-        const igrejaModal = document.getElementById('igrejaModal');
-        const igrejaForm = document.getElementById('igrejaForm');
-        const addIgrejaBtn = document.getElementById('addIgrejaBtn');
-        const exportIgrejasCsvBtn = document.getElementById('exportIgrejasCsvBtn');
-
-        const produtoModal = document.getElementById('produtoModal');
-        const produtoForm = document.getElementById('produtoForm');
-        const addProdutoBtn = document.getElementById('addProdutoBtn');
-        const exportProdutosCsvBtn = document.getElementById('exportProdutosCsvBtn');
-
-        const vendaDetalhesModal = document.getElementById('vendaDetalhesModal');
-        const saqueDetalhesModal = document.getElementById('saqueDetalhesModal');
-
-        const configForm = document.getElementById('configForm');
-        const exportVendasCsvBtn = document.getElementById('exportVendasCsvBtn');
-        const exportSaquesCsvBtn = document.getElementById('exportSaquesCsvBtn');
-
-        // --- Utility Functions ---
-        function showSpinner(element) { element.classList.add('show'); }
-        function hideSpinner(element) { element.classList.remove('show'); }
-        function showErrorMessage(element, message) { element.textContent = message; element.classList.add('show'); }
-        function hideErrorMessage(element) { element.classList.remove('show'); }
-
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        // ✅ FUNÇÕES UTILITÁRIAS GLOBAIS
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('show');
         }
 
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
         }
 
-        // --- Authentication and Authorization ---
-        async function checkAuth() {
-            showSpinner(mainLoadingSpinner);
-            const { data: { session }, error } = await supabase.auth.getSession();
-
-            if (error || !session) {
-                console.error('Nenhuma sessão ativa ou erro:', error);
-                window.location.href = '../login.html'; // Redirect to login
-                return;
-            }
-
-            const { data: userData, error: userError } = await supabase
-                .from('parceiros')
-                .select('nome_completo, tipo_parceiro')
-                .eq('email', session.user.email)
-                .single();
-
-            if (userError || !userData || userData.tipo_parceiro !== 'admin') {
-                console.error('Usuário não é admin ou não encontrado:', userError);
-                await supabase.auth.signOut();
-                window.location.href = '../login.html'; // Redirect if not admin
-                return;
-            }
-
-            adminNameSpan.textContent = userData.nome_completo;
-            hideSpinner(mainLoadingSpinner);
-            showSection('dashboard'); // Show dashboard after successful auth
+        function showAlert(message, type, elementId) {
+            const alertElement = document.getElementById(elementId);
+            alertElement.textContent = message;
+            alertElement.className = `alert show alert-${type}`;
+            setTimeout(() => {
+                alertElement.classList.remove('show');
+            }, 5000);
         }
 
-        async function handleLogout() {
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                console.error('Erro ao fazer logout:', error);
-            }
-            window.location.href = '../login.html';
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
-        // --- Navigation ---
-        function showSection(sectionId) {
-            contentSections.forEach(section => {
-                section.classList.remove('active');
-            });
-            document.getElementById(sectionId).classList.add('active');
-
-            sidebarMenuLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.dataset.section === sectionId) {
-                    link.classList.add('active');
+        // ✅ CARREGAR DADOS DO USUÁRIO LOGADO
+        async function loadUserData() {
+            showLoading();
+            try {
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                if (sessionError || !session) {
+                    console.error('Nenhuma sessão ativa ou erro:', sessionError);
+                    window.location.href = '../login.html';
+                    return;
                 }
-            });
-            currentSectionTitle.textContent = sectionId.charAt(0).toUpperCase() + sectionId.slice(1); // Capitalize first letter
+                
+                const { data: userData, error: userError } = await supabase
+                    .from('parceiros')
+                    .select('nome_completo, email, tipo_parceiro')
+                    .eq('email', session.user.email)
+                    .single();
+                
+                if (userError || !userData) {
+                    console.error('Usuário não encontrado na tabela parceiros ou erro:', userError);
+                    await supabase.auth.signOut();
+                    window.location.href = '../login.html';
+                    return;
+                }
 
-            // Load data for the active section
-            switch (sectionId) {
-                case 'dashboard':
-                    loadDashboardData();
-                    break;
-                case 'parceiros':
-                    loadParceiros();
-                    break;
-                case 'igrejas':
-                    loadIgrejas();
-                    break;
-                case 'produtos':
-                    loadProdutos();
-                    break;
-                case 'vendas':
-                    loadVendas();
-                    break;
-                case 'saques':
-                    loadSaques();
-                    break;
-                case 'configuracoes':
-                    loadConfiguracoes();
-                    break;
+                if (userData.tipo_parceiro !== 'admin') {
+                    alert('Acesso negado. Você não tem permissão de administrador.');
+                    await supabase.auth.signOut();
+                    window.location.href = '../login.html';
+                    return;
+                }
+                
+                document.getElementById('userName').textContent = userData.nome_completo;
+                document.getElementById('userEmail').textContent = userData.email;
+                console.log('✅ Dados do usuário carregados:', userData.nome_completo);
+
+            } catch (error) {
+                console.error('Erro ao carregar dados do usuário:', error);
+                await supabase.auth.signOut();
+                window.location.href = '../login.html';
+            } finally {
+                hideLoading();
             }
         }
 
-        // --- Dashboard Functions ---
-        async function loadDashboardData() {
-            showSpinner(mainLoadingSpinner);
+        // ✅ NAVEGAÇÃO ENTRE SEÇÕES
+        function setupNavigation() {
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    
+                    const sectionId = this.getAttribute('data-section');
+                    const sectionElement = document.getElementById(sectionId + 'Section');
+                    if (sectionElement) {
+                        sectionElement.style.display = 'block';
+                        document.getElementById('pageTitle').textContent = this.textContent.trim().split(' ')[1]; // Pega o texto após o ícone
+                        
+                        // Carregar dados da seção
+                        switch (sectionId) {
+                            case 'dashboard': loadDashboard(); break;
+                            case 'parceiros': loadParceiros(); break;
+                            case 'igrejas': loadIgrejas(); break;
+                            case 'produtos': loadProdutos(); break;
+                            case 'vendas': loadVendas(); break;
+                            case 'saques': loadSaques(); break;
+                            case 'configuracoes': loadConfiguracoes(); break;
+                        }
+                    }
+                });
+            });
+        }
+
+        // ✅ FUNÇÃO DE LOGOUT
+        async function handleLogout() {
+            showLoading();
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                window.location.href = '../login.html';
+            } catch (error) {
+                console.error('Erro ao fazer logout:', error);
+                showAlert('Erro ao sair. Tente novamente.', 'danger', 'parceirosAlert'); // Usando um alert genérico
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function setupLogout() {
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            document.getElementById('logoutBtnMobile').addEventListener('click', handleLogout);
+        }
+
+        // ✅ DASHBOARD SECTION
+        async function loadDashboard() {
+            showLoading();
             try {
                 // Total Parceiros
                 const { count: totalParceiros } = await supabase.from('parceiros').select('*', { count: 'exact' });
                 document.getElementById('totalParceiros').textContent = totalParceiros || 0;
 
-                // Total Igrejas (filtrar por tipo_parceiro = 'igreja')
+                // Total Igrejas (filtrando por tipo_parceiro = 'igreja')
                 const { count: totalIgrejas } = await supabase.from('parceiros').select('*', { count: 'exact' }).eq('tipo_parceiro', 'igreja');
                 document.getElementById('totalIgrejas').textContent = totalIgrejas || 0;
 
@@ -1084,57 +1135,48 @@
                 const { count: totalProdutos } = await supabase.from('produtos').select('*', { count: 'exact' });
                 document.getElementById('totalProdutos').textContent = totalProdutos || 0;
 
-                // Vendas Mês (simplificado)
-                const { data: vendas, error: vendasError } = await supabase.from('vendas').select('valor_total, created_at');
+                // Total Vendas (somando valor_total da tabela vendas)
+                const { data: vendasData, error: vendasError } = await supabase.from('vendas').select('valor_total');
                 if (vendasError) throw vendasError;
+                const totalVendas = vendasData.reduce((sum, venda) => sum + (venda.valor_total || 0), 0);
+                document.getElementById('totalVendas').textContent = `R$ ${totalVendas.toFixed(2).replace('.', ',')}`;
 
-                const currentMonthSales = vendas.filter(v => {
-                    const saleDate = new Date(v.created_at);
-                    const now = new Date();
-                    return saleDate.getMonth() === now.getMonth() && saleDate.getFullYear() === now.getFullYear();
-                }).reduce((sum, v) => sum + v.valor_total, 0);
-                document.getElementById('vendasMes').textContent = formatCurrency(currentMonthSales);
+                // Gráfico de Vendas Mensais (dados mockados para exemplo)
+                renderVendasMensaisChart();
 
-                // Load Charts
-                renderSalesChart(vendas);
-                renderPartnerTypeChart();
+                // Gráfico de Parceiros por Tipo
+                renderParceirosPorTipoChart();
 
             } catch (error) {
-                console.error('Erro ao carregar dados do dashboard:', error);
+                console.error('Erro ao carregar dashboard:', error);
+                showAlert('Erro ao carregar dados do dashboard.', 'danger', 'parceirosAlert');
             } finally {
-                hideSpinner(mainLoadingSpinner);
+                hideLoading();
             }
         }
 
-        function renderSalesChart(salesData) {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            if (salesChartInstance) salesChartInstance.destroy();
-
-            const monthlySales = {};
-            salesData.forEach(sale => {
-                const date = new Date(sale.created_at);
-                const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
-                monthlySales[monthYear] = (monthlySales[monthYear] || 0) + sale.valor_total;
-            });
-
-            const labels = Object.keys(monthlySales).sort();
-            const data = labels.map(label => monthlySales[label]);
-
-            salesChartInstance = new Chart(ctx, {
+        function renderVendasMensaisChart() {
+            const ctx = document.getElementById('vendasMensaisChart').getContext('2d');
+            if (vendasMensaisChartInstance) vendasMensaisChartInstance.destroy();
+            vendasMensaisChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
                     datasets: [{
                         label: 'Vendas (R$)',
-                        data: data,
-                        borderColor: var(--primary-color),
+                        data: [1200, 1900, 3000, 5000, 2300, 4000],
+                        borderColor: '#667eea',
                         backgroundColor: 'rgba(102, 126, 234, 0.2)',
                         fill: true,
-                        tension: 0.1
+                        tension: 0.3
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
                     scales: {
                         y: { beginAtZero: true }
                     }
@@ -1142,29 +1184,35 @@
             });
         }
 
-        async function renderPartnerTypeChart() {
-            const ctx = document.getElementById('partnerTypeChart').getContext('2d');
-            if (partnerTypeChartInstance) partnerTypeChartInstance.destroy();
+        async function renderParceirosPorTipoChart() {
+            const ctx = document.getElementById('parceirosPorTipoChart').getContext('2d');
+            if (parceirosPorTipoChartInstance) parceirosPorTipoChartInstance.destroy();
 
-            const { data, error } = await supabase.from('parceiros').select('tipo_parceiro');
+            const { data, error } = await supabase
+                .from('parceiros')
+                .select('tipo_parceiro', { count: 'exact' });
+
             if (error) {
-                console.error('Erro ao carregar tipos de parceiros para o gráfico:', error);
+                console.error('Erro ao buscar tipos de parceiros para o gráfico:', error);
                 return;
             }
 
-            const partnerTypes = {};
-            data.forEach(p => {
-                partnerTypes[p.tipo_parceiro] = (partnerTypes[p.tipo_parceiro] || 0) + 1;
-            });
+            const counts = data.reduce((acc, p) => {
+                acc[p.tipo_parceiro] = (acc[p.tipo_parceiro] || 0) + 1;
+                return acc;
+            }, {});
 
-            partnerTypeChartInstance = new Chart(ctx, {
+            const labels = Object.keys(counts);
+            const chartData = Object.values(counts);
+
+            parceirosPorTipoChartInstance = new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: Object.keys(partnerTypes),
+                    labels: labels,
                     datasets: [{
-                        data: Object.values(partnerTypes),
+                        data: chartData,
                         backgroundColor: [
-                            '#667eea', '#764ba2', '#ffc107', '#28a745', '#17a2b8'
+                            '#667eea', '#764ba2', '#ff6384', '#ff9f40', '#4bc0c0', '#9966ff'
                         ],
                         hoverOffset: 4
                     }]
@@ -1172,668 +1220,717 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: { position: 'top' }
+                        legend: { position: 'right' },
+                        title: { display: false }
                     }
                 }
             });
         }
 
-        // --- Parceiros CRUD ---
+        // ✅ PARCEIROS SECTION
         async function loadParceiros() {
-            showSpinner(document.getElementById('parceirosLoadingSpinner'));
-            hideErrorMessage(document.getElementById('parceirosErrorMessage'));
+            showLoading();
             try {
-                const { data, error } = await supabase.from('parceiros').select('*');
+                const filterTipo = document.getElementById('filterParceiroTipo').value;
+                const filterStatus = document.getElementById('filterParceiroStatus').value;
+
+                let query = supabase.from('parceiros').select('*');
+
+                if (filterTipo) query = query.eq('tipo_parceiro', filterTipo);
+                if (filterStatus) query = query.eq('status', filterStatus);
+
+                const { data, error } = await query.order('nome_completo', { ascending: true });
                 if (error) throw error;
-                renderParceirosTable(data);
+
+                const tbody = document.getElementById('parceirosTable').querySelector('tbody');
+                tbody.innerHTML = '';
+
+                data.forEach(parceiro => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = parceiro.nome_completo;
+                    row.insertCell().textContent = parceiro.email;
+                    row.insertCell().textContent = parceiro.tipo_parceiro;
+                    row.insertCell().textContent = parceiro.status;
+                    const actionsCell = row.insertCell();
+                    actionsCell.className = 'actions';
+                    actionsCell.innerHTML = `
+                        <button class="edit" onclick="openParceiroModal(${JSON.stringify(parceiro).replace(/"/g, '&quot;')})">Editar</button>
+                        <button class="delete" onclick="deleteParceiro('${parceiro.id}')">Excluir</button>
+                    `;
+                });
+                showAlert('Parceiros carregados com sucesso!', 'success', 'parceirosAlert');
             } catch (error) {
-                showErrorMessage(document.getElementById('parceirosErrorMessage'), 'Erro ao carregar parceiros: ' + error.message);
                 console.error('Erro ao carregar parceiros:', error);
+                showAlert('Erro ao carregar parceiros: ' + error.message, 'danger', 'parceirosAlert');
             } finally {
-                hideSpinner(document.getElementById('parceirosLoadingSpinner'));
+                hideLoading();
             }
         }
 
-        function renderParceirosTable(parceiros) {
-            const tableBody = document.getElementById('parceirosTable').querySelector('tbody');
-            tableBody.innerHTML = '';
-            parceiros.forEach(parceiro => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>${parceiro.id.substring(0, 8)}...</td>
-                    <td>${parceiro.nome_completo}</td>
-                    <td>${parceiro.email}</td>
-                    <td>${parceiro.tipo_parceiro}</td>
-                    <td>${parceiro.status}</td>
-                    <td>${parceiro.comissao_padrao}%</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editParceiro('${parceiro.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteParceiro('${parceiro.id}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-            });
+        function openParceiroModal(parceiro = {}) {
+            const modal = document.getElementById('parceiroModal');
+            document.getElementById('parceiroModalTitle').textContent = parceiro.id ? 'Editar Parceiro' : 'Adicionar Parceiro';
+            document.getElementById('parceiroId').value = parceiro.id || '';
+            document.getElementById('parceiroNome').value = parceiro.nome_completo || '';
+            document.getElementById('parceiroEmail').value = parceiro.email || '';
+            document.getElementById('parceiroCpfCnpj').value = parceiro.cpf_cnpj || '';
+            document.getElementById('parceiroTelefone').value = parceiro.telefone || '';
+            document.getElementById('parceiroTipo').value = parceiro.tipo_parceiro || 'parceiro';
+            document.getElementById('parceiroStatus').value = parceiro.status || 'pendente';
+            document.getElementById('parceiroComissaoPadrao').value = parceiro.comissao_padrao || 0;
+            modal.style.display = 'flex';
         }
 
-        async function addOrUpdateParceiro(event) {
-            event.preventDefault();
-            showSpinner(parceiroModal.querySelector('.loading-spinner') || mainLoadingSpinner); // Use modal spinner if available
-            hideErrorMessage(document.getElementById('parceiroModalErrorMessage'));
-
-            const id = document.getElementById('parceiroId').value;
-            const nome_completo = document.getElementById('parceiroNome').value;
-            const email = document.getElementById('parceiroEmail').value;
-            const tipo_parceiro = document.getElementById('parceiroTipo').value;
-            const cpf_cnpj = document.getElementById('parceiroCpfCnpj').value;
-            const comissao_padrao = parseFloat(document.getElementById('parceiroComissao').value);
-            const status = document.getElementById('parceiroStatus').value;
-
+        document.getElementById('parceiroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
             try {
-                let data, error;
-                if (id) { // Update
-                    ({ data, error } = await supabase
-                        .from('parceiros')
-                        .update({ nome_completo, email, tipo_parceiro, cpf_cnpj, comissao_padrao, status })
-                        .eq('id', id));
-                } else { // Insert
-                    ({ data, error } = await supabase
-                        .from('parceiros')
-                        .insert([{ nome_completo, email, tipo_parceiro, cpf_cnpj, comissao_padrao, status }]));
+                const id = document.getElementById('parceiroId').value;
+                const data = {
+                    nome_completo: document.getElementById('parceiroNome').value,
+                    email: document.getElementById('parceiroEmail').value,
+                    cpf_cnpj: document.getElementById('parceiroCpfCnpj').value,
+                    telefone: document.getElementById('parceiroTelefone').value,
+                    tipo_parceiro: document.getElementById('parceiroTipo').value,
+                    status: document.getElementById('parceiroStatus').value,
+                    comissao_padrao: parseFloat(document.getElementById('parceiroComissaoPadrao').value)
+                };
+
+                let error;
+                if (id) {
+                    ({ error } = await supabase.from('parceiros').update(data).eq('id', id));
+                } else {
+                    ({ error } = await supabase.from('parceiros').insert([data]));
                 }
                 if (error) throw error;
-                closeModal(parceiroModal);
+
+                showAlert('Parceiro salvo com sucesso!', 'success', 'parceirosAlert');
+                closeModal('parceiroModal');
                 loadParceiros();
             } catch (error) {
-                showErrorMessage(document.getElementById('parceiroModalErrorMessage'), 'Erro ao salvar parceiro: ' + error.message);
                 console.error('Erro ao salvar parceiro:', error);
+                showAlert('Erro ao salvar parceiro: ' + error.message, 'danger', 'parceiroModalAlert');
             } finally {
-                hideSpinner(parceiroModal.querySelector('.loading-spinner') || mainLoadingSpinner);
+                hideLoading();
             }
-        }
-
-        async function editParceiro(id) {
-            showSpinner(mainLoadingSpinner);
-            try {
-                const { data, error } = await supabase.from('parceiros').select('*').eq('id', id).single();
-                if (error) throw error;
-
-                document.getElementById('parceiroModalTitle').textContent = 'Editar Parceiro';
-                document.getElementById('parceiroId').value = data.id;
-                document.getElementById('parceiroNome').value = data.nome_completo;
-                document.getElementById('parceiroEmail').value = data.email;
-                document.getElementById('parceiroTipo').value = data.tipo_parceiro;
-                document.getElementById('parceiroCpfCnpj').value = data.cpf_cnpj;
-                document.getElementById('parceiroComissao').value = data.comissao_padrao;
-                document.getElementById('parceiroStatus').value = data.status;
-                openModal(parceiroModal);
-            } catch (error) {
-                showErrorMessage(document.getElementById('parceirosErrorMessage'), 'Erro ao carregar parceiro para edição: ' + error.message);
-                console.error('Erro ao carregar parceiro para edição:', error);
-            } finally {
-                hideSpinner(mainLoadingSpinner);
-            }
-        }
+        });
 
         async function deleteParceiro(id) {
             if (!confirm('Tem certeza que deseja excluir este parceiro?')) return;
-            showSpinner(mainLoadingSpinner);
+            showLoading();
             try {
                 const { error } = await supabase.from('parceiros').delete().eq('id', id);
                 if (error) throw error;
+                showAlert('Parceiro excluído com sucesso!', 'success', 'parceirosAlert');
                 loadParceiros();
             } catch (error) {
-                showErrorMessage(document.getElementById('parceirosErrorMessage'), 'Erro ao excluir parceiro: ' + error.message);
                 console.error('Erro ao excluir parceiro:', error);
+                showAlert('Erro ao excluir parceiro: ' + error.message, 'danger', 'parceirosAlert');
             } finally {
-                hideSpinner(mainLoadingSpinner);
+                hideLoading();
             }
         }
 
-        // --- Igrejas CRUD (simplificado, similar a Parceiros) ---
+        async function exportParceirosCSV() {
+            showLoading();
+            try {
+                const { data, error } = await supabase.from('parceiros').select('*');
+                if (error) throw error;
+
+                const headers = Object.keys(data[0]);
+                const csv = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'parceiros.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showAlert('Parceiros exportados com sucesso!', 'success', 'parceirosAlert');
+            } catch (error) {
+                console.error('Erro ao exportar parceiros:', error);
+                showAlert('Erro ao exportar parceiros: ' + error.message, 'danger', 'parceirosAlert');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        document.getElementById('addParceiroBtn').addEventListener('click', () => openParceiroModal());
+        document.getElementById('exportParceirosCSVBtn').addEventListener('click', exportParceirosCSV);
+        document.getElementById('filterParceiroTipo').addEventListener('change', loadParceiros);
+        document.getElementById('filterParceiroStatus').addEventListener('change', loadParceiros);
+
+
+        // ✅ IGREJAS SECTION
         async function loadIgrejas() {
-            showSpinner(document.getElementById('igrejasLoadingSpinner'));
-            hideErrorMessage(document.getElementById('igrejasErrorMessage'));
+            showLoading();
+            try {
+                const { data, error } = await supabase.from('parceiros').select('*').eq('tipo_parceiro', 'igreja').order('nome_completo', { ascending: true });
+                if (error) throw error;
+
+                const tbody = document.getElementById('igrejasTable').querySelector('tbody');
+                tbody.innerHTML = '';
+
+                data.forEach(igreja => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = igreja.nome_igreja || 'N/A';
+                    row.insertCell().textContent = igreja.responsavel_igreja || 'N/A';
+                    row.insertCell().textContent = igreja.email;
+                    row.insertCell().textContent = igreja.status;
+                    const actionsCell = row.insertCell();
+                    actionsCell.className = 'actions';
+                    actionsCell.innerHTML = `
+                        <button class="edit" onclick="openIgrejaModal(${JSON.stringify(igreja).replace(/"/g, '&quot;')})">Editar</button>
+                        <button class="delete" onclick="deleteParceiro('${igreja.id}')">Excluir</button>
+                    `;
+                });
+                showAlert('Igrejas carregadas com sucesso!', 'success', 'igrejasAlert');
+            } catch (error) {
+                console.error('Erro ao carregar igrejas:', error);
+                showAlert('Erro ao carregar igrejas: ' + error.message, 'danger', 'igrejasAlert');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function openIgrejaModal(igreja = {}) {
+            const modal = document.getElementById('igrejaModal');
+            document.getElementById('igrejaModalTitle').textContent = igreja.id ? 'Editar Igreja' : 'Adicionar Igreja';
+            document.getElementById('igrejaId').value = igreja.id || '';
+            document.getElementById('igrejaNome').value = igreja.nome_igreja || '';
+            document.getElementById('igrejaResponsavel').value = igreja.responsavel_igreja || '';
+            document.getElementById('igrejaEmail').value = igreja.email || '';
+            document.getElementById('igrejaCpfCnpj').value = igreja.cpf_cnpj || '';
+            document.getElementById('igrejaTelefone').value = igreja.telefone || '';
+            document.getElementById('igrejaStatus').value = igreja.status || 'pendente';
+            document.getElementById('igrejaComissaoPadrao').value = igreja.comissao_padrao || 0;
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('igrejaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
+            try {
+                const id = document.getElementById('igrejaId').value;
+                const data = {
+                    nome_igreja: document.getElementById('igrejaNome').value,
+                    responsavel_igreja: document.getElementById('igrejaResponsavel').value,
+                    email: document.getElementById('igrejaEmail').value,
+                    cpf_cnpj: document.getElementById('igrejaCpfCnpj').value,
+                    telefone: document.getElementById('igrejaTelefone').value,
+                    tipo_parceiro: 'igreja', // Sempre 'igreja' para este modal
+                    status: document.getElementById('igrejaStatus').value,
+                    comissao_padrao: parseFloat(document.getElementById('igrejaComissaoPadrao').value)
+                };
+
+                let error;
+                if (id) {
+                    ({ error } = await supabase.from('parceiros').update(data).eq('id', id));
+                } else {
+                    ({ error } = await supabase.from('parceiros').insert([data]));
+                }
+                if (error) throw error;
+
+                showAlert('Igreja salva com sucesso!', 'success', 'igrejasAlert');
+                closeModal('igrejaModal');
+                loadIgrejas();
+            } catch (error) {
+                console.error('Erro ao salvar igreja:', error);
+                showAlert('Erro ao salvar igreja: ' + error.message, 'danger', 'igrejaModalAlert');
+            } finally {
+                hideLoading();
+            }
+        });
+
+        async function exportIgrejasCSV() {
+            showLoading();
             try {
                 const { data, error } = await supabase.from('parceiros').select('*').eq('tipo_parceiro', 'igreja');
                 if (error) throw error;
-                renderIgrejasTable(data);
+
+                const headers = Object.keys(data[0]);
+                const csv = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'igrejas.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showAlert('Igrejas exportadas com sucesso!', 'success', 'igrejasAlert');
             } catch (error) {
-                showErrorMessage(document.getElementById('igrejasErrorMessage'), 'Erro ao carregar igrejas: ' + error.message);
-                console.error('Erro ao carregar igrejas:', error);
+                console.error('Erro ao exportar igrejas:', error);
+                showAlert('Erro ao exportar igrejas: ' + error.message, 'danger', 'igrejasAlert');
             } finally {
-                hideSpinner(document.getElementById('igrejasLoadingSpinner'));
+                hideLoading();
             }
         }
 
-        function renderIgrejasTable(igrejas) {
-            const tableBody = document.getElementById('igrejasTable').querySelector('tbody');
-            tableBody.innerHTML = '';
-            igrejas.forEach(igreja => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>${igreja.id.substring(0, 8)}...</td>
-                    <td>${igreja.nome_igreja || igreja.nome_completo}</td>
-                    <td>${igreja.responsavel_igreja || 'N/A'}</td>
-                    <td>${igreja.email}</td>
-                    <td>${igreja.status}</td>
-                    <td>${igreja.comissao_padrao}%</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editIgreja('${igreja.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteIgreja('${igreja.id}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-            });
-        }
+        document.getElementById('addIgrejaBtn').addEventListener('click', () => openIgrejaModal());
+        document.getElementById('exportIgrejasCSVBtn').addEventListener('click', exportIgrejasCSV);
 
-        async function addOrUpdateIgreja(event) {
-            event.preventDefault();
-            showSpinner(igrejaModal.querySelector('.loading-spinner') || mainLoadingSpinner);
-            hideErrorMessage(document.getElementById('igrejaModalErrorMessage'));
 
-            const id = document.getElementById('igrejaId').value;
-            const nome_igreja = document.getElementById('igrejaNome').value;
-            const responsavel_igreja = document.getElementById('igrejaResponsavel').value;
-            const email = document.getElementById('igrejaEmail').value;
-            const cpf_cnpj = document.getElementById('igrejaCpfCnpj').value;
-            const comissao_padrao = parseFloat(document.getElementById('igrejaComissao').value);
-            const status = document.getElementById('igrejaStatus').value;
-
-            try {
-                let data, error;
-                const updateData = { nome_igreja, responsavel_igreja, email, cpf_cnpj, comissao_padrao, status, tipo_parceiro: 'igreja' };
-                if (id) { // Update
-                    ({ data, error } = await supabase
-                        .from('parceiros')
-                        .update(updateData)
-                        .eq('id', id));
-                } else { // Insert
-                    ({ data, error } = await supabase
-                        .from('parceiros')
-                        .insert([updateData]));
-                }
-                if (error) throw error;
-                closeModal(igrejaModal);
-                loadIgrejas();
-            } catch (error) {
-                showErrorMessage(document.getElementById('igrejaModalErrorMessage'), 'Erro ao salvar igreja: ' + error.message);
-                console.error('Erro ao salvar igreja:', error);
-            } finally {
-                hideSpinner(igrejaModal.querySelector('.loading-spinner') || mainLoadingSpinner);
-            }
-        }
-
-        async function editIgreja(id) {
-            showSpinner(mainLoadingSpinner);
-            try {
-                const { data, error } = await supabase.from('parceiros').select('*').eq('id', id).single();
-                if (error) throw error;
-
-                document.getElementById('igrejaModalTitle').textContent = 'Editar Igreja';
-                document.getElementById('igrejaId').value = data.id;
-                document.getElementById('igrejaNome').value = data.nome_igreja || data.nome_completo;
-                document.getElementById('igrejaResponsavel').value = data.responsavel_igreja || '';
-                document.getElementById('igrejaEmail').value = data.email;
-                document.getElementById('igrejaCpfCnpj').value = data.cpf_cnpj;
-                document.getElementById('igrejaComissao').value = data.comissao_padrao;
-                document.getElementById('igrejaStatus').value = data.status;
-                openModal(igrejaModal);
-            } catch (error) {
-                showErrorMessage(document.getElementById('igrejasErrorMessage'), 'Erro ao carregar igreja para edição: ' + error.message);
-                console.error('Erro ao carregar igreja para edição:', error);
-            } finally {
-                hideSpinner(mainLoadingSpinner);
-            }
-        }
-
-        async function deleteIgreja(id) {
-            if (!confirm('Tem certeza que deseja excluir esta igreja?')) return;
-            showSpinner(mainLoadingSpinner);
-            try {
-                const { error } = await supabase.from('parceiros').delete().eq('id', id);
-                if (error) throw error;
-                loadIgrejas();
-            } catch (error) {
-                showErrorMessage(document.getElementById('igrejasErrorMessage'), 'Erro ao excluir igreja: ' + error.message);
-                console.error('Erro ao excluir igreja:', error);
-            } finally {
-                hideSpinner(mainLoadingSpinner);
-            }
-        }
-
-        // --- Produtos CRUD ---
+        // ✅ PRODUTOS SECTION
         async function loadProdutos() {
-            showSpinner(document.getElementById('produtosLoadingSpinner'));
-            hideErrorMessage(document.getElementById('produtosErrorMessage'));
+            showLoading();
             try {
-                const { data, error } = await supabase.from('produtos').select('*');
+                const { data, error } = await supabase.from('produtos').select('*').order('nome', { ascending: true });
                 if (error) throw error;
-                renderProdutosTable(data);
+
+                const tbody = document.getElementById('produtosTable').querySelector('tbody');
+                tbody.innerHTML = '';
+
+                data.forEach(produto => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = produto.nome;
+                    row.insertCell().textContent = produto.descricao || 'N/A';
+                    row.insertCell().textContent = `R$ ${produto.preco.toFixed(2).replace('.', ',')}`;
+                    row.insertCell().textContent = produto.status;
+                    const actionsCell = row.insertCell();
+                    actionsCell.className = 'actions';
+                    actionsCell.innerHTML = `
+                        <button class="edit" onclick="openProdutoModal(${JSON.stringify(produto).replace(/"/g, '&quot;')})">Editar</button>
+                        <button class="delete" onclick="deleteProduto('${produto.id}')">Excluir</button>
+                    `;
+                });
+                showAlert('Produtos carregados com sucesso!', 'success', 'produtosAlert');
             } catch (error) {
-                showErrorMessage(document.getElementById('produtosErrorMessage'), 'Erro ao carregar produtos: ' + error.message);
                 console.error('Erro ao carregar produtos:', error);
+                showAlert('Erro ao carregar produtos: ' + error.message, 'danger', 'produtosAlert');
             } finally {
-                hideSpinner(document.getElementById('produtosLoadingSpinner'));
+                hideLoading();
             }
         }
 
-        function renderProdutosTable(produtos) {
-            const tableBody = document.getElementById('produtosTable').querySelector('tbody');
-            tableBody.innerHTML = '';
-            produtos.forEach(produto => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>${produto.id.substring(0, 8)}...</td>
-                    <td>${produto.nome}</td>
-                    <td>${formatCurrency(produto.preco)}</td>
-                    <td>${produto.categoria}</td>
-                    <td>${produto.status}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm" onclick="editProduto('${produto.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteProduto('${produto.id}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                `;
-            });
+        function openProdutoModal(produto = {}) {
+            const modal = document.getElementById('produtoModal');
+            document.getElementById('produtoModalTitle').textContent = produto.id ? 'Editar Produto' : 'Adicionar Produto';
+            document.getElementById('produtoId').value = produto.id || '';
+            document.getElementById('produtoNome').value = produto.nome || '';
+            document.getElementById('produtoDescricao').value = produto.descricao || '';
+            document.getElementById('produtoPreco').value = produto.preco || 0;
+            document.getElementById('produtoStatus').value = produto.status || 'ativo';
+            modal.style.display = 'flex';
         }
 
-        async function addOrUpdateProduto(event) {
-            event.preventDefault();
-            showSpinner(produtoModal.querySelector('.loading-spinner') || mainLoadingSpinner);
-            hideErrorMessage(document.getElementById('produtoModalErrorMessage'));
-
-            const id = document.getElementById('produtoId').value;
-            const nome = document.getElementById('produtoNome').value;
-            const descricao = document.getElementById('produtoDescricao').value;
-            const preco = parseFloat(document.getElementById('produtoPreco').value);
-            const categoria = document.getElementById('produtoCategoria').value;
-            const status = document.getElementById('produtoStatus').value;
-
+        document.getElementById('produtoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
             try {
-                let data, error;
-                if (id) { // Update
-                    ({ data, error } = await supabase
-                        .from('produtos')
-                        .update({ nome, descricao, preco, categoria, status })
-                        .eq('id', id));
-                } else { // Insert
-                    ({ data, error } = await supabase
-                        .from('produtos')
-                        .insert([{ nome, descricao, preco, categoria, status }]));
+                const id = document.getElementById('produtoId').value;
+                const data = {
+                    nome: document.getElementById('produtoNome').value,
+                    descricao: document.getElementById('produtoDescricao').value,
+                    preco: parseFloat(document.getElementById('produtoPreco').value),
+                    status: document.getElementById('produtoStatus').value
+                };
+
+                let error;
+                if (id) {
+                    ({ error } = await supabase.from('produtos').update(data).eq('id', id));
+                } else {
+                    ({ error } = await supabase.from('produtos').insert([data]));
                 }
                 if (error) throw error;
-                closeModal(produtoModal);
+
+                showAlert('Produto salvo com sucesso!', 'success', 'produtosAlert');
+                closeModal('produtoModal');
                 loadProdutos();
             } catch (error) {
-                showErrorMessage(document.getElementById('produtoModalErrorMessage'), 'Erro ao salvar produto: ' + error.message);
                 console.error('Erro ao salvar produto:', error);
+                showAlert('Erro ao salvar produto: ' + error.message, 'danger', 'produtoModalAlert');
             } finally {
-                hideSpinner(produtoModal.querySelector('.loading-spinner') || mainLoadingSpinner);
+                hideLoading();
             }
-        }
-
-        async function editProduto(id) {
-            showSpinner(mainLoadingSpinner);
-            try {
-                const { data, error } = await supabase.from('produtos').select('*').eq('id', id).single();
-                if (error) throw error;
-
-                document.getElementById('produtoModalTitle').textContent = 'Editar Produto';
-                document.getElementById('produtoId').value = data.id;
-                document.getElementById('produtoNome').value = data.nome;
-                document.getElementById('produtoDescricao').value = data.descricao;
-                document.getElementById('produtoPreco').value = data.preco;
-                document.getElementById('produtoCategoria').value = data.categoria;
-                document.getElementById('produtoStatus').value = data.status;
-                openModal(produtoModal);
-            } catch (error) {
-                showErrorMessage(document.getElementById('produtosErrorMessage'), 'Erro ao carregar produto para edição: ' + error.message);
-                console.error('Erro ao carregar produto para edição:', error);
-            } finally {
-                hideSpinner(mainLoadingSpinner);
-            }
-        }
+        });
 
         async function deleteProduto(id) {
             if (!confirm('Tem certeza que deseja excluir este produto?')) return;
-            showSpinner(mainLoadingSpinner);
+            showLoading();
             try {
                 const { error } = await supabase.from('produtos').delete().eq('id', id);
                 if (error) throw error;
+                showAlert('Produto excluído com sucesso!', 'success', 'produtosAlert');
                 loadProdutos();
             } catch (error) {
-                showErrorMessage(document.getElementById('produtosErrorMessage'), 'Erro ao excluir produto: ' + error.message);
                 console.error('Erro ao excluir produto:', error);
+                showAlert('Erro ao excluir produto: ' + error.message, 'danger', 'produtosAlert');
             } finally {
-                hideSpinner(mainLoadingSpinner);
+                hideLoading();
             }
         }
 
-        // --- Vendas Management ---
+        async function exportProdutosCSV() {
+            showLoading();
+            try {
+                const { data, error } = await supabase.from('produtos').select('*');
+                if (error) throw error;
+
+                const headers = Object.keys(data[0]);
+                const csv = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'produtos.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showAlert('Produtos exportados com sucesso!', 'success', 'produtosAlert');
+            } catch (error) {
+                console.error('Erro ao exportar produtos:', error);
+                showAlert('Erro ao exportar produtos: ' + error.message, 'danger', 'produtosAlert');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        document.getElementById('addProdutoBtn').addEventListener('click', () => openProdutoModal());
+        document.getElementById('exportProdutosCSVBtn').addEventListener('click', exportProdutosCSV);
+
+
+        // ✅ VENDAS SECTION
         async function loadVendas() {
-            showSpinner(document.getElementById('vendasLoadingSpinner'));
-            hideErrorMessage(document.getElementById('vendasErrorMessage'));
+            showLoading();
             try {
-                const { data, error } = await supabase.from('vendas').select('*, parceiros(nome_completo), produtos(nome)');
-                if (error) throw error;
-                renderVendasTable(data);
-            } catch (error) {
-                showErrorMessage(document.getElementById('vendasErrorMessage'), 'Erro ao carregar vendas: ' + error.message);
-                console.error('Erro ao carregar vendas:', error);
-            } finally {
-                hideSpinner(document.getElementById('vendasLoadingSpinner'));
-            }
-        }
-
-        function renderVendasTable(vendas) {
-            const tableBody = document.getElementById('vendasTable').querySelector('tbody');
-            tableBody.innerHTML = '';
-            vendas.forEach(venda => {
-                const row = tableBody.insertRow();
-                row.innerHTML = `
-                    <td>${venda.id.substring(0, 8)}...</td>
-                    <td>${venda.parceiros.nome_completo}</td>
-                    <td>${venda.produtos.nome}</td>
-                    <td>${formatCurrency(venda.valor_total)}</td>
-                    <td>${formatCurrency(venda.valor_comissao)}</td>
-                    <td>${formatDate(venda.created_at)}</td>
-                    <td>${venda.status}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm" onclick="viewVendaDetails('${venda.id}')"><i class="fas fa-eye"></i></button>
-                    </td>
-                `;
-            });
-        }
-
-        async function viewVendaDetails(id) {
-            showSpinner(mainLoadingSpinner);
-            try {
-                const { data, error } = await supabase.from('vendas').select('*, parceiros(nome_completo, email), produtos(nome, preco)').eq('id', id).single();
+                const { data, error } = await supabase
+                    .from('vendas')
+                    .select(`
+                        *,
+                        produtos (nome),
+                        parceiros (nome_completo)
+                    `)
+                    .order('data_venda', { ascending: false });
                 if (error) throw error;
 
-                const detailsHtml = `
-                    <p><strong>ID Venda:</strong> ${data.id}</p>
-                    <p><strong>Parceiro:</strong> ${data.parceiros.nome_completo} (${data.parceiros.email})</p>
-                    <p><strong>Produto:</strong> ${data.produtos.nome} (R$ ${data.produtos.preco})</p>
-                    <p><strong>Valor Total:</strong> ${formatCurrency(data.valor_total)}</p>
-                    <p><strong>Valor Comissão:</strong> ${formatCurrency(data.valor_comissao)}</p>
-                    <p><strong>Data:</strong> ${formatDate(data.created_at)}</p>
-                    <p><strong>Status:</strong> ${data.status}</p>
-                    <p><strong>Quantidade:</strong> ${data.quantidade}</p>
-                `;
-                document.getElementById('vendaDetalhesContent').innerHTML = detailsHtml;
-                openModal(vendaDetalhesModal);
-            } catch (error) {
-                showErrorMessage(document.getElementById('vendasErrorMessage'), 'Erro ao carregar detalhes da venda: ' + error.message);
-                console.error('Erro ao carregar detalhes da venda:', error);
-            } finally {
-                hideSpinner(mainLoadingSpinner);
-            }
-        }
+                const tbody = document.getElementById('vendasTable').querySelector('tbody');
+                tbody.innerHTML = '';
 
-        // --- Saques Management ---
-        async function loadSaques() {
-            showSpinner(document.getElementById('saquesLoadingSpinner'));
-            hideErrorMessage(document.getElementById('saquesErrorMessage'));
-            try {
-                const { data, error } = await supabase.from('saques').select('*, parceiros(nome_completo, email)');
-                if (error) throw error;
-                renderSaquesTable(data);
-            } catch (error) {
-                showErrorMessage(document.getElementById('saquesErrorMessage'), 'Erro ao carregar saques: ' + error.message);
-                console.error('Erro ao carregar saques:', error);
-            } finally {
-                hideSpinner(document.getElementById('saquesLoadingSpinner'));
-            }
-        }
-
-        function renderSaquesTable(saques) {
-            const tableBody = document.getElementById('saquesTable').querySelector('tbody');
-            tableBody.innerHTML = '';
-            saques.forEach(saque => {
-                const row = tableBody.insertRow();
-                let actions = '';
-                if (saque.status === 'pendente') {
-                    actions = `
-                        <button class="btn btn-success btn-sm" onclick="approveSaque('${saque.id}')"><i class="fas fa-check"></i> Aprovar</button>
-                        <button class="btn btn-danger btn-sm" onclick="rejectSaque('${saque.id}')"><i class="fas fa-times"></i> Rejeitar</button>
+                data.forEach(venda => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = venda.id;
+                    row.insertCell().textContent = venda.produtos ? venda.produtos.nome : 'N/A';
+                    row.insertCell().textContent = venda.parceiros ? venda.parceiros.nome_completo : 'N/A';
+                    row.insertCell().textContent = `R$ ${venda.valor_total.toFixed(2).replace('.', ',')}`;
+                    row.insertCell().textContent = new Date(venda.data_venda).toLocaleDateString();
+                    const actionsCell = row.insertCell();
+                    actionsCell.className = 'actions';
+                    actionsCell.innerHTML = `
+                        <button class="view" onclick="viewVendaDetails(${JSON.stringify(venda).replace(/"/g, '&quot;')})">Ver</button>
                     `;
-                }
-                row.innerHTML = `
-                    <td>${saque.id.substring(0, 8)}...</td>
-                    <td>${saque.parceiros.nome_completo}</td>
-                    <td>${formatCurrency(saque.valor)}</td>
-                    <td>${formatDate(saque.created_at)}</td>
-                    <td>${saque.status}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm" onclick="viewSaqueDetails('${saque.id}')"><i class="fas fa-eye"></i></button>
-                        ${actions}
-                    </td>
-                `;
-            });
+                });
+                showAlert('Vendas carregadas com sucesso!', 'success', 'vendasAlert');
+            } catch (error) {
+                console.error('Erro ao carregar vendas:', error);
+                showAlert('Erro ao carregar vendas: ' + error.message, 'danger', 'vendasAlert');
+            } finally {
+                hideLoading();
+            }
         }
 
-        async function viewSaqueDetails(id) {
-            showSpinner(mainLoadingSpinner);
+        function viewVendaDetails(venda) {
+            const modal = document.getElementById('vendaDetalhesModal');
+            const content = document.getElementById('vendaDetalhesContent');
+            content.innerHTML = `
+                <p><strong>ID:</strong> ${venda.id}</p>
+                <p><strong>Produto:</strong> ${venda.produtos ? venda.produtos.nome : 'N/A'}</p>
+                <p><strong>Parceiro:</strong> ${venda.parceiros ? venda.parceiros.nome_completo : 'N/A'}</p>
+                <p><strong>Valor Total:</strong> R$ ${venda.valor_total.toFixed(2).replace('.', ',')}</p>
+                <p><strong>Comissão Parceiro:</strong> R$ ${venda.comissao_parceiro.toFixed(2).replace('.', ',')}</p>
+                <p><strong>Data da Venda:</strong> ${new Date(venda.data_venda).toLocaleDateString()}</p>
+                <p><strong>Status:</strong> ${venda.status}</p>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        async function exportVendasCSV() {
+            showLoading();
             try {
-                const { data, error } = await supabase.from('saques').select('*, parceiros(nome_completo, email, cpf_cnpj, banco, agencia, conta, tipo_conta, tipo_chave_pix, chave_pix)').eq('id', id).single();
+                const { data, error } = await supabase
+                    .from('vendas')
+                    .select(`
+                        id,
+                        valor_total,
+                        comissao_parceiro,
+                        data_venda,
+                        status,
+                        produtos (nome),
+                        parceiros (nome_completo)
+                    `);
                 if (error) throw error;
 
-                const detailsHtml = `
-                    <p><strong>ID Saque:</strong> ${data.id}</p>
-                    <p><strong>Parceiro:</strong> ${data.parceiros.nome_completo} (${data.parceiros.email})</p>
-                    <p><strong>Valor:</strong> ${formatCurrency(data.valor)}</p>
-                    <p><strong>Data Solicitação:</strong> ${formatDate(data.created_at)}</p>
-                    <p><strong>Status:</strong> ${data.status}</p>
-                    <hr>
-                    <h4>Dados Bancários:</h4>
-                    <p><strong>CPF/CNPJ:</strong> ${data.parceiros.cpf_cnpj || 'N/A'}</p>
-                    <p><strong>Banco:</strong> ${data.parceiros.banco || 'N/A'}</p>
-                    <p><strong>Agência:</strong> ${data.parceiros.agencia || 'N/A'}</p>
-                    <p><strong>Conta:</strong> ${data.parceiros.conta || 'N/A'}</p>
-                    <p><strong>Tipo Conta:</strong> ${data.parceiros.tipo_conta || 'N/A'}</p>
-                    <p><strong>Tipo Chave PIX:</strong> ${data.parceiros.tipo_chave_pix || 'N/A'}</p>
-                    <p><strong>Chave PIX:</strong> ${data.parceiros.chave_pix || 'N/A'}</p>
-                `;
-                document.getElementById('saqueDetalhesContent').innerHTML = detailsHtml;
-                openModal(saqueDetalhesModal);
+                const formattedData = data.map(venda => ({
+                    id: venda.id,
+                    produto_nome: venda.produtos ? venda.produtos.nome : 'N/A',
+                    parceiro_nome: venda.parceiros ? venda.parceiros.nome_completo : 'N/A',
+                    valor_total: venda.valor_total,
+                    comissao_parceiro: venda.comissao_parceiro,
+                    data_venda: new Date(venda.data_venda).toLocaleDateString(),
+                    status: venda.status
+                }));
+
+                const headers = Object.keys(formattedData[0]);
+                const csv = [
+                    headers.join(','),
+                    ...formattedData.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'vendas.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showAlert('Vendas exportadas com sucesso!', 'success', 'vendasAlert');
             } catch (error) {
-                showErrorMessage(document.getElementById('saquesErrorMessage'), 'Erro ao carregar detalhes do saque: ' + error.message);
-                console.error('Erro ao carregar detalhes do saque:', error);
+                console.error('Erro ao exportar vendas:', error);
+                showAlert('Erro ao exportar vendas: ' + error.message, 'danger', 'vendasAlert');
             } finally {
-                hideSpinner(mainLoadingSpinner);
+                hideLoading();
             }
+        }
+
+        document.getElementById('exportVendasCSVBtn').addEventListener('click', exportVendasCSV);
+
+
+        // ✅ SAQUES SECTION
+        async function loadSaques() {
+            showLoading();
+            try {
+                const filterStatus = document.getElementById('filterSaqueStatus').value;
+
+                let query = supabase
+                    .from('saques')
+                    .select(`
+                        *,
+                        parceiros (nome_completo, email)
+                    `);
+
+                if (filterStatus) query = query.eq('status', filterStatus);
+
+                const { data, error } = await query.order('data_solicitacao', { ascending: false });
+                if (error) throw error;
+
+                const tbody = document.getElementById('saquesTable').querySelector('tbody');
+                tbody.innerHTML = '';
+
+                data.forEach(saque => {
+                    const row = tbody.insertRow();
+                    row.insertCell().textContent = saque.id;
+                    row.insertCell().textContent = saque.parceiros ? saque.parceiros.nome_completo : 'N/A';
+                    row.insertCell().textContent = `R$ ${saque.valor_solicitado.toFixed(2).replace('.', ',')}`;
+                    row.insertCell().textContent = saque.status;
+                    row.insertCell().textContent = new Date(saque.data_solicitacao).toLocaleDateString();
+                    const actionsCell = row.insertCell();
+                    actionsCell.className = 'actions';
+                    actionsCell.innerHTML = `
+                        <button class="view" onclick="viewSaqueDetails(${JSON.stringify(saque).replace(/"/g, '&quot;')})">Ver</button>
+                        ${saque.status === 'pendente' ? `<button class="approve" onclick="approveSaque('${saque.id}')">Aprovar</button>` : ''}
+                        ${saque.status === 'pendente' ? `<button class="reject" onclick="rejectSaque('${saque.id}')">Rejeitar</button>` : ''}
+                    `;
+                });
+                showAlert('Saques carregados com sucesso!', 'success', 'saquesAlert');
+            } catch (error) {
+                console.error('Erro ao carregar saques:', error);
+                showAlert('Erro ao carregar saques: ' + error.message, 'danger', 'saquesAlert');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function viewSaqueDetails(saque) {
+            const modal = document.getElementById('saqueDetalhesModal');
+            const content = document.getElementById('saqueDetalhesContent');
+            content.innerHTML = `
+                <p><strong>ID:</strong> ${saque.id}</p>
+                <p><strong>Parceiro:</strong> ${saque.parceiros ? saque.parceiros.nome_completo : 'N/A'}</p>
+                <p><strong>Email Parceiro:</strong> ${saque.parceiros ? saque.parceiros.email : 'N/A'}</p>
+                <p><strong>Valor Solicitado:</strong> R$ ${saque.valor_solicitado.toFixed(2).replace('.', ',')}</p>
+                <p><strong>Valor Líquido:</strong> R$ ${saque.valor_liquido.toFixed(2).replace('.', ',')}</p>
+                <p><strong>Taxa:</strong> R$ ${saque.taxa.toFixed(2).replace('.', ',')}</p>
+                <p><strong>Status:</strong> ${saque.status}</p>
+                <p><strong>Data Solicitação:</strong> ${new Date(saque.data_solicitacao).toLocaleDateString()}</p>
+                <p><strong>Data Processamento:</strong> ${saque.data_processamento ? new Date(saque.data_processamento).toLocaleDateString() : 'N/A'}</p>
+            `;
+            modal.style.display = 'flex';
         }
 
         async function approveSaque(id) {
-            if (!confirm('Tem certeza que deseja APROVAR este saque?')) return;
-            showSpinner(mainLoadingSpinner);
+            if (!confirm('Tem certeza que deseja aprovar este saque?')) return;
+            showLoading();
             try {
-                const { error } = await supabase.from('saques').update({ status: 'aprovado', data_aprovacao: new Date().toISOString() }).eq('id', id);
+                const { error } = await supabase.from('saques').update({ status: 'aprovado', data_processamento: new Date().toISOString() }).eq('id', id);
                 if (error) throw error;
+                showAlert('Saque aprovado com sucesso!', 'success', 'saquesAlert');
                 loadSaques();
             } catch (error) {
-                showErrorMessage(document.getElementById('saquesErrorMessage'), 'Erro ao aprovar saque: ' + error.message);
                 console.error('Erro ao aprovar saque:', error);
+                showAlert('Erro ao aprovar saque: ' + error.message, 'danger', 'saquesAlert');
             } finally {
-                hideSpinner(mainLoadingSpinner);
+                hideLoading();
             }
         }
 
         async function rejectSaque(id) {
-            if (!confirm('Tem certeza que deseja REJEITAR este saque?')) return;
-            showSpinner(mainLoadingSpinner);
+            if (!confirm('Tem certeza que deseja rejeitar este saque?')) return;
+            showLoading();
             try {
-                const { error } = await supabase.from('saques').update({ status: 'rejeitado', data_rejeicao: new Date().toISOString() }).eq('id', id);
+                const { error } = await supabase.from('saques').update({ status: 'rejeitado', data_processamento: new Date().toISOString() }).eq('id', id);
                 if (error) throw error;
+                showAlert('Saque rejeitado com sucesso!', 'success', 'saquesAlert');
                 loadSaques();
             } catch (error) {
-                showErrorMessage(document.getElementById('saquesErrorMessage'), 'Erro ao rejeitar saque: ' + error.message);
                 console.error('Erro ao rejeitar saque:', error);
+                showAlert('Erro ao rejeitar saque: ' + error.message, 'danger', 'saquesAlert');
             } finally {
-                hideSpinner(mainLoadingSpinner);
+                hideLoading();
             }
         }
 
-        // --- Configurações ---
-        async function loadConfiguracoes() {
-            showSpinner(document.getElementById('configuracoesLoadingSpinner'));
-            hideErrorMessage(document.getElementById('configuracoesErrorMessage'));
+        async function exportSaquesCSV() {
+            showLoading();
             try {
+                const { data, error } = await supabase
+                    .from('saques')
+                    .select(`
+                        id,
+                        valor_solicitado,
+                        valor_liquido,
+                        taxa,
+                        status,
+                        data_solicitacao,
+                        data_processamento,
+                        parceiros (nome_completo, email)
+                    `);
+                if (error) throw error;
+
+                const formattedData = data.map(saque => ({
+                    id: saque.id,
+                    parceiro_nome: saque.parceiros ? saque.parceiros.nome_completo : 'N/A',
+                    parceiro_email: saque.parceiros ? saque.parceiros.email : 'N/A',
+                    valor_solicitado: saque.valor_solicitado,
+                    valor_liquido: saque.valor_liquido,
+                    taxa: saque.taxa,
+                    status: saque.status,
+                    data_solicitacao: new Date(saque.data_solicitacao).toLocaleDateString(),
+                    data_processamento: saque.data_processamento ? new Date(saque.data_processamento).toLocaleDateString() : 'N/A'
+                }));
+
+                const headers = Object.keys(formattedData[0]);
+                const csv = [
+                    headers.join(','),
+                    ...formattedData.map(row => headers.map(fieldName => JSON.stringify(row[fieldName])).join(','))
+                ].join('\n');
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.setAttribute('download', 'saques.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showAlert('Saques exportados com sucesso!', 'success', 'saquesAlert');
+            } catch (error) {
+                console.error('Erro ao exportar saques:', error);
+                showAlert('Erro ao exportar saques: ' + error.message, 'danger', 'saquesAlert');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        document.getElementById('filterSaqueStatus').addEventListener('change', loadSaques);
+        document.getElementById('exportSaquesCSVBtn').addEventListener('click', exportSaquesCSV);
+
+
+        // ✅ CONFIGURAÇÕES SECTION
+        async function loadConfiguracoes() {
+            showLoading();
+            try {
+                // Supondo que as configurações são armazenadas em uma tabela 'configuracoes' com um único registro
                 const { data, error } = await supabase.from('configuracoes').select('*').single();
-                if (error && error.code !== 'PGRST116') throw error; // PGRST116 means no rows found
+                if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows found
 
                 if (data) {
-                    document.getElementById('comissaoPadrao').value = data.comissao_padrao;
-                    document.getElementById('minSaque').value = data.min_saque;
-                    document.getElementById('taxaSaque').value = data.taxa_saque;
+                    document.getElementById('comissaoPadrao').value = data.comissao_padrao || 0;
+                    document.getElementById('valorMinimoSaque').value = data.valor_minimo_saque || 0;
+                    document.getElementById('taxaSaque').value = data.taxa_saque || 0;
                 } else {
-                    // Default values if no config found
+                    // Valores padrão se não houver configurações
                     document.getElementById('comissaoPadrao').value = 10;
-                    document.getElementById('minSaque').value = 50;
-                    document.getElementById('taxaSaque').value = 0;
+                    document.getElementById('valorMinimoSaque').value = 50;
+                    document.getElementById('taxaSaque').value = 2;
                 }
+                showAlert('Configurações carregadas!', 'success', 'configuracoesAlert');
             } catch (error) {
-                showErrorMessage(document.getElementById('configuracoesErrorMessage'), 'Erro ao carregar configurações: ' + error.message);
                 console.error('Erro ao carregar configurações:', error);
+                showAlert('Erro ao carregar configurações: ' + error.message, 'danger', 'configuracoesAlert');
             } finally {
-                hideSpinner(document.getElementById('configuracoesLoadingSpinner'));
+                hideLoading();
             }
         }
 
-        async function saveConfiguracoes(event) {
-            event.preventDefault();
-            showSpinner(document.getElementById('configuracoesLoadingSpinner'));
-            hideErrorMessage(document.getElementById('configuracoesErrorMessage'));
-
-            const comissao_padrao = parseFloat(document.getElementById('comissaoPadrao').value);
-            const min_saque = parseFloat(document.getElementById('minSaque').value);
-            const taxa_saque = parseFloat(document.getElementById('taxaSaque').value);
-
+        document.getElementById('configuracoesForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showLoading();
             try {
+                const comissaoPadrao = parseFloat(document.getElementById('comissaoPadrao').value);
+                const valorMinimoSaque = parseFloat(document.getElementById('valorMinimoSaque').value);
+                const taxaSaque = parseFloat(document.getElementById('taxaSaque').value);
+
                 const { data: existingConfig, error: fetchError } = await supabase.from('configuracoes').select('id').single();
                 if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
-                let data, error;
+                const dataToSave = {
+                    comissao_padrao: comissaoPadrao,
+                    valor_minimo_saque: valorMinimoSaque,
+                    taxa_saque: taxaSaque
+                };
+
+                let error;
                 if (existingConfig) {
-                    ({ data, error } = await supabase
-                        .from('configuracoes')
-                        .update({ comissao_padrao, min_saque, taxa_saque })
-                        .eq('id', existingConfig.id));
+                    ({ error } = await supabase.from('configuracoes').update(dataToSave).eq('id', existingConfig.id));
                 } else {
-                    ({ data, error } = await supabase
-                        .from('configuracoes')
-                        .insert([{ comissao_padrao, min_saque, taxa_saque }]));
+                    ({ error } = await supabase.from('configuracoes').insert([dataToSave]));
                 }
                 if (error) throw error;
-                alert('Configurações salvas com sucesso!');
+
+                showAlert('Configurações salvas com sucesso!', 'success', 'configuracoesAlert');
             } catch (error) {
-                showErrorMessage(document.getElementById('configuracoesErrorMessage'), 'Erro ao salvar configurações: ' + error.message);
                 console.error('Erro ao salvar configurações:', error);
+                showAlert('Erro ao salvar configurações: ' + error.message, 'danger', 'configuracoesAlert');
             } finally {
-                hideSpinner(document.getElementById('configuracoesLoadingSpinner'));
+                hideLoading();
             }
-        }
+        });
 
-        // --- CSV Export Functions ---
-        function exportTableToCsv(tableId, filename) {
-            const table = document.getElementById(tableId);
-            let csv = [];
-            for (let i = 0; i < table.rows.length; i++) {
-                let row = [], cols = table.rows[i].querySelectorAll('td, th');
-                for (let j = 0; j < cols.length; j++) {
-                    // Exclude the 'Ações' column
-                    if (cols[j].textContent.trim() !== 'Ações') {
-                        row.push(cols[j].textContent.trim());
-                    }
-                }
-                csv.push(row.join(','));
-            }
 
-            const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
-            const downloadLink = document.createElement('a');
-            downloadLink.download = filename;
-            downloadLink.href = window.URL.createObjectURL(csvFile);
-            downloadLink.style.display = 'none';
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-        }
+        // ✅ INICIALIZAÇÃO
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Painel Super Admin carregado');
+            
+            // 1. Carregar dados do usuário
+            await loadUserData();
+            
+            // 2. Configurar navegação
+            setupNavigation();
+            
+            // 3. Configurar logout
+            setupLogout();
 
-        // --- Modal Control ---
-        function openModal(modalElement) {
-            modalElement.classList.add('show');
-        }
-
-        function closeModal(modalElement) {
-            modalElement.classList.remove('show');
-            // Clear form and error messages
-            const form = modalElement.querySelector('form');
-            if (form) form.reset();
-            const errorMessage = modalElement.querySelector('.error-message');
-            if (errorMessage) hideErrorMessage(errorMessage);
-            // Reset title for add modals
-            if (modalElement.id === 'parceiroModal') document.getElementById('parceiroModalTitle').textContent = 'Adicionar Parceiro';
-            if (modalElement.id === 'igrejaModal') document.getElementById('igrejaModalTitle').textContent = 'Adicionar Igreja';
-            if (modalElement.id === 'produtoModal') document.getElementById('produtoModalTitle').textContent = 'Adicionar Produto';
-        }
-
-        // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-
-            logoutButton.addEventListener('click', handleLogout);
-            logoutButtonHeader.addEventListener('click', handleLogout);
-
-            sidebarMenuLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showSection(e.target.closest('a').dataset.section);
-                });
-            });
-
-            // Parceiros Events
-            addParceiroBtn.addEventListener('click', () => {
-                document.getElementById('parceiroId').value = ''; // Clear ID for new entry
-                openModal(parceiroModal);
-            });
-            parceiroForm.addEventListener('submit', addOrUpdateParceiro);
-            exportParceirosCsvBtn.addEventListener('click', () => exportTableToCsv('parceirosTable', 'parceiros.csv'));
-
-            // Igrejas Events
-            addIgrejaBtn.addEventListener('click', () => {
-                document.getElementById('igrejaId').value = ''; // Clear ID for new entry
-                openModal(igrejaModal);
-            });
-            igrejaForm.addEventListener('submit', addOrUpdateIgreja);
-            exportIgrejasCsvBtn.addEventListener('click', () => exportTableToCsv('igrejasTable', 'igrejas.csv'));
-
-            // Produtos Events
-            addProdutoBtn.addEventListener('click', () => {
-                document.getElementById('produtoId').value = ''; // Clear ID for new entry
-                openModal(produtoModal);
-            });
-            produtoForm.addEventListener('submit', addOrUpdateProduto);
-            exportProdutosCsvBtn.addEventListener('click', () => exportTableToCsv('produtosTable', 'produtos.csv'));
-
-            // Vendas Events
-            exportVendasCsvBtn.addEventListener('click', () => exportTableToCsv('vendasTable', 'vendas.csv'));
-
-            // Saques Events
-            exportSaquesCsvBtn.addEventListener('click', () => exportTableToCsv('saquesTable', 'saques.csv'));
-
-            // Configurações Events
-            configForm.addEventListener('submit', saveConfiguracoes);
-
-            // Close Modals
-            document.querySelectorAll('.close-button').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const modalId = e.target.dataset.modal;
-                    closeModal(document.getElementById(modalId));
-                });
-            });
-            window.addEventListener('click', (event) => {
-                if (event.target.classList.contains('modal')) {
-                    closeModal(event.target);
-                }
-            });
+            // 4. Ativar a primeira seção (Dashboard) e carregar seus dados
+            document.querySelector('.menu-item[data-section="dashboard"]').click();
         });
     </script>
 </body>
