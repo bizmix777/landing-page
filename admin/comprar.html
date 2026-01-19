@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalize sua Compra - Livro Somos Todos Um</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-color: #333;
+            --light-text-color: #fff;
+            --bg-light: #f9fafb;
+            --bg-white: #ffffff;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-light);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: var(--bg-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            flex-grow: 1;
+        }
+
+        h1, h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-info {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .product-info h2 {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .product-info .price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .payment-options {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .payment-option {
+            margin-bottom: 1rem;
+        }
+
+        .payment-option label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+        }
+
+        .payment-option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .payment-option label:hover {
+            background-color: var(--bg-light);
+            border-color: var(--primary-color);
+        }
+
+        .payment-section {
+            display: none; /* Hidden by default */
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--bg-light);
+            border-radius: var(--radius);
+            border: 1px dashed var(--primary-color);
+            text-align: center;
+        }
+
+        .payment-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .pix-details p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pix-details strong {
+            color: var(--secondary-color);
+        }
+
+        .copy-pix-btn {
+            margin-top: 1rem;
+            background-color: var(--secondary-color);
+        }
+
+        .copy-pix-btn:hover {
+            background-color: var(--primary-color);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .alert {
+            padding: 10px;
+            margin-bottom: 1rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            .product-info .price {
+                font-size: 2rem;
+            }
+            .btn {
+                font-size: 1rem;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛒 Finalize sua Compra</h1>
+
+        <div class="product-info">
+            <h2>Livro "Somos Todos Um"</h2>
+            <p class="price">R$ 29,90</p>
+        </div>
+
+        <form id="checkoutForm">
+            <div class="form-group">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required placeholder="seu.email@exemplo.com">
+            </div>
+            <div class="form-group">
+                <label for="telefone">Telefone:</label>
+                <input type="tel" id="telefone" name="telefone" required placeholder="(XX) XXXXX-XXXX">
+            </div>
+            <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" required placeholder="XXX.XXX.XXX-XX">
+            </div>
+
+            <div class="payment-options">
+                <h2>Método de Pagamento</h2>
+                <div class="payment-option">
+                    <label>
+                        <input type="radio" name="paymentMethod" value="pix" checked>
+                        Pix
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Finalizar Compra</button>
+        </form>
+
+        <div id="paymentSection" class="payment-section">
+            <h3>Pagamento via Pix</h3>
+            <div class="pix-details">
+                <p>Valor: <strong>R$ 29,90</strong></p>
+                <p>Chave Pix: <strong>CNPJ 00.000.000/0001-00</strong></p>
+                <p>Nome: <strong>BIZMIX LTDA</strong></p>
+                <p>Banco: <strong>Banco do Brasil</strong></p>
+            </div>
+            <button type="button" class="btn copy-pix-btn" onclick="copiarCodigoPix()">Copiar Código Pix</button>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Após o pagamento, seu acesso será liberado em breve.</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Bizmix. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // 
+        // CONFIGURAÇÃO SUPABASE
+        // 
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3OTQ4NzEsImV4cCI6MjA1MjM3MDg3MX0.zLgPLnMnHbxJjrUZJbIvZNjOBMhRfVqhQYZR9fJdLzM';
+
+        const meuSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 
+        // FUNÇÕES AUXILIARES
+        // 
+
+        // Função para capturar parâmetros da URL
+        function getUrlParams() {
+            const params = {};
+            window.location.search.substring(1).split('&').forEach(param => {
+                const [key, value] = param.split('=');
+                params[key] = value ? decodeURIComponent(value) : null;
+            });
+            return params;
+        }
+
+        // Formatação de telefone
+        function formatTelefone(value) {
+            if (!value) return '';
+            value = value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            if (value.length > 10) {
+                return `(${value.substring(0, 2)}) ${value.substring(2, 7)}-${value.substring(7, 11)}`;
+            } else if (value.length > 5) {
+                return `(${value.substring(0, 2)}) ${value.substring(2, 6)}-${value.substring(6, 10)}`;
+            } else if (value.length > 2) {
+                return `(${value.substring(0, 2)}) ${value.substring(2, 6)}`;
+            } else if (value.length > 0) {
+                return `(${value.substring(0, 2)})`;
+            }
+            return value;
+        }
+
+        // Formatação de CPF
+        function formatCpf(value) {
+            if (!value) return '';
+            value = value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            if (value.length > 9) {
+                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else if (value.length > 6) {
+                return value.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3');
+            } else if (value.length > 3) {
+                return value.replace(/(\d{3})(\d{3})/, '$1.$2');
+            } else if (value.length > 0) {
+                return value.replace(/(\d{3})/, '$1');
+            }
+            return value;
+        }
+
+        // 
+        // FUNÇÃO FINALIZAR COMPRA
+        // 
+        document.getElementById('checkoutForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Previne o envio padrão do formulário
+
+            try {
+                // Capturar dados do formulário
+                const nome = document.getElementById('nome').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const telefone = document.getElementById('telefone').value.trim();
+                const cpf = document.getElementById('cpf').value.trim();
+                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+                // Validar campos
+                    alert('⚠️ Por favor, preencha todos os campos!');
+                    return;
+                }
+
+                // Validar email
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('⚠️ Por favor, insira um email válido!');
+                    return;
+                }
+
+                // Capturar parâmetros da URL
+                const urlParams = getUrlParams();
+                const igreja = urlParams.igreja || null;
+                const parceiro = urlParams.parceiro || null;
+                const empresa = urlParams.empresa || null;
+
+                console.log('Parâmetros capturados:', { igreja, parceiro, empresa });
+
+                // Preparar dados para inserção
+                const dadosVenda = {
+                    nome_comprador: nome,
+                    email_comprador: email,
+                    telefone_comprador: telefone,
+                    cpf_comprador: cpf,
+                    valor_total: 29.90,
+                    valor_unitario: 29.90,
+                    quantidade: 1,
+                    forma_pagamento: paymentMethod,
+                    status_pagamento: 'pendente',
+                    data_venda: new Date().toISOString(),
+                    email_enviado: false,
+                    comissao_paga: false,
+                    igreja_id: igreja, // Pode ser null
+                    parceiro_id: parceiro, // Pode ser null
+                    empresa_id: empresa // Pode ser null
+                };
+
+                console.log('📤 Enviando dados para o Supabase:', dadosVenda);
+
+                // Inserir no Supabase
+                const { data, error } = await meuSupabase
+                    .from('vendas')
+                    .insert([dadosVenda])
+                    .select(); // Retorna os dados inseridos
+
+                if (error) {
+                    console.error('❌ Erro ao salvar no Supabase:', error);
+                    alert(`❌ Erro ao registrar venda: ${error.message}`);
+                    return;
+                }
+
+                console.log('✅ Compra registrada com sucesso!', data);
+
+                // Mostrar seção de pagamento Pix
+                document.getElementById('paymentSection').style.display = 'block';
+
+                // Scroll suave até a seção de pagamento
+                document.getElementById('paymentSection').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+                alert('✅ Compra registrada com sucesso! Complete o pagamento via Pix.');
+
+            } catch (error) {
+                console.error('❌ Erro ao processar compra:', error);
+                alert(`❌ Erro ao processar compra: ${error.message}`);
+            }
+        });
+
+        // 
+        // FUNÇÃO COPIAR CÓDIGO PIX
+        // 
+        function copiarCodigoPix() {
+            // Este é um código Pix de exemplo. Em um ambiente real, seria gerado dinamicamente.
+            const codigoPix = "00020126580014br.gov.bcb.pix0136seu-codigo-pix-aqui5204000053039865802BR5925BIZMIX LTDA6009SAO PAULO62070503***6304ABCD";
+
+            navigator.clipboard.writeText(codigoPix).then(() => {
+                alert('✅ Código Pix copiado! Cole no app do seu banco.');
+            }).catch(err => {
+                console.error('Erro ao copiar:', err);
+                alert('❌ Erro ao copiar código. Tente manualmente.');
+            });
+        }
+
+        // 
+        // INICIALIZAÇÃO E FORMATAÇÃO
+        // 
+        document.addEventListener('DOMContentLoaded', () => {
+            // Aplica formatação ao telefone
+            const telefoneInput = document.getElementById('telefone');
+            telefoneInput.addEventListener('input', (e) => {
+                e.target.value = formatTelefone(e.target.value);
+            });
+
+            // Aplica formatação ao CPF
+            const cpfInput = document.getElementById('cpf');
+            cpfInput.addEventListener('input', (e) => {
+                e.target.value = formatCpf(e.target.value);
+            });
+
+            console.log('✅ JavaScript de compra carregado com sucesso!');
+        });
+    </script>
+</body>
+</html>
