@@ -274,7 +274,7 @@
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const meuSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         document.addEventListener('DOMContentLoaded', function() {
             const session = localStorage.getItem('igrejaSession');
@@ -304,14 +304,14 @@
             setLoading(true);
 
             try {
-                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                const { data: authData, error: authError } = await meuSupabase.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
 
                 if (authError) throw authError;
 
-                const { data: userData, error: userError } = await supabase
+                const { data: userData, error: userError } = await meuSupabase
                     .from('parceiros')
                     .select('*')
                     .eq('email', email)
@@ -319,7 +319,7 @@
                     .single();
 
                 if (userError || !userData) {
-                    await supabase.auth.signOut();
+                    await meuSupabase.auth.signOut();
                     throw new Error('Acesso negado. Este login é exclusivo para igrejas parceiras.');
                 }
 
