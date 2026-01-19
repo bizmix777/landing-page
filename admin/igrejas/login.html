@@ -8,12 +8,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Body Styling */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -24,6 +26,7 @@
             padding: 20px;
         }
 
+        /* Login Container */
         .login-container {
             background: white;
             border-radius: 20px;
@@ -35,6 +38,7 @@
             grid-template-columns: 1fr 1fr;
         }
 
+        /* Left Panel */
         .login-left {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 60px 40px;
@@ -64,6 +68,7 @@
             line-height: 1.6;
         }
 
+        /* Right Panel */
         .login-right {
             padding: 60px 40px;
             display: flex;
@@ -87,6 +92,7 @@
             font-size: 14px;
         }
 
+        /* Form Elements */
         .form-group {
             margin-bottom: 25px;
         }
@@ -155,12 +161,13 @@
             transform: none;
         }
 
+        /* Alert Messages */
         .alert {
             padding: 12px 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
-            display: none;
+            display: none; /* Hidden by default */
         }
 
         .alert.show {
@@ -179,6 +186,7 @@
             border: 1px solid #c3e6cb;
         }
 
+        /* Loading Spinner */
         .loading-spinner {
             display: none;
             width: 20px;
@@ -195,6 +203,7 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* Forgot Password Link */
         .forgot-password {
             text-align: center;
             margin-top: 20px;
@@ -210,13 +219,14 @@
             text-decoration: underline;
         }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .login-container {
                 grid-template-columns: 1fr;
             }
 
             .login-left {
-                display: none;
+                display: none; /* Hide left panel on small screens */
             }
 
             .login-right {
@@ -227,14 +237,14 @@
 </head>
 <body>
     <div class="login-container">
-        <!-- Left Side -->
+        <!-- Left Panel -->
         <div class="login-left">
             <i class="fas fa-church"></i>
             <h1>Portal das Igrejas</h1>
             <p>Acesse seu painel exclusivo para gerenciar comissões, vendas e acompanhar o desempenho da sua igreja parceira.</p>
         </div>
 
-        <!-- Right Side -->
+        <!-- Right Panel -->
         <div class="login-right">
             <div class="login-header">
                 <h2>Bem-vindo de volta!</h2>
@@ -273,88 +283,27 @@
     </div>
 
     <script>
-        // Supabase Configuration
+        // Supabase Configuration - Declared ONLY ONCE
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY2MjA5ODgsImV4cCI6MjA1MjE5Njk4OH0.zrSuKXlVXZSFb0LnOZBE5LYJsZYMvpqyuRcBKYYP-Xw';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Check if already logged in
-        document.addEventListener('DOMContentLoaded', function() {
-            const session = localStorage.getItem('igrejaSession');
-            if (session) {
-                const sessionData = JSON.parse(session);
-                const now = new Date().getTime();
-                
-                if (now < sessionData.expires) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    localStorage.removeItem('igrejaSession');
-                }
-            }
-        });
+        // Function to show alert messages
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alertMessage');
+            alertDiv.className = `alert alert-${type} show`;
+            alertDiv.textContent = message;
 
-        // Handle Login Form
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-
-            if (!email || !password) {
-                showAlert('Por favor, preencha todos os campos.', 'danger');
-                return;
-            }
-
-            setLoading(true);
-
-            try {
-                // Authenticate with Supabase
-                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (authError) throw authError;
-
-                // Verify user is a church partner
-                const { data: userData, error: userError } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('email', email)
-                    .eq('tipo_parceiro', 'igreja')
-                    .single();
-
-                if (userError || !userData) {
-                    await supabase.auth.signOut();
-                    throw new Error('Acesso negado. Este login é exclusivo para igrejas parceiras.');
-                }
-
-                // Create session
-                const sessionData = {
-                    userId: userData.id,
-                    email: userData.email,
-                    nome: userData.nome_completo,
-                    tipo: userData.tipo_parceiro,
-                    expires: new Date().getTime() + (24 * 60 * 60 * 1000) // 24 hours
-                };
-
-                localStorage.setItem('igrejaSession', JSON.stringify(sessionData));
-
-                showAlert('Login realizado com sucesso! Redirecionando...', 'success');
-
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1500);
-
-            } catch (error) {
-                console.error('Login error:', error);
-                showAlert(error.message || 'Erro ao fazer login. Verifique suas credenciais.', 'danger');
-            } finally {
-                setLoading(false);
+                    alertDiv.classList.remove('show');
+                }, 3000);
             }
-        });
+        }
 
+        // Function to handle loading state of the button
         function setLoading(loading) {
             const btnLogin = document.getElementById('btnLogin');
             const btnText = document.getElementById('btnText');
@@ -371,17 +320,86 @@
             }
         }
 
-        function showAlert(message, type) {
-            const alertDiv = document.getElementById('alertMessage');
-            alertDiv.className = `alert alert-${type} show`;
-            alertDiv.textContent = message;
-
-            if (type === 'success') {
-                setTimeout(() => {
-                    alertDiv.classList.remove('show');
-                }, 3000);
+        // Check if already logged in on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const session = localStorage.getItem('igrejaSession');
+            if (session) {
+                const sessionData = JSON.parse(session);
+                const now = new Date().getTime();
+                
+                // If session is valid, redirect to dashboard
+                if (now < sessionData.expires) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Session expired, clear it
+                    localStorage.removeItem('igrejaSession');
+                }
             }
-        }
+        });
+
+        // Handle Login Form Submission
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Basic validation
+            if (!email || !password) {
+                showAlert('Por favor, preencha todos os campos.', 'danger');
+                return;
+            }
+
+            setLoading(true); // Show loading spinner
+
+            try {
+                // 1. Authenticate with Supabase
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (authError) throw authError; // Throw if authentication fails
+
+                // 2. Verify user is a church partner from 'parceiros' table
+                const { data: userData, error: userError } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('tipo_parceiro', 'igreja') // CRITICAL: Ensure user is of type 'igreja'
+                    .single(); // Expecting a single record
+
+                if (userError || !userData) {
+                    // If user not found or not of type 'igreja', sign out from Supabase auth
+                    await supabase.auth.signOut();
+                    throw new Error('Acesso negado. Este login é exclusivo para igrejas parceiras.');
+                }
+
+                // 3. Create and store session in localStorage
+                const sessionData = {
+                    userId: userData.id,
+                    email: userData.email,
+                    nome: userData.nome_completo,
+                    tipo: userData.tipo_parceiro,
+                    expires: new Date().getTime() + (24 * 60 * 60 * 1000) // Session expires in 24 hours
+                };
+
+                localStorage.setItem('igrejaSession', JSON.stringify(sessionData));
+
+                showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+
+                // Redirect to dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert(error.message || 'Erro ao fazer login. Verifique suas credenciais.', 'danger');
+            } finally {
+                setLoading(false); // Hide loading spinner
+            }
+        });
     </script>
 </body>
 </html>
