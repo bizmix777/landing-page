@@ -469,7 +469,7 @@
         // ✅ CARREGAR INFORMAÇÕES DO INDICADOR
         async function loadReferralInfo(type, code) {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await meuSupabase
                     .from('parceiros')
                     .select('id, nome_completo, codigo_parceiro, tipo_parceiro')
                     .eq('codigo_parceiro', code)
@@ -593,7 +593,7 @@
                 console.log('Dados da venda:', formData);
 
                 // Inserir venda no Supabase
-                const { data: vendaData, error: vendaError } = await supabase
+                const { data: vendaData, error: vendaError } = await meuSupabase
                     .from('vendas')
                     .insert([formData])
                     .select()
