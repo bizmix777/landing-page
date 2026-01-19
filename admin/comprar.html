@@ -3,283 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalize sua Compra - Livro Somos Todos Um</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Finalize sua Compra - Somos Todos Um</title>
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --text-color: #333;
-            --light-text-color: #fff;
-            --bg-light: #f9fafb;
-            --bg-white: #ffffff;
-            --border-color: #e2e8f0;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 0.5rem;
-        }
-
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-light);
-            color: var(--text-color);
-            line-height: 1.6;
+            padding: 20px;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
             min-height: 100vh;
+            color: #333;
         }
-
         .container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 1.5rem;
-            background-color: var(--bg-white);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            flex-grow: 1;
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
         }
-
-        h1, h2 {
-            color: var(--primary-color);
+        h1 {
+            color: #2c3e50;
             text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .product-info {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .product-info h2 {
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-        }
-
-        .product-info .price {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--secondary-color);
-            margin-top: 0;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 30px;
+            font-size: 2em;
             font-weight: 600;
         }
-
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
         input[type="text"],
         input[type="email"],
         input[type="tel"] {
             width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            font-size: 1rem;
+            padding: 12px 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1em;
             box-sizing: border-box;
+            transition: border-color 0.3s ease;
         }
-
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="tel"]:focus {
+            border-color: #007bff;
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
-
-        .btn {
+        .price-display {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #28a745;
+        }
+        .payment-options {
+            margin-top: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 25px;
+        }
+        .payment-method-btn {
             display: block;
             width: 100%;
-            padding: 12px 20px;
-            background-color: var(--primary-color);
-            color: var(--light-text-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #007bff;
+            color: white;
             border: none;
-            border-radius: var(--radius);
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
             font-weight: 600;
+        }
+        .payment-method-btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .payment-method-btn.selected {
+            background-color: #28a745;
+        }
+        .payment-method-btn.selected:hover {
+            background-color: #218838;
+        }
+        .pix-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e9f7ef;
+            border: 1px solid #d4edda;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .pix-section h3 {
+            color: #28a745;
+            margin-top: 0;
+            font-size: 1.4em;
+        }
+        .pix-section p {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .pix-code-display {
+            background-color: #ffffff;
+            border: 1px dashed #28a745;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .copy-pix-btn {
+            background-color: #17a2b8;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
             cursor: pointer;
             transition: background-color 0.3s ease;
-            text-align: center;
-            text-decoration: none;
         }
-
-        .btn:hover {
-            background-color: var(--secondary-color);
-        }
-
-        .payment-options {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-
-        .payment-option {
-            margin-bottom: 1rem;
-        }
-
-        .payment-option label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            transition: all 0.3s ease;
-        }
-
-        .payment-option input[type="radio"] {
-            margin-right: 10px;
-        }
-
-        .payment-option label:hover {
-            background-color: var(--bg-light);
-            border-color: var(--primary-color);
-        }
-
-        .payment-section {
-            display: none; /* Hidden by default */
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background-color: var(--bg-light);
-            border-radius: var(--radius);
-            border: 1px dashed var(--primary-color);
-            text-align: center;
-        }
-
-        .payment-section h3 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .pix-details p {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .pix-details strong {
-            color: var(--secondary-color);
-        }
-
-        .copy-pix-btn {
-            margin-top: 1rem;
-            background-color: var(--secondary-color);
-        }
-
         .copy-pix-btn:hover {
-            background-color: var(--primary-color);
+            background-color: #138496;
         }
-
-        .footer {
+        .footer-links {
+            margin-top: 30px;
             text-align: center;
-            padding: 1.5rem;
-            margin-top: 2rem;
+            font-size: 0.9em;
             color: #777;
-            font-size: 0.9rem;
-            border-top: 1px solid var(--border-color);
         }
-
-        .alert {
-            padding: 10px;
-            margin-bottom: 1rem;
-            border-radius: var(--radius);
-            font-weight: 600;
-            text-align: center;
+        .footer-links a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
         }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border-color: #c3e6cb;
-        }
-
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                margin: 1rem;
-                padding: 1rem;
-            }
-            .product-info .price {
-                font-size: 2rem;
-            }
-            .btn {
-                font-size: 1rem;
-                padding: 10px 15px;
-            }
+        .footer-links a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🛒 Finalize sua Compra</h1>
+        <p class="price-display">Valor: R$ 29,90</p>
 
-        <div class="product-info">
-            <h2>Livro "Somos Todos Um"</h2>
-            <p class="price">R$ 29,90</p>
-        </div>
-
-        <form id="checkoutForm">
+        <form id="formCompra">
             <div class="form-group">
                 <label for="nome">Nome Completo:</label>
-                <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                <input type="text" id="nome" name="nome" required>
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required placeholder="seu.email@exemplo.com">
+                <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
                 <label for="telefone">Telefone:</label>
-                <input type="tel" id="telefone" name="telefone" required placeholder="(XX) XXXXX-XXXX">
+                <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" maxlength="15" required>
             </div>
             <div class="form-group">
                 <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" required placeholder="XXX.XXX.XXX-XX">
+                <input type="text" id="cpf" name="cpf" placeholder="XXX.XXX.XXX-XX" maxlength="14" required>
             </div>
 
             <div class="payment-options">
-                <h2>Método de Pagamento</h2>
-                <div class="payment-option">
-                    <label>
-                        <input type="radio" name="paymentMethod" value="pix" checked>
-                        Pix
-                    </label>
-                </div>
+                <button type="submit" class="payment-method-btn selected" id="btnPix">
+                    💳 Pix
+                </button>
             </div>
-
-            <button type="submit" class="btn">Finalizar Compra</button>
         </form>
 
-        <div id="paymentSection" class="payment-section">
-            <h3>Pagamento via Pix</h3>
-            <div class="pix-details">
-                <p>Valor: <strong>R$ 29,90</strong></p>
-                <p>Chave Pix: <strong>CNPJ 00.000.000/0001-00</strong></p>
-                <p>Nome: <strong>BIZMIX LTDA</strong></p>
-                <p>Banco: <strong>Banco do Brasil</strong></p>
+        <div id="pixSection" class="pix-section">
+            <h3>Confirme o pagamento de R$ 29,90 via Pix</h3>
+            <p>Use o código Pix abaixo no aplicativo do seu banco para finalizar a compra.</p>
+            <div class="pix-code-display" id="pixCodeDisplay">
+                00020126580014br.gov.bcb.pix0136seu-codigo-pix-aqui5204000053039865802BR5925BIZMIX LTDA6009SAO PAULO62070503***6304ABCD
             </div>
-            <button type="button" class="btn copy-pix-btn" onclick="copiarCodigoPix()">Copiar Código Pix</button>
-            <p style="margin-top: 1rem; font-size: 0.9rem;">Após o pagamento, seu acesso será liberado em breve.</p>
+            <button class="copy-pix-btn" onclick="copiarCodigoPix()">Copiar Código Pix</button>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">Termos de Uso</a>
+            <a href="#">Política de Privacidade</a>
         </div>
     </div>
-
-    <footer class="footer">
-        <p>&copy; 2024 Bizmix. Todos os direitos reservados.</p>
-    </footer>
 
     <script>
         // 
@@ -291,85 +211,78 @@
         const meuSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // 
-        // FUNÇÕES AUXILIARES
+        // CAPTURAR PARÂMETROS DA URL
         // 
+        const urlParams = new URLSearchParams(window.location.search);
+        const igrejaId = urlParams.get('igreja');
+        const parceiroId = urlParams.get('parceiro');
+        const empresaId = urlParams.get('empresa');
 
-        // Função para capturar parâmetros da URL
-        function getUrlParams() {
-            const params = {};
-            window.location.search.substring(1).split('&').forEach(param => {
-                const [key, value] = param.split('=');
-                params[key] = value ? decodeURIComponent(value) : null;
-            });
-            return params;
-        }
+        console.log('Parâmetros capturados:', { igreja: igrejaId, parceiro: parceiroId, empresa: empresaId });
 
-        // Formatação de telefone
-        function formatTelefone(value) {
-            if (!value) return '';
-            value = value.replace(/\D/g, ''); // Remove tudo que não é dígito
-            if (value.length > 10) {
-                return `(${value.substring(0, 2)}) ${value.substring(2, 7)}-${value.substring(7, 11)}`;
-            } else if (value.length > 5) {
-                return `(${value.substring(0, 2)}) ${value.substring(2, 6)}-${value.substring(6, 10)}`;
-            } else if (value.length > 2) {
-                return `(${value.substring(0, 2)}) ${value.substring(2, 6)}`;
-            } else if (value.length > 0) {
-                return `(${value.substring(0, 2)})`;
+        // 
+        // FUNÇÕES DE FORMATAÇÃO
+        // 
+        function formatarTelefone(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                value = '(' + value.substring(0, 2) + ') ' + value.substring(2, 7);
             }
-            return value;
-        }
-
-        // Formatação de CPF
-        function formatCpf(value) {
-            if (!value) return '';
-            value = value.replace(/\D/g, ''); // Remove tudo que não é dígito
             if (value.length > 9) {
-                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            } else if (value.length > 6) {
-                return value.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3');
-            } else if (value.length > 3) {
-                return value.replace(/(\d{3})(\d{3})/, '$1.$2');
-            } else if (value.length > 0) {
-                return value.replace(/(\d{3})/, '$1');
+                value = value + '-' + value.substring(7, 11);
             }
-            return value;
+            input.value = value;
         }
+
+        function formatarCPF(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                value = value.substring(0, 3);
+            }
+            if (value.length > 3) {
+                value = value + '.' + value.substring(3, 6);
+            }
+            if (value.length > 7) {
+                value = value + '.' + value.substring(6, 9);
+            }
+            if (value.length > 11) {
+                value = value + '-' + value.substring(9, 11);
+            }
+            input.value = value;
+        }
+
+        document.getElementById('telefone').addEventListener('keyup', function() {
+            formatarTelefone(this);
+        });
+        document.getElementById('cpf').addEventListener('keyup', function() {
+            formatarCPF(this);
+        });
 
         // 
         // FUNÇÃO FINALIZAR COMPRA
         // 
-        document.getElementById('checkoutForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Previne o envio padrão do formulário
-
+        document.getElementById('formCompra').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
             try {
                 // Capturar dados do formulário
                 const nome = document.getElementById('nome').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const telefone = document.getElementById('telefone').value.trim();
                 const cpf = document.getElementById('cpf').value.trim();
-                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
+                
                 // Validar campos
                     alert('⚠️ Por favor, preencha todos os campos!');
                     return;
                 }
-
+                
                 // Validar email
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
                     alert('⚠️ Por favor, insira um email válido!');
                     return;
                 }
-
-                // Capturar parâmetros da URL
-                const urlParams = getUrlParams();
-                const igreja = urlParams.igreja || null;
-                const parceiro = urlParams.parceiro || null;
-                const empresa = urlParams.empresa || null;
-
-                console.log('Parâmetros capturados:', { igreja, parceiro, empresa });
-
+                
                 // Preparar dados para inserção
                 const dadosVenda = {
                     nome_comprador: nome,
@@ -379,46 +292,45 @@
                     valor_total: 29.90,
                     valor_unitario: 29.90,
                     quantidade: 1,
-                    forma_pagamento: paymentMethod,
+                    forma_pagamento: 'pix',
                     status_pagamento: 'pendente',
                     data_venda: new Date().toISOString(),
+                    igreja_id: igrejaId,
+                    parceiro_id: parceiroId,
                     email_enviado: false,
-                    comissao_paga: false,
-                    igreja_id: igreja, // Pode ser null
-                    parceiro_id: parceiro, // Pode ser null
-                    empresa_id: empresa // Pode ser null
+                    comissao_paga: false
                 };
-
+                
                 console.log('📤 Enviando dados para o Supabase:', dadosVenda);
-
+                
                 // Inserir no Supabase
                 const { data, error } = await meuSupabase
                     .from('vendas')
                     .insert([dadosVenda])
-                    .select(); // Retorna os dados inseridos
-
+                    .select();
+                
                 if (error) {
-                    console.error('❌ Erro ao salvar no Supabase:', error);
-                    alert(`❌ Erro ao registrar venda: ${error.message}`);
+                    console.error('❌ Erro ao salvar:', error);
+                    alert('❌ Erro ao processar compra. Tente novamente. Detalhes: ' + error.message);
                     return;
                 }
-
+                
                 console.log('✅ Compra registrada com sucesso!', data);
-
+                
                 // Mostrar seção de pagamento Pix
-                document.getElementById('paymentSection').style.display = 'block';
-
+                document.getElementById('pixSection').style.display = 'block';
+                
                 // Scroll suave até a seção de pagamento
-                document.getElementById('paymentSection').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+                document.getElementById('pixSection').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
                 });
-
+                
                 alert('✅ Compra registrada com sucesso! Complete o pagamento via Pix.');
-
+                
             } catch (error) {
-                console.error('❌ Erro ao processar compra:', error);
-                alert(`❌ Erro ao processar compra: ${error.message}`);
+                console.error('❌ Erro geral ao processar compra:', error);
+                alert('❌ Erro geral ao processar compra. Tente novamente. Detalhes: ' + error.message);
             }
         });
 
@@ -426,9 +338,9 @@
         // FUNÇÃO COPIAR CÓDIGO PIX
         // 
         function copiarCodigoPix() {
-            // Este é um código Pix de exemplo. Em um ambiente real, seria gerado dinamicamente.
-            const codigoPix = "00020126580014br.gov.bcb.pix0136seu-codigo-pix-aqui5204000053039865802BR5925BIZMIX LTDA6009SAO PAULO62070503***6304ABCD";
-
+            const pixCodeDisplay = document.getElementById('pixCodeDisplay');
+            const codigoPix = pixCodeDisplay.textContent.trim();
+            
             navigator.clipboard.writeText(codigoPix).then(() => {
                 alert('✅ Código Pix copiado! Cole no app do seu banco.');
             }).catch(err => {
@@ -437,24 +349,7 @@
             });
         }
 
-        // 
-        // INICIALIZAÇÃO E FORMATAÇÃO
-        // 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Aplica formatação ao telefone
-            const telefoneInput = document.getElementById('telefone');
-            telefoneInput.addEventListener('input', (e) => {
-                e.target.value = formatTelefone(e.target.value);
-            });
-
-            // Aplica formatação ao CPF
-            const cpfInput = document.getElementById('cpf');
-            cpfInput.addEventListener('input', (e) => {
-                e.target.value = formatCpf(e.target.value);
-            });
-
-            console.log('✅ JavaScript de compra carregado com sucesso!');
-        });
+        console.log('✅ JavaScript de compra carregado com sucesso!');
     </script>
 </body>
 </html>
