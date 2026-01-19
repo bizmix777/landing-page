@@ -328,7 +328,7 @@
                     email: userData.email,
                     nome: userData.nome_completo,
                     tipo: userData.tipo_parceiro,
-                    expires: new Date().getTime() + (24  60  60 * 1000)
+                    expires: new Date().getTime() + (24 * 60 * 60 * 1000)
                 };
 
                 localStorage.setItem('igrejaSession', JSON.stringify(sessionData));
