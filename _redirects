@@ -1,0 +1,79 @@
+# ===================================
+# REGRAS DE REDIRECIONAMENTO
+# Cloudflare Pages
+# ===================================
+
+# Arquivos HTML na raiz
+/teste-supabase.html     /teste-supabase.html     200
+/comprar.html            /comprar.html            200
+/teste.html              /teste.html              200
+/ig_parceiras.html       /ig_parceiras.html       200
+/index.html              /index.html              200
+
+# Pasta admin (DEVE VIR ANTES DO /*)
+/admin                               /admin/index.html                    200
+/admin/                              /admin/index.html                    200
+/admin/login.html                    /admin/login.html                    200
+/admin/index.html                    /admin/index.html                    200
+/admin/admin.html                    /admin/admin.html                    200
+/admin/dashboard-comissoes.html      /admin/dashboard-comissoes.html      200
+/admin/venda.html                    /admin/venda.html                    200
+/admin/igrejas.html                  /admin/igrejas.html                  200
+/admin/comprovante.html              /admin/comprovante.html              200
+
+# ADICIONE ESTAS LINHAS NOVAS (pasta admin/igrejas)
+/admin/igrejas                       /admin/igrejas/login.html            200
+/admin/igrejas/                      /admin/igrejas/login.html            200
+/admin/igrejas/login.html            /admin/igrejas/login.html            200
+/admin/igrejas/dashboard.html        /admin/igrejas/dashboard.html        200
+/admin/igrejas/teste-login.html      /admin/igrejas/teste-login.html      200
+/admin/igrejas/teste-simples.html    /admin/igrejas/teste-simples.html    200
+/admin/igrejas/*                     /admin/igrejas/:splat                200
+
+# ADICIONE ESTAS LINHAS NOVAS (pasta admin/parceiros)
+/admin/parceiros                     /admin/parceiros/login.html          200
+/admin/parceiros/                    /admin/parceiros/login.html          200
+/admin/parceiros/login.html          /admin/parceiros/login.html          200
+/admin/parceiros/dashboard.html      /admin/parceiros/dashboard.html      200
+/admin/parceiros/*                   /admin/parceiros/:splat              200
+
+# Regra genérica admin (DEPOIS das específicas)
+/admin/*                             /admin/:splat                        200
+
+# Pasta livro
+/livro                   /livro/index.html        200
+/livro/                  /livro/index.html        200
+/livro/*                 /livro/:splat            200
+
+# Pasta painel-acesso
+/painel-acesso           /painel-acesso/index.html     200
+/painel-acesso/          /painel-acesso/index.html     200
+/painel-acesso/*         /painel-acesso/:splat         200
+
+# Pasta painel
+/painel                  /painel/index.html            200
+/painel/                 /painel/index.html            200
+/painel/*                /painel/:splat                200
+
+# Pasta cadastro
+/cadastro                /cadastro/index.html          200
+/cadastro/               /cadastro/index.html          200
+/cadastro/*              /cadastro/:splat              200
+
+# Pasta somos-todos-um
+/somos-todos-um          /somos-todos-um/index.html    200
+/somos-todos-um/         /somos-todos-um/index.html    200
+/somos-todos-um/*        /somos-todos-um/:splat        200
+
+# Arquivos estáticos (CSS, JS, imagens)
+/js/*                    /js/:splat               200
+/css/*                   /css/:splat              200
+/images/*                /images/:splat           200
+/assets/*                /assets/:splat           200
+
+# Favicon e outros recursos
+/favicon.ico             /favicon.ico             200
+/robots.txt              /robots.txt              200
+
+# SPA fallback - ÚLTIMA regra (SEMPRE NO FINAL)
+/*                       /index.html              200
