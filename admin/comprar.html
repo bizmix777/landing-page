@@ -3,201 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finalize sua Compra - Somos Todos Um</title>
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>🛒 Finalize sua Compra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-gradient: linear-gradient(to right, #667eea, #764ba2);
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --text-color: #333;
+            --white: #fff;
+            --light-gray: #f4f7f6;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            background: var(--primary-gradient);
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
-            color: #333;
+            color: var(--text-color);
+            line-height: 1.6;
         }
+
         .container {
-            background-color: #ffffff;
-            padding: 30px 40px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            max-width: 500px;
             width: 100%;
+            max-width: 800px;
+            padding: 20px;
             box-sizing: border-box;
         }
-        h1 {
-            color: #2c3e50;
+
+        .card {
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 40px;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 2em;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        h2 {
+            font-size: 2.2em;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .product-name {
+            font-size: 1.4em;
+            color: var(--primary-color);
+            margin-bottom: 10px;
             font-weight: 600;
         }
+
+        .price {
+            font-size: 2.5em;
+            color: var(--secondary-color);
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        form {
+            text-align: left;
+            margin-top: 30px;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
+
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
-            color: #555;
+            font-weight: 600;
+            color: var(--text-color);
         }
+
         input[type="text"],
         input[type="email"],
         input[type="tel"] {
             width: calc(100% - 20px);
             padding: 12px 10px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 1em;
             box-sizing: border-box;
             transition: border-color 0.3s ease;
         }
+
         input[type="text"]:focus,
         input[type="email"]:focus,
         input[type="tel"]:focus {
-            border-color: #007bff;
+            border-color: var(--primary-color);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
         }
-        .price-display {
+
+        .payment-methods {
+            margin-top: 30px;
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #28a745;
         }
-        .payment-options {
-            margin-top: 25px;
-            border-top: 1px solid #eee;
-            padding-top: 25px;
-        }
-        .payment-method-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: #007bff;
-            color: white;
+
+        .payment-methods button {
+            background: var(--primary-color);
+            color: var(--white);
             border: none;
+            padding: 15px 30px;
             border-radius: 8px;
             font-size: 1.1em;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+            transition: background 0.3s ease, transform 0.2s ease;
             font-weight: 600;
+            margin: 0 10px;
         }
-        .payment-method-btn:hover {
-            background-color: #0056b3;
+
+        .payment-methods button:hover {
+            background: var(--secondary-color);
             transform: translateY(-2px);
         }
-        .payment-method-btn.selected {
-            background-color: #28a745;
-        }
-        .payment-method-btn.selected:hover {
-            background-color: #218838;
-        }
-        .pix-section {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #e9f7ef;
-            border: 1px solid #d4edda;
+
+        .btn-finalizar {
+            display: block;
+            width: 100%;
+            background: var(--secondary-color);
+            color: var(--white);
+            border: none;
+            padding: 18px;
             border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+            font-weight: 700;
+            margin-top: 30px;
+        }
+
+        .btn-finalizar:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-finalizar:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .payment-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: var(--light-gray);
+            border-radius: 10px;
             text-align: center;
+            border: 1px solid var(--border-color);
         }
-        .pix-section h3 {
-            color: #28a745;
-            margin-top: 0;
-            font-size: 1.4em;
+
+        .payment-section h3 {
+            color: var(--primary-color);
+            font-size: 1.8em;
+            margin-bottom: 20px;
         }
-        .pix-section p {
+
+        .payment-section p {
             font-size: 1.1em;
             margin-bottom: 15px;
-            color: #333;
         }
+
         .pix-code-display {
-            background-color: #ffffff;
-            border: 1px dashed #28a745;
+            background: var(--white);
+            border: 1px dashed var(--primary-color);
             padding: 15px;
             border-radius: 8px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9em;
+            font-size: 1.1em;
             word-break: break-all;
-            margin-bottom: 15px;
-            color: #333;
+            margin-bottom: 20px;
+            color: var(--text-color);
         }
-        .copy-pix-btn {
-            background-color: #17a2b8;
-            color: white;
-            padding: 12px 20px;
+
+        .btn-copy-pix {
+            background: var(--primary-color);
+            color: var(--white);
             border: none;
+            padding: 12px 25px;
             border-radius: 8px;
             font-size: 1em;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease, transform 0.2s ease;
+            font-weight: 600;
         }
-        .copy-pix-btn:hover {
-            background-color: #138496;
+
+        .btn-copy-pix:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
         }
-        .footer-links {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #777;
+
+        .instructions {
+            margin-top: 25px;
+            font-size: 0.95em;
+            color: #555;
         }
-        .footer-links a {
-            color: #007bff;
-            text-decoration: none;
-            margin: 0 10px;
+
+        .instructions ol {
+            list-style-position: inside;
+            padding-left: 0;
+            text-align: left;
+            margin-top: 15px;
         }
-        .footer-links a:hover {
-            text-decoration: underline;
+
+        .instructions li {
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .product-name {
+                font-size: 1.2em;
+            }
+
+            .price {
+                font-size: 2em;
+            }
+
+            .payment-methods button {
+                width: 100%;
+                margin: 10px 0;
+            }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="container">
-        <h1>🛒 Finalize sua Compra</h1>
-        <p class="price-display">Valor: R$ 29,90</p>
+        <div class="card">
+            <h2>🛒 Finalize sua Compra</h2>
+            <p class="product-name">Livro Digital: Somos Todos Um</p>
+            <p class="price">R$ 29,90</p>
 
-        <form id="formCompra">
-            <div class="form-group">
-                <label for="nome">Nome Completo:</label>
-                <input type="text" id="nome" name="nome" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="telefone">Telefone:</label>
-                <input type="tel" id="telefone" name="telefone" placeholder="(XX) XXXXX-XXXX" maxlength="15" required>
-            </div>
-            <div class="form-group">
-                <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" placeholder="XXX.XXX.XXX-XX" maxlength="14" required>
-            </div>
+            <form id="purchaseForm">
+                <div class="form-group">
+                    <label for="nome">Nome Completo:</label>
+                    <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required placeholder="seu.email@exemplo.com">
+                </div>
+                <div class="form-group">
+                    <label for="telefone">Telefone:</label>
+                    <input type="tel" id="telefone" name="telefone" required placeholder="(XX) XXXXX-XXXX">
+                </div>
+                <div class="form-group">
+                    <label for="cpf">CPF:</label>
+                    <input type="text" id="cpf" name="cpf" required placeholder="XXX.XXX.XXX-XX">
+                </div>
 
-            <div class="payment-options">
-                <button type="submit" class="payment-method-btn selected" id="btnPix">
-                    💳 Pix
-                </button>
-            </div>
-        </form>
+                <div class="payment-methods">
+                    <button type="button" id="btnPix">💳 Pix</button>
+                </div>
 
-        <div id="pixSection" class="pix-section">
-            <h3>Confirme o pagamento de R$ 29,90 via Pix</h3>
-            <p>Use o código Pix abaixo no aplicativo do seu banco para finalizar a compra.</p>
-            <div class="pix-code-display" id="pixCodeDisplay">
-                00020126580014br.gov.bcb.pix0136seu-codigo-pix-aqui5204000053039865802BR5925BIZMIX LTDA6009SAO PAULO62070503***6304ABCD
-            </div>
-            <button class="copy-pix-btn" onclick="copiarCodigoPix()">Copiar Código Pix</button>
-        </div>
+                <button type="submit" class="btn-finalizar" id="btnFinalizarCompra">Finalizar Compra</button>
+            </form>
 
-        <div class="footer-links">
-            <a href="#">Termos de Uso</a>
-            <a href="#">Política de Privacidade</a>
+            <div class="payment-section" id="pixPaymentSection" style="display: none;">
+                <h3>💳 Pagamento via Pix</h3>
+                <p>Valor: R$ 29,90</p>
+                <p>Confirme o pagamento de R$ 29,90 para a Bizmix LTDA.</p>
+                <div class="pix-code-display" id="pixCodeDisplay">
+                    00020126580014br.gov.bcb.pix0136seu-codigo-pix-aqui5204000053039865802BR5925BIZMIX LTDA6009SAO PAULO62070503***6304ABCD
+                </div>
+                <button class="btn-copy-pix" onclick="copiarCodigoPix()">Copiar Código Pix</button>
+                <div class="instructions">
+                    <p>Instruções para pagamento:</p>
+                    <ol>
+                        <li>Abra o aplicativo do seu banco ou carteira digital.</li>
+                        <li>Escolha a opção "Pix Copia e Cola" ou "Pagar com Pix".</li>
+                        <li>Cole o código Pix copiado acima.</li>
+                        <li>Confirme o valor de R$ 29,90 e finalize o pagamento.</li>
+                    </ol>
+                    <p>Após o pagamento, seu acesso será liberado automaticamente.</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -210,60 +310,75 @@
 
         const meuSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 
-        // CAPTURAR PARÂMETROS DA URL
-        // 
-        const urlParams = new URLSearchParams(window.location.search);
-        const igrejaId = urlParams.get('igreja');
-        const parceiroId = urlParams.get('parceiro');
-        const empresaId = urlParams.get('empresa');
-
-        console.log('Parâmetros capturados:', { igreja: igrejaId, parceiro: parceiroId, empresa: empresaId });
+        console.log('✅ JavaScript de compra carregado com sucesso!');
 
         // 
         // FUNÇÕES DE FORMATAÇÃO
         // 
         function formatarTelefone(input) {
             let value = input.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                value = '(' + value.substring(0, 2) + ') ' + value.substring(2, 7);
-            }
-            if (value.length > 9) {
-                value = value + '-' + value.substring(7, 11);
+            if (value.length > 10) {
+                value = value.replace(/^(\d\d)(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                value = value.replace(/^(\d\d)(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                value = value.replace(/^(\d\d)(\d{0,5}).*/, '($1) $2');
+            } else {
+                value = value.replace(/^(\d*)/, '($1');
             }
             input.value = value;
         }
 
         function formatarCPF(input) {
             let value = input.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                value = value.substring(0, 3);
-            }
-            if (value.length > 3) {
-                value = value + '.' + value.substring(3, 6);
-            }
-            if (value.length > 7) {
-                value = value + '.' + value.substring(6, 9);
-            }
-            if (value.length > 11) {
-                value = value + '-' + value.substring(9, 11);
+            if (value.length > 9) {
+                value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, '$1.$2.$3-$4');
+            } else if (value.length > 6) {
+                value = value.replace(/^(\d{3})(\d{3})(\d{0,3}).*/, '$1.$2.$3');
+            } else if (value.length > 3) {
+                value = value.replace(/^(\d{3})(\d{0,3}).*/, '$1.$2');
             }
             input.value = value;
         }
 
-        document.getElementById('telefone').addEventListener('keyup', function() {
+        // 
+        // EVENT LISTENERS PARA FORMATAÇÃO
+        // 
+        document.getElementById('telefone').addEventListener('input', function() {
             formatarTelefone(this);
         });
-        document.getElementById('cpf').addEventListener('keyup', function() {
+
+        document.getElementById('cpf').addEventListener('input', function() {
             formatarCPF(this);
         });
 
         // 
+        // CAPTURAR PARÂMETROS DA URL
+        // 
+        function getUrlParams() {
+            const params = {};
+            window.location.search.substring(1).split('&').forEach(param => {
+                const parts = param.split('=');
+                if (parts[0]) {
+                    params[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1] || '');
+                }
+            });
+            return params;
+        }
+
+        const urlParams = getUrlParams();
+        console.log('Parâmetros capturados:', urlParams);
+
+        // 
         // FUNÇÃO FINALIZAR COMPRA
         // 
-        document.getElementById('formCompra').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
+        async function finalizarCompra(event) {
+            event.preventDefault(); // Previne o envio padrão do formulário
+
+            const btnFinalizar = document.getElementById('btnFinalizarCompra');
+            btnFinalizar.disabled = true;
+            btnFinalizar.textContent = 'Processando...';
+
             try {
                 // Capturar dados do formulário
                 const nome = document.getElementById('nome').value.trim();
@@ -273,6 +388,8 @@
                 
                 // Validar campos
                     alert('⚠️ Por favor, preencha todos os campos!');
+                    btnFinalizar.disabled = false;
+                    btnFinalizar.textContent = 'Finalizar Compra';
                     return;
                 }
                 
@@ -280,25 +397,31 @@
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
                     alert('⚠️ Por favor, insira um email válido!');
+                    btnFinalizar.disabled = false;
+                    btnFinalizar.textContent = 'Finalizar Compra';
                     return;
                 }
+
+                // Remover formatação para salvar no banco
+                const telefoneLimpo = telefone.replace(/\D/g, '');
+                const cpfLimpo = cpf.replace(/\D/g, '');
                 
                 // Preparar dados para inserção
                 const dadosVenda = {
                     nome_comprador: nome,
                     email_comprador: email,
-                    telefone_comprador: telefone,
-                    cpf_comprador: cpf,
+                    telefone_comprador: telefoneLimpo,
+                    cpf_comprador: cpfLimpo,
                     valor_total: 29.90,
                     valor_unitario: 29.90,
                     quantidade: 1,
                     forma_pagamento: 'pix',
                     status_pagamento: 'pendente',
                     data_venda: new Date().toISOString(),
-                    igreja_id: igrejaId,
-                    parceiro_id: parceiroId,
                     email_enviado: false,
-                    comissao_paga: false
+                    comissao_paga: false,
+                    created_at: new Date().toISOString(), // Adicionado para consistência
+                    updated_at: new Date().toISOString()  // Adicionado para consistência
                 };
                 
                 console.log('📤 Enviando dados para o Supabase:', dadosVenda);
@@ -312,16 +435,19 @@
                 if (error) {
                     console.error('❌ Erro ao salvar:', error);
                     alert('❌ Erro ao processar compra. Tente novamente. Detalhes: ' + error.message);
+                    btnFinalizar.disabled = false;
+                    btnFinalizar.textContent = 'Finalizar Compra';
                     return;
                 }
                 
                 console.log('✅ Compra registrada com sucesso!', data);
                 
                 // Mostrar seção de pagamento Pix
-                document.getElementById('pixSection').style.display = 'block';
+                const pixSection = document.getElementById('pixPaymentSection');
+                pixSection.style.display = 'block';
                 
                 // Scroll suave até a seção de pagamento
-                document.getElementById('pixSection').scrollIntoView({ 
+                pixSection.scrollIntoView({ 
                     behavior: 'smooth', 
                     block: 'start' 
                 });
@@ -330,16 +456,18 @@
                 
             } catch (error) {
                 console.error('❌ Erro geral ao processar compra:', error);
-                alert('❌ Erro geral ao processar compra. Tente novamente. Detalhes: ' + error.message);
+                alert('❌ Erro ao processar compra. Tente novamente. Detalhes: ' + error.message);
+            } finally {
+                btnFinalizar.disabled = false;
+                btnFinalizar.textContent = 'Finalizar Compra';
             }
-        });
+        }
 
         // 
         // FUNÇÃO COPIAR CÓDIGO PIX
         // 
         function copiarCodigoPix() {
-            const pixCodeDisplay = document.getElementById('pixCodeDisplay');
-            const codigoPix = pixCodeDisplay.textContent.trim();
+            const codigoPix = document.getElementById('pixCodeDisplay').textContent.trim();
             
             navigator.clipboard.writeText(codigoPix).then(() => {
                 alert('✅ Código Pix copiado! Cole no app do seu banco.');
@@ -349,7 +477,20 @@
             });
         }
 
-        console.log('✅ JavaScript de compra carregado com sucesso!');
+        // 
+        // EVENT LISTENER PARA O FORMULÁRIO
+        // 
+        document.getElementById('purchaseForm').addEventListener('submit', finalizarCompra);
+
+        // 
+        // EVENT LISTENER PARA O BOTÃO PIX (se houver mais de um método)
+        // 
+        document.getElementById('btnPix').addEventListener('click', function() {
+            // Aqui você pode adicionar lógica para selecionar o método Pix,
+            // mas como é o único, o submit já vai para finalizarCompra.
+            // Por enquanto, apenas garante que o botão Pix não faz nada extra.
+        });
+
     </script>
 </body>
 </html>
