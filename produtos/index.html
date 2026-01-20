@@ -1,19 +1,17 @@
 <!DOCTYPE html><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+     <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Configuração centralizada do Supabase -->
+    <script src="/js/supabase-config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nossos Produtos | BizMix</title>
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
-    
-    <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Configuração centralizada do Supabase -->
-    <script src="/js/supabase-config.js"></script>
-    
+         
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -561,10 +559,6 @@
     </div>
 
     <script>
-        // ========================================
-        // NÃO DECLARAR MAIS SUPABASE AQUI!
-        // Ele vem do arquivo /js/supabase-config.js
-        // ========================================
 
         let todosProdutos = [];
         let produtosFiltrados = [];
