@@ -1,12 +1,23 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento Aprovado! - Livro Somos Todos Um</title>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"></script>
+    <title>Pagamento Confirmado! - BizMix</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico">
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuração centralizada do Supabase -->
+    <script src="/js/supabase-config.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
@@ -15,452 +26,324 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 20px;
-            color: #333;
         }
 
         .container {
-            max-width: 700px;
+            max-width: 600px;
             width: 100%;
+        }
+
+        .success-card {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
+            border-radius: 20px;
+            padding: 40px;
             text-align: center;
-            animation: fadeIn 0.8s ease-out;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Header - Success Message */
-        .header-success {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-            color: white;
-            padding: 40px 20px;
-            border-bottom: 5px solid #1B5E20;
-        }
-
-        .checkmark-circle {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: white;
-            margin: 0 auto 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .checkmark-icon {
-            width: 50px;
-            height: 50px;
-            stroke-width: 4;
-            stroke: #4CAF50;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            transform: rotate(0deg);
-            animation: drawCheckmark 0.6s ease-out forwards;
-        }
-
-        @keyframes drawCheckmark {
-            0% {
-                stroke-dasharray: 100;
-                stroke-dashoffset: 100;
-                transform: rotate(0deg) scale(0.8);
+        @keyframes slideUp {
+            from {
                 opacity: 0;
+                transform: translateY(30px);
             }
-            50% {
+            to {
                 opacity: 1;
-                transform: rotate(0deg) scale(1.1);
-            }
-            100% {
-                stroke-dashoffset: 0;
-                transform: rotate(0deg) scale(1);
-                opacity: 1;
+                transform: translateY(0);
             }
         }
 
-        .header-success h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: scaleIn 0.5s ease 0.3s backwards;
         }
 
-        .header-success p {
-            font-size: 1.1em;
-            opacity: 0.9;
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
         }
 
-        /* Content Sections */
-        .content-section {
-            padding: 30px;
+        .success-icon i {
+            color: white;
+            font-size: 50px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
             text-align: left;
         }
 
-        .content-section h2 {
-            font-size: 1.8em;
-            color: #2E7D32;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 10px;
-        }
-
-        .detail-item {
+        .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px dashed #eee;
-            font-size: 1.05em;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
         }
 
-        .detail-item:last-child {
+        .info-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
             border-bottom: none;
         }
 
-        .detail-item strong {
-            color: #555;
-        }
-
-        .detail-item span {
-            color: #2E7D32;
-            font-weight: 600;
-        }
-
-        .partner-info {
-            background: #e8f5e9;
-            border-left: 5px solid #4CAF50;
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 8px;
-            font-size: 0.95em;
-        }
-
-        .partner-info p {
-            margin: 5px 0;
-        }
-
-        .partner-info strong {
-            color: #2E7D32;
-        }
-
-        /* Buttons */
-        .button-group {
-            padding: 20px 30px 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-            color: white;
-            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.6);
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #555;
-            border: 1px solid #ddd;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
-
-        /* Loading and Error States */
-        .loading-state, .error-state {
-            padding: 50px;
-            text-align: center;
-            font-size: 1.2em;
+        .info-label {
             color: #666;
-        }
-
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-top: 4px solid #4CAF50;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .error-state p {
-            color: #D32F2F;
             font-weight: 500;
         }
 
-        /* Next Steps */
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
         .next-steps {
-            background: #f9f9f9;
-            padding: 30px;
-            border-top: 1px solid #eee;
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 30px 0;
             text-align: left;
+            border-radius: 5px;
         }
 
         .next-steps h3 {
-            font-size: 1.4em;
-            color: #2E7D32;
+            color: #667eea;
             margin-bottom: 15px;
         }
 
         .next-steps ul {
             list-style: none;
-            padding-left: 0;
         }
 
         .next-steps li {
-            margin-bottom: 10px;
-            line-height: 1.5;
+            padding: 8px 0;
             color: #555;
         }
 
-        .next-steps li strong {
-            color: #333;
+        .next-steps li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
         }
 
-        /* Footer */
-        .footer {
-            background: #f0f0f0;
-            padding: 20px;
-            font-size: 0.9em;
-            color: #777;
-            border-top: 1px solid #e0e0e0;
-        }
+        @media (max-width: 768px) {
+            .success-card {
+                padding: 30px 20px;
+            }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            .header-success h1 {
-                font-size: 2em;
+            h1 {
+                font-size: 26px;
             }
-            .header-success p {
-                font-size: 1em;
-            }
-            .content-section h2 {
-                font-size: 1.5em;
-            }
-            .detail-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .detail-item span {
-                margin-top: 5px;
-            }
-            .button-group {
-                padding: 20px;
+
+            .btn {
+                display: block;
+                margin: 10px 0;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header-success">
-            <div class="checkmark-circle">
-                <svg class="checkmark-icon" viewBox="0 0 52 52">
-                    <path d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                </svg>
-            </div>
-            <h1>Pagamento Aprovado!</h1>
-            <p>Sua compra foi realizada com sucesso.</p>
-        </div>
-
-        <div id="loadingState" class="loading-state">
-            <div class="spinner"></div>
-            <p>Carregando detalhes da sua compra...</p>
-        </div>
-
-        <div id="errorState" class="error-state" style="display: none;">
-            <p>❌ Ocorreu um erro ao carregar os detalhes da compra.</p>
-            <p>Por favor, tente novamente ou entre em contato com o suporte.</p>
-            <a href="/" class="btn btn-secondary" style="margin-top: 20px;">Voltar para Home</a>
-        </div>
-
-        <div id="successContent" style="display: none;">
-            <div class="content-section">
-                <h2>Detalhes da Compra</h2>
-                <div class="detail-item">
-                    <strong>Comprador:</strong> <span id="buyerName"></span>
-                </div>
-                <div class="detail-item">
-                    <strong>Email:</strong> <span id="buyerEmail"></span>
-                </div>
-                <div class="detail-item">
-                    <strong>Valor Total:</strong> <span id="totalValue"></span>
-                </div>
-                <div class="detail-item">
-                    <strong>Data do Pagamento:</strong> <span id="paymentDate"></span>
-                </div>
-
-                <div id="partnerDetails" class="partner-info" style="display: none;">
-                    <p>Sua compra foi indicada por <strong><span id="partnerName"></span></strong>.</p>
-                    <p>Este parceiro receberá <strong><span id="partnerCommission"></span></strong> de comissão.</p>
-                </div>
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
             </div>
 
-            <div class="button-group">
-                <a href="#" id="downloadButton" class="btn btn-primary">Baixar Livro Digital</a>
-                <a href="/" class="btn btn-secondary">Voltar para Home</a>
+            <h1>🎉 Pagamento Confirmado!</h1>
+            <p class="subtitle">Sua compra foi processada com sucesso</p>
+
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="info-label">Produto:</span>
+                    <span class="info-value" id="produto-nome">Carregando...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Valor Pago:</span>
+                    <span class="info-value" id="valor-pago">R$ 0,00</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Forma de Pagamento:</span>
+                    <span class="info-value" id="forma-pagamento">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Data:</span>
+                    <span class="info-value" id="data-compra">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Pedido:</span>
+                    <span class="info-value" id="pedido-id">-</span>
+                </div>
             </div>
 
             <div class="next-steps">
-                <h3>O que acontece agora?</h3>
+                <h3>📋 Próximos Passos:</h3>
                 <ul>
-                    <li><strong>Acesso Imediato:</strong> Clique no botão "Baixar Livro Digital" para fazer o download do seu e-book.</li>
-                    <li><strong>Confirmação por Email:</strong> Você receberá um email de confirmação com o link para download e detalhes da compra.</li>
-                    <li><strong>Suporte:</strong> Se tiver qualquer dúvida ou problema, entre em contato conosco.</li>
+                    <li>Seu produto digital estará disponível para download imediatamente</li>
+                    <li>Você receberá um e-mail de confirmação com os detalhes da compra</li>
+                    <li>Para produtos físicos, acompanhe o status do envio pelo e-mail</li>
+                    <li>Em caso de dúvidas, entre em contato com nosso suporte</li>
                 </ul>
             </div>
-        </div>
 
-        <div class="footer">
-            <p>Precisa de ajuda? Entre em contato: suporte@bizmix.com.br</p>
+            <div>
+                <a href="/somos-todos-um/download.html" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Fazer Download
+                </a>
+                <a href="/produtos/" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Voltar à Loja
+                </a>
+            </div>
         </div>
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+    <script>
+        // Supabase já configurado via /js/supabase-config.js
 
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Buscar parâmetros da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const vendaId = urlParams.get('venda');
+        const paymentId = urlParams.get('payment_id');
 
-        // DOM Elements
-        const loadingState = document.getElementById('loadingState');
-        const errorState = document.getElementById('errorState');
-        const successContent = document.getElementById('successContent');
-        const buyerName = document.getElementById('buyerName');
-        const buyerEmail = document.getElementById('buyerEmail');
-        const totalValue = document.getElementById('totalValue');
-        const paymentDate = document.getElementById('paymentDate');
-        const partnerDetails = document.getElementById('partnerDetails');
-        const partnerName = document.getElementById('partnerName');
-        const partnerCommission = document.getElementById('partnerCommission');
-        const downloadButton = document.getElementById('downloadButton');
-
-        // Function to format currency
-        const formatCurrency = (value) => {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-        };
-
-        // Function to format date
-        const formatDate = (isoString) => {
-            if (!isoString) return 'N/A';
-            const date = new Date(isoString);
-            return date.toLocaleDateString('pt-BR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        };
-
-        // Fetch sale details
-        async function fetchSaleDetails() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const venda_id = urlParams.get('venda_id');
-
-            if (!venda_id) {
-                loadingState.style.display = 'none';
-                errorState.style.display = 'block';
-                errorState.querySelector('p').textContent = '❌ ID da venda não encontrado na URL.';
-                return;
-            }
-
+        async function carregarDadosVenda() {
             try {
-                const { data: venda, error } = await supabase
-                    .from('vendas')
-                    .select(`
-                        id,
-                        nome_comprador,
-                        email_comprador,
-                        valor_total,
-                        data_pagamento,
-                        comissao_valor,
-                        parceiros (
-                            nome_completo,
-                            codigo_parceiro
-                        )
-                    `)
-                    .eq('id', venda_id)
-                    .single();
-
-                if (error || !venda) {
-                    console.error('Erro ao buscar detalhes da venda:', error);
-                    loadingState.style.display = 'none';
-                    errorState.style.display = 'block';
-                    errorState.querySelector('p').textContent = '❌ Não foi possível encontrar os detalhes da sua compra.';
+                if (!vendaId && !paymentId) {
+                    console.warn('Nenhum ID de venda fornecido');
                     return;
                 }
 
-                // Display data
-                buyerName.textContent = venda.nome_comprador;
-                buyerEmail.textContent = venda.email_comprador;
-                totalValue.textContent = formatCurrency(venda.valor_total);
-                paymentDate.textContent = formatDate(venda.data_pagamento);
+                // Buscar venda pelo ID ou payment_id
+                let query = supabase
+                    .from('vendas')
+                    .select('*');
 
-                if (venda.parceiros) {
-                    partnerName.textContent = venda.parceiros.nome_completo;
-                    partnerCommission.textContent = formatCurrency(venda.comissao_valor);
-                    partnerDetails.style.display = 'block';
+                if (vendaId) {
+                    query = query.eq('id', vendaId);
+                } else if (paymentId) {
+                    query = query.eq('payment_id', paymentId);
                 }
 
-                // Placeholder for download link (replace with actual product link)
-                downloadButton.href = '#'; // Replace with actual download URL
-                downloadButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    alert('Seu download do Livro Digital começará em breve! (Link de download real será configurado aqui)');
-                    // window.location.href = 'URL_DO_SEU_LIVRO_DIGITAL';
-                });
+                const { data, error } = await query.single();
 
-                loadingState.style.display = 'none';
-                successContent.style.display = 'block';
+                if (error) throw error;
 
+                if (data) {
+                    // Preencher informações na página
+                    document.getElementById('produto-nome').textContent = data.produto_nome || 'Produto Digital';
+                    document.getElementById('valor-pago').textContent = formatarMoeda(data.valor_total);
+                    document.getElementById('forma-pagamento').textContent = formatarFormaPagamento(data.forma_pagamento);
+                    document.getElementById('data-compra').textContent = formatarData(data.created_at);
+                    document.getElementById('pedido-id').textContent = data.id.substring(0, 8).toUpperCase();
+
+                    // Atualizar status para 'entregue' se for digital
+                    if (data.produto_tipo === 'digital' && data.status_pagamento === 'aprovado') {
+                        await supabase
+                            .from('vendas')
+                            .update({ status_entrega: 'entregue' })
+                            .eq('id', data.id);
+                    }
+                }
             } catch (error) {
-                console.error('Erro inesperado:', error);
-                loadingState.style.display = 'none';
-                errorState.style.display = 'block';
-                errorState.querySelector('p').textContent = '❌ Ocorreu um erro inesperado. Por favor, tente novamente.';
+                console.error('Erro ao carregar dados da venda:', error);
             }
         }
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', fetchSaleDetails);
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function formatarFormaPagamento(forma) {
+            const formas = {
+                'pix': '💳 PIX',
+                'credit_card': '💳 Cartão de Crédito',
+                'debit_card': '💳 Cartão de Débito',
+                'boleto': '📄 Boleto'
+            };
+            return formas[forma] || forma;
+        }
+
+        function formatarData(dataISO) {
+            const data = new Date(dataISO);
+            return data.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Carregar dados ao carregar página
+        document.addEventListener('DOMContentLoaded', carregarDadosVenda);
     </script>
 </body>
 </html>
