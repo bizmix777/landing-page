@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/supabase-config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parceiros da Igreja - BizMix</title>
+    <title>Gerenciar Parceiros - Admin BizMix</title>
+    
+    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuração centralizada -->
+    <script src="/js/supabase-config.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -14,224 +21,148 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --danger-color: #ef4444;
-            --dark-color: #1f2937;
-            --light-color: #f9fafb;
-            --border-color: #e5e7eb;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-color);
-            color: var(--dark-color);
+            background: #f5f7fa;
+            min-height: 100vh;
         }
 
-        .container {
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px 40px;
             display: flex;
-            min-height: 100vh;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 24px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-logout {
+            padding: 10px 20px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #ee5a6f;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 260px;
-            background: linear-gradient(180deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 20px;
             position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            transition: transform 0.3s;
-            z-index: 1000;
-        }
-
-        .sidebar-header {
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            margin-bottom: 20px;
-        }
-
-        .sidebar-header h2 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .sidebar-header p {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .user-info {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .user-info h3 {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .user-info p {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .nav-menu {
-            list-style: none;
+            left: 0;
+            top: 80px;
+            width: 250px;
+            height: calc(100vh - 80px);
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 30px 20px;
         }
 
         .nav-item {
-            margin-bottom: 5px;
-        }
-
-        .nav-link {
             display: flex;
             align-items: center;
-            padding: 12px 15px;
-            color: white;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #666;
             text-decoration: none;
             border-radius: 8px;
-            transition: all 0.3s;
-            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
         }
 
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
+        .nav-item:hover, .nav-item.active {
+            background: #f0f3ff;
+            color: #667eea;
         }
 
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-link span {
-            margin-left: 10px;
-        }
-
-        .logout-btn {
-            margin-top: 20px;
-            width: 100%;
-            padding: 12px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.5);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.3);
+        .nav-item i {
+            font-size: 18px;
+            width: 24px;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
-            margin-left: 260px;
-            padding: 30px;
-        }
-
-        .page-header {
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .page-header p {
-            color: #6b7280;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .card-header h2 {
-            font-size: 20px;
+            margin-left: 250px;
+            padding: 40px;
         }
 
         /* Filters */
         .filters {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
-        .filter-group {
+        .filter-input {
             flex: 1;
             min-width: 200px;
-        }
-
-        .filter-group label {
-            display: block;
-            margin-bottom: 5px;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 14px;
-            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        .filter-group input,
-        .filter-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+        .filter-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 14px;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
         }
 
-        .btn-primary {
-            background: var(--primary-color);
+        .btn-filter {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
-            background: var(--secondary-color);
-        }
-
-        .btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
+        .btn-filter:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
         /* Table */
         .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 25px;
             overflow-x: auto;
         }
 
@@ -240,55 +171,97 @@
             border-collapse: collapse;
         }
 
-        table th,
-        table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
+        thead {
+            background: #f8f9fa;
         }
 
-        table th {
-            background: var(--light-color);
+        th {
+            padding: 15px;
+            text-align: left;
+            color: #666;
             font-weight: 600;
             font-size: 14px;
-            color: var(--dark-color);
         }
 
-        table td {
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #333;
             font-size: 14px;
         }
 
-        table tr:hover {
-            background: var(--light-color);
+        tbody tr:hover {
+            background: #f8f9fa;
         }
 
-        /* Status Badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
+            display: inline-block;
         }
 
-        .badge-success {
-            background: #d1fae5;
-            color: #065f46;
+        .status-badge.ativo {
+            background: #d4edda;
+            color: #155724;
         }
 
-        .badge-warning {
-            background: #fef3c7;
-            color: #92400e;
+        .status-badge.pendente {
+            background: #fff3cd;
+            color: #856404;
         }
 
-        .badge-danger {
-            background: #fee2e2;
-            color: #991b1b;
+        .status-badge.inativo {
+            background: #f8d7da;
+            color: #721c24;
         }
 
-        .badge-info {
-            background: #dbeafe;
-            color: #1e40af;
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-action {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-approve {
+            background: #28a745;
+        }
+
+        .btn-approve:hover {
+            background: #218838;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+        }
+
+        .btn-reject:hover {
+            background: #c82333;
+        }
+
+        .btn-edit {
+            background: #007bff;
+        }
+
+        .btn-edit:hover {
+            background: #0056b3;
+        }
+
+        .btn-view {
+            background: #6c757d;
+        }
+
+        .btn-view:hover {
+            background: #5a6268;
         }
 
         /* Modal */
@@ -299,7 +272,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             z-index: 2000;
             align-items: center;
             justify-content: center;
@@ -312,10 +285,10 @@
         .modal-content {
             background: white;
             padding: 30px;
-            border-radius: 12px;
+            border-radius: 15px;
             max-width: 600px;
             width: 90%;
-            max-height: 90vh;
+            max-height: 80vh;
             overflow-y: auto;
         }
 
@@ -324,20 +297,23 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
         }
 
         .modal-header h2 {
-            font-size: 20px;
+            color: #333;
+            font-size: 22px;
         }
 
-        .close-modal {
+        .btn-close {
             background: none;
             border: none;
             font-size: 24px;
             cursor: pointer;
-            color: #6b7280;
+            color: #999;
+        }
+
+        .btn-close:hover {
+            color: #333;
         }
 
         .form-group {
@@ -346,514 +322,457 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            color: #333;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .form-group select {
             width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
             font-size: 14px;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
-        /* Mobile */
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: var(--primary-color);
+        .btn-save {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 768px) {
             .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.show {
-                transform: translateX(0);
+                width: 0;
+                overflow: hidden;
             }
 
             .main-content {
                 margin-left: 0;
+                padding: 20px;
             }
 
-            .mobile-menu-btn {
-                display: block;
+            .header {
+                padding: 15px 20px;
             }
 
             .filters {
                 flex-direction: column;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
+            .filter-input {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <button class="mobile-menu-btn" id="mobileMenuBtn">☰ Menu</button>
-
-    <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h2>⛪ BizMix</h2>
-                <p>Gestão de Parceiros</p>
-            </div>
-
-            <div class="user-info" id="userInfo">
-                <h3 id="userName">Carregando...</h3>
-                <p id="userEmail">...</p>
-            </div>
-
-            <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a class="nav-link" href="igrejas.html">
-                            <span>📊</span>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="ig-parceiras.html">
-                            <span>👥</span>
-                            <span>Parceiros</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="igrejas.html#sales">
-                            <span>💳</span>
-                            <span>Vendas</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="igrejas.html#withdrawals">
-                            <span>💸</span>
-                            <span>Saques</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="igrejas.html#profile">
-                            <span>⛪</span>
-                            <span>Perfil</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-
-            <button class="logout-btn" id="logoutBtn">🚪 Sair</button>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="page-header">
-                <h1>Gestão de Parceiros</h1>
-                <p>Gerencie os parceiros vinculados à sua igreja</p>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2>Filtros</h2>
-                    <button class="btn btn-success" id="addPartnerBtn">➕ Adicionar Parceiro</button>
-                </div>
-                <div class="filters">
-                    <div class="filter-group">
-                        <label>Buscar</label>
-                        <input type="text" id="searchPartner" placeholder="Nome, email ou código">
-                    </div>
-                    <div class="filter-group">
-                        <label>Status</label>
-                        <select id="filterStatus">
-                            <option value="">Todos</option>
-                            <option value="ativo">Ativo</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
-                    <div class="filter-group" style="display: flex; align-items: flex-end;">
-                        <button class="btn btn-primary" id="applyFilters">Aplicar Filtros</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2>Lista de Parceiros</h2>
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Nome</th>
-                                <th>Email</th>
-                                <th>Telefone</th>
-                                <th>Status</th>
-                                <th>Data Cadastro</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="partnersTable">
-                            <tr>
-                                <td colspan="7" style="text-align: center;">Carregando...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
+    <!-- Header -->
+    <div class="header">
+        <h1>👥 Gerenciar Parceiros</h1>
+        <div class="header-actions">
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </div>
     </div>
 
-    <!-- Modal Add/Edit Partner -->
-    <div class="modal" id="partnerModal">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a href="/admin/index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            Dashboard
+        </a>
+        <a href="/admin/gerenciar-parceiros.html" class="nav-item active">
+            <i class="fas fa-users"></i>
+            Parceiros
+        </a>
+        <a href="/admin/dashboard-igrejas.html" class="nav-item">
+            <i class="fas fa-church"></i>
+            Igrejas
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-box"></i>
+            Produtos
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-shopping-cart"></i>
+            Vendas
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-dollar-sign"></i>
+            Comissões
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-cog"></i>
+            Configurações
+        </a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Filters -->
+        <div class="filters">
+            <input type="text" id="searchInput" class="filter-input" placeholder="🔍 Buscar por nome, email ou telefone...">
+            <select id="statusFilter" class="filter-select">
+                <option value="">Todos os Status</option>
+                <option value="ativo">Ativo</option>
+                <option value="pendente">Pendente</option>
+                <option value="inativo">Inativo</option>
+            </select>
+            <button class="btn-filter" onclick="aplicarFiltros()">
+                <i class="fas fa-search"></i> Filtrar
+            </button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #666;">Carregando parceiros...</p>
+            </div>
+
+            <table id="parceirosTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Status</th>
+                        <th>Data de Cadastro</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="parceirosTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle">Adicionar Parceiro</h2>
-                <button class="close-modal" onclick="closeModal()">&times;</button>
+                <h2>Editar Parceiro</h2>
+                <button class="btn-close" onclick="fecharModal()">&times;</button>
             </div>
-            <form id="partnerForm">
-                <input type="hidden" id="partnerId">
+            <form id="editForm">
+                <input type="hidden" id="editId">
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Nome Completo *</label>
-                        <input type="text" id="partnerName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="partnerEmail" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Telefone</label>
-                        <input type="tel" id="partnerPhone">
-                    </div>
-                    <div class="form-group">
-                        <label>CPF/CNPJ</label>
-                        <input type="text" id="partnerDocument">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Senha *</label>
-                        <input type="password" id="partnerPassword" minlength="6">
-                        <small style="color: #6b7280;">Mínimo 6 caracteres (deixe em branco para manter a senha atual)</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Status *</label>
-                        <select id="partnerStatus" required>
-                            <option value="ativo">Ativo</option>
-                            <option value="pendente">Pendente</option>
-                            <option value="inativo">Inativo</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label for="editNome">Nome</label>
+                    <input type="text" id="editNome" required>
                 </div>
 
                 <div class="form-group">
-                    <label>Dados Bancários</label>
-                    <textarea id="partnerBankData" rows="3" placeholder="Banco, Agência, Conta"></textarea>
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail" required>
                 </div>
 
-                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
-                    <button type="button" class="btn btn-danger" onclick="closeModal()">Cancelar</button>
-                    <button type="submit" class="btn btn-success">Salvar</button>
+                <div class="form-group">
+                    <label for="editTelefone">Telefone</label>
+                    <input type="tel" id="editTelefone">
                 </div>
+
+                <div class="form-group">
+                    <label for="editStatus">Status</label>
+                    <select id="editStatus" required>
+                        <option value="ativo">Ativo</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="inativo">Inativo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="editComissao">Taxa de Comissão (%)</label>
+                    <input type="number" id="editComissao" min="0" max="100" step="0.01">
+                </div>
+
+                <button type="submit" class="btn-save">
+                    💾 Salvar Alterações
+                </button>
             </form>
         </div>
     </div>
 
     <script>
-
-        let currentUser = null;
-        let editingPartnerId = null;
+        let parceiros = [];
 
         // Verificar autenticação
-        async function checkAuth() {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                
-                if (!session) {
-                    window.location.href = '/admin/login.html';
-                    return;
-                }
-
-                const { data: userData, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('email', session.user.email)
-                    .single();
-
-                if (error || !userData) {
-                    alert('Erro ao carregar dados do usuário.');
-                    await supabase.auth.signOut();
-                    window.location.href = '/admin/login.html';
-                    return;
-                }
-
-                if (userData.tipo_parceiro !== 'igreja') {
-                    alert('Acesso negado. Esta área é exclusiva para igrejas.');
-                    window.location.href = '/admin/login.html';
-                    return;
-                }
-
-                currentUser = userData;
-                document.getElementById('userName').textContent = userData.nome_completo;
-                document.getElementById('userEmail').textContent = userData.email;
-
-                loadPartners();
-            } catch (error) {
-                console.error('Erro na autenticação:', error);
+        async function verificarAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session) {
                 window.location.href = '/admin/login.html';
+                return;
             }
+
+            // Verificar se é admin
+            const { data: usuario } = await supabase
+                .from('usuarios')
+                .select('tipo')
+                .eq('email', session.user.email)
+                .single();
+
+            if (!usuario || (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin')) {
+                await supabase.auth.signOut();
+                window.location.href = '/admin/login.html';
+                return;
+            }
+
+            // Carregar parceiros
+            carregarParceiros();
+        }
+
+        // Logout
+        async function logout() {
+            await supabase.auth.signOut();
+            window.location.href = '/admin/login.html';
         }
 
         // Carregar parceiros
-        async function loadPartners() {
+        async function carregarParceiros() {
             try {
-                const search = document.getElementById('searchPartner').value;
-                const status = document.getElementById('filterStatus').value;
-
-                let query = supabase
-                    .from('parceiros')
+                const { data, error } = await supabase
+                    .from('usuarios')
                     .select('*')
-                    .eq('igreja_vinculada_id', currentUser.id)
-                    .eq('tipo_parceiro', 'parceiro')
+                    .eq('tipo', 'parceiro')
                     .order('created_at', { ascending: false });
-
-                if (search) {
-                    query = query.or(`nome_completo.ilike.%${search}%,email.ilike.%${search}%,codigo_parceiro.ilike.%${search}%`);
-                }
-
-                if (status) {
-                    query = query.eq('status', status);
-                }
-
-                const { data: partners, error } = await query;
 
                 if (error) throw error;
 
-                const tableHtml = partners?.map(partner => `
-                    <tr>
-                        <td>${partner.codigo_parceiro || 'N/A'}</td>
-                        <td>${partner.nome_completo}</td>
-                        <td>${partner.email}</td>
-                        <td>${partner.telefone || '-'}</td>
-                        <td><span class="badge badge-${getStatusBadge(partner.status)}">${partner.status}</span></td>
-                        <td>${formatDate(partner.created_at)}</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" onclick="editPartner('${partner.id}')">Editar</button>
-                            ${partner.status === 'ativo' ? 
-                                `<button class="btn btn-sm" style="background: #f59e0b; color: white;" onclick="toggleStatus('${partner.id}', 'inativo')">Desativar</button>` : 
-                                `<button class="btn btn-success btn-sm" onclick="toggleStatus('${partner.id}', 'ativo')">Ativar</button>`
-                            }
-                        </td>
-                    </tr>
-                `).join('') || '<tr><td colspan="7" style="text-align: center;">Nenhum parceiro encontrado</td></tr>';
-
-                document.getElementById('partnersTable').innerHTML = tableHtml;
+                parceiros = data || [];
+                exibirParceiros(parceiros);
 
             } catch (error) {
                 console.error('Erro ao carregar parceiros:', error);
-                alert('Erro ao carregar parceiros.');
+                document.getElementById('loading').innerHTML = '<p style="color: #c00;">Erro ao carregar parceiros</p>';
             }
         }
 
-        // Adicionar parceiro
-        document.getElementById('addPartnerBtn').addEventListener('click', () => {
-            editingPartnerId = null;
-            document.getElementById('modalTitle').textContent = 'Adicionar Parceiro';
-            document.getElementById('partnerForm').reset();
-            document.getElementById('partnerId').value = '';
-            document.getElementById('partnerPassword').required = true;
-            openModal();
-        });
+        // Exibir parceiros na tabela
+        function exibirParceiros(dados) {
+            const tbody = document.getElementById('parceirosTableBody');
+            tbody.innerHTML = '';
 
-        // Editar parceiro
-        async function editPartner(partnerId) {
-            try {
-                const { data: partner, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('id', partnerId)
-                    .single();
-
-                if (error) throw error;
-
-                editingPartnerId = partnerId;
-                document.getElementById('modalTitle').textContent = 'Editar Parceiro';
-                document.getElementById('partnerId').value = partner.id;
-                document.getElementById('partnerName').value = partner.nome_completo || '';
-                document.getElementById('partnerEmail').value = partner.email || '';
-                document.getElementById('partnerPhone').value = partner.telefone || '';
-                document.getElementById('partnerDocument').value = partner.cpf_cnpj || '';
-                document.getElementById('partnerStatus').value = partner.status || 'ativo';
-                document.getElementById('partnerBankData').value = partner.dados_bancarios || '';
-                document.getElementById('partnerPassword').required = false;
-                document.getElementById('partnerPassword').value = '';
-
-                openModal();
-            } catch (error) {
-                console.error('Erro ao carregar parceiro:', error);
-                alert('Erro ao carregar dados do parceiro.');
+            if (dados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Nenhum parceiro encontrado</td></tr>';
+                document.getElementById('parceirosTable').style.display = 'table';
+                document.getElementById('loading').style.display = 'none';
+                return;
             }
+
+            dados.forEach(parceiro => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${parceiro.nome || 'N/A'}</td>
+                    <td>${parceiro.email || 'N/A'}</td>
+                    <td>${parceiro.telefone || 'N/A'}</td>
+                    <td><span class="status-badge ${parceiro.status}">${getStatusText(parceiro.status)}</span></td>
+                    <td>${formatarData(parceiro.created_at)}</td>
+                    <td>
+                        <div class="action-buttons">
+                            ${parceiro.status === 'pendente' ? `
+                                <button class="btn-action btn-approve" onclick="aprovarParceiro('${parceiro.id}')">
+                                    <i class="fas fa-check"></i> Aprovar
+                                </button>
+                                <button class="btn-action btn-reject" onclick="recusarParceiro('${parceiro.id}')">
+                                    <i class="fas fa-times"></i> Recusar
+                                </button>
+                            ` : ''}
+                            <button class="btn-action btn-edit" onclick="editarParceiro('${parceiro.id}')">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('parceirosTable').style.display = 'table';
+            document.getElementById('loading').style.display = 'none';
         }
 
-        // Salvar parceiro
-        document.getElementById('partnerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Aplicar filtros
+        function aplicarFiltros() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
 
-            try {
-                const partnerId = document.getElementById('partnerId').value;
-                const email = document.getElementById('partnerEmail').value;
-                const password = document.getElementById('partnerPassword').value;
+            let filtrados = parceiros;
 
-                const partnerData = {
-                    nome_completo: document.getElementById('partnerName').value,
-                    email: email,
-                    telefone: document.getElementById('partnerPhone').value,
-                    cpf_cnpj: document.getElementById('partnerDocument').value,
-                    status: document.getElementById('partnerStatus').value,
-                    dados_bancarios: document.getElementById('partnerBankData').value,
-                    tipo_parceiro: 'parceiro',
-                    igreja_vinculada_id: currentUser.id
-                };
-
-                if (partnerId) {
-                    // Atualizar
-                    const { error } = await supabase
-                        .from('parceiros')
-                        .update(partnerData)
-                        .eq('id', partnerId);
-
-                    if (error) throw error;
-
-                    // Atualizar senha se fornecida
-                    if (password) {
-                        // Implementar atualização de senha via Supabase Auth
-                    }
-
-                    alert('Parceiro atualizado com sucesso!');
-                } else {
-                    // Criar novo
-                    if (!password) {
-                        alert('Senha é obrigatória para novos parceiros.');
-                        return;
-                    }
-
-                    // Criar usuário no Supabase Auth
-                    const { data: authData, error: authError } = await supabase.auth.signUp({
-                        email: email,
-                        password: password
-                    });
-
-                    if (authError) throw authError;
-
-                    // Gerar código do parceiro
-                    partnerData.codigo_parceiro = 'PARC' + Date.now().toString().slice(-6);
-
-                    // Criar registro na tabela parceiros
-                    const { error: insertError } = await supabase
-                        .from('parceiros')
-                        .insert(partnerData);
-
-                    if (insertError) throw insertError;
-
-                    alert('Parceiro adicionado com sucesso!');
-                }
-
-                closeModal();
-                loadPartners();
-
-            } catch (error) {
-                console.error('Erro ao salvar parceiro:', error);
-                alert('Erro ao salvar parceiro: ' + error.message);
+            // Filtro de busca
+            if (searchTerm) {
+                filtrados = filtrados.filter(p => 
+                    (p.nome && p.nome.toLowerCase().includes(searchTerm)) ||
+                    (p.email && p.email.toLowerCase().includes(searchTerm)) ||
+                    (p.telefone && p.telefone.includes(searchTerm))
+                );
             }
-        });
 
-        // Alternar status
-        async function toggleStatus(partnerId, newStatus) {
-            if (!confirm(`Deseja ${newStatus === 'ativo' ? 'ativar' : 'desativar'} este parceiro?`)) return;
+            // Filtro de status
+            if (statusFilter) {
+                filtrados = filtrados.filter(p => p.status === statusFilter);
+            }
+
+            exibirParceiros(filtrados);
+        }
+
+        // Aprovar parceiro
+        async function aprovarParceiro(id) {
+            if (!confirm('Deseja aprovar este parceiro?')) return;
 
             try {
                 const { error } = await supabase
-                    .from('parceiros')
-                    .update({ status: newStatus })
-                    .eq('id', partnerId);
+                    .from('usuarios')
+                    .update({ status: 'ativo' })
+                    .eq('id', id);
 
                 if (error) throw error;
 
-                alert('Status atualizado com sucesso!');
-                loadPartners();
+                alert('Parceiro aprovado com sucesso!');
+                carregarParceiros();
+
             } catch (error) {
-                console.error('Erro ao atualizar status:', error);
-                alert('Erro ao atualizar status.');
+                console.error('Erro ao aprovar parceiro:', error);
+                alert('Erro ao aprovar parceiro');
             }
         }
 
-        // Modal
-        function openModal() {
-            document.getElementById('partnerModal').classList.add('show');
+        // Recusar parceiro
+        async function recusarParceiro(id) {
+            if (!confirm('Deseja recusar este parceiro?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('usuarios')
+                    .update({ status: 'inativo' })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('Parceiro recusado');
+                carregarParceiros();
+
+            } catch (error) {
+                console.error('Erro ao recusar parceiro:', error);
+                alert('Erro ao recusar parceiro');
+            }
         }
 
-        function closeModal() {
-            document.getElementById('partnerModal').classList.remove('show');
+        // Editar parceiro
+        function editarParceiro(id) {
+            const parceiro = parceiros.find(p => p.id === id);
+            if (!parceiro) return;
+
+            document.getElementById('editId').value = parceiro.id;
+            document.getElementById('editNome').value = parceiro.nome || '';
+            document.getElementById('editEmail').value = parceiro.email || '';
+            document.getElementById('editTelefone').value = parceiro.telefone || '';
+            document.getElementById('editStatus').value = parceiro.status || 'pendente';
+            document.getElementById('editComissao').value = parceiro.taxa_comissao || 0;
+
+            document.getElementById('editModal').classList.add('show');
         }
+
+        // Fechar modal
+        function fecharModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        // Salvar edição
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('editId').value;
+            const dados = {
+                nome: document.getElementById('editNome').value,
+                email: document.getElementById('editEmail').value,
+                telefone: document.getElementById('editTelefone').value,
+                status: document.getElementById('editStatus').value,
+                taxa_comissao: parseFloat(document.getElementById('editComissao').value) || 0
+            };
+
+            try {
+                const { error } = await supabase
+                    .from('usuarios')
+                    .update(dados)
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert('Parceiro atualizado com sucesso!');
+                fecharModal();
+                carregarParceiros();
+
+            } catch (error) {
+                console.error('Erro ao atualizar parceiro:', error);
+                alert('Erro ao atualizar parceiro');
+            }
+        });
 
         // Funções auxiliares
-        function formatDate(dateString) {
-            if (!dateString) return 'N/A';
-            return new Date(dateString).toLocaleDateString('pt-BR');
+        function formatarData(data) {
+            return new Date(data).toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
         }
 
-        function getStatusBadge(status) {
-            const badges = {
-                'ativo': 'success',
-                'pendente': 'warning',
-                'inativo': 'danger'
+        function getStatusText(status) {
+            const statusMap = {
+                'ativo': 'Ativo',
+                'pendente': 'Pendente',
+                'inativo': 'Inativo'
             };
-            return badges[status] || 'info';
+            return statusMap[status] || status;
         }
 
-        // Event Listeners
-        document.getElementById('applyFilters').addEventListener('click', loadPartners);
+        // Executar ao carregar
+        verificarAuth();
 
-        // Logout
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-            if (confirm('Deseja sair?')) {
-                await supabase.auth.signOut();
-                window.location.href = '/admin/login.html';
-            }
-        });
-
-        // Mobile Menu
-        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('show');
-        });
-
-        // Initialize
-        checkAuth();
+        // Busca em tempo real
+        document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+        document.getElementById('statusFilter').addEventListener('change', aplicarFiltros);
     </script>
 </body>
 </html>
