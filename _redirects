@@ -10,6 +10,12 @@
 /ig_parceiras.html       /ig_parceiras.html       200
 /index.html              /index.html              200
 
+# ✅ NOVAS PÁGINAS DE AUTENTICAÇÃO (ADICIONE AQUI)
+/login.html              /login.html              200
+/esqueci-senha.html      /esqueci-senha.html      200
+/dashboard-admin.html    /dashboard-admin.html    200
+/dashboard-parceiro.html /dashboard-parceiro.html 200
+
 # Pasta admin (DEVE VIR ANTES DO /*)
 /admin                               /admin/index.html                    200
 /admin/                              /admin/index.html                    200
