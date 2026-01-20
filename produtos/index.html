@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -7,14 +7,12 @@
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
-
+    
     <!-- Supabase SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Configuração centralizada -->
-<script src="/js/supabase-config.js"></script>
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuração centralizada do Supabase -->
+    <script src="/js/supabase-config.js"></script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -265,6 +263,11 @@
             border: 2px solid #fd7e14;
         }
 
+        .badge-livro {
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
         .product-promo-badge {
             position: absolute;
             top: 15px;
@@ -506,6 +509,7 @@
                     <option value="digital">Digital</option>
                     <option value="fisico">Físico</option>
                     <option value="servico">Serviço</option>
+                    <option value="livro">Livro</option>
                 </select>
             </div>
 
@@ -558,9 +562,10 @@
 
     <script>
         // ========================================
-        // CONFIGURAÇÃO SUPABASE - APENAS UMA VEZ!
+        // NÃO DECLARAR MAIS SUPABASE AQUI!
+        // Ele vem do arquivo /js/supabase-config.js
         // ========================================
-        
+
         let todosProdutos = [];
         let produtosFiltrados = [];
         let viewMode = 'grid';
@@ -573,7 +578,8 @@
             const icons = {
                 'digital': '📱',
                 'fisico': '📦',
-                'servico': '⚙️'
+                'servico': '⚙️',
+                'livro': '📚'
             };
             return icons[tipo] || '📦';
         }
