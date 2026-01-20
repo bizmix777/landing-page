@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin - Somos Todos Um</title>
@@ -389,17 +392,6 @@
     
     <script>
         console.log('🚀 DASHBOARD - SCRIPT INICIADO');
-
-        // ========================================
-        // CONFIGURAÇÃO DO SUPABASE
-        // ========================================
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        console.log('✅ Supabase inicializado');
 
         // ========================================
         // VERIFICAÇÃO DE AUTENTICAÇÃO
