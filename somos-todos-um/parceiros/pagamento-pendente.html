@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento Pendente - Livro Somos Todos Um</title>
+    <title>Pagamento Pendente - BizMix</title>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuração centralizada -->
+    <script src="/js/supabase-config.js"></script>
+    
     <style>
-        /* Reset e Base */
         * {
             margin: 0;
             padding: 0;
@@ -14,37 +20,131 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%); /* Amarelo/Laranja */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            color: #333;
         }
 
         .container {
-            max-width: 700px;
-            width: 100%;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
             text-align: center;
-            margin-bottom: 20px;
+            animation: slideUp 0.5s ease;
         }
 
-        .header {
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pending-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ffa726, #fb8c00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pending-icon svg {
+            width: 60px;
+            height: 60px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .status-box {
+            background: #fff8e1;
+            border: 2px solid #ffa726;
+            border-radius: 12px;
+            padding: 20px;
             margin-bottom: 30px;
         }
 
-        .header .icon {
-            font-size: 60px;
-            color: #ff9800;
+        .status-box h3 {
+            color: #f57c00;
+            font-size: 16px;
             margin-bottom: 15px;
-            animation: spin 2s linear infinite; /* Animação do relógio */
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .status-message {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .verification-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ffa726;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
@@ -52,272 +152,317 @@
             100% { transform: rotate(360deg); }
         }
 
-        .header h1 {
-            font-size: 2.2em;
-            color: #ff9800;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.1em;
+        .timer {
+            font-size: 13px;
             color: #666;
         }
 
-        .section-title {
-            font-size: 1.4em;
-            color: #333;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        .purchase-summary, .instructions, .support {
+        .payment-details {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
             text-align: left;
-            margin-bottom: 25px;
         }
 
-        .purchase-summary p, .support p {
-            margin-bottom: 8px;
-            line-height: 1.6;
+        .payment-details h4 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .purchase-summary strong, .support strong {
-            color: #555;
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        .instructions ol {
-            margin-left: 25px;
-            padding-left: 0;
-            list-style-type: decimal;
+        .detail-row:last-child {
+            border-bottom: none;
         }
 
-        .instructions li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-            color: #555;
+        .detail-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .actions {
-            margin-top: 30px;
             display: flex;
-            flex-direction: column;
             gap: 15px;
+            margin-top: 30px;
         }
 
         .btn {
-            padding: 15px 25px;
+            flex: 1;
+            padding: 16px 24px;
             border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
-            text-align: center;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #f57c00 0%, #e65100 100%);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
 
         .btn-secondary {
-            background: #f0f0f0;
-            color: #555;
-            border: 1px solid #ddd;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
         }
 
         .btn-secondary:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
+            background: #f8f9ff;
         }
 
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            border-radius: 8px;
+            padding: 15px;
             margin-top: 20px;
-            color: #ff9800;
-            font-weight: bold;
+            text-align: left;
         }
 
-        .spinner {
-            border: 4px solid rgba(255, 152, 0, 0.2);
-            border-top: 4px solid #ff9800;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
+        .info-box p {
+            color: #1565c0;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0;
         }
 
-        footer {
-            margin-top: 30px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9em;
-            text-align: center;
-        }
-
-        /* Responsividade */
         @media (max-width: 600px) {
             .container {
-                padding: 20px;
+                padding: 30px 20px;
             }
-            .header h1 {
-                font-size: 1.8em;
+
+            h1 {
+                font-size: 24px;
             }
-            .header .icon {
-                font-size: 50px;
+
+            .actions {
+                flex-direction: column;
             }
+
             .btn {
-                font-size: 1em;
-                padding: 12px 20px;
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="icon">⏳</div>
-            <h1>Pagamento Pendente</h1>
-            <p>Seu pedido está aguardando a confirmação do pagamento.</p>
+        <div class="pending-icon">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
         </div>
 
-        <div class="loading" id="loadingDetails">
-            <div class="spinner"></div>
-            <span>Carregando detalhes do pedido...</span>
+        <h1>Pagamento Pendente</h1>
+        <p class="subtitle">Estamos aguardando a confirmação do seu pagamento.</p>
+
+        <div class="status-box">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Status do Pagamento
+            </h3>
+            <p class="status-message" id="statusMessage">
+                Verificando status do pagamento...
+            </p>
+            <div class="verification-status">
+                <div class="spinner"></div>
+                <span class="timer">Verificando automaticamente a cada 5 segundos...</span>
+            </div>
         </div>
 
-        <div id="orderDetails" style="display: none;">
-            <h2 class="section-title">Detalhes do Pedido</h2>
-            <div class="purchase-summary">
-                <p><strong>ID da Venda:</strong> <span id="vendaIdDisplay"></span></p>
-                <p><strong>Comprador:</strong> <span id="buyerName"></span></p>
-                <p><strong>Email:</strong> <span id="buyerEmail"></span></p>
-                <p><strong>Valor Total:</strong> R$ <span id="totalValue"></span></p>
-                <p><strong>Método de Pagamento:</strong> <span id="paymentMethod"></span></p>
-                <p><strong>Status Atual:</strong> <span id="currentStatus" style="color: #ff9800; font-weight: bold;">Pendente</span></p>
+        <div class="payment-details" id="paymentDetails">
+            <h4>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+                Detalhes do Pedido
+            </h4>
+            <div class="detail-row">
+                <span class="detail-label">Produto:</span>
+                <span class="detail-value" id="productName">Carregando...</span>
             </div>
+            <div class="detail-row">
+                <span class="detail-label">Valor:</span>
+                <span class="detail-value" id="productPrice">Carregando...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Forma de Pagamento:</span>
+                <span class="detail-value" id="paymentMethod">Carregando...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">ID do Pedido:</span>
+                <span class="detail-value" id="orderId">Carregando...</span>
+            </div>
+        </div>
 
-            <h2 class="section-title">O que acontece agora?</h2>
-            <div class="instructions">
-                <p>Seu pagamento está em processo de análise ou aguardando confirmação. Isso pode levar alguns minutos ou, em casos específicos, até 2 dias úteis, dependendo do método de pagamento.</p>
-                <ol>
-                    <li><strong>Aguarde a Confirmação:</strong> O Mercado Pago está processando seu pagamento. Você receberá uma notificação por e-mail assim que for aprovado.</li>
-                    <li><strong>Verifique seu E-mail:</strong> Fique atento à sua caixa de entrada (e spam) para atualizações do Mercado Pago e nossa equipe.</li>
-                    <li><strong>Não Feche esta Página:</strong> Você pode verificar o status do seu pagamento a qualquer momento clicando no botão abaixo.</li>
-                </ol>
-            </div>
+        <div class="info-box">
+            <p>
+                <strong>💡 Dica:</strong> Para pagamentos via PIX, a confirmação geralmente ocorre em poucos minutos. 
+                Para boleto bancário, pode levar até 3 dias úteis.
+            </p>
+        </div>
 
-            <div class="actions">
-                <button id="checkStatusBtn" class="btn btn-primary">Verificar Status do Pagamento</button>
-                <a href="/" class="btn btn-secondary">Voltar para Home</a>
-            </div>
-
-            <h2 class="section-title">Precisa de Ajuda?</h2>
-            <div class="support">
-                <p>Se tiver dúvidas ou seu pagamento demorar para ser aprovado, entre em contato conosco:</p>
-                <p><strong>Email:</strong> suporte@bizmix.com.br</p>
-                <p><strong>WhatsApp:</strong> (62) 99999-9999</p>
-            </div>
+        <div class="actions">
+            <button class="btn btn-primary" onclick="verificarManualmente()">
+                Verificar Agora
+            </button>
+            <a href="/produtos" class="btn btn-secondary">
+                Voltar à Loja
+            </a>
         </div>
     </div>
 
-    <footer>
-        &copy; 2026 Livro Somos Todos Um. Todos os direitos reservados.
-    </footer>
-
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+    <script>
+        // Buscar dados da URL
         const urlParams = new URLSearchParams(window.location.search);
         const vendaId = urlParams.get('venda_id');
+        const paymentId = urlParams.get('payment_id');
 
-        const loadingDetails = document.getElementById('loadingDetails');
-        const orderDetails = document.getElementById('orderDetails');
-        const vendaIdDisplay = document.getElementById('vendaIdDisplay');
-        const buyerName = document.getElementById('buyerName');
-        const buyerEmail = document.getElementById('buyerEmail');
-        const totalValue = document.getElementById('totalValue');
-        const paymentMethod = document.getElementById('paymentMethod');
-        const currentStatus = document.getElementById('currentStatus');
-        const checkStatusBtn = document.getElementById('checkStatusBtn');
+        let verificacaoInterval;
+        let tentativas = 0;
+        const MAX_TENTATIVAS = 60; // 5 minutos (60 x 5 segundos)
 
-        async function fetchSaleDetails() {
+        // Carregar dados da venda
+        async function carregarDadosVenda() {
             if (!vendaId) {
-                console.error('ID da venda não encontrado na URL.');
-                loadingDetails.innerHTML = '<p style="color: red;">Erro: ID da venda não encontrado.</p>';
+                document.getElementById('statusMessage').textContent = 'ID da venda não encontrado.';
                 return;
             }
 
-            loadingDetails.style.display = 'flex';
-            orderDetails.style.display = 'none';
-            checkStatusBtn.disabled = true;
-
             try {
-                const { data: venda, error } = await supabase
+                const { data, error } = await supabase
                     .from('vendas')
                     .select('*')
                     .eq('id', vendaId)
                     .single();
 
-                if (error || !venda) {
-                    console.error('Erro ao buscar detalhes da venda:', error);
-                    loadingDetails.innerHTML = '<p style="color: red;">Erro ao carregar detalhes do pedido.</p>';
-                    return;
+                if (error) throw error;
+
+                if (data) {
+                    document.getElementById('productName').textContent = data.produto_nome || 'N/A';
+                    document.getElementById('productPrice').textContent = formatarMoeda(data.valor || 0);
+                    document.getElementById('paymentMethod').textContent = data.metodo_pagamento === 'pix' ? 'PIX' : 'Cartão de Crédito';
+                    document.getElementById('orderId').textContent = vendaId.slice(0, 8).toUpperCase();
+
+                    // Atualizar mensagem de status baseada no método
+                    if (data.metodo_pagamento === 'pix') {
+                        document.getElementById('statusMessage').textContent = 
+                            'Aguardando o pagamento do PIX. Assim que detectarmos o pagamento, você será redirecionado automaticamente.';
+                    } else {
+                        document.getElementById('statusMessage').textContent = 
+                            'Seu pagamento está sendo processado pela operadora do cartão. Aguarde a confirmação.';
+                    }
                 }
-
-                vendaIdDisplay.textContent = venda.id;
-                buyerName.textContent = venda.nome_comprador;
-                buyerEmail.textContent = venda.email_comprador;
-                totalValue.textContent = parseFloat(venda.valor_total).toFixed(2).replace('.', ',');
-                paymentMethod.textContent = venda.forma_pagamento || 'Não informado';
-                currentStatus.textContent = formatStatus(venda.status_pagamento);
-
-                if (venda.status_pagamento === 'approved') {
-                    window.location.href = `pagamento-sucesso.html?venda_id=${venda.id}`;
-                } else if (venda.status_pagamento === 'rejected') {
-                    window.location.href = `pagamento-erro.html?venda_id=${venda.id}`;
-                }
-
-                loadingDetails.style.display = 'none';
-                orderDetails.style.display = 'block';
-
-            } catch (err) {
-                console.error('Erro inesperado:', err);
-                loadingDetails.innerHTML = '<p style="color: red;">Erro inesperado ao carregar detalhes.</p>';
-            } finally {
-                checkStatusBtn.disabled = false;
+            } catch (error) {
+                console.error('Erro ao carregar dados da venda:', error);
+                document.getElementById('statusMessage').textContent = 'Erro ao carregar informações do pedido.';
             }
         }
 
-        function formatStatus(status) {
-            switch (status) {
-                case 'pending': return 'Pendente';
-                case 'approved': return 'Aprovado';
-                case 'rejected': return 'Recusado';
-                case 'in_process': return 'Em Análise';
-                default: return status;
+        // Verificar status do pagamento
+        async function verificarStatusPagamento() {
+            if (!vendaId) return;
+
+            tentativas++;
+
+            try {
+                const { data, error } = await supabase
+                    .from('vendas')
+                    .select('status, payment_id')
+                    .eq('id', vendaId)
+                    .single();
+
+                if (error) throw error;
+
+                if (data) {
+                    if (data.status === 'aprovado' || data.status === 'approved') {
+                        // Pagamento aprovado!
+                        clearInterval(verificacaoInterval);
+                        window.location.href = `pagamento-sucesso.html?venda_id=${vendaId}`;
+                    } else if (data.status === 'recusado' || data.status === 'rejected' || data.status === 'erro') {
+                        // Pagamento recusado
+                        clearInterval(verificacaoInterval);
+                        window.location.href = `pagamento-erro.html?venda_id=${vendaId}`;
+                    }
+                }
+
+                // Parar verificação após máximo de tentativas
+                if (tentativas >= MAX_TENTATIVAS) {
+                    clearInterval(verificacaoInterval);
+                    document.getElementById('statusMessage').textContent = 
+                        'O pagamento ainda está pendente. Você receberá um email assim que for confirmado.';
+                    document.querySelector('.verification-status').innerHTML = 
+                        '<span style="color: #f57c00;">⏸️ Verificação automática pausada</span>';
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', fetchSaleDetails);
-        checkStatusBtn.addEventListener('click', fetchSaleDetails);
+        // Verificar manualmente
+        function verificarManualmente() {
+            tentativas = 0; // Resetar contador
+            verificarStatusPagamento();
+        }
+
+        // Formatar moeda
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        // Inicializar
+        async function inicializar() {
+            await carregarDadosVenda();
+            
+            // Verificar imediatamente
+            verificarStatusPagamento();
+            
+            // Verificar a cada 5 segundos
+            verificacaoInterval = setInterval(verificarStatusPagamento, 5000);
+        }
+
+        // Executar ao carregar
+        inicializar();
+
+        // Limpar interval ao sair da página
+        window.addEventListener('beforeunload', () => {
+            if (verificacaoInterval) {
+                clearInterval(verificacaoInterval);
+            }
+        });
     </script>
 </body>
 </html>
