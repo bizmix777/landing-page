@@ -7,6 +7,12 @@
     
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
+
+    <!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Configuração centralizada -->
+<script src="/js/supabase-config.js"></script>
     
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -835,11 +841,7 @@
         // ========================================
         // CONFIGURAÇÕES GLOBAIS
         // ========================================
-        
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYyNzk0MjcsImV4cCI6MjA1MTg1NTQyN30.JC2x_vTL_LpBhp9X_Hj6fYkTq2gEIQQwrx-mnzNqxnI';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+       
         const MERCADOPAGO_PUBLIC_KEY = 'APP_USR_cd84c7d1-f6e9-4c25-9c65-4c96ff68152f';
         const mp = new MercadoPago(MERCADOPAGO_PUBLIC_KEY, { locale: 'pt-BR' });
 
