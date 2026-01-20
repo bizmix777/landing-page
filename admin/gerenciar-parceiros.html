@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parceiros da Igreja - BizMix</title>
@@ -583,10 +585,6 @@
     </div>
 
     <script>
-        // ✅ CONFIGURAÇÃO DO SUPABASE - CHAVE CORRETA
-        const supabaseUrl = 'https://pjzaabuqzgvwrfgqzgzm.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBqemFhYnVxemd2d3JmZ3F6Z3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NTQ4NzMsImV4cCI6MjA1MjUzMDg3M30.VJEhHoLhkuLZo7XqNnODKzL-dKNs5gMvEr3gCHxoKfk';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let currentUser = null;
         let editingPartnerId = null;
