@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Portal do Parceiro</title>
-    <link rel="stylesheet" href="css/modern-style.css">
+    <title>Login - Painel do Parceiro</title>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Configuração centralizada -->
+    <script src="/js/supabase-config.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -25,52 +31,59 @@
         .login-container {
             background: white;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
             width: 100%;
-            max-width: 400px;
+            padding: 40px;
+            animation: slideUp 0.5s ease;
         }
 
-        .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 30px;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
             text-align: center;
-            color: white;
+            margin-bottom: 30px;
         }
 
-        .login-header h1 {
-            font-size: 28px;
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
             margin-bottom: 10px;
         }
 
-        .login-header p {
+        .logo p {
+            color: #666;
             font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .login-body {
-            padding: 40px 30px;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
             color: #333;
-            font-weight: 600;
             font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 16px;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 15px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         .form-group input:focus {
@@ -79,86 +92,167 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle input {
+            padding-right: 45px;
+        }
+
+        .toggle-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            color: #999;
+            font-size: 18px;
         }
 
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .btn-login:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .alert {
-            padding: 12px 15px;
-            border-radius: 8px;
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
             font-size: 14px;
         }
 
-        .alert-error {
-            background-color: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
         }
 
-        .alert-success {
-            background-color: #efe;
-            color: #3c3;
-            border: 1px solid #cfc;
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
         }
 
-        .login-footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .login-footer a {
+        .forgot-link {
             color: #667eea;
             text-decoration: none;
             font-weight: 600;
         }
 
-        .login-footer a:hover {
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            animation: shake 0.5s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #999;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
             text-decoration: underline;
         }
 
         .loading {
             display: none;
             text-align: center;
-            margin-top: 10px;
-        }
-
-        .loading.active {
-            display: block;
+            margin-top: 20px;
         }
 
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #667eea;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
@@ -167,206 +261,266 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 28px;
+            }
+
+            .remember-forgot {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="login-header">
-            <h1>🔐 Portal do Parceiro</h1>
-            <p>Faça login para acessar sua área</p>
+        <div class="logo">
+            <h1>🔐 Área do Parceiro</h1>
+            <p>Faça login para acessar seu painel</p>
         </div>
 
-        <div class="login-body">
-            <div id="alertContainer"></div>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
 
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="seu@email.com"
-                        required
-                        autocomplete="email"
-                    >
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <div class="password-toggle">
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    <span class="toggle-icon" onclick="togglePassword()">👁️</span>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="senha">Senha</label>
-                    <input 
-                        type="password" 
-                        id="senha" 
-                        name="senha" 
-                        placeholder="••••••••"
-                        required
-                        autocomplete="current-password"
-                    >
-                </div>
+            <div class="remember-forgot">
+                <label class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    Lembrar-me
+                </label>
+                <a href="#" class="forgot-link" id="forgotPasswordLink">Esqueci minha senha</a>
+            </div>
 
-                <button type="submit" class="btn-login" id="btnLogin">
-                    Entrar
-                </button>
+            <button type="submit" class="btn-login" id="btnLogin">
+                Entrar
+            </button>
+        </form>
 
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <p style="margin-top: 10px; color: #666;">Autenticando...</p>
-                </div>
-            </form>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #666;">Autenticando...</p>
         </div>
 
-        <div class="login-footer">
-            <p>Ainda não é parceiro? <a href="registro.html">Cadastre-se aqui</a></p>
+        <div class="divider">
+            <span>ou</span>
+        </div>
+
+        <div class="signup-link">
+            Ainda não é parceiro? <a href="cadastro.html">Cadastre-se gratuitamente</a>
+        </div>
+
+        <div class="back-home">
+            <a href="/">← Voltar para o site</a>
         </div>
     </div>
 
-    <!-- Supabase Client -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-        // Configuração do Supabase
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        console.log('✅ Supabase Client inicializado');
-
-        // Elementos do DOM
+    <script>
         const loginForm = document.getElementById('loginForm');
         const btnLogin = document.getElementById('btnLogin');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
         const loading = document.getElementById('loading');
-        const alertContainer = document.getElementById('alertContainer');
-
-        // Função para mostrar alertas
-        function mostrarAlerta(mensagem, tipo = 'error') {
-            alertContainer.innerHTML = `
-                <div class="alert alert-${tipo}">
-                    ${mensagem}
-                </div>
-            `;
-            setTimeout(() => {
-                alertContainer.innerHTML = '';
-            }, 5000);
-        }
 
         // Verificar se já está logado
         async function verificarSessao() {
             const { data: { session } } = await supabase.auth.getSession();
+            
             if (session) {
-                console.log('✅ Sessão ativa encontrada, redirecionando...');
-                window.location.href = 'dashboard.html';
+                // Verificar se é parceiro
+                const { data: usuario } = await supabase
+                    .from('usuarios')
+                    .select('tipo')
+                    .eq('email', session.user.email)
+                    .single();
+
+                if (usuario && usuario.tipo === 'parceiro') {
+                    window.location.href = 'index.html';
+                }
             }
         }
 
-        verificarSessao();
+        // Toggle mostrar/ocultar senha
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.toggle-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '👁️‍🗨️';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
 
-        // Handler do formulário de login
+        // Login
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const email = document.getElementById('email').value.trim();
-            const senha = document.getElementById('senha').value;
-
-            console.log('🔐 Tentando fazer login com:', email);
-
-            // Validações básicas
-            if (!email || !senha) {
-                mostrarAlerta('Por favor, preencha todos os campos.', 'error');
-                return;
-            }
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
 
             // Desabilitar botão e mostrar loading
             btnLogin.disabled = true;
             btnLogin.textContent = 'Entrando...';
-            loading.classList.add('active');
+            errorMessage.classList.remove('show');
+            loading.style.display = 'block';
 
             try {
-                // Tentar autenticar com Supabase Auth
-                console.log('📡 Autenticando via Supabase Auth...');
-                
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: senha,
+                // Fazer login
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
                 });
 
-                if (error) {
-                    console.error('❌ Erro na autenticação:', error);
-                    throw new Error(error.message);
-                }
+                if (authError) throw authError;
 
-                console.log('✅ Autenticação bem-sucedida!');
-                console.log('👤 Usuário:', data.user);
-
-                // Buscar dados do parceiro
-                console.log('📊 Buscando dados do parceiro...');
-                
-                const { data: parceiro, error: parceiroError } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('auth_user_id', data.user.id)
+                // Verificar se é parceiro
+                const { data: usuario, error: userError } = await supabase
+                    .from('usuarios')
+                    .select('tipo, status, nome')
+                    .eq('email', email)
                     .single();
 
-                if (parceiroError) {
-                    console.error('❌ Erro ao buscar parceiro:', parceiroError);
-                    throw new Error('Parceiro não encontrado no sistema.');
+                if (userError) throw new Error('Usuário não encontrado');
+
+                if (usuario.tipo !== 'parceiro') {
+                    await supabase.auth.signOut();
+                    throw new Error('Esta área é exclusiva para parceiros. Use o login correto para sua função.');
                 }
 
-                console.log('✅ Dados do parceiro carregados:', parceiro);
-
-                // Verificar se o parceiro está ativo
-                if (parceiro.status !== 'ativo') {
+                if (usuario.status === 'inativo') {
+                    await supabase.auth.signOut();
                     throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
                 }
 
-                // Atualizar último acesso
-                await supabase
-                    .from('parceiros')
-                    .update({ ultimo_acesso: new Date().toISOString() })
-                    .eq('id', parceiro.id);
-
-                // Salvar dados no localStorage (para compatibilidade)
-                localStorage.setItem('parceiro', JSON.stringify({
-                    id: parceiro.id,
-                    nome: parceiro.nome_completo,
-                    email: parceiro.email,
-                    codigo: parceiro.codigo_parceiro,
-                    tipo: parceiro.tipo_parceiro,
-                    comissao: parceiro.comissao_percentual || 30
-                }));
-
-                console.log('✅ Dados salvos no localStorage');
-
-                // Mostrar sucesso
-                mostrarAlerta('Login realizado com sucesso! Redirecionando...', 'success');
-
-                // Redirecionar para o dashboard
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1000);
-
-            } catch (error) {
-                console.error('❌ Erro no login:', error);
-                
-                let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
-                
-                if (error.message.includes('Invalid login credentials')) {
-                    mensagemErro = 'Email ou senha incorretos.';
-                } else if (error.message.includes('Email not confirmed')) {
-                    mensagemErro = 'Por favor, confirme seu email antes de fazer login.';
-                } else if (error.message.includes('Parceiro não encontrado')) {
-                    mensagemErro = 'Usuário não cadastrado como parceiro.';
-                } else if (error.message.includes('inativa')) {
-                    mensagemErro = error.message;
+                if (usuario.status === 'pendente') {
+                    await supabase.auth.signOut();
+                    throw new Error('Sua conta ainda está em análise. Aguarde a aprovação.');
                 }
 
-                mostrarAlerta(mensagemErro, 'error');
+                // Salvar preferência de "lembrar-me"
+                if (remember) {
+                    localStorage.setItem('rememberMe', 'true');
+                } else {
+                    localStorage.removeItem('rememberMe');
+                }
 
-                // Reabilitar botão
+                // Login bem-sucedido
+                successMessage.textContent = `Bem-vindo, ${usuario.nome}! Redirecionando...`;
+                successMessage.classList.add('show');
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Erro no login:', error);
+                errorMessage.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
+                errorMessage.classList.add('show');
                 btnLogin.disabled = false;
                 btnLogin.textContent = 'Entrar';
-                loading.classList.remove('active');
+                loading.style.display = 'none';
             }
+        });
+
+        // Recuperar senha
+        document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                errorMessage.textContent = 'Por favor, digite seu email no campo acima.';
+                errorMessage.classList.add('show');
+                document.getElementById('email').focus();
+                return;
+            }
+
+            // Validar formato de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Por favor, digite um email válido.';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            btnLogin.disabled = true;
+            errorMessage.classList.remove('show');
+
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/somos-todos-um/parceiros/reset-password.html`
+                });
+
+                if (error) throw error;
+
+                successMessage.textContent = 'Enviamos um link de recuperação para seu email! Verifique sua caixa de entrada.';
+                successMessage.classList.add('show');
+
+            } catch (error) {
+                console.error('Erro ao recuperar senha:', error);
+                errorMessage.textContent = 'Erro ao enviar email de recuperação. Tente novamente.';
+                errorMessage.classList.add('show');
+            } finally {
+                btnLogin.disabled = false;
+            }
+        });
+
+        // Verificar sessão ao carregar
+        verificarSessao();
+
+        // Auto-preencher email se "lembrar-me" estiver ativo
+        if (localStorage.getItem('rememberMe') === 'true') {
+            document.getElementById('remember').checked = true;
+        }
+
+        // Fechar alertas ao clicar
+        errorMessage.addEventListener('click', () => {
+            errorMessage.classList.remove('show');
+        });
+
+        successMessage.addEventListener('click', () => {
+            successMessage.classList.remove('show');
         });
     </script>
 </body>
