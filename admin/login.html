@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Login - Painel Administrativo BizMix</title>
+    <title>Login - BizMix</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -20,43 +17,38 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
         .login-container {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            max-width: 400px;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             width: 100%;
+            max-width: 420px;
         }
 
         .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
             text-align: center;
+            margin-bottom: 30px;
         }
 
         .login-header h1 {
-            font-size: 28px;
+            color: #333;
             margin-bottom: 10px;
+            font-size: 28px;
         }
 
         .login-header p {
+            color: #666;
             font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .login-form {
-            padding: 40px 30px;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
@@ -70,16 +62,15 @@
         .form-group input {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e1e1e1;
             border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s;
+            font-size: 15px;
+            transition: border-color 0.3s;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .btn-login {
@@ -97,323 +88,261 @@
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
 
         .btn-login:disabled {
-            opacity: 0.6;
+            background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
 
-        .error-message {
-            background: #fee;
-            color: #c33;
-            padding: 12px;
+        .alert {
+            padding: 12px 15px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
             display: none;
         }
 
-        .error-message.show {
-            display: block;
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
         }
 
-        .loading {
-            display: none;
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .links {
             text-align: center;
-            padding: 20px;
+            margin-top: 20px;
         }
 
-        .loading.show {
-            display: block;
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
         }
 
-        .spinner {
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .loader {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            display: inline-block;
+            margin-right: 10px;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        .forgot-password {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .forgot-password a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>🔐 BizMix</h1>
-            <p>Painel Administrativo</p>
+            <h1>🔐 Login</h1>
+            <p>Acesse sua conta BizMix</p>
         </div>
-        
-        <div class="login-form">
-            <div class="error-message" id="errorMessage"></div>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: #666;">Autenticando...</p>
+
+        <div id="alertBox" class="alert"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="seu@email.com" 
+                    required 
+                    autocomplete="email"
+                >
             </div>
 
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required placeholder="seu@email.com" autocomplete="email">
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" required placeholder="••••••••" autocomplete="current-password">
-                </div>
-
-                <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
-            </form>
-
-            <div class="forgot-password">
-                <a href="#" id="forgotPassword">Esqueceu sua senha?</a>
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input 
+                    type="password" 
+                    id="senha" 
+                    name="senha" 
+                    placeholder="••••••••" 
+                    required
+                    autocomplete="current-password"
+                >
             </div>
+
+            <button type="submit" class="btn-login" id="btnLogin">
+                Entrar
+            </button>
+        </form>
+
+        <div class="links">
+            <a href="/cadastro/">Criar conta</a> | 
+            <a href="/recuperar-senha.html">Esqueci minha senha</a>
         </div>
     </div>
-        <script>
-        // ✅ EVITAR EXECUÇÃO DUPLICADA
-        if (!window.loginInitialized) {
-            window.loginInitialized = true;
 
-            // ✅ CONFIGURAÇÃO DO SUPABASE - CREDENCIAIS CORRETAS
-            const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+    <script>
+        // CREDENCIAIS DO SUPABASE
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // ELEMENTOS
+        const loginForm = document.getElementById('loginForm');
+        const btnLogin = document.getElementById('btnLogin');
+        const alertBox = document.getElementById('alertBox');
+
+        // FUNÇÕES AUXILIARES
+        function showAlert(message, type = 'error') {
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
             
-            const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-            console.log('✅ Sistema de login inicializado');
-            console.log('🔗 Supabase URL:', SUPABASE_URL);
-
-            // ✅ FUNÇÕES AUXILIARES
-            function showError(message) {
-                const errorDiv = document.getElementById('errorMessage');
-                errorDiv.textContent = message;
-                errorDiv.classList.add('show');
-            }
-
-            function hideError() {
-                const errorDiv = document.getElementById('errorMessage');
-                errorDiv.classList.remove('show');
-            }
-
-            function showLoading(show) {
-                const loadingDiv = document.getElementById('loading');
-                const loginForm = document.getElementById('loginForm');
-                const btnLogin = document.getElementById('btnLogin');
-
-                if (show) {
-                    loadingDiv.classList.add('show');
-                    loginForm.style.display = 'none';
-                    btnLogin.disabled = true;
-                } else {
-                    loadingDiv.classList.remove('show');
-                    loginForm.style.display = 'block';
-                    btnLogin.disabled = false;
-                }
-            }
-
-            // ✅ FUNÇÃO DE REDIRECIONAMENTO
-            function redirectToDashboard(tipo) {
-                const dashboards = {
-                    'admin': './super-admin/index.html',
-                    'parceiro': './parceiros/index.html',
-                    'empresa': './parceiros/index.html',
-                    'igreja': './igrejas/index.html'
-                };
-                
-                const dashboard = dashboards[tipo] || './parceiros/index.html';
-                
-                console.log('🔄 Redirecionando para:', dashboard);
-                console.log('👤 Tipo de usuário:', tipo);
-                
-                setTimeout(() => {
-                    window.location.href = dashboard;
-                }, 300);
-            }
-
-            // ✅ VERIFICAR SESSÃO EXISTENTE
-            async function checkExistingSession() {
-                try {
-                    const { data: { session } } = await supabaseClient.auth.getSession();
-                    
-                    if (session) {
-                        console.log('✅ Sessão ativa encontrada:', session.user.email);
-                        showLoading(true);
-                        
-                        const { data: userData, error } = await supabaseClient
-                            .from('parceiros')
-                            .select('tipo_parceiro, status')
-                            .eq('email', session.user.email)
-                            .single();
-
-                        if (userData && !error && userData.status === 'ativo') {
-                            console.log('🔄 Redirecionando usuário já logado...');
-                            redirectToDashboard(userData.tipo_parceiro);
-                            return true;
-                        }
-                    }
-                } catch (error) {
-                    console.log('ℹ️ Nenhuma sessão ativa');
-                }
-                return false;
-            }
-
-            // ✅ PROCESSAR LOGIN
-            async function handleLogin(e) {
-                e.preventDefault();
-
-                const email = document.getElementById('email').value.trim().toLowerCase();
-                const password = document.getElementById('password').value;
-
-                if (!email || !password) {
-                    showError('Por favor, preencha todos os campos.');
-                    return;
-                }
-
-                showLoading(true);
-                hideError();
-
-                try {
-                    console.log('🔐 Tentando autenticar:', email);
-
-                    // 1. Autenticar
-                    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
-                        email: email,
-                        password: password
-                    });
-
-                    if (authError) {
-                        console.error('❌ Erro de autenticação:', authError);
-                        throw new Error('Email ou senha incorretos.');
-                    }
-
-                    console.log('✅ Autenticação bem-sucedida');
-
-                    // 2. Buscar dados do usuário
-                    const { data: userData, error: userError } = await supabaseClient
-                        .from('parceiros')
-                        .select('*')
-                        .eq('email', email)
-                        .single();
-
-                    if (userError || !userData) {
-                        console.error('❌ Usuário não encontrado:', userError);
-                        await supabaseClient.auth.signOut();
-                        throw new Error('Usuário não encontrado no sistema.');
-                    }
-
-                    console.log('✅ Dados do usuário carregados:', userData.nome_completo);
-
-                    // 3. Verificar status
-                    if (userData.status !== 'ativo') {
-                        await supabaseClient.auth.signOut();
-                        throw new Error('Sua conta está inativa. Entre em contato com o administrador.');
-                    }
-
-                    // 4. Redirecionar
-                    console.log('✅ Login bem-sucedido! Tipo:', userData.tipo_parceiro);
-                    redirectToDashboard(userData.tipo_parceiro);
-
-                } catch (error) {
-                    console.error('❌ Erro no login:', error);
-                    showError(error.message || 'Erro ao fazer login. Tente novamente.');
-                    showLoading(false);
-                }
-            }
-
-            // ✅ RECUPERAR SENHA
-            async function handleForgotPassword(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('email').value.trim().toLowerCase();
-                
-                if (!email) {
-                    alert('⚠️ Por favor, digite seu email no campo acima antes de solicitar recuperação de senha.');
-                    document.getElementById('email').focus();
-                    return;
-                }
-
-                try {
-                    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                        redirectTo: window.location.origin + '/admin/reset-password.html'
-                    });
-
-                    if (error) throw error;
-
-                    alert('✅ Email de recuperação enviado! Verifique sua caixa de entrada.');
-                } catch (error) {
-                    console.error('❌ Erro ao enviar email:', error);
-                    alert('❌ Erro ao enviar email de recuperação. Tente novamente.');
-                }
-            }
-
-            // ✅ VERIFICAR PARÂMETROS DA URL (auto-login)
-            function checkURLParams() {
-                const urlParams = new URLSearchParams(window.location.search);
-                const email = urlParams.get('email');
-                const password = urlParams.get('password');
-
-                if (email && password) {
-                    console.log('🔗 Parâmetros de auto-login detectados');
-                    document.getElementById('email').value = decodeURIComponent(email);
-                    document.getElementById('password').value = password;
-                    
-                    // Limpar URL
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    
-                    // Auto-submit
-                    setTimeout(() => {
-                        document.getElementById('loginForm').dispatchEvent(new Event('submit'));
-                    }, 500);
-                }
-            }
-
-            // ✅ INICIALIZAR EVENTOS
-            window.addEventListener('DOMContentLoaded', async () => {
-                console.log('🚀 Página de login carregada');
-                
-                // Verificar sessão existente
-                const hasSession = await checkExistingSession();
-                
-                if (!hasSession) {
-                    // Adicionar event listeners
-                    document.getElementById('loginForm').addEventListener('submit', handleLogin);
-                    document.getElementById('forgotPassword').addEventListener('click', handleForgotPassword);
-                    
-                    // Verificar parâmetros da URL
-                    checkURLParams();
-                }
-            });
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
         }
+
+        function setLoading(isLoading) {
+            btnLogin.disabled = isLoading;
+            if (isLoading) {
+                btnLogin.innerHTML = '<span class="loader"></span>Entrando...';
+            } else {
+                btnLogin.innerHTML = 'Entrar';
+            }
+        }
+
+        // LOGIN HANDLER
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            if (!email || !senha) {
+                showAlert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            setLoading(true);
+            
+            try {
+                // PASSO 1: AUTENTICAR NO SUPABASE AUTH
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: senha
+                });
+
+                if (authError) {
+                    throw new Error('E-mail ou senha incorretos.');
+                }
+
+                const userId = authData.user.id;
+
+                // PASSO 2: VERIFICAR SE É ADMIN
+                const { data: adminData, error: adminError } = await supabase
+                    .from('admins')
+                    .select('*')
+                    .eq('email', email)
+                    .eq('ativo', true)
+                    .single();
+
+                if (adminData && !adminError) {
+                    // É ADMIN - redirecionar baseado no nível
+                    console.log('✅ Login como Admin:', adminData.nivel);
+                    
+                    if (adminData.nivel === 'super-admin') {
+                        window.location.href = '/admin/super-admin/index.html';
+                    } else {
+                        window.location.href = '/admin/index.html';
+                    }
+                    return;
+                }
+
+                // PASSO 3: VERIFICAR SE É PARCEIRO OU IGREJA
+                const { data: parceiroData, error: parceiroError } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', email)
+                    .single();
+
+                if (parceiroData && !parceiroError) {
+                    console.log('✅ Login como Parceiro:', parceiroData.tipo_parceiro);
+                    
+                    // Atualizar último acesso
+                    await supabase
+                        .from('parceiros')
+                        .update({ ultimo_acesso: new Date().toISOString() })
+                        .eq('id', parceiroData.id);
+
+                    // Verificar se está aprovado
+                    if (parceiroData.status !== 'aprovado') {
+                        showAlert('Sua conta ainda está aguardando aprovação.', 'error');
+                        await supabase.auth.signOut();
+                        setLoading(false);
+                        return;
+                    }
+
+                    // Redirecionar para painel de parceiro
+                    if (parceiroData.tipo_parceiro === 'igreja') {
+                        window.location.href = '/painel/';
+                    } else {
+                        window.location.href = '/painel/';
+                    }
+                    return;
+                }
+
+                // CASO NÃO SEJA ADMIN NEM PARCEIRO
+                throw new Error('Usuário não encontrado no sistema. Entre em contato com o suporte.');
+
+            } catch (error) {
+                console.error('Erro no login:', error);
+                showAlert(error.message);
+                setLoading(false);
+            }
+        });
+
+        // VERIFICAR SE JÁ ESTÁ LOGADO
+        (async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                const email = session.user.email;
+
+                // Verificar se é admin
+                const { data: admin } = await supabase
+                    .from('admins')
+                    .select('nivel')
+                    .eq('email', email)
+                    .eq('ativo', true)
+                    .single();
+
+                if (admin) {
+                    if (admin.nivel === 'super-admin') {
+                        window.location.href = '/admin/super-admin/index.html';
+                    } else {
+                        window.location.href = '/admin/index.html';
+                    }
+                } else {
+                    // É parceiro
+                    window.location.href = '/painel/';
+                }
+            }
+        })();
     </script>
 </body>
 </html>
