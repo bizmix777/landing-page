@@ -93,7 +93,7 @@
 
         input[type="text"],
         input[type="email"] {
-            width: calc(100% - 24px);
+            width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -135,64 +135,35 @@
             background: linear-gradient(45deg, var(--secondary-color) 0%, var(--primary-color) 100%);
         }
 
-        .pix-section {
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
             display: none;
-            margin-top: 40px;
-            padding: 30px;
-            background-color: #f9f9f9;
-            border-radius: var(--border-radius);
-            box-shadow: 0 5px 15px var(--shadow-color);
             text-align: center;
-        }
-
-        .pix-section h2 {
-            color: var(--primary-color);
-            font-size: 1.8em;
-            margin-bottom: 20px;
-        }
-
-        .pix-code-display {
-            background-color: #e9e9e9;
-            padding: 20px;
-            border-radius: 8px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.1em;
-            word-break: break-all;
-            margin-bottom: 20px;
-            text-align: left;
-            color: #333;
-            border: 1px dashed #ccc;
-        }
-
-        .btn-copy {
-            background: #28a745;
-            margin-top: 15px;
-        }
-
-        .btn-copy:hover {
-            background: #218838;
-        }
-
-        .pix-instructions {
-            margin-top: 25px;
-            font-size: 0.95em;
-            color: #666;
-            text-align: left;
-        }
-
-        .pix-instructions ol {
-            padding-left: 20px;
-            margin-top: 10px;
-        }
-
-        .pix-instructions li {
-            margin-bottom: 8px;
-        }
-
-        .status-message {
             margin-top: 20px;
-            font-weight: 600;
-            color: #007bff;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         @media (max-width: 600px) {
@@ -238,37 +209,21 @@
                 </div>
 
                 <div class="button-group">
-                    <button type="submit" class="btn">💳 Pix</button>
+                    <button type="submit" class="btn">💳 Pagar com PIX</button>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 15px; color: var(--primary-color); font-weight: 600;">Processando...</p>
                 </div>
             </form>
-        </div>
-
-        <div id="pixSection" class="pix-section">
-            <h2>Complete seu Pagamento via Pix</h2>
-            <p>Escaneie o QR Code ou copie o código Pix abaixo para finalizar sua compra.</p>
-            
-            <div class="pix-code-display" id="pixCode">
-                Gerando código Pix...
-            </div>
-            <button id="copyPixBtn" class="btn btn-copy">Copiar Código Pix</button>
-
-            <div class="pix-instructions">
-                <h3>Como pagar com Pix:</h3>
-                <ol>
-                    <li>Abra o aplicativo do seu banco ou carteira digital.</li>
-                    <li>Escolha a opção "Pix" e depois "Pagar com QR Code" ou "Pix Copia e Cola".</li>
-                    <li>Escaneie o QR Code (se disponível) ou cole o código Pix copiado.</li>
-                    <li>Confirme o valor de R$ 29,90 e finalize o pagamento.</li>
-                </ol>
-            </div>
-            <p class="status-message">Aguardando confirmação do pagamento...</p>
         </div>
     </div>
 
     <script>
         console.log('✅ JavaScript de compra carregado com sucesso!');
 
-        // ✅ USAR SUPABASE DO CONFIG (NÃO CRIAR NOVAMENTE)
+        // Usar Supabase do config
         const meuSupabase = window.supabase;
 
         // Get URL parameters for referral tracking
@@ -276,7 +231,8 @@
         const referralParams = {
             igreja: urlParams.get('igreja'),
             parceiro: urlParams.get('parceiro'),
-            empresa: urlParams.get('empresa')
+            empresa: urlParams.get('empresa'),
+            ref: urlParams.get('ref')
         };
         console.log('Parâmetros capturados:', referralParams);
 
@@ -318,7 +274,13 @@
 
         // --- Form Submission Handler ---
         document.getElementById('purchaseForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // CRITICAL: Prevent form from clearing
+            event.preventDefault();
+
+            // Mostrar loading
+            const btn = event.target.querySelector('.btn');
+            const loading = document.getElementById('loading');
+            btn.disabled = true;
+            loading.classList.add('active');
 
             // Get form values
             const nome = document.getElementById('nome').value.trim();
@@ -329,6 +291,8 @@
             // Validation
             if (!nome || !email || !telefone || !cpf) {
                 alert('⚠️ Por favor, preencha todos os campos!');
+                btn.disabled = false;
+                loading.classList.remove('active');
                 return;
             }
 
@@ -336,7 +300,27 @@
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 alert('⚠️ Por favor, insira um email válido!');
+                btn.disabled = false;
+                loading.classList.remove('active');
                 return;
+            }
+
+            // Determinar origem
+            let origem = 'direto';
+            let referencia = null;
+            
+            if (referralParams.ref) {
+                referencia = referralParams.ref;
+                origem = 'afiliado';
+            } else if (referralParams.igreja) {
+                referencia = referralParams.igreja;
+                origem = 'igreja';
+            } else if (referralParams.parceiro) {
+                referencia = referralParams.parceiro;
+                origem = 'parceiro';
+            } else if (referralParams.empresa) {
+                referencia = referralParams.empresa;
+                origem = 'empresa';
             }
 
             // Prepare data for Supabase
@@ -346,14 +330,14 @@
                 telefone_comprador: telefone,
                 cpf_comprador: cpf,
                 valor_total: 29.90,
-                valor_unitario: 29.90,
-                quantidade: 1,
+                valor_comissao: 8.97,
+                comissao_percentual: 30,
                 forma_pagamento: 'pix',
-                status_pagamento: 'pendente',
-                data_venda: new Date().toISOString(),
+                status_pagamento: 'pending',
                 email_enviado: false,
-                comissao_paga: false,
-                origem: referralParams.igreja ? 'igreja' : (referralParams.parceiro ? 'parceiro' : (referralParams.empresa ? 'empresa' : 'direto')),
+                downloads: 0,
+                origem: origem,
+                referencia: referencia
             };
 
             console.log('📤 Enviando dados para o Supabase:', dadosVenda);
@@ -368,41 +352,28 @@
                 if (error) {
                     console.error('❌ Erro do Supabase:', error);
                     alert('❌ Erro ao registrar compra: ' + error.message);
+                    btn.disabled = false;
+                    loading.classList.remove('active');
                     return;
                 }
 
                 console.log('✅ Compra registrada com sucesso!', data);
 
-                // Show success message
-                alert('✅ Compra registrada com sucesso! Agora complete o pagamento via Pix.');
+                // Pegar o ID da venda criada
+                const vendaId = data[0].id;
 
-                // Generate Pix code (mock for now)
-                const pixCode = '00020126580014br.gov.bcb.pix0136' + Math.random().toString(36).substring(2, 15) + '520400005303986540529.905802BR5925BIZMIX EDITORA LTDA6009SAO PAULO62070503***63041D3D';
-                document.getElementById('pixCode').textContent = pixCode;
+                console.log('🔀 Redirecionando para página de pagamento PIX...');
+                console.log('📋 Venda ID:', vendaId);
 
-                // Show Pix section
-                document.getElementById('pixSection').style.display = 'block';
-
-                // Smooth scroll to Pix section
-                document.getElementById('pixSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // ✅ REDIRECIONAR para página de pagamento PIX
+                window.location.href = `/somos-todos-um/parceiros/pagamento-pix.html?venda_id=${vendaId}`;
 
             } catch (err) {
                 console.error('❌ Erro ao processar compra:', err);
                 alert('❌ Erro ao processar compra: ' + err.message);
+                btn.disabled = false;
+                loading.classList.remove('active');
             }
-        });
-
-        // --- Copy Pix Code Button Handler ---
-        document.getElementById('copyPixBtn').addEventListener('click', function() {
-            const pixCode = document.getElementById('pixCode').textContent;
-            navigator.clipboard.writeText(pixCode)
-                .then(() => {
-                    alert('✅ Código Pix copiado!');
-                })
-                .catch(err => {
-                    console.error('Erro ao copiar Pix:', err);
-                    alert('❌ Erro ao copiar código Pix. Por favor, copie manualmente.');
-                });
         });
     </script>
 </body>
