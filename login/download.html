@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - Somos Todos Um</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo {
+            font-size: 64px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .cliente-info {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #374151;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-item strong {
+            min-width: 140px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .downloads-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .downloads-badge.warning {
+            background: #f59e0b;
+        }
+
+        .downloads-badge.danger {
+            background: #ef4444;
+        }
+
+        .personalizacao-box {
+            background: #f0f9ff;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .personalizacao-box h3 {
+            color: #1e40af;
+            font-size: 18px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .personalizacao-box > p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .opcoes-rodape {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .opcao-rodape {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .opcao-rodape:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .opcao-rodape.selected {
+            border-color: #3b82f6;
+            background: #dbeafe;
+        }
+
+        .opcao-rodape input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .opcao-info {
+            flex: 1;
+        }
+
+        .opcao-label {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 15px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .opcao-exemplo {
+            font-size: 13px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .preview-rodape {
+            background: white;
+            border: 2px dashed #3b82f6;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .preview-rodape strong {
+            display: block;
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .preview-texto {
+            font-size: 16px;
+            color: #374151;
+            font-weight: 600;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-download:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-box {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-box h3 {
+            color: #1f2937;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box li {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .info-box li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .erro {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .erro p {
+            color: #991b1b;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .erro ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .erro li {
+            color: #991b1b;
+            font-size: 14px;
+            line-height: 1.8;
+            padding-left: 25px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .erro li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            border: 2px solid #10b981;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #065f46;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: #1e40af;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .logo {
+                font-size: 48px;
+            }
+
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .info-item strong {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ESTADO 1: CARREGANDO -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <h1>🔄 Verificando acesso...</h1>
+            <p class="subtitle">Aguarde enquanto validamos seu pagamento.</p>
+        </div>
+
+        <!-- ESTADO 2: ACESSO LIBERADO -->
+        <div id="conteudo" style="display: none;">
+            <div class="logo">📖</div>
+            <h1>Seu Livro Digital Está Pronto!</h1>
+            <p class="subtitle">Parabéns pela aquisição!<br>Personalize o rodapé e clique no botão para fazer o download.</p>
+
+            <div class="cliente-info" id="clienteInfo">
+                <!-- Preenchido dinamicamente -->
+            </div>
+
+            <!-- PERSONALIZAÇÃO DO RODAPÉ -->
+            <div class="personalizacao-box" id="personalizacaoBox">
+                <h3>🎨 Personalização do Rodapé</h3>
+                <p>Escolha as informações que aparecerão no rodapé de cada página do PDF:</p>
+                
+                <div class="opcoes-rodape" id="opcoesRodape">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+                
+                <div class="preview-rodape" id="previewRodape">
+                    <strong>📄 Prévia do rodapé:</strong>
+                    <div class="preview-texto" id="previewTexto"></div>
+                </div>
+            </div>
+
+            <button id="btnDownloadPDF" class="btn-download">
+                📥 Baixar Livro Digital (PDF)
+            </button>
+
+            <div class="info-box">
+                <h3>📚 Sobre o Livro</h3>
+                <ul>
+                    <li>Formato: PDF de alta qualidade</li>
+                    <li>Personalizado com as informações que você escolher</li>
+                    <li>Compatível com todos os dispositivos</li>
+                    <li>Pode ser lido offline</li>
+                    <li>Acesso ilimitado e vitalício</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h3>🔐 Proteção e Segurança</h3>
+                <ul>
+                    <li>PDF personalizado exclusivamente para você</li>
+                    <li>Rodapé discreto conforme sua escolha</li>
+                    <li>Limite de 5 downloads por compra</li>
+                    <li>Sistema de backup automático ativo</li>
+                </ul>
+            </div>
+
+            <div class="info-box">
+                <h3>💡 Dicas de Leitura</h3>
+                <ul>
+                    <li>Use Adobe Reader ou navegador para melhor experiência</li>
+                    <li>Salve o arquivo em local seguro</li>
+                    <li>Você pode imprimir para leitura física</li>
+                    <li>Compartilhe sua experiência nas redes sociais!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ESTADO 3: ACESSO NEGADO -->
+        <div id="erro" style="display: none;">
+            <div class="logo">❌</div>
+            <h1 id="tituloErro">Acesso Negado</h1>
+            <div class="erro">
+                <p><strong>Não foi possível validar seu acesso.</strong></p>
+                <p id="mensagemErro"></p>
+                <ul id="listaErros"></ul>
+                <p style="margin-top: 20px; font-size: 13px;">
+                    Se você já pagou, aguarde alguns minutos e tente novamente.<br>
+                    Caso o problema persista, entre em contato conosco.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('📄 Página de Download - Iniciada');
+
+        // Configuração do Supabase
+
+        let vendaAtual = null;
+        let preferenciaRodapeAtual = 'nome_email';
+
+        // Opções de rodapé disponíveis
+        const OPCOES_RODAPE = [
+            {
+                id: 'nome_email',
+                label: '👤 Nome + Email',
+                getTexto: (venda) => `${venda.nome_comprador} - ${venda.email_comprador}`
+            },
+            {
+                id: 'igreja_nome_data',
+                label: '⛪ Igreja + Nome + Data',
+                getTexto: (venda) => {
+                    const igreja = venda.igreja_id ? 'Igreja [Nome]' : 'Comprador';
+                    const data = new Date(venda.data_venda).toLocaleDateString('pt-BR');
+                    return `${igreja} - ${venda.nome_comprador} - ${data}`;
+                }
+            },
+            {
+                id: 'nome_telefone',
+                label: '📱 Nome + Telefone',
+                getTexto: (venda) => `${venda.nome_comprador} - ${venda.telefone_comprador || 'Sem telefone'}`
+            },
+            {
+                id: 'apenas_nome',
+                label: '👤 Apenas Nome',
+                getTexto: (venda) => venda.nome_comprador
+            },
+            {
+                id: 'sem_rodape',
+                label: '🚫 Sem Rodapé',
+                getTexto: () => 'Nenhuma informação será exibida'
+            }
+        ];
+
+        // Verificar acesso ao carregar a página
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarAcesso();
+        });
+
+        async function verificarAcesso() {
+            console.log('🔍 Verificando acesso...');
+
+            try {
+                // Aceita tanto ?id= quanto ?venda=
+                const urlParams = new URLSearchParams(window.location.search);
+                const vendaId = urlParams.get('id') || urlParams.get('venda');
+
+                console.log('📋 Parâmetro recebido:', vendaId);
+
+                // VALIDAÇÃO 1: Verificar se o ID existe
+                if (!vendaId) {
+                    throw new Error('LINK_INVALIDO');
+                }
+
+                // VALIDAÇÃO 2: Buscar venda no banco
+                const { data: venda, error } = await supabaseClient
+                    .from('vendas')
+                    .select('*')
+                    .eq('id', vendaId)
+                    .single();
+
+                if (error || !venda) {
+                    console.error('❌ Erro ao buscar venda:', error);
+                    throw new Error('VENDA_NAO_ENCONTRADA');
+                }
+
+                console.log('✅ Venda encontrada:', venda);
+                vendaAtual = venda;
+
+                // VALIDAÇÃO 3: Verificar status do pagamento
+                if (venda.status_pagamento !== 'pago') {
+                    throw new Error('PAGAMENTO_PENDENTE');
+                }
+
+                // VALIDAÇÃO 4: Verificar limite de downloads
+                const downloadsRealizados = venda.downloads || 0;
+                if (downloadsRealizados >= 5) {
+                    throw new Error('LIMITE_ATINGIDO');
+                }
+
+                // ✅ TODAS VALIDAÇÕES OK - Mostrar conteúdo
+                mostrarConteudo(venda);
+
+            } catch (erro) {
+                console.error('❌ Erro na verificação:', erro);
+                mostrarErro(erro.message);
+            }
+        }
+
+        function mostrarConteudo(venda) {
+            console.log('✅ Acesso liberado!');
+
+            const downloadsRealizados = venda.downloads || 0;
+            const downloadsRestantes = 5 - downloadsRealizados;
+
+            let badgeClass = '';
+            if (downloadsRealizados >= 4) {
+                badgeClass = 'danger';
+            } else if (downloadsRealizados >= 3) {
+                badgeClass = 'warning';
+            }
+
+            // Preencher informações do cliente
+            document.getElementById('clienteInfo').innerHTML = `
+                <div class="info-item">
+                    <strong>👤 Cliente:</strong>
+                    <span>${venda.nome_comprador}</span>
+                </div>
+                <div class="info-item">
+                    <strong>📧 Email:</strong>
+                    <span>${venda.email_comprador}</span>
+                </div>
+                <div class="info-item">
+                    <strong>📅 Data da Compra:</strong>
+                    <span>${new Date(venda.data_venda).toLocaleDateString('pt-BR')}</span>
+                </div>
+                <div class="info-item">
+                    <strong>📥 Downloads:</strong>
+                    <span>
+                        ${downloadsRealizados} de 5 utilizados
+                        <span class="downloads-badge ${badgeClass}">${downloadsRestantes} restantes</span>
+                    </span>
+                </div>
+            `;
+
+            // Mostrar aviso se estiver perto do limite
+            if (downloadsRealizados >= 3) {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert-info';
+                alertDiv.innerHTML = `
+                    <strong>⚠️ Atenção:</strong> Você tem apenas ${downloadsRestantes} download(s) restante(s).
+                    Use com cuidado e salve o arquivo em local seguro!
+                `;
+                document.getElementById('btnDownloadPDF').insertAdjacentElement('beforebegin', alertDiv);
+            }
+
+            // Mostrar opções de personalização
+            mostrarOpcoesRodape(venda);
+
+            // Configurar botão de download
+            document.getElementById('btnDownloadPDF').addEventListener('click', fazerDownload);
+
+            // Esconder loading e mostrar conteúdo
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('conteudo').style.display = 'block';
+        }
+
+        function mostrarOpcoesRodape(venda) {
+            const container = document.getElementById('opcoesRodape');
+            
+            // Usar preferência salva ou padrão
+            preferenciaRodapeAtual = venda.preferencia_rodape || 'nome_email';
+            
+            let html = '';
+            OPCOES_RODAPE.forEach(opcao => {
+                const exemplo = opcao.getTexto(venda);
+                const checked = opcao.id === preferenciaRodapeAtual ? 'checked' : '';
+                const selected = opcao.id === preferenciaRodapeAtual ? 'selected' : '';
+                
+                html += `
+                    <label class="opcao-rodape ${selected}" data-opcao="${opcao.id}">
+                        <input type="radio" name="rodape" value="${opcao.id}" ${checked} onchange="atualizarPreviewRodape('${opcao.id}')">
+                        <div class="opcao-info">
+                            <span class="opcao-label">${opcao.label}</span>
+                            <span class="opcao-exemplo">${exemplo}</span>
+                        </div>
+                    </label>
+                `;
+            });
+            
+            container.innerHTML = html;
+            
+            // Atualizar preview inicial
+            atualizarPreviewRodape(preferenciaRodapeAtual);
+        }
+
+        function atualizarPreviewRodape(opcaoId) {
+            preferenciaRodapeAtual = opcaoId;
+            
+            // Atualizar seleção visual
+            document.querySelectorAll('.opcao-rodape').forEach(el => {
+                if (el.dataset.opcao === opcaoId) {
+                    el.classList.add('selected');
+                } else {
+                    el.classList.remove('selected');
+                }
+            });
+            
+            // Atualizar preview
+            const opcao = OPCOES_RODAPE.find(o => o.id === opcaoId);
+            const textoPreview = opcao.getTexto(vendaAtual);
+            
+            document.getElementById('previewTexto').textContent = textoPreview;
+        }
+
+        function mostrarErro(tipoErro) {
+            console.log('❌ Mostrando erro:', tipoErro);
+
+            let titulo = 'Acesso Negado';
+            let mensagem = '';
+            let listaErros = [];
+
+            switch (tipoErro) {
+                case 'LINK_INVALIDO':
+                    titulo = '❌ Link Inválido';
+                    mensagem = 'O link de acesso está incompleto ou incorreto.';
+                    listaErros = [
+                        'Verifique se você copiou o link completo do email',
+                        'Use o link fornecido no email de confirmação',
+                        'Não tente digitar o link manualmente'
+                    ];
+                    break;
+
+                case 'VENDA_NAO_ENCONTRADA':
+                    titulo = '❌ Acesso Não Encontrado';
+                    mensagem = 'Não conseguimos localizar sua compra em nosso sistema.';
+                    listaErros = [
+                        'Verifique o email de confirmação que você recebeu',
+                        'Use o link fornecido no email (não digite manualmente)',
+                        'Se não recebeu o email, verifique a pasta de spam',
+                        'Entre em contato conosco se o problema persistir'
+                    ];
+                    break;
+
+                case 'PAGAMENTO_PENDENTE':
+                    titulo = '⏳ Pagamento Ainda Não Confirmado';
+                    mensagem = 'Seu pagamento está sendo processado.';
+                    listaErros = [
+                        'Aguarde alguns minutos (processamento pode levar até 10 minutos)',
+                        'Verifique seu email para confirmação do pagamento',
+                        'Se já pagou, recarregue esta página em alguns minutos',
+                        'Se o problema persistir após 1 hora, entre em contato'
+                    ];
+                    break;
+
+                case 'LIMITE_ATINGIDO':
+                    titulo = '❌ Limite de Downloads Atingido';
+                    mensagem = 'Você já utilizou os 5 downloads permitidos para esta compra.';
+                    listaErros = [
+                        `Downloads realizados: 5 de 5`,
+                        'Salve o arquivo em local seguro para não perder',
+                        'Se precisar de mais downloads, entre em contato conosco explicando o motivo'
+                    ];
+                    break;
+
+                default:
+                    mensagem = 'Ocorreu um erro inesperado ao validar seu acesso.';
+                    listaErros = [
+                        'Tente recarregar a página',
+                        'Verifique sua conexão com a internet',
+                        'Entre em contato conosco se o problema persistir'
+                    ];
+            }
+
+            // Preencher elementos de erro
+            document.getElementById('tituloErro').textContent = titulo;
+            document.getElementById('mensagemErro').textContent = mensagem;
+            
+            const listaErrosElement = document.getElementById('listaErros');
+            listaErrosElement.innerHTML = '';
+            listaErros.forEach(erro => {
+                const li = document.createElement('li');
+                li.textContent = erro;
+                listaErrosElement.appendChild(li);
+            });
+
+            // Esconder loading e mostrar erro
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('erro').style.display = 'block';
+        }
+
+        async function fazerDownload() {
+            const btnDownload = document.getElementById('btnDownloadPDF');
+            
+            // Desabilitar botão
+            btnDownload.disabled = true;
+            btnDownload.innerHTML = '⏳ Gerando seu PDF personalizado...';
+
+            console.log('📥 Iniciando geração do PDF personalizado...');
+            console.log('🎨 Preferência de rodapé:', preferenciaRodapeAtual);
+
+            try {
+                // Salvar preferência no banco
+                const { error: updatePrefError } = await supabaseClient
+                    .from('vendas')
+                    .update({ preferencia_rodape: preferenciaRodapeAtual })
+                    .eq('id', vendaAtual.id);
+
+                if (updatePrefError) {
+                    console.error('⚠️ Erro ao salvar preferência:', updatePrefError);
+                }
+
+                // Obter texto do rodapé baseado na preferência
+                const opcao = OPCOES_RODAPE.find(o => o.id === preferenciaRodapeAtual);
+                const textoRodape = opcao.getTexto(vendaAtual);
+                const semRodape = preferenciaRodapeAtual === 'sem_rodape';
+
+                console.log('📝 Texto do rodapé:', textoRodape);
+                console.log('🚫 Sem rodapé:', semRodape);
+
+                // Chamar Edge Function
+                const { data, error } = await supabaseClient.functions.invoke('personalizar-pdf', {
+                    body: {
+                        vendaId: vendaAtual.id,
+                        textoRodape: textoRodape,
+                        semRodape: semRodape
+                    },
+                    responseType: 'blob'
+                });
+
+                if (error) {
+                    console.error('❌ Erro na Edge Function:', error);
+                    throw new Error(error.message || 'Erro ao personalizar PDF');
+                }
+
+                console.log('✅ PDF personalizado gerado com sucesso');
+
+                // Criar blob e fazer download
+                const blob = new Blob([data], { type: 'application/pdf' });
+                const url = window.URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `Somos-Todos-Um-${vendaAtual.nome_comprador.replace(/\s+/g, '-')}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Limpar URL temporária
+                window.URL.revokeObjectURL(url);
+
+                console.log('✅ Download iniciado com sucesso!');
+
+                // Atualizar interface
+                btnDownload.innerHTML = '✅ Download Concluído!';
+                btnDownload.style.background = '#10b981';
+
+                // Obter novo total de downloads
+                const { data: vendaAtualizada } = await supabaseClient
+                    .from('vendas')
+                    .select('downloads')
+                    .eq('id', vendaAtual.id)
+                    .single();
+
+                const novoTotal = vendaAtualizada?.downloads || (vendaAtual.downloads || 0) + 1;
+
+                // Mostrar mensagem de sucesso
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success-message';
+                successDiv.innerHTML = `
+                    ✅ <strong>Download iniciado com sucesso!</strong><br>
+                    Seu PDF personalizado está sendo baixado.<br>
+                    Rodapé: ${textoRodape}<br>
+                    Downloads realizados: ${novoTotal} de 5
+                `;
+                btnDownload.insertAdjacentElement('afterend', successDiv);
+
+                // Recarregar página após 3 segundos
+                setTimeout(() => {
+                    console.log('🔄 Recarregando página...');
+                    window.location.reload();
+                }, 3000);
+
+            } catch (erro) {
+                console.error('❌ Erro no download:', erro);
+                
+                alert(`❌ Erro ao gerar PDF personalizado:\n\n${erro.message}\n\nTente novamente. Se o problema persistir, entre em contato conosco.`);
+                
+                btnDownload.disabled = false;
+                btnDownload.innerHTML = '📥 Baixar Livro Digital (PDF)';
+            }
+        }
+
+        console.log('✅ Sistema de download pronto');
+    </script>
+</body>
+</html>
