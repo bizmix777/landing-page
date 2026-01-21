@@ -266,7 +266,7 @@
                     Nome: HENRIQUE GOMES DA SILVA<br>
                     CPF: 349.656.291-91<br>
                     Banco: C6 (336) - Ag: 0001<br>
-                    Conta: 0000-011203567-1
+                    Chave PIX: 6ea0fa32-993a-4769-b515-61dbca2db8f6
                 </div>
 
                 <!-- Instruções -->
@@ -363,13 +363,18 @@
             }
         }
 
-        // Gerar código PIX Direto (formato EMV)
+        // Gerar código PIX Direto (formato EMV) - USANDO UUID
         function gerarPixDireto(valor) {
             console.log('🏦 Gerando PIX para valor:', valor);
             
+            // ✅ USANDO CHAVE UUID CONFIRMADA
             const chavePix = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
             const nome = 'HENRIQUE GOMES DA SILVA';
             const cidade = 'SAO PAULO';
+            
+            console.log('🔑 Chave PIX (UUID):', chavePix);
+            console.log('👤 Nome:', nome);
+            console.log('🌆 Cidade:', cidade);
 
             // Função auxiliar para formatar campos EMV
             function formatarCampo(id, valor) {
@@ -382,7 +387,7 @@
             payload += formatarCampo('00', '01'); // Payload Format Indicator
             payload += formatarCampo('26', 
                 formatarCampo('00', 'br.gov.bcb.pix') + 
-                formatarCampo('01', chavePix)
+                formatarCampo('01', chavePix) // UUID
             );
             payload += formatarCampo('52', '0000'); // Merchant Category Code
             payload += formatarCampo('53', '986'); // Currency (BRL)
@@ -396,7 +401,9 @@
             const crc = calcularCRC16(payload);
             payload += crc;
 
-            console.log('✅ Código PIX gerado');
+            console.log('✅ Código PIX gerado:', payload);
+            console.log('📏 Tamanho:', payload.length, 'caracteres');
+            
             return payload;
         }
 
@@ -420,14 +427,17 @@
         // Exibir PIX na tela
         function exibirPix(codigoPix) {
             console.log('🎨 Exibindo PIX na tela');
+            console.log('📝 Código completo:', codigoPix);
 
             // Mostrar código
             document.getElementById('pixcode-direto').textContent = codigoPix;
-            console.log('✅ Código inserido');
+            console.log('✅ Código inserido no elemento');
 
             // Gerar QR Code
             const qrcodeDiv = document.getElementById('qrcode-direto');
             qrcodeDiv.innerHTML = ''; // Limpar
+            
+            console.log('🎨 Gerando QR Code visual...');
             
             try {
                 new QRCode(qrcodeDiv, {
@@ -438,19 +448,21 @@
                     colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.H
                 });
-                console.log('✅ QR Code gerado');
+                console.log('✅ QR Code gerado com sucesso!');
             } catch (error) {
                 console.error('❌ Erro ao gerar QR Code:', error);
-                qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code</p>';
+                qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code: ' + error.message + '</p>';
             }
         }
 
         // Copiar código PIX
         function copiarCodigo() {
             const codigo = document.getElementById('pixcode-direto').textContent;
+            console.log('📋 Copiando código PIX...');
             
             navigator.clipboard.writeText(codigo)
                 .then(() => {
+                    console.log('✅ Código copiado!');
                     alert('✅ Código PIX copiado com sucesso!');
                 })
                 .catch(err => {
@@ -461,33 +473,46 @@
 
         // Inicializar
         async function inicializar() {
-            console.log('🚀 Inicializando...');
+            console.log('🚀 Inicializando página...');
             
             try {
                 // Carregar venda
+                console.log('1️⃣ Carregando dados da venda...');
                 const venda = await carregarDadosVenda();
-                if (!venda) return;
+                if (!venda) {
+                    console.error('❌ Falha ao carregar venda');
+                    return;
+                }
 
                 // Gerar PIX
+                console.log('2️⃣ Gerando código PIX...');
                 const pixDireto = gerarPixDireto(venda.valor_total);
+                
+                console.log('3️⃣ Exibindo PIX na tela...');
                 exibirPix(pixDireto);
 
                 // Esconder loading e mostrar conteúdo
+                console.log('4️⃣ Escondendo loading...');
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content-pix').style.display = 'block';
 
-                console.log('🎉 Página carregada com sucesso!');
+                console.log('🎉 PÁGINA CARREGADA COM SUCESSO!');
 
             } catch (error) {
-                console.error('❌ Erro fatal:', error);
+                console.error('❌ ERRO FATAL:', error);
                 alert('❌ Erro ao carregar página: ' + error.message);
             }
         }
 
         // Executar ao carregar
+        console.log('⏳ Aguardando DOM...');
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', inicializar);
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('✅ DOM carregado');
+                inicializar();
+            });
         } else {
+            console.log('✅ DOM já pronto');
             inicializar();
         }
     </script>
