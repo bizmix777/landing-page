@@ -1,7 +1,7 @@
 /**
  * Configuração centralizada do Supabase
  * Usado por todas as páginas do sistema
- * Atualizado: 2026-01-20
+ * Atualizado: 2026-01-21
  */
 
 const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
@@ -18,5 +18,6 @@ if (typeof window.supabase === 'undefined' || !window.supabase.from) {
 
 // Criar alias global
 var supabase = window.supabase;
+var supabaseClient = window.supabase;  // ✅ ADICIONADO
 
 console.log('📦 supabase-config.js carregado');
