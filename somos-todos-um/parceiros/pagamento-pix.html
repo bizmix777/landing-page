@@ -9,8 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/js/supabase-config.js"></script>
     
-    <!-- QR Code Generator -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- QR Code Generator (CDN ALTERNATIVO CONFIÁVEL) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -569,7 +569,7 @@
             }
         }
 
-        // Exibir PIX na tela
+        // Exibir PIX na tela (FUNÇÃO CORRIGIDA COM NOVA BIBLIOTECA)
         function exibirPix(tipo, codigoPix) {
             console.log(`🎨 EXIBINDO PIX do tipo: ${tipo}`);
             console.log(`📝 Código PIX (primeiros 50 chars):`, codigoPix.substring(0, 50) + '...');
@@ -598,16 +598,21 @@
             qrcodeDiv.innerHTML = ''; // Limpar anterior
             console.log(`🎨 Gerando QR Code visual...`);
 
-            QRCode.toCanvas(codigoPix, { width: 250, margin: 1 }, function (error, canvas) {
-                if (error) {
-                    console.error('❌ ERRO ao gerar QR Code:', error);
-                    qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code: ' + error.message + '</p>';
-                } else {
-                    console.log('✅ QR Code canvas gerado com sucesso');
-                    qrcodeDiv.appendChild(canvas);
-                    console.log('✅ QR Code adicionado ao DOM');
-                }
-            });
+            try {
+                // USAR NOVA BIBLIOTECA QRCode.js
+                new QRCode(qrcodeDiv, {
+                    text: codigoPix,
+                    width: 250,
+                    height: 250,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                console.log('✅ QR Code gerado e adicionado ao DOM');
+            } catch (error) {
+                console.error('❌ ERRO ao gerar QR Code:', error);
+                qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code: ' + error.message + '</p>';
+            }
         }
 
         // Mudar aba
