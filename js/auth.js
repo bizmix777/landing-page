@@ -3,14 +3,27 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('loginForm');
+    const loginForm = document.getElementById('formLogin'); // ⭐ CORRIGIDO: formLogin
     const btnLogin = document.getElementById('btnLogin');
     const alertDiv = document.getElementById('alert');
+
+    // Verificar se o formulário existe
+    if (!loginForm) {
+        console.log('⚠️ Formulário de login não encontrado nesta página');
+        return;
+    }
+
+    console.log('✅ Formulário de login encontrado!');
 
     // ========================================
     // FUNÇÃO: Mostrar alerta
     // ========================================
     function mostrarAlerta(mensagem, tipo = 'error') {
+        if (!alertDiv) {
+            alert(mensagem);
+            return;
+        }
+        
         alertDiv.textContent = mensagem;
         alertDiv.className = `alert alert-${tipo} show`;
         
@@ -25,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========================================
     async function fazerLogin(email, senha) {
         try {
+            console.log('🔐 Iniciando login para:', email);
+
             // 1. Autenticar no Supabase Auth
             const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
                 email: email,
@@ -84,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========================================
     loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        console.log('✅ Submit do formulário capturado!');
 
         const email = document.getElementById('email').value.trim();
         const senha = document.getElementById('password').value;
@@ -95,15 +111,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Adicionar loading no botão
-        btnLogin.classList.add('loading');
-        btnLogin.disabled = true;
+        if (btnLogin) {
+            btnLogin.classList.add('loading');
+            btnLogin.disabled = true;
+        }
 
         // Fazer login
         await fazerLogin(email, senha);
 
         // Remover loading
-        btnLogin.classList.remove('loading');
-        btnLogin.disabled = false;
+        if (btnLogin) {
+            btnLogin.classList.remove('loading');
+            btnLogin.disabled = false;
+        }
     });
 
     // ========================================
