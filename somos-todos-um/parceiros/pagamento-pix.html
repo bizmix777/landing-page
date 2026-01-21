@@ -363,7 +363,7 @@
             }
         }
 
-        // Gerar código PIX Direto (formato EMV) - CORRIGIDO COM UUID
+        // Gerar código PIX Direto (formato EMV) - VERSÃO FINAL COM CAMPO 62
         function gerarPixDireto(valor) {
             console.log('🏦 Gerando PIX para valor:', valor);
             
@@ -382,12 +382,21 @@
                 return `${id}${tamanho}${valor}`;
             }
 
-            // Montar payload PIX (CORRIGIDO)
+            // Gerar Transaction ID único (25 caracteres alfanuméricos)
+            function gerarTxId() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let txid = '';
+                for (let i = 0; i < 25; i++) {
+                    txid += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return txid;
+            }
+
+            // Montar payload PIX (VERSÃO FINAL)
             let payload = '';
             
-            // ✅ CORREÇÃO: Adicionando todos os campos obrigatórios
             payload += formatarCampo('00', '01'); // Payload Format Indicator
-            payload += formatarCampo('01', '12'); // ✅ Point of Initiation Method (ADICIONADO!)
+            payload += formatarCampo('01', '12'); // Point of Initiation Method
             
             // Merchant Account Information (tag 26)
             const merchantAccount = formatarCampo('00', 'br.gov.bcb.pix') + formatarCampo('01', chavePix);
@@ -400,6 +409,11 @@
             payload += formatarCampo('59', nome); // Merchant Name
             payload += formatarCampo('60', cidade); // Merchant City
             
+            // ✅ ADICIONAR CAMPO 62 (Additional Data Field Template)
+            const txid = gerarTxId();
+            const additionalData = formatarCampo('05', txid); // Transaction ID
+            payload += formatarCampo('62', additionalData);
+            
             // Calcular CRC16
             payload += '6304'; // CRC placeholder
             const crc = calcularCRC16(payload);
@@ -407,7 +421,7 @@
 
             console.log('✅ Código PIX gerado:', payload);
             console.log('📏 Tamanho:', payload.length, 'caracteres');
-            console.log('🔍 Primeiros 50 chars:', payload.substring(0, 50));
+            console.log('🆔 Transaction ID:', txid);
             
             return payload;
         }
@@ -432,7 +446,6 @@
         // Exibir PIX na tela
         function exibirPix(codigoPix) {
             console.log('🎨 Exibindo PIX na tela');
-            console.log('📝 Código completo:', codigoPix);
 
             // Mostrar código
             document.getElementById('pixcode-direto').textContent = codigoPix;
