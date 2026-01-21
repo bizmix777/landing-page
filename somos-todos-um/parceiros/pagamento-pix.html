@@ -3,21 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagamento - BizMix</title>
+    <title>💳 Pagamento PIX - Somos Todos Um</title>
     
-    <!-- Supabase SDK -->
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Configuração centralizada do Supabase -->
     <script src="/js/supabase-config.js"></script>
     
-    <!-- Mercado Pago SDK -->
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- QR Code Generator -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
         * {
             margin: 0;
             padding: 0;
@@ -25,256 +22,182 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .container {
-            max-width: 900px;
-            width: 100%;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
             overflow: hidden;
         }
 
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 30px;
             text-align: center;
-            color: white;
         }
 
         .header h1 {
-            font-size: 2rem;
+            font-size: 28px;
             margin-bottom: 10px;
         }
 
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1rem;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        .produto-info {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            border-left: 4px solid #667eea;
-        }
-
-        .produto-info h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .produto-info .preco {
-            font-size: 2rem;
-            color: #667eea;
+        .valor-destaque {
+            font-size: 42px;
             font-weight: bold;
             margin: 15px 0;
         }
 
-        .metodos-pagamento {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
+        .body {
+            padding: 30px;
         }
 
-        .metodo-card {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 25px;
+        .payment-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
             cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .metodo-card:hover {
-            border-color: #667eea;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-        }
-
-        .metodo-card.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-        }
-
-        .metodo-card i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #667eea;
-        }
-
-        .metodo-card h3 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .metodo-card p {
+            font-size: 16px;
+            font-weight: 600;
             color: #666;
-            font-size: 0.9rem;
+            transition: all 0.3s ease;
         }
 
-        .area-pagamento {
+        .tab:hover {
+            color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .tab-content {
             display: none;
-            animation: fadeIn 0.5s;
         }
 
-        .area-pagamento.active {
+        .tab-content.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .qr-code-container {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
+        .qr-section {
             text-align: center;
-            margin-bottom: 20px;
+            margin: 25px 0;
         }
 
-        .qr-code-container img {
-            max-width: 300px;
-            width: 100%;
-            border: 5px solid white;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        #qrcode {
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             margin: 20px 0;
+        }
+
+        .pix-code-container {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px dashed #ccc;
         }
 
         .pix-code {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            color: #333;
             background: white;
             padding: 15px;
-            border-radius: 10px;
-            word-break: break-all;
-            font-family: monospace;
-            font-size: 0.9rem;
-            margin: 20px 0;
-            border: 2px dashed #667eea;
+            border-radius: 6px;
+            margin: 10px 0;
+            max-height: 150px;
+            overflow-y: auto;
         }
 
-        .btn {
+        .btn-copy {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
+            background: #28a745;
+            color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
+            transition: all 0.3s ease;
             margin-top: 10px;
         }
 
-        .instrucoes {
-            background: #e8f5e9;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border-left: 4px solid #4caf50;
+        .btn-copy:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
 
-        .instrucoes h4 {
-            color: #2e7d32;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
         }
 
-        .instrucoes h4 i {
-            margin-right: 10px;
+        .info-box.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
         }
 
-        .instrucoes ol {
-            margin-left: 20px;
+        .info-box.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .instructions {
+            margin-top: 25px;
+        }
+
+        .instructions h3 {
             color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
         }
 
-        .instrucoes li {
+        .instructions ol {
+            padding-left: 20px;
+            color: #666;
+        }
+
+        .instructions li {
             margin-bottom: 10px;
             line-height: 1.6;
         }
 
-        .timer {
-            background: #fff3cd;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-            border-left: 4px solid #ffc107;
-        }
-
-        .timer .tempo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ff6b6b;
-            margin-top: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
         .loading {
-            display: none;
             text-align: center;
             padding: 40px;
-        }
-
-        .loading.active {
-            display: block;
         }
 
         .spinner {
@@ -284,7 +207,7 @@
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto;
         }
 
         @keyframes spin {
@@ -292,453 +215,368 @@
             100% { transform: rotate(360deg); }
         }
 
-        .alert {
+        .dados-bancarios {
+            background: #f9f9f9;
             padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 13px;
         }
 
-        .alert.active {
-            display: block;
+        .dados-bancarios strong {
+            color: #667eea;
         }
 
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        @media (max-width: 768px) {
-            .metodos-pagamento {
-                grid-template-columns: 1fr;
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 0;
             }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 1.5rem;
+            .valor-destaque {
+                font-size: 32px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1><i class="fas fa-shopping-cart"></i> Finalizar Pagamento</h1>
-            <p>Escolha sua forma de pagamento preferida</p>
+            <h1>💳 Pagamento PIX</h1>
+            <p>Livro Digital - Somos Todos Um</p>
+            <div class="valor-destaque" id="valor-display">R$ 29,90</div>
         </div>
 
-        <div class="content">
-            <!-- Informações do Produto -->
-            <div class="produto-info">
-                <h3 id="produto-nome">Carregando produto...</h3>
-                <p id="produto-descricao"></p>
-                <div class="preco" id="produto-preco">R$ 0,00</div>
-            </div>
-
-            <!-- Alertas -->
-            <div id="alert-success" class="alert alert-success">
-                <i class="fas fa-check-circle"></i> <span id="alert-success-text"></span>
-            </div>
-            <div id="alert-error" class="alert alert-error">
-                <i class="fas fa-exclamation-circle"></i> <span id="alert-error-text"></span>
-            </div>
-
-            <!-- Loading -->
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <p>Processando pagamento...</p>
-            </div>
-
-            <!-- Métodos de Pagamento -->
-            <div id="selecao-metodo">
-                <h2 style="margin-bottom: 20px; color: #333;">Escolha a forma de pagamento:</h2>
-                <div class="metodos-pagamento">
-                    <div class="metodo-card" onclick="selecionarMetodo('pix')">
-                        <i class="fas fa-qrcode"></i>
-                        <h3>PIX</h3>
-                        <p>Aprovação imediata</p>
-                        <p style="color: #667eea; font-weight: bold; margin-top: 10px;">Recomendado</p>
-                    </div>
-                    <div class="metodo-card" onclick="selecionarMetodo('cartao')">
-                        <i class="fas fa-credit-card"></i>
-                        <h3>Cartão de Crédito</h3>
-                        <p>Parcelamento disponível</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Área de Pagamento PIX -->
-            <div id="area-pix" class="area-pagamento">
-                <div class="timer">
-                    <i class="fas fa-clock"></i> Este QR Code expira em:
-                    <div class="tempo" id="timer">10:00</div>
-                </div>
-
-                <div class="qr-code-container">
-                    <h3 style="margin-bottom: 15px;">Escaneie o QR Code:</h3>
-                    <img id="qr-code-img" src="" alt="QR Code PIX">
-                    
-                    <p style="margin: 20px 0; color: #666;">Ou copie o código PIX:</p>
-                    <div class="pix-code" id="pix-code-text"></div>
-                    <button class="btn btn-primary" onclick="copiarCodigoPix()">
-                        <i class="fas fa-copy"></i> Copiar Código PIX
-                    </button>
-                </div>
-
-                <div class="instrucoes">
-                    <h4><i class="fas fa-info-circle"></i> Como pagar com PIX:</h4>
-                    <ol>
-                        <li>Abra o app do seu banco</li>
-                        <li>Escolha pagar via PIX</li>
-                        <li>Escaneie o QR Code ou cole o código copiado</li>
-                        <li>Confirme o pagamento</li>
-                        <li>Pronto! Você receberá o produto por e-mail</li>
-                    </ol>
-                </div>
-
-                <button class="btn btn-secondary" onclick="voltarMetodos()">
-                    <i class="fas fa-arrow-left"></i> Voltar
+        <!-- Body -->
+        <div class="body">
+            
+            <!-- Tabs -->
+            <div class="payment-tabs">
+                <button class="tab active" onclick="mudarAba('direto')">
+                    🏦 PIX Direto
+                </button>
+                <button class="tab" onclick="mudarAba('mercadopago')">
+                    💳 Mercado Pago
                 </button>
             </div>
 
-            <!-- Área de Pagamento Cartão -->
-            <div id="area-cartao" class="area-pagamento">
-                <form id="form-cartao">
-                    <div class="form-group">
-                        <label for="cardNumber">Número do Cartão:</label>
-                        <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cardholderName">Nome no Cartão:</label>
-                        <input type="text" id="cardholderName" placeholder="Como está no cartão" required>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="form-group">
-                            <label for="cardExpiration">Validade:</label>
-                            <input type="text" id="cardExpiration" placeholder="MM/AA" maxlength="5" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="securityCode">CVV:</label>
-                            <input type="text" id="securityCode" placeholder="000" maxlength="4" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="installments">Parcelamento:</label>
-                        <select id="installments" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem;">
-                            <option value="1">1x sem juros</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-lock"></i> Pagar com Cartão
-                    </button>
-
-                    <button type="button" class="btn btn-secondary" onclick="voltarMetodos()">
-                        <i class="fas fa-arrow-left"></i> Voltar
-                    </button>
-                </form>
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #667eea; font-weight: 600;">Gerando código PIX...</p>
             </div>
+
+            <!-- TAB 1: PIX DIRETO -->
+            <div class="tab-content active" id="content-direto" style="display: none;">
+                
+                <div class="info-box success">
+                    <strong>✅ PIX Direto - Recebimento Imediato</strong><br>
+                    Pagamento cai direto na conta sem taxas intermediárias!
+                </div>
+
+                <!-- QR Code -->
+                <div class="qr-section">
+                    <h3>Escaneie o QR Code:</h3>
+                    <div id="qrcode-direto"></div>
+                </div>
+
+                <!-- Código Pix Copia e Cola -->
+                <div class="pix-code-container">
+                    <strong>Ou copie o código PIX:</strong>
+                    <div class="pix-code" id="pixcode-direto">Gerando...</div>
+                    <button class="btn-copy" onclick="copiarCodigo('direto')">
+                        📋 Copiar Código PIX
+                    </button>
+                </div>
+
+                <!-- Dados Bancários -->
+                <div class="dados-bancarios">
+                    <strong>📌 Dados do Beneficiário:</strong><br>
+                    Nome: HENRIQUE GOMES DA SILVA<br>
+                    CPF: 349.656.291-91<br>
+                    Banco: C6 (336) - Ag: 0001<br>
+                    Conta: 0000-011203567-1
+                </div>
+
+                <!-- Instruções -->
+                <div class="instructions">
+                    <h3>Como pagar:</h3>
+                    <ol>
+                        <li>Abra o app do seu banco</li>
+                        <li>Escolha <strong>PIX → Pagar com QR Code</strong> ou <strong>PIX Copia e Cola</strong></li>
+                        <li>Escaneie o QR Code ou cole o código acima</li>
+                        <li>Confirme o valor de <strong>R$ 29,90</strong></li>
+                        <li>Finalize o pagamento</li>
+                    </ol>
+                </div>
+
+                <div class="info-box warning">
+                    <strong>⚠️ Importante:</strong> Após o pagamento, aguarde alguns minutos. Você receberá o link de download por email.
+                </div>
+            </div>
+
+            <!-- TAB 2: MERCADO PAGO -->
+            <div class="tab-content" id="content-mercadopago" style="display: none;">
+                
+                <div class="info-box">
+                    <strong>💳 PIX via Mercado Pago</strong><br>
+                    Pagamento processado automaticamente com confirmação instantânea!
+                </div>
+
+                <!-- QR Code -->
+                <div class="qr-section">
+                    <h3>Escaneie o QR Code:</h3>
+                    <div id="qrcode-mercadopago"></div>
+                </div>
+
+                <!-- Código Pix Copia e Cola -->
+                <div class="pix-code-container">
+                    <strong>Ou copie o código PIX:</strong>
+                    <div class="pix-code" id="pixcode-mercadopago">Gerando...</div>
+                    <button class="btn-copy" onclick="copiarCodigo('mercadopago')">
+                        📋 Copiar Código PIX
+                    </button>
+                </div>
+
+                <!-- Instruções -->
+                <div class="instructions">
+                    <h3>Como pagar:</h3>
+                    <ol>
+                        <li>Abra o app do seu banco</li>
+                        <li>Escolha <strong>PIX → Pagar com QR Code</strong> ou <strong>PIX Copia e Cola</strong></li>
+                        <li>Escaneie o QR Code ou cole o código acima</li>
+                        <li>Confirme o valor de <strong>R$ 29,90</strong></li>
+                        <li>Finalize o pagamento</li>
+                    </ol>
+                </div>
+
+                <div class="info-box success">
+                    <strong>✅ Confirmação Automática:</strong> Você receberá o email com o link de download assim que o pagamento for confirmado (geralmente em segundos).
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        // Supabase já está configurado via /js/supabase-config.js
-        
-        // Mercado Pago
-        const mp = new MercadoPago('APP_USR_cd84c7d1-f6e9-4c25-9c65-4c96ff68152f');
-        
-        let produtoAtual = null;
-        let vendaId = null;
-        let timerInterval = null;
+        console.log('💳 Página de pagamento PIX carregada');
 
-        // Carregar produto da URL
-        async function carregarProduto() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const produtoId = urlParams.get('produto');
-            const parceiroId = urlParams.get('parceiro');
+        // Obter venda_id da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const vendaId = urlParams.get('venda_id');
 
-            if (!produtoId) {
-                mostrarErro('Produto não encontrado na URL');
-                return;
+        console.log('📋 Venda ID:', vendaId);
+
+        if (!vendaId) {
+            alert('❌ Erro: ID da venda não encontrado!');
+            window.location.href = '/somos-todos-um/parceiros/checkout.html';
+        }
+
+        // Dados da venda
+        let dadosVenda = null;
+
+        // Carregar dados da venda
+        async function carregarDadosVenda() {
+            console.log('📥 Carregando dados da venda...');
+            
+            const { data, error } = await supabase
+                .from('vendas')
+                .select('*')
+                .eq('id', vendaId)
+                .single();
+
+            if (error) {
+                console.error('❌ Erro ao carregar venda:', error);
+                alert('❌ Erro ao carregar dados da venda!');
+                return null;
             }
 
+            console.log('✅ Dados da venda carregados:', data);
+            dadosVenda = data;
+            
+            // Atualizar valor na tela
+            document.getElementById('valor-display').textContent = 
+                `R$ ${data.valor_total.toFixed(2).replace('.', ',')}`;
+
+            return data;
+        }
+
+        // Gerar código PIX Direto (formato EMV)
+        function gerarPixDireto(valor) {
+            const chavePix = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
+            const nome = 'HENRIQUE GOMES DA SILVA';
+            const cidade = 'SAO PAULO';
+            
+            // Função auxiliar para formatar campos EMV
+            function formatarCampo(id, valor) {
+                const tamanho = valor.length.toString().padStart(2, '0');
+                return `${id}${tamanho}${valor}`;
+            }
+
+            // Montar payload PIX
+            let payload = '';
+            payload += formatarCampo('00', '01'); // Payload Format Indicator
+            payload += formatarCampo('26', 
+                formatarCampo('00', 'br.gov.bcb.pix') + 
+                formatarCampo('01', chavePix)
+            );
+            payload += formatarCampo('52', '0000'); // Merchant Category Code
+            payload += formatarCampo('53', '986'); // Currency (BRL)
+            payload += formatarCampo('54', valor.toFixed(2)); // Transaction Amount
+            payload += formatarCampo('58', 'BR'); // Country Code
+            payload += formatarCampo('59', nome); // Merchant Name
+            payload += formatarCampo('60', cidade); // Merchant City
+            
+            // Calcular CRC16
+            payload += '6304'; // CRC placeholder
+            const crc = calcularCRC16(payload);
+            payload += crc;
+
+            return payload;
+        }
+
+        // Calcular CRC16 (checksum)
+        function calcularCRC16(str) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < str.length; i++) {
+                crc ^= str.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    if (crc & 0x8000) {
+                        crc = (crc << 1) ^ 0x1021;
+                    } else {
+                        crc = crc << 1;
+                    }
+                }
+            }
+            crc = crc & 0xFFFF;
+            return crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        // Gerar PIX Mercado Pago
+        async function gerarPixMercadoPago() {
+            console.log('💳 Gerando PIX via Mercado Pago...');
+
             try {
-                const { data, error } = await supabase
-                    .from('produtos')
-                    .select('*')
-                    .eq('id', produtoId)
-                    .single();
+                const response = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/criar-pagamento', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+                    },
+                    body: JSON.stringify({
+                        transaction_amount: dadosVenda.valor_total,
+                        description: 'Livro Digital - Somos Todos Um',
+                        payment_method_id: 'pix',
+                        payer: {
+                            email: dadosVenda.email_comprador,
+                            first_name: dadosVenda.nome_comprador.split(' ')[0],
+                            last_name: dadosVenda.nome_comprador.split(' ').slice(1).join(' '),
+                            identification: {
+                                type: 'CPF',
+                                number: dadosVenda.cpf_comprador
+                            }
+                        },
+                        venda_id: vendaId
+                    })
+                });
 
-                if (error) throw error;
+                const data = await response.json();
+                console.log('✅ Resposta Mercado Pago:', data);
 
-                produtoAtual = data;
-                document.getElementById('produto-nome').textContent = data.nome;
-                document.getElementById('produto-descricao').textContent = data.descricao_curta || '';
-                document.getElementById('produto-preco').textContent = formatarMoeda(data.preco);
-
-                // Salvar parceiro no localStorage se existir
-                if (parceiroId) {
-                    localStorage.setItem('parceiroId', parceiroId);
+                if (data.qr_code && data.qr_code_base64) {
+                    return {
+                        codigo: data.qr_code,
+                        qrcode: data.qr_code_base64
+                    };
+                } else {
+                    throw new Error('Resposta inválida do Mercado Pago');
                 }
 
             } catch (error) {
-                console.error('Erro ao carregar produto:', error);
-                mostrarErro('Erro ao carregar informações do produto');
+                console.error('❌ Erro ao gerar PIX Mercado Pago:', error);
+                return null;
             }
         }
 
-        // Selecionar método de pagamento
-        function selecionarMetodo(metodo) {
-            document.getElementById('selecao-metodo').style.display = 'none';
+        // Exibir PIX na tela
+        function exibirPix(tipo, codigoPix) {
+            console.log(`✅ Exibindo PIX ${tipo}`);
 
-            if (metodo === 'pix') {
-                gerarPagamentoPix();
-            } else if (metodo === 'cartao') {
-                document.getElementById('area-cartao').classList.add('active');
-                inicializarFormularioCartao();
-            }
+            // Mostrar código
+            document.getElementById(`pixcode-${tipo}`).textContent = codigoPix;
+
+            // Gerar QR Code
+            const qrcodeDiv = document.getElementById(`qrcode-${tipo}`);
+            qrcodeDiv.innerHTML = ''; // Limpar anterior
+
+            QRCode.toCanvas(codigoPix, { width: 250, margin: 1 }, function (error, canvas) {
+                if (error) {
+                    console.error('❌ Erro ao gerar QR Code:', error);
+                    qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code</p>';
+                } else {
+                    qrcodeDiv.appendChild(canvas);
+                }
+            });
         }
 
-        // Gerar pagamento PIX
-        async function gerarPagamentoPix() {
-            document.getElementById('loading').classList.add('active');
+        // Mudar aba
+        function mudarAba(tipo) {
+            console.log('🔄 Mudando para aba:', tipo);
 
-            try {
-                // Criar venda no Supabase
-                const vendaData = {
-                    produto_id: produtoAtual.id,
-                    nome_comprador: localStorage.getItem('nomeComprador') || 'Cliente',
-                    email_comprador: localStorage.getItem('emailComprador') || 'email@exemplo.com',
-                    cpf_comprador: localStorage.getItem('cpfComprador') || '',
-                    telefone_comprador: localStorage.getItem('telefoneComprador') || '',
-                    valor_total: produtoAtual.preco,
-                    forma_pagamento: 'pix',
-                    status_pagamento: 'pendente',
-                    parceiro_id: localStorage.getItem('parceiroId') || null
-                };
+            // Atualizar tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
 
-                const { data: venda, error: vendaError } = await supabase
-                    .from('vendas')
-                    .insert([vendaData])
-                    .select()
-                    .single();
-
-                if (vendaError) throw vendaError;
-
-                vendaId = venda.id;
-
-                // Gerar QR Code PIX (simulado - integrar com API real)
-                const qrCodeData = await gerarQRCodePix(produtoAtual.preco);
-
-                // Atualizar venda com dados do PIX
-                await supabase
-                    .from('vendas')
-                    .update({
-                        qr_code_pix: qrCodeData.qrCode,
-                        codigo_pix: qrCodeData.codigoPix
-                    })
-                    .eq('id', vendaId);
-
-                // Exibir PIX
-                document.getElementById('qr-code-img').src = qrCodeData.qrCodeImg;
-                document.getElementById('pix-code-text').textContent = qrCodeData.codigoPix;
-
-                document.getElementById('loading').classList.remove('active');
-                document.getElementById('area-pix').classList.add('active');
-
-                iniciarTimer(600); // 10 minutos
-                verificarPagamentoPix();
-
-            } catch (error) {
-                console.error('Erro ao gerar PIX:', error);
-                document.getElementById('loading').classList.remove('active');
-                mostrarErro('Erro ao gerar pagamento PIX. Tente novamente.');
-            }
-        }
-
-        // Gerar QR Code PIX (função simulada - integrar com API real)
-        async function gerarQRCodePix(valor) {
-            // SIMULAÇÃO - Substituir por integração real com API de pagamento
-            const codigoPix = `00020126580014br.gov.bcb.pix0136${Math.random().toString(36).substring(2, 38)}52040000530398654${valor.toFixed(2)}5802BR5913BIZMIX6009SAO PAULO62070503***6304`;
+            // Atualizar conteúdo
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                content.style.display = 'none';
+            });
             
-            return {
-                qrCodeImg: `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(codigoPix)}`,
-                qrCode: codigoPix,
-                codigoPix: codigoPix
-            };
+            const content = document.getElementById(`content-${tipo}`);
+            content.classList.add('active');
+            content.style.display = 'block';
         }
 
         // Copiar código PIX
-        function copiarCodigoPix() {
-            const codigo = document.getElementById('pix-code-text').textContent;
-            navigator.clipboard.writeText(codigo).then(() => {
-                mostrarSucesso('Código PIX copiado!');
-            });
-        }
-
-        // Timer de expiração
-        function iniciarTimer(segundos) {
-            let tempo = segundos;
-            timerInterval = setInterval(() => {
-                tempo--;
-                const minutos = Math.floor(tempo / 60);
-                const segs = tempo % 60;
-                document.getElementById('timer').textContent = 
-                    `${minutos.toString().padStart(2, '0')}:${segs.toString().padStart(2, '0')}`;
-
-                if (tempo <= 0) {
-                    clearInterval(timerInterval);
-                    mostrarErro('QR Code expirado. Por favor, gere um novo.');
-                }
-            }, 1000);
-        }
-
-        // Verificar pagamento PIX
-        async function verificarPagamentoPix() {
-            const verificarInterval = setInterval(async () => {
-                try {
-                    const { data, error } = await supabase
-                        .from('vendas')
-                        .select('status_pagamento')
-                        .eq('id', vendaId)
-                        .single();
-
-                    if (error) throw error;
-
-                    if (data.status_pagamento === 'aprovado') {
-                        clearInterval(verificarInterval);
-                        clearInterval(timerInterval);
-                        window.location.href = `/somos-todos-um/parceiros/pagamento-sucesso.html?venda=${vendaId}`;
-                    } else if (data.status_pagamento === 'recusado') {
-                        clearInterval(verificarInterval);
-                        window.location.href = `/somos-todos-um/parceiros/pagamento-erro.html?venda=${vendaId}`;
-                    }
-                } catch (error) {
-                    console.error('Erro ao verificar pagamento:', error);
-                }
-            }, 3000); // Verificar a cada 3 segundos
-        }
-
-        // Inicializar formulário de cartão
-        function inicializarFormularioCartao() {
-            // Máscaras de input
-            document.getElementById('cardNumber').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\s/g, '');
-                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-                e.target.value = formattedValue;
-            });
-
-            document.getElementById('cardExpiration').addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length >= 2) {
-                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
-                }
-                e.target.value = value;
-            });
-
-            // Submit do formulário
-            document.getElementById('form-cartao').addEventListener('submit', processarPagamentoCartao);
-        }
-
-        // Processar pagamento com cartão
-        async function processarPagamentoCartao(e) {
-            e.preventDefault();
-            document.getElementById('loading').classList.add('active');
-            document.getElementById('area-cartao').style.display = 'none';
-
-            try {
-                // Criar venda
-                const vendaData = {
-                    produto_id: produtoAtual.id,
-                    nome_comprador: localStorage.getItem('nomeComprador') || 'Cliente',
-                    email_comprador: localStorage.getItem('emailComprador') || 'email@exemplo.com',
-                    cpf_comprador: localStorage.getItem('cpfComprador') || '',
-                    telefone_comprador: localStorage.getItem('telefoneComprador') || '',
-                    valor_total: produtoAtual.preco,
-                    forma_pagamento: 'cartao',
-                    status_pagamento: 'processando',
-                    parceiro_id: localStorage.getItem('parceiroId') || null
-                };
-
-                const { data: venda, error: vendaError } = await supabase
-                    .from('vendas')
-                    .insert([vendaData])
-                    .select()
-                    .single();
-
-                if (vendaError) throw vendaError;
-
-                vendaId = venda.id;
-
-                // Processar pagamento com Mercado Pago (simulado)
-                // Aqui você integraria com a API do Mercado Pago
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                // Atualizar status (simulado como aprovado)
-                await supabase
-                    .from('vendas')
-                    .update({ status_pagamento: 'aprovado' })
-                    .eq('id', vendaId);
-
-                window.location.href = `/somos-todos-um/parceiros/pagamento-sucesso.html?venda=${vendaId}`;
-
-            } catch (error) {
-                console.error('Erro ao processar cartão:', error);
-                document.getElementById('loading').classList.remove('active');
-                mostrarErro('Erro ao processar pagamento. Tente novamente.');
-                document.getElementById('area-cartao').style.display = 'block';
-            }
-        }
-
-        // Voltar para métodos
-        function voltarMetodos() {
-            document.getElementById('area-pix').classList.remove('active');
-            document.getElementById('area-cartao').classList.remove('active');
-            document.getElementById('selecao-metodo').style.display = 'block';
+        function copiarCodigo(tipo) {
+            const codigo = document.getElementById(`pixcode-${tipo}`).textContent;
             
-            if (timerInterval) {
-                clearInterval(timerInterval);
-            }
-        }
-
-        // Funções auxiliares
-        function formatarMoeda(valor) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(valor);
-        }
-
-        function mostrarSucesso(mensagem) {
-            const alert = document.getElementById('alert-success');
-            document.getElementById('alert-success-text').textContent = mensagem;
-            alert.classList.add('active');
-            setTimeout(() => alert.classList.remove('active'), 3000);
-        }
-
-        function mostrarErro(mensagem) {
-            const alert = document.getElementById('alert-error');
-            document.getElementById('alert-error-text').textContent = mensagem;
-            alert.classList.add('active');
-            setTimeout(() => alert.classList.remove('active'), 5000);
+            navigator.clipboard.writeText(codigo)
+                .then(() => {
+                    alert('✅ Código PIX copiado com sucesso!');
+                })
+                .catch(err => {
+                    console.error('❌ Erro ao copiar:', err);
+                    alert('❌ Erro ao copiar código. Tente manualmente.');
+                });
         }
 
         // Inicializar
-        document.addEventListener('DOMContentLoaded', carregarProduto);
+        async function inicializar() {
+            // Carregar dados da venda
+            const venda = await carregarDadosVenda();
+            if (!venda) return;
+
+            // Gerar PIX Direto
+            const pixDireto = gerarPixDireto(venda.valor_total);
+            exibirPix('direto', pixDireto);
+
+            // Gerar PIX Mercado Pago
+            const pixMP = await gerarPixMercadoPago();
+            if (pixMP) {
+                exibirPix('mercadopago', pixMP.codigo);
+            } else {
+                document.getElementById('pixcode-mercadopago').textContent = 
+                    'Erro ao gerar PIX via Mercado Pago. Use a opção PIX Direto.';
+            }
+
+            // Esconder loading
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content-direto').style.display = 'block';
+        }
+
+        // Executar ao carregar
+        inicializar();
     </script>
 </body>
 </html>
