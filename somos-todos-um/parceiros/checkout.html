@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Livro Digital Somos Todos Um</title>
+    <title>Checkout - Somos Todos Um</title>
+    
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <!-- Checkout Config -->
+    <script src="/js/checkout-config.js"></script>
+    <script src="/js/checkout-pix.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -13,455 +21,408 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            color: #333;
         }
 
-        .container {
+        .checkout-container {
             background: white;
-            border-radius: 15px;
-            padding: 30px;
-            max-width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
             width: 100%;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
+            overflow: hidden;
         }
 
-        .header {
+        .checkout-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        .header h1 {
-            color: #667eea;
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        .product-info {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-            border: 1px solid #eee;
-        }
-
-        .product-info h2 {
-            font-size: 1.5em;
-            color: #444;
+        .checkout-header h1 {
+            font-size: 24px;
             margin-bottom: 10px;
         }
 
-        .product-info .price {
-            font-size: 2.5em;
-            color: #764ba2;
+        .checkout-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .preco-destaque {
+            font-size: 36px;
             font-weight: bold;
+            margin: 15px 0;
         }
 
-        .payment-method-selector {
-            margin-bottom: 30px;
+        .checkout-body {
+            padding: 30px;
         }
 
-        .payment-method-selector h3 {
-            font-size: 1.3em;
-            color: #444;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .payment-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        .payment-methods {
+            display: flex;
             gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .payment-option {
+        .payment-method {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             cursor: pointer;
-            display: block;
-        }
-
-        .payment-option input[type="radio"] {
-            display: none;
-        }
-
-        .option-content {
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
             text-align: center;
             transition: all 0.3s ease;
-            background: #fff;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: relative;
         }
 
-        .payment-option input[type="radio"]:checked + .option-content {
+        .payment-method:hover {
             border-color: #667eea;
-            background: #eef2ff;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            background: #f8f9ff;
         }
 
-        .payment-option:hover .option-content {
-            border-color: #a7b4f7;
+        .payment-method.active {
+            border-color: #667eea;
+            background: #f0f3ff;
         }
 
-        .option-content .icon {
-            font-size: 2.5em;
-            display: block;
-            margin-bottom: 10px;
+        .payment-method.active::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 10px;
             color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
         }
 
-        .option-content .text {
-            font-size: 1em;
+        .payment-method.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
+        .payment-method-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .payment-method-name {
+            font-size: 14px;
+            font-weight: 600;
             color: #333;
-            font-weight: bold;
+        }
+
+        .coming-soon {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
         }
 
         .form-group {
             margin-bottom: 20px;
         }
 
-        .form-group label {
+        label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #555;
+            color: #333;
+            font-size: 14px;
         }
 
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="tel"] {
+        input {
             width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ccc;
+            border: 2px solid #e0e0e0;
             border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
         }
 
-        .form-group input:focus {
-            border-color: #667eea;
+        input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-        }
-
-        .btn-submit {
+        .btn-pagar {
             width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            background: #667eea;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            font-size: 1.1em;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-            margin-top: 20px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
         }
 
-        .btn-submit:hover {
-            background: #5568d3;
+        .btn-pagar:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-submit:disabled {
-            background: #a7b4f7;
+        .btn-pagar:active {
+            transform: translateY(0);
+        }
+
+        .btn-pagar:disabled {
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
 
-        .message {
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
             padding: 15px;
-            border-radius: 8px;
             margin-top: 20px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #0c4a6e;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .security-info {
             text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .security-info svg {
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .loading {
             display: none;
-        }
-
-        .message.loading {
-            background: #eef2ff;
-            color: #667eea;
-            border: 1px solid #a7b4f7;
-            display: block;
-        }
-
-        .message.error {
-            background: #ffebeb;
-            color: #d9534f;
-            border: 1px solid #f5c6cb;
-            display: block;
-        }
-
-        .footer {
             text-align: center;
-            margin-top: 30px;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9em;
+            margin: 20px 0;
         }
 
-        @media (max-width: 768px) {
-            .container {
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .checkout-container {
+                border-radius: 0;
+            }
+
+            .checkout-body {
                 padding: 20px;
             }
-            .header h1 {
-                font-size: 1.8em;
-            }
-            .product-info .price {
-                font-size: 2em;
-            }
-            .payment-options {
-                grid-template-columns: 1fr;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
+
+            .preco-destaque {
+                font-size: 28px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>BizMix Checkout</h1>
-            <p>Finalize sua compra do Livro Digital - Somos Todos Um</p>
+    <div class="checkout-container">
+        <!-- Header -->
+        <div class="checkout-header">
+            <h1>📖 Livro Digital</h1>
+            <p>Somos Todos Um</p>
+            <div class="preco-destaque">R$ 47,00</div>
         </div>
 
-        <div class="product-info">
-            <h2>Livro Digital - Somos Todos Um</h2>
-            <p class="price">R$ 47,00</p>
-        </div>
-
-        <form id="form-checkout">
-            <div class="payment-method-selector">
-                <h3>Escolha a forma de pagamento:</h3>
-                <div class="payment-options">
-                    <label class="payment-option">
-                        <input type="radio" name="payment_method" value="credit_card">
-                        <div class="option-content">
-                            <span class="icon">💳</span>
-                            <span class="text">Cartão de Crédito</span>
-                        </div>
-                    </label>
-                    <label class="payment-option">
-                        <input type="radio" name="payment_method" value="pix" checked>
-                        <div class="option-content">
-                            <span class="icon">💰</span>
-                            <span class="text">PIX (Aprovação Instantânea)</span>
-                        </div>
-                    </label>
+        <!-- Body -->
+        <div class="checkout-body">
+            
+            <!-- Métodos de Pagamento -->
+            <div class="payment-methods">
+                <div class="payment-method active" id="method-pix" onclick="selecionarMetodo('pix')">
+                    <div class="payment-method-icon">💳</div>
+                    <div class="payment-method-name">PIX</div>
+                </div>
+                
+                <div class="payment-method disabled" id="method-card">
+                    <div class="payment-method-icon">💳</div>
+                    <div class="payment-method-name">Cartão</div>
+                    <div class="coming-soon">Em breve</div>
                 </div>
             </div>
 
-            <div class="buyer-info">
-                <h3>Seus Dados</h3>
+            <!-- Formulário -->
+            <form id="checkout-form">
                 <div class="form-group">
-                    <label for="form-checkout__cardholderName">Nome Completo</label>
-                    <input type="text" id="form-checkout__cardholderName" name="cardholderName" placeholder="Seu nome completo" required>
+                    <label for="nome">Nome Completo *</label>
+                    <input 
+                        type="text" 
+                        id="nome" 
+                        name="nome" 
+                        placeholder="Seu nome completo" 
+                        required
+                        autocomplete="name"
+                    >
                 </div>
+
                 <div class="form-group">
-                    <label for="form-checkout__cardholderEmail">E-mail</label>
-                    <input type="email" id="form-checkout__cardholderEmail" name="cardholderEmail" placeholder="seu.email@exemplo.com" required>
+                    <label for="email">E-mail *</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="seu@email.com" 
+                        required
+                        autocomplete="email"
+                    >
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="phone">Telefone</label>
-                        <input type="tel" id="phone" name="phone" placeholder="(XX) XXXXX-XXXX" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="cpf">CPF</label>
-                        <input type="text" id="cpf" name="cpf" placeholder="XXX.XXX.XXX-XX" required>
-                    </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone/WhatsApp *</label>
+                    <input 
+                        type="tel" 
+                        id="telefone" 
+                        name="telefone" 
+                        placeholder="(00) 00000-0000" 
+                        required
+                        maxlength="15"
+                        autocomplete="tel"
+                    >
                 </div>
+
+                <div class="form-group">
+                    <label for="cpf">CPF *</label>
+                    <input 
+                        type="text" 
+                        id="cpf" 
+                        name="cpf" 
+                        placeholder="000.000.000-00" 
+                        required
+                        maxlength="14"
+                    >
+                </div>
+
+                <button type="submit" class="btn-pagar" id="btn-pagar">
+                    💳 Pagar com PIX - R$ 47,00
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 15px; color: #667eea; font-weight: 600;">Processando...</p>
+                </div>
+            </form>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <strong>✅ Pagamento 100% Seguro</strong>
+                Após o pagamento, você receberá o link de download por email imediatamente.
             </div>
 
-            <button type="submit" class="btn-submit" id="submit-button">Finalizar Compra</button>
-
-            <div id="loading-message" class="message loading" style="display: none;">Processando seu pagamento...</div>
-            <div id="error-message" class="message error" style="display: none;"></div>
-        </form>
+            <!-- Security -->
+            <div class="security-info">
+                🔒 Ambiente seguro e criptografado
+            </div>
+        </div>
     </div>
 
-    <footer class="footer">
-        <p>&copy; 2026 BizMix. Todos os direitos reservados.</p>
-    </footer>
-
     <script>
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.kHXn2pCMqGdNzxKPTUGIRdJI0Ow-Ks6gxLBLSvXaR_4';
-        const PRODUCT_PRICE = 47.00;
-        const COMMISSION_PERCENTAGE = 0.30;
-        const COMMISSION_AMOUNT = PRODUCT_PRICE * COMMISSION_PERCENTAGE;
+        // Estado global
+        let metodoSelecionado = 'pix'
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Selecionar método de pagamento
+        function selecionarMetodo(metodo) {
+            if (metodo === 'card') {
+                alert('💳 Pagamento com cartão estará disponível em breve!\n\nPor enquanto, use PIX para pagamento instantâneo.')
+                return
+            }
 
-        let affiliateCode = null;
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('ref')) {
-            affiliateCode = urlParams.get('ref');
-            console.log('✅ Código de afiliado:', affiliateCode);
-        }
+            metodoSelecionado = metodo
 
-        const formCheckout = document.getElementById('form-checkout');
-        const submitButton = document.getElementById('submit-button');
-        const loadingMessage = document.getElementById('loading-message');
-        const errorMessage = document.getElementById('error-message');
+            // Atualizar UI
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active')
+            })
+            document.getElementById(`method-${metodo}`).classList.add('active')
 
-        function showMessage(element, msg) {
-            element.textContent = msg;
-            element.style.display = 'block';
-        }
-
-        function hideMessage(element) {
-            element.style.display = 'none';
-        }
-
-        function setLoading(isLoading) {
-            submitButton.disabled = isLoading;
-            if (isLoading) {
-                loadingMessage.style.display = 'block';
-                hideMessage(errorMessage);
-            } else {
-                loadingMessage.style.display = 'none';
+            // Atualizar botão
+            const btn = document.getElementById('btn-pagar')
+            if (metodo === 'pix') {
+                btn.innerHTML = '💳 Pagar com PIX - R$ 47,00'
+            } else if (metodo === 'card') {
+                btn.innerHTML = '💳 Pagar com Cartão - R$ 47,00'
             }
         }
 
-        function validateBuyerInfo() {
-            const name = document.getElementById('form-checkout__cardholderName').value;
-            const email = document.getElementById('form-checkout__cardholderEmail').value;
-            const phone = document.getElementById('phone').value;
-            const cpf = document.getElementById('cpf').value;
+        // Aplicar máscaras
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            e.target.value = CHECKOUT_CONFIG.aplicarMascaraTelefone(e.target.value)
+        })
 
-            if (!name || !email || !phone || !cpf) {
-                showMessage(errorMessage, 'Por favor, preencha todos os seus dados.');
-                return false;
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            e.target.value = CHECKOUT_CONFIG.aplicarMascaraCPF(e.target.value)
+        })
+
+        // Submit do formulário
+        document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+            e.preventDefault()
+
+            // Desabilitar botão e mostrar loading
+            const btn = document.getElementById('btn-pagar')
+            const loading = document.getElementById('loading')
+            
+            btn.disabled = true
+            loading.classList.add('active')
+
+            // Coletar dados
+            const dados = {
+                nome: document.getElementById('nome').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                telefone: document.getElementById('telefone').value,
+                cpf: document.getElementById('cpf').value,
+                referencia: CHECKOUT_CONFIG.obterParametroURL('ref')
             }
-            if (!/^\S+@\S+\.\S+$/.test(email)) {
-                showMessage(errorMessage, 'Por favor, insira um e-mail válido.');
-                return false;
-            }
-            return true;
-        }
 
-        formCheckout.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            setLoading(true);
-            hideMessage(errorMessage);
+            console.log('📝 Dados do formulário:', dados)
 
-            if (!validateBuyerInfo()) {
-                setLoading(false);
-                return;
-            }
-
-            const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
-            const cardholderName = document.getElementById('form-checkout__cardholderName').value;
-            const cardholderEmail = document.getElementById('form-checkout__cardholderEmail').value;
-            const phone = document.getElementById('phone').value;
-            const cpf = document.getElementById('cpf').value;
-
-            console.log('📊 Método selecionado:', selectedMethod);
-
-            if (selectedMethod === 'pix') {
-                console.log('💰 Processando PIX...');
+            // Processar pagamento
+            if (metodoSelecionado === 'pix') {
+                const resultado = await CHECKOUT_PIX.processar(dados)
                 
-                try {
-                    // Criar venda no Supabase
-                    const { data: venda, error: supabaseError } = await supabase
-                        .from('vendas')
-                        .insert({
-                            nome_comprador: cardholderName,
-                            email_comprador: cardholderEmail,
-                            telefone_comprador: phone,
-                            cpf_comprador: cpf,
-                            valor_total: PRODUCT_PRICE,
-                            valor_comissao: COMMISSION_AMOUNT,
-                            status_pagamento: 'pending',
-                            forma_pagamento: 'pix',
-                            codigo_indicacao: affiliateCode,
-                            data_venda: new Date().toISOString(),
-                        })
-                        .select()
-                        .single();
-
-                    if (supabaseError) {
-                        throw new Error('Erro ao registrar a venda: ' + supabaseError.message);
-                    }
-
-                    const vendaId = venda.id;
-                    console.log('✅ Venda PIX registrada:', vendaId);
-
-                    // Redirecionar para página PIX
-                    console.log('🔄 Redirecionando para página PIX...');
-                    window.location.href = `pagamento-pix.html?venda_id=${vendaId}`;
-
-                } catch (error) {
-                    console.error('❌ Erro no processamento PIX:', error);
-                    showMessage(errorMessage, 'Erro ao gerar pagamento PIX: ' + error.message);
-                    setLoading(false);
+                if (!resultado.success) {
+                    alert('❌ Erro ao processar pagamento. Tente novamente.')
+                    btn.disabled = false
+                    loading.classList.remove('active')
                 }
-            } else {
-                // Cartão de crédito (implementar depois)
-                showMessage(errorMessage, 'Pagamento com cartão será implementado em breve. Use PIX por enquanto.');
-                setLoading(false);
             }
-        });
+        })
 
-        // Máscaras
-        const phoneInput = document.getElementById('phone');
-        const cpfInput = document.getElementById('cpf');
-
-        function maskPhone(value) {
-            value = value.replace(/\D/g, "");
-            value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
-            value = value.replace(/(\d)(\d{4})$/, "$1-$2");
-            return value;
-        }
-
-        function maskCpf(value) {
-            value = value.replace(/\D/g, "");
-            value = value.replace(/(\d{3})(\d)/, "$1.$2");
-            value = value.replace(/(\d{3})(\d)/, "$1.$2");
-            value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-            return value;
-        }
-
-        phoneInput.addEventListener('input', (e) => {
-            e.target.value = maskPhone(e.target.value);
-        });
-
-        cpfInput.addEventListener('input', (e) => {
-            e.target.value = maskCpf(e.target.value);
-        });
-
-        console.log('✅ Supabase inicializado');
-        if (affiliateCode) {
-            console.log('🔍 Código do parceiro:', affiliateCode);
-        }
+        // Log inicial
+        console.log('🛒 Checkout carregado')
+        console.log('💰 Produto:', CHECKOUT_CONFIG.produto.nome)
+        console.log('💵 Preço:', CHECKOUT_CONFIG.formatarMoeda(CHECKOUT_CONFIG.produto.preco))
     </script>
 </body>
 </html>
