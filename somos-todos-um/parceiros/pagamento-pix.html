@@ -363,11 +363,11 @@
             }
         }
 
-        // Gerar código PIX Direto (formato EMV) - USANDO UUID
+        // Gerar código PIX Direto (formato EMV) - CORRIGIDO COM UUID
         function gerarPixDireto(valor) {
             console.log('🏦 Gerando PIX para valor:', valor);
             
-            // ✅ USANDO CHAVE UUID CONFIRMADA
+            // ✅ Chave UUID confirmada
             const chavePix = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
             const nome = 'HENRIQUE GOMES DA SILVA';
             const cidade = 'SAO PAULO';
@@ -382,13 +382,17 @@
                 return `${id}${tamanho}${valor}`;
             }
 
-            // Montar payload PIX
+            // Montar payload PIX (CORRIGIDO)
             let payload = '';
+            
+            // ✅ CORREÇÃO: Adicionando todos os campos obrigatórios
             payload += formatarCampo('00', '01'); // Payload Format Indicator
-            payload += formatarCampo('26', 
-                formatarCampo('00', 'br.gov.bcb.pix') + 
-                formatarCampo('01', chavePix) // UUID
-            );
+            payload += formatarCampo('01', '12'); // ✅ Point of Initiation Method (ADICIONADO!)
+            
+            // Merchant Account Information (tag 26)
+            const merchantAccount = formatarCampo('00', 'br.gov.bcb.pix') + formatarCampo('01', chavePix);
+            payload += formatarCampo('26', merchantAccount);
+            
             payload += formatarCampo('52', '0000'); // Merchant Category Code
             payload += formatarCampo('53', '986'); // Currency (BRL)
             payload += formatarCampo('54', valor.toFixed(2)); // Transaction Amount
@@ -403,6 +407,7 @@
 
             console.log('✅ Código PIX gerado:', payload);
             console.log('📏 Tamanho:', payload.length, 'caracteres');
+            console.log('🔍 Primeiros 50 chars:', payload.substring(0, 50));
             
             return payload;
         }
