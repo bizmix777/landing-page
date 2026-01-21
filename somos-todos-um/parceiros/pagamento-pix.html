@@ -106,7 +106,12 @@
             margin: 25px 0;
         }
 
-        #qrcode {
+        .qr-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #qrcode-direto, #qrcode-mercadopago {
             display: inline-block;
             padding: 20px;
             background: white;
@@ -121,6 +126,12 @@
             border-radius: 8px;
             margin: 20px 0;
             border: 1px dashed #ccc;
+        }
+
+        .pix-code-container strong {
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
         }
 
         .pix-code {
@@ -163,6 +174,12 @@
             border-radius: 8px;
             margin: 20px 0;
             font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
         }
 
         .info-box.warning {
@@ -221,6 +238,7 @@
             border-radius: 8px;
             margin: 15px 0;
             font-size: 13px;
+            line-height: 1.8;
         }
 
         .dados-bancarios strong {
@@ -233,6 +251,9 @@
             }
             .valor-destaque {
                 font-size: 32px;
+            }
+            .body {
+                padding: 20px;
             }
         }
     </style>
@@ -269,7 +290,7 @@
             <div class="tab-content active" id="content-direto" style="display: none;">
                 
                 <div class="info-box success">
-                    <strong>✅ PIX Direto - Recebimento Imediato</strong><br>
+                    <strong>✅ PIX Direto - Recebimento Imediato</strong>
                     Pagamento cai direto na conta sem taxas intermediárias!
                 </div>
 
@@ -318,7 +339,7 @@
             <div class="tab-content" id="content-mercadopago" style="display: none;">
                 
                 <div class="info-box">
-                    <strong>💳 PIX via Mercado Pago</strong><br>
+                    <strong>💳 PIX via Mercado Pago</strong>
                     Pagamento processado automaticamente com confirmação instantânea!
                 </div>
 
@@ -358,17 +379,34 @@
     </div>
 
     <script>
-        console.log('💳 Página de pagamento PIX carregada');
+        console.log('🚀 INICIANDO PÁGINA DE PAGAMENTO PIX');
+        console.log('📍 URL atual:', window.location.href);
+
+        // Verificar se QRCode library carregou
+        if (typeof QRCode === 'undefined') {
+            console.error('❌ ERRO: Biblioteca QRCode não carregou!');
+            alert('❌ Erro ao carregar biblioteca QR Code. Recarregue a página.');
+        } else {
+            console.log('✅ Biblioteca QRCode carregada');
+        }
+
+        // Verificar se Supabase carregou
+        if (typeof supabase === 'undefined') {
+            console.error('❌ ERRO: Supabase não carregado!');
+            alert('❌ Erro ao carregar Supabase. Recarregue a página.');
+        } else {
+            console.log('✅ Supabase carregado');
+        }
 
         // Obter venda_id da URL
         const urlParams = new URLSearchParams(window.location.search);
         const vendaId = urlParams.get('venda_id');
 
-        console.log('📋 Venda ID:', vendaId);
+        console.log('📋 Venda ID extraído da URL:', vendaId);
 
         if (!vendaId) {
+            console.error('❌ ERRO: ID da venda não encontrado na URL!');
             alert('❌ Erro: ID da venda não encontrado!');
-            window.location.href = '/somos-todos-um/parceiros/checkout.html';
         }
 
         // Dados da venda
@@ -376,36 +414,59 @@
 
         // Carregar dados da venda
         async function carregarDadosVenda() {
-            console.log('📥 Carregando dados da venda...');
+            console.log('📥 INICIANDO carregamento de dados da venda...');
+            console.log('🔍 Buscando venda com ID:', vendaId);
             
-            const { data, error } = await supabase
-                .from('vendas')
-                .select('*')
-                .eq('id', vendaId)
-                .single();
+            try {
+                const { data, error } = await supabase
+                    .from('vendas')
+                    .select('*')
+                    .eq('id', vendaId)
+                    .single();
 
-            if (error) {
-                console.error('❌ Erro ao carregar venda:', error);
-                alert('❌ Erro ao carregar dados da venda!');
+                console.log('📦 Resposta do Supabase - data:', data);
+                console.log('📦 Resposta do Supabase - error:', error);
+
+                if (error) {
+                    console.error('❌ ERRO ao carregar venda:', error);
+                    alert('❌ Erro ao carregar dados da venda: ' + error.message);
+                    return null;
+                }
+
+                if (!data) {
+                    console.error('❌ ERRO: Nenhum dado retornado!');
+                    alert('❌ Venda não encontrada!');
+                    return null;
+                }
+
+                console.log('✅ Dados da venda carregados COM SUCESSO:', data);
+                dadosVenda = data;
+                
+                // Atualizar valor na tela
+                const valorFormatado = `R$ ${data.valor_total.toFixed(2).replace('.', ',')}`;
+                console.log('💰 Atualizando valor na tela para:', valorFormatado);
+                document.getElementById('valor-display').textContent = valorFormatado;
+
+                return data;
+            } catch (err) {
+                console.error('❌ EXCEÇÃO ao carregar venda:', err);
+                alert('❌ Erro inesperado: ' + err.message);
                 return null;
             }
-
-            console.log('✅ Dados da venda carregados:', data);
-            dadosVenda = data;
-            
-            // Atualizar valor na tela
-            document.getElementById('valor-display').textContent = 
-                `R$ ${data.valor_total.toFixed(2).replace('.', ',')}`;
-
-            return data;
         }
 
         // Gerar código PIX Direto (formato EMV)
         function gerarPixDireto(valor) {
+            console.log('🏦 GERANDO PIX DIRETO para valor:', valor);
+            
             const chavePix = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
             const nome = 'HENRIQUE GOMES DA SILVA';
             const cidade = 'SAO PAULO';
             
+            console.log('🔑 Chave PIX:', chavePix);
+            console.log('👤 Nome:', nome);
+            console.log('🌆 Cidade:', cidade);
+
             // Função auxiliar para formatar campos EMV
             function formatarCampo(id, valor) {
                 const tamanho = valor.length.toString().padStart(2, '0');
@@ -431,6 +492,9 @@
             const crc = calcularCRC16(payload);
             payload += crc;
 
+            console.log('✅ Código PIX gerado:', payload);
+            console.log('📏 Tamanho do código:', payload.length);
+
             return payload;
         }
 
@@ -453,67 +517,95 @@
 
         // Gerar PIX Mercado Pago
         async function gerarPixMercadoPago() {
-            console.log('💳 Gerando PIX via Mercado Pago...');
+            console.log('💳 INICIANDO geração de PIX via Mercado Pago...');
 
             try {
+                const requestBody = {
+                    transaction_amount: dadosVenda.valor_total,
+                    description: 'Livro Digital - Somos Todos Um',
+                    payment_method_id: 'pix',
+                    payer: {
+                        email: dadosVenda.email_comprador,
+                        first_name: dadosVenda.nome_comprador.split(' ')[0],
+                        last_name: dadosVenda.nome_comprador.split(' ').slice(1).join(' '),
+                        identification: {
+                            type: 'CPF',
+                            number: dadosVenda.cpf_comprador
+                        }
+                    },
+                    venda_id: vendaId
+                };
+
+                console.log('📤 Enviando para Edge Function:', requestBody);
+
                 const response = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/criar-pagamento', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTc1NzMsImV4cCI6MjA1MjI5MzU3M30.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
                     },
-                    body: JSON.stringify({
-                        transaction_amount: dadosVenda.valor_total,
-                        description: 'Livro Digital - Somos Todos Um',
-                        payment_method_id: 'pix',
-                        payer: {
-                            email: dadosVenda.email_comprador,
-                            first_name: dadosVenda.nome_comprador.split(' ')[0],
-                            last_name: dadosVenda.nome_comprador.split(' ').slice(1).join(' '),
-                            identification: {
-                                type: 'CPF',
-                                number: dadosVenda.cpf_comprador
-                            }
-                        },
-                        venda_id: vendaId
-                    })
+                    body: JSON.stringify(requestBody)
                 });
 
+                console.log('📥 Resposta HTTP Status:', response.status);
+
                 const data = await response.json();
-                console.log('✅ Resposta Mercado Pago:', data);
+                console.log('📦 Resposta Mercado Pago:', data);
 
                 if (data.qr_code && data.qr_code_base64) {
+                    console.log('✅ PIX Mercado Pago gerado com sucesso');
                     return {
                         codigo: data.qr_code,
                         qrcode: data.qr_code_base64
                     };
                 } else {
+                    console.warn('⚠️ Resposta sem QR Code:', data);
                     throw new Error('Resposta inválida do Mercado Pago');
                 }
 
             } catch (error) {
-                console.error('❌ Erro ao gerar PIX Mercado Pago:', error);
+                console.error('❌ ERRO ao gerar PIX Mercado Pago:', error);
                 return null;
             }
         }
 
         // Exibir PIX na tela
         function exibirPix(tipo, codigoPix) {
-            console.log(`✅ Exibindo PIX ${tipo}`);
+            console.log(`🎨 EXIBINDO PIX do tipo: ${tipo}`);
+            console.log(`📝 Código PIX (primeiros 50 chars):`, codigoPix.substring(0, 50) + '...');
 
             // Mostrar código
-            document.getElementById(`pixcode-${tipo}`).textContent = codigoPix;
+            const pixcodeElement = document.getElementById(`pixcode-${tipo}`);
+            console.log(`📍 Elemento pixcode-${tipo}:`, pixcodeElement);
+            
+            if (!pixcodeElement) {
+                console.error(`❌ ERRO: Elemento pixcode-${tipo} não encontrado!`);
+                return;
+            }
+            
+            pixcodeElement.textContent = codigoPix;
+            console.log(`✅ Código PIX inserido no elemento`);
 
             // Gerar QR Code
             const qrcodeDiv = document.getElementById(`qrcode-${tipo}`);
+            console.log(`📍 Elemento qrcode-${tipo}:`, qrcodeDiv);
+            
+            if (!qrcodeDiv) {
+                console.error(`❌ ERRO: Elemento qrcode-${tipo} não encontrado!`);
+                return;
+            }
+            
             qrcodeDiv.innerHTML = ''; // Limpar anterior
+            console.log(`🎨 Gerando QR Code visual...`);
 
             QRCode.toCanvas(codigoPix, { width: 250, margin: 1 }, function (error, canvas) {
                 if (error) {
-                    console.error('❌ Erro ao gerar QR Code:', error);
-                    qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code</p>';
+                    console.error('❌ ERRO ao gerar QR Code:', error);
+                    qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code: ' + error.message + '</p>';
                 } else {
+                    console.log('✅ QR Code canvas gerado com sucesso');
                     qrcodeDiv.appendChild(canvas);
+                    console.log('✅ QR Code adicionado ao DOM');
                 }
             });
         }
@@ -535,14 +627,18 @@
             const content = document.getElementById(`content-${tipo}`);
             content.classList.add('active');
             content.style.display = 'block';
+            
+            console.log(`✅ Aba ${tipo} ativada`);
         }
 
         // Copiar código PIX
         function copiarCodigo(tipo) {
+            console.log(`📋 Copiando código PIX do tipo: ${tipo}`);
             const codigo = document.getElementById(`pixcode-${tipo}`).textContent;
             
             navigator.clipboard.writeText(codigo)
                 .then(() => {
+                    console.log('✅ Código copiado para clipboard');
                     alert('✅ Código PIX copiado com sucesso!');
                 })
                 .catch(err => {
@@ -553,30 +649,73 @@
 
         // Inicializar
         async function inicializar() {
-            // Carregar dados da venda
-            const venda = await carregarDadosVenda();
-            if (!venda) return;
+            console.log('🚀 EXECUTANDO inicializar()...');
+            
+            try {
+                // Carregar dados da venda
+                console.log('1️⃣ Carregando dados da venda...');
+                const venda = await carregarDadosVenda();
+                
+                if (!venda) {
+                    console.error('❌ FALHA: Não foi possível carregar dados da venda');
+                    return;
+                }
+                console.log('✅ Venda carregada:', venda);
 
-            // Gerar PIX Direto
-            const pixDireto = gerarPixDireto(venda.valor_total);
-            exibirPix('direto', pixDireto);
+                // Gerar PIX Direto
+                console.log('2️⃣ Gerando PIX Direto...');
+                const pixDireto = gerarPixDireto(venda.valor_total);
+                console.log('✅ PIX Direto gerado');
+                
+                console.log('3️⃣ Exibindo PIX Direto na tela...');
+                exibirPix('direto', pixDireto);
+                console.log('✅ PIX Direto exibido');
 
-            // Gerar PIX Mercado Pago
-            const pixMP = await gerarPixMercadoPago();
-            if (pixMP) {
-                exibirPix('mercadopago', pixMP.codigo);
-            } else {
-                document.getElementById('pixcode-mercadopago').textContent = 
-                    'Erro ao gerar PIX via Mercado Pago. Use a opção PIX Direto.';
+                // Gerar PIX Mercado Pago
+                console.log('4️⃣ Gerando PIX Mercado Pago...');
+                const pixMP = await gerarPixMercadoPago();
+                
+                if (pixMP) {
+                    console.log('✅ PIX Mercado Pago gerado');
+                    console.log('5️⃣ Exibindo PIX Mercado Pago na tela...');
+                    exibirPix('mercadopago', pixMP.codigo);
+                    console.log('✅ PIX Mercado Pago exibido');
+                } else {
+                    console.warn('⚠️ Falha ao gerar PIX Mercado Pago');
+                    document.getElementById('pixcode-mercadopago').textContent = 
+                        'Erro ao gerar PIX via Mercado Pago. Use a opção PIX Direto.';
+                }
+
+                // Esconder loading
+                console.log('6️⃣ Escondendo loading...');
+                const loadingElement = document.getElementById('loading');
+                loadingElement.style.display = 'none';
+                console.log('✅ Loading escondido');
+                
+                console.log('7️⃣ Mostrando conteúdo PIX Direto...');
+                const contentDireto = document.getElementById('content-direto');
+                contentDireto.style.display = 'block';
+                console.log('✅ Conteúdo PIX Direto visível');
+
+                console.log('🎉 INICIALIZAÇÃO COMPLETA COM SUCESSO!');
+
+            } catch (error) {
+                console.error('❌ ERRO FATAL na inicialização:', error);
+                alert('❌ Erro ao carregar página: ' + error.message);
             }
-
-            // Esconder loading
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('content-direto').style.display = 'block';
         }
 
         // Executar ao carregar
-        inicializar();
+        console.log('⏳ Aguardando DOM carregar...');
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('✅ DOM carregado, executando inicializar()');
+                inicializar();
+            });
+        } else {
+            console.log('✅ DOM já carregado, executando inicializar() imediatamente');
+            inicializar();
+        }
     </script>
 </body>
 </html>
