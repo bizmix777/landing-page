@@ -23,22 +23,31 @@ const CHECKOUT_PIX = {
       console.log('💰 Valor total:', valorTotal)
       console.log('💵 Comissão (30%):', valorComissao)
 
+      // Preparar dados para insert
+      const dadosVenda = {
+        nome_comprador: dados.nome,
+        email_comprador: dados.email,
+        telefone_comprador: dados.telefone,
+        cpf_comprador: dados.cpf,
+        valor_total: valorTotal,
+        valor_comissao: valorComissao,
+        comissao_percentual: CHECKOUT_CONFIG.produto.comissao_percentual,
+        status_pagamento: 'pending',
+        forma_pagamento: 'pix',
+        downloads: 0
+      }
+
+      // ✅ ADICIONAR referencia SOMENTE se existir
+      if (dados.referencia) {
+        dadosVenda.referencia = dados.referencia
+      }
+
+      console.log('📤 Enviando para Supabase:', dadosVenda)
+
       // Criar registro da venda no Supabase
       const { data: venda, error } = await supabase
         .from('vendas')
-        .insert([{
-          nome_comprador: dados.nome,
-          email_comprador: dados.email,
-          telefone_comprador: dados.telefone,
-          cpf_comprador: dados.cpf,
-          valor_total: valorTotal,
-          valor_comissao: valorComissao,
-          comissao_percentual: CHECKOUT_CONFIG.produto.comissao_percentual,
-          status_pagamento: 'pending',
-          forma_pagamento: 'pix',
-          referencia: dados.referencia || null,
-          downloads: 0
-        }])
+        .insert([dadosVenda])
         .select()
 
       if (error) {
