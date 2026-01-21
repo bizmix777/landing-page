@@ -7,21 +7,27 @@ const CHECKOUT_PIX = {
   
   // Processar pagamento via PIX
   processar: async function(dados) {
-    console.log('💳 Processando pagamento PIX...')
-    console.log('📊 Dados:', dados)
+    console.log('💳 Processando pagamento PIX...');
+    console.log('📊 Dados:', dados);
 
     try {
       // Validar dados
       if (!this.validarDados(dados)) {
-        throw new Error('Dados inválidos')
+        throw new Error('Dados inválidos');
       }
 
       // Calcular comissão
-      const valorTotal = CHECKOUT_CONFIG.produto.preco
-      const valorComissao = CHECKOUT_CONFIG.calcularComissao(valorTotal)
+      const valorTotal = CHECKOUT_CONFIG.produto.preco;
+      const valorComissao = CHECKOUT_CONFIG.calcularComissao(valorTotal);
 
-      console.log('💰 Valor total:', valorTotal)
-      console.log('💵 Comissão (30%):', valorComissao)
+      console.log('💰 Valor total:', valorTotal);
+      console.log('💵 Comissão (30%):', valorComissao);
+
+      // Determinar origem baseado na referência
+      let origem = 'direto';
+      if (dados.referencia) {
+        origem = 'afiliado';
+      }
 
       // Preparar dados para insert
       const dadosVenda = {
@@ -34,71 +40,68 @@ const CHECKOUT_PIX = {
         comissao_percentual: CHECKOUT_CONFIG.produto.comissao_percentual,
         status_pagamento: 'pending',
         forma_pagamento: 'pix',
+        origem: origem,
+        referencia: dados.referencia || null,
         downloads: 0
-      }
+      };
 
-      // ✅ ADICIONAR referencia SOMENTE se existir
-      if (dados.referencia) {
-        dadosVenda.referencia = dados.referencia
-      }
-
-      console.log('📤 Enviando para Supabase:', dadosVenda)
+      console.log('📤 Enviando para Supabase:', dadosVenda);
 
       // Criar registro da venda no Supabase
       const { data: venda, error } = await supabase
         .from('vendas')
         .insert([dadosVenda])
-        .select()
+        .select();
 
       if (error) {
-        console.error('❌ Erro ao criar venda:', error)
-        throw error
+        console.error('❌ Erro ao criar venda:', error);
+        throw error;
       }
 
-      console.log('✅ Venda criada:', venda[0])
+      console.log('✅ Venda criada:', venda[0]);
 
       // Redirecionar para página de pagamento PIX
-      const vendaId = venda[0].id
-      const urlPix = `${CHECKOUT_CONFIG.urls.pix}?venda_id=${vendaId}`
+      const vendaId = venda[0].id;
+      const urlPix = `${CHECKOUT_CONFIG.urls.pix}?venda_id=${vendaId}`;
       
-      console.log('🔀 Redirecionando para:', urlPix)
-      window.location.href = urlPix
+      console.log('🔀 Redirecionando para:', urlPix);
+      window.location.href = urlPix;
 
-      return { success: true, vendaId: vendaId }
+      return { success: true, vendaId: vendaId };
 
     } catch (error) {
-      console.error('❌ Erro no processamento:', error)
-      return { success: false, error: error.message }
+      console.error('❌ Erro no processamento:', error);
+      return { success: false, error: error.message };
     }
   },
 
   // Validar dados do formulário
   validarDados: function(dados) {
     if (!dados.nome || dados.nome.trim().length < 3) {
-      alert('❌ Nome deve ter pelo menos 3 caracteres')
-      return false
+      alert('❌ Nome deve ter pelo menos 3 caracteres');
+      return false;
     }
 
     if (!CHECKOUT_CONFIG.validarEmail(dados.email)) {
-      alert('❌ Email inválido')
-      return false
+      alert('❌ Email inválido');
+      return false;
     }
 
     if (!CHECKOUT_CONFIG.validarTelefone(dados.telefone)) {
-      alert('❌ Telefone inválido')
-      return false
+      alert('❌ Telefone inválido');
+      return false;
     }
 
     if (!CHECKOUT_CONFIG.validarCPF(dados.cpf)) {
-      alert('❌ CPF inválido')
-      return false
+      alert('❌ CPF inválido');
+      return false;
     }
 
-    return true
+    return true;
   }
-}
+};
 
 // Exportar globalmente
-window.CHECKOUT_PIX = CHECKOUT_PIX
+window.CHECKOUT_PIX = CHECKOUT_PIX;
 
-console.log('💳 checkout-pix.js carregado')
+console.log('💳 checkout-pix.js carregado');
