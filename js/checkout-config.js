@@ -8,7 +8,7 @@ const CHECKOUT_CONFIG = {
   // Informações do Produto
   produto: {
     nome: 'Livro Digital - Somos Todos Um',
-    preco: 47.00,
+    preco: 29.90,
     comissao_percentual: 30
   },
 
