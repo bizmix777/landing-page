@@ -15,6 +15,7 @@
 /login/                         /login/index.html              200
 /login/index.html               /login/index.html              200
 /login/esqueci-senha.html       /login/esqueci-senha.html      200
+/login/redefinir-senha.html     /login/redefinir-senha.html    200
 /login/dashboard-admin.html     /login/dashboard-admin.html    200
 /login/dashboard-parceiro.html  /login/dashboard-parceiro.html 200
 /login/*                        /login/:splat                  200
