@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Somos Todos Um</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Seleção de Tipo */
+        .type-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .type-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .type-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .type-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .type-card .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .type-card h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .type-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .type-card .btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-card.active .btn {
+            background: white;
+            color: #667eea;
+        }
+
+        .type-card .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Formulário */
+        .form-container {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-container.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .form-header h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            transform: translateX(-5px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            .type-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>📖 Somos Todos Um</h1>
+            <p>Escolha o tipo de cadastro e comece sua jornada</p>
+        </div>
+
+        <!-- Seleção de Tipo -->
+        <div class="type-selection" id="type-selection">
+            
+            <!-- Card Igreja -->
+            <div class="type-card" onclick="selecionarTipo('igreja')">
+                <div class="icon">🙏</div>
+                <h2>Igreja</h2>
+                <p>Cadastre sua igreja e ajude seus membros a crescerem espiritualmente através da sabedoria.</p>
+                <button class="btn">Cadastrar Igreja</button>
+            </div>
+
+            <!-- Card Parceiro -->
+            <div class="type-card" onclick="selecionarTipo('parceiro')">
+                <div class="icon">🤝</div>
+                <h2>Parceiro</h2>
+                <p>Torne-se um afiliado e ganhe 30% de comissão por cada venda realizada através do seu link.</p>
+                <button class="btn">Ser Parceiro</button>
+            </div>
+
+            <!-- Card Empresa -->
+            <div class="type-card" onclick="selecionarTipo('empresa')">
+                <div class="icon">💼</div>
+                <h2>Empresa</h2>
+                <p>Cadastre sua empresa e ofereça conteúdo de valor para desenvolvimento pessoal da sua equipe.</p>
+                <button class="btn">Cadastrar Empresa</button>
+            </div>
+
+        </div>
+
+        <!-- Formulário Igreja -->
+        <div class="form-container" id="form-igreja">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            
+            <div class="form-header">
+                <div class="icon">🙏</div>
+                <h2>Cadastro de Igreja</h2>
+                <p>Preencha os dados da sua igreja</p>
+            </div>
+
+            <form id="formIgreja" onsubmit="submitForm(event, 'igreja')">
+                <div class="form-group">
+                    <label>Nome da Igreja *</label>
+                    <input type="text" name="nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome do Responsável *</label>
+                    <input type="text" name="responsavel" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone/WhatsApp *</label>
+                    <input type="tel" name="telefone" required placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label>CNPJ (opcional)</label>
+                    <input type="text" name="cnpj" placeholder="00.000.000/0000-00">
+                </div>
+
+                <div class="form-group">
+                    <label>Cidade/Estado *</label>
+                    <input type="text" name="cidade" required placeholder="Ex: São Paulo/SP">
+                </div>
+
+                <div class="form-group">
+                    <label>Número aproximado de membros</label>
+                    <select name="membros">
+                        <option value="">Selecione</option>
+                        <option value="ate-50">Até 50</option>
+                        <option value="51-100">51 a 100</option>
+                        <option value="101-300">101 a 300</option>
+                        <option value="301-500">301 a 500</option>
+                        <option value="acima-500">Acima de 500</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Cadastrar Igreja</button>
+            </form>
+        </div>
+
+        <!-- Formulário Parceiro -->
+        <div class="form-container" id="form-parceiro">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            
+            <div class="form-header">
+                <div class="icon">🤝</div>
+                <h2>Cadastro de Parceiro</h2>
+                <p>Torne-se um afiliado</p>
+            </div>
+
+            <form id="formParceiro" onsubmit="submitForm(event, 'parceiro')">
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" name="nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone/WhatsApp *</label>
+                    <input type="tel" name="telefone" required placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label>CPF *</label>
+                    <input type="text" name="cpf" required placeholder="000.000.000-00">
+                </div>
+
+                <div class="form-group">
+                    <label>Chave PIX (para receber comissões) *</label>
+                    <input type="text" name="chave_pix" required placeholder="CPF, email, telefone ou chave aleatória">
+                </div>
+
+                <div class="form-group">
+                    <label>Como pretende divulgar?</label>
+                    <textarea name="estrategia" placeholder="Ex: Redes sociais, WhatsApp, Blog, etc."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Cadastrar como Parceiro</button>
+            </form>
+        </div>
+
+        <!-- Formulário Empresa -->
+        <div class="form-container" id="form-empresa">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            
+            <div class="form-header">
+                <div class="icon">💼</div>
+                <h2>Cadastro de Empresa</h2>
+                <p>Preencha os dados da sua empresa</p>
+            </div>
+
+            <form id="formEmpresa" onsubmit="submitForm(event, 'empresa')">
+                <div class="form-group">
+                    <label>Nome da Empresa *</label>
+                    <input type="text" name="nome" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome do Responsável *</label>
+                    <input type="text" name="responsavel" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone/WhatsApp *</label>
+                    <input type="tel" name="telefone" required placeholder="(00) 00000-0000">
+                </div>
+
+                <div class="form-group">
+                    <label>CNPJ *</label>
+                    <input type="text" name="cnpj" required placeholder="00.000.000/0000-00">
+                </div>
+
+                <div class="form-group">
+                    <label>Cidade/Estado *</label>
+                    <input type="text" name="cidade" required placeholder="Ex: São Paulo/SP">
+                </div>
+
+                <div class="form-group">
+                    <label>Segmento da Empresa</label>
+                    <input type="text" name="segmento" placeholder="Ex: Tecnologia, Educação, Saúde, etc.">
+                </div>
+
+                <div class="form-group">
+                    <label>Número de Funcionários</label>
+                    <select name="funcionarios">
+                        <option value="">Selecione</option>
+                        <option value="1-10">1 a 10</option>
+                        <option value="11-50">11 a 50</option>
+                        <option value="51-100">51 a 100</option>
+                        <option value="101-500">101 a 500</option>
+                        <option value="acima-500">Acima de 500</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Cadastrar Empresa</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        console.log('📋 Página de cadastro carregada');
+
+        // Verificar Supabase
+        if (typeof supabase === 'undefined') {
+            console.error('❌ Supabase não carregado!');
+        } else {
+            console.log('✅ Supabase carregado');
+        }
+
+        // Selecionar tipo de cadastro
+        function selecionarTipo(tipo) {
+            console.log('📋 Tipo selecionado:', tipo);
+            
+            // Esconder seleção
+            document.getElementById('type-selection').style.display = 'none';
+            
+            // Mostrar formulário correspondente
+            document.getElementById(`form-${tipo}`).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Voltar para seleção
+        function voltarSelecao() {
+            console.log('↩️ Voltando para seleção');
+            
+            // Esconder todos os formulários
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Mostrar seleção
+            document.getElementById('type-selection').style.display = 'grid';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Submeter formulário
+        async function submitForm(event, tipo) {
+            event.preventDefault();
+            console.log('📤 Enviando formulário:', tipo);
+
+            const form = event.target;
+            const submitBtn = form.querySelector('.btn-submit');
+            
+            // Desabilitar botão
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+
+            try {
+                // Coletar dados do formulário
+                const formData = new FormData(form);
+                const dados = {
+                    tipo: tipo,
+                    data_cadastro: new Date().toISOString()
+                };
+
+                // Converter FormData para objeto
+                for (let [key, value] of formData.entries()) {
+                    dados[key] = value;
+                }
+
+                console.log('📦 Dados coletados:', dados);
+
+                // Salvar no Supabase
+                const { data, error } = await supabase
+                    .from('cadastros')
+                    .insert([dados]);
+
+                if (error) {
+                    console.error('❌ Erro ao salvar:', error);
+                    alert('❌ Erro ao salvar cadastro: ' + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = tipo === 'igreja' ? 'Cadastrar Igreja' : 
+                                           tipo === 'parceiro' ? 'Cadastrar como Parceiro' : 
+                                           'Cadastrar Empresa';
+                    return;
+                }
+
+                console.log('✅ Cadastro salvo com sucesso!');
+                
+                // Sucesso
+                alert(`✅ Cadastro realizado com sucesso!\n\nEm breve entraremos em contato através do email/telefone informado.`);
+                
+                // Limpar formulário
+                form.reset();
+                
+                // Voltar para seleção
+                voltarSelecao();
+
+            } catch (err) {
+                console.error('❌ Erro:', err);
+                alert('❌ Erro ao processar cadastro: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = tipo === 'igreja' ? 'Cadastrar Igreja' : 
+                                       tipo === 'parceiro' ? 'Cadastrar como Parceiro' : 
+                                       'Cadastrar Empresa';
+            }
+        }
+
+        // Máscaras
+        document.addEventListener('input', function(e) {
+            if (e.target.name === 'telefone') {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                    value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+                }
+                e.target.value = value;
+            }
+            
+            if (e.target.name === 'cpf') {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            }
+            
+            if (e.target.name === 'cnpj') {
+                let value = e.target.value.replace(/\D/g, '');
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                e.target.value = value;
+            }
+        });
+    </script>
+</body>
+</html>
