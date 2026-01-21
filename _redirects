@@ -10,11 +10,14 @@
 /ig_parceiras.html       /ig_parceiras.html       200
 /index.html              /index.html              200
 
-# ✅ NOVAS PÁGINAS DE AUTENTICAÇÃO (SISTEMA BIZMIX)
-/login.html              /login.html              200
-/esqueci-senha.html      /esqueci-senha.html      200
-/dashboard-admin.html    /dashboard-admin.html    200
-/dashboard-parceiro.html /dashboard-parceiro.html 200
+# ✅ PASTA LOGIN (SISTEMA DE AUTENTICAÇÃO BIZMIX)
+/login                          /login/index.html              200
+/login/                         /login/index.html              200
+/login/index.html               /login/index.html              200
+/login/esqueci-senha.html       /login/esqueci-senha.html      200
+/login/dashboard-admin.html     /login/dashboard-admin.html    200
+/login/dashboard-parceiro.html  /login/dashboard-parceiro.html 200
+/login/*                        /login/:splat                  200
 
 # Pasta admin (DEVE VIR ANTES DO /*)
 /admin                               /admin/index.html                    200
