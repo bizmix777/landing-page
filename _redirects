@@ -10,7 +10,7 @@
 /ig_parceiras.html       /ig_parceiras.html       200
 /index.html              /index.html              200
 
-# ✅ NOVAS PÁGINAS DE AUTENTICAÇÃO (ADICIONE AQUI)
+# ✅ NOVAS PÁGINAS DE AUTENTICAÇÃO (SISTEMA BIZMIX)
 /login.html              /login.html              200
 /esqueci-senha.html      /esqueci-senha.html      200
 /dashboard-admin.html    /dashboard-admin.html    200
@@ -27,7 +27,7 @@
 /admin/igrejas.html                  /admin/igrejas.html                  200
 /admin/comprovante.html              /admin/comprovante.html              200
 
-# ADICIONE ESTAS LINHAS NOVAS (pasta admin/igrejas)
+# Pasta admin/igrejas
 /admin/igrejas                       /admin/igrejas/login.html            200
 /admin/igrejas/                      /admin/igrejas/login.html            200
 /admin/igrejas/login.html            /admin/igrejas/login.html            200
@@ -36,7 +36,7 @@
 /admin/igrejas/teste-simples.html    /admin/igrejas/teste-simples.html    200
 /admin/igrejas/*                     /admin/igrejas/:splat                200
 
-# ADICIONE ESTAS LINHAS NOVAS (pasta admin/parceiros)
+# Pasta admin/parceiros
 /admin/parceiros                     /admin/parceiros/login.html          200
 /admin/parceiros/                    /admin/parceiros/login.html          200
 /admin/parceiros/login.html          /admin/parceiros/login.html          200
