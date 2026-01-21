@@ -6,6 +6,9 @@
     <title>🛒 Finalize sua Compra - Livro Somos Todos Um</title>
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase Config -->
+    <script src="/js/supabase-config.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
@@ -265,10 +268,8 @@
     <script>
         console.log('✅ JavaScript de compra carregado com sucesso!');
 
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3OTQ4NzEsImV4cCI6MjA1MjM3MDg3MX0.zLgPLnMnHbxJjrUZJbIvZNjOBMhRfVqhQYZR9fJdLzM';
-        const meuSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ✅ USAR SUPABASE DO CONFIG (NÃO CRIAR NOVAMENTE)
+        const meuSupabase = window.supabase;
 
         // Get URL parameters for referral tracking
         const urlParams = new URLSearchParams(window.location.search);
@@ -325,7 +326,7 @@
             const telefone = document.getElementById('telefone').value.replace(/\D/g, '');
             const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
 
-            // ✅ CORREÇÃO LINHA 332: Validation
+            // Validation
             if (!nome || !email || !telefone || !cpf) {
                 alert('⚠️ Por favor, preencha todos os campos!');
                 return;
