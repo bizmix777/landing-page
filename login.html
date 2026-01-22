@@ -249,6 +249,26 @@
             text-decoration: underline;
         }
 
+        /* Link Esqueci Senha */
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+
         .divider {
             margin: 20px 0;
             text-align: center;
@@ -270,47 +290,6 @@
             display: block;
         }
 
-        /* ===================================
-           LOGOS - TAMANHOS PADRÃO
-           =================================== */
-
-        /* Logo Header (topo da página) */
-        .logo-header {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-        }
-
-        /* Logo Login/Cadastro (centro) */
-        .logo-login {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin-bottom: 20px;
-        }
-
-        /* Logo Sidebar (menu lateral) */
-        .logo-sidebar {
-            width: 50px;
-            height: 50px;
-            object-fit: contain;
-            margin-right: 10px;
-        }
-
-        /* Logo Small (ícones pequenos) */
-        .logo-small {
-            width: 35px;
-            height: 35px;
-            object-fit: contain;
-        }
-
-        /* Logo Footer */
-        .logo-footer {
-            width: 45px;
-            height: 45px;
-            object-fit: contain;
-        }
-
         /* Responsivo */
         @media (max-width: 768px) {
             .header h1 {
@@ -318,18 +297,6 @@
             }
             .type-selection {
                 grid-template-columns: 1fr;
-            }
-            .logo-header {
-                width: 50px;
-                height: 50px;
-            }
-            .logo-login {
-                width: 80px;
-                height: 80px;
-            }
-            .logo-sidebar {
-                width: 40px;
-                height: 40px;
             }
         }
     </style>
@@ -404,6 +371,10 @@
                     <input type="password" name="senha" required>
                 </div>
 
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
+                </div>
+
                 <button type="submit" class="btn-submit">Entrar</button>
             </form>
 
@@ -446,6 +417,10 @@
                     <input type="password" name="senha" required>
                 </div>
 
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
+                </div>
+
                 <button type="submit" class="btn-submit">Entrar</button>
             </form>
 
@@ -477,6 +452,10 @@
                     <input type="password" name="senha" required>
                 </div>
 
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
+                </div>
+
                 <button type="submit" class="btn-submit">Entrar</button>
             </form>
         </div>
@@ -502,6 +481,10 @@
                 <div class="form-group">
                     <label>Senha *</label>
                     <input type="password" name="senha" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
                 </div>
 
                 <button type="submit" class="btn-submit">Entrar</button>
@@ -643,7 +626,7 @@
                 // Salvar sessão
                 localStorage.setItem('userId', userData.id);
                 localStorage.setItem('userEmail', userData.email);
-                localStorage.setItem('userName', userData.nome);
+                localStorage.setItem('userName', userData.nome_completo);
                 localStorage.setItem('userType', userData.tipo_parceiro || 'parceiro');
                 localStorage.setItem('isAdmin', userData.is_admin || false);
 
@@ -702,7 +685,7 @@
                 // Salvar sessão
                 localStorage.setItem('userId', userData.id);
                 localStorage.setItem('userEmail', userData.email);
-                localStorage.setItem('userName', userData.nome);
+                localStorage.setItem('userName', userData.nome_completo);
                 localStorage.setItem('userType', 'igreja');
                 localStorage.setItem('loginMethod', 'code');
 
