@@ -37,14 +37,17 @@
         }
 
         .header .logo {
-            width: 220px;
-            height: auto;
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
             margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
         }
 
         .header h1 {
             font-size: 42px;
             margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .header p {
@@ -267,12 +270,66 @@
             display: block;
         }
 
+        /* ===================================
+           LOGOS - TAMANHOS PADRÃO
+           =================================== */
+
+        /* Logo Header (topo da página) */
+        .logo-header {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        /* Logo Login/Cadastro (centro) */
+        .logo-login {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        /* Logo Sidebar (menu lateral) */
+        .logo-sidebar {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-right: 10px;
+        }
+
+        /* Logo Small (ícones pequenos) */
+        .logo-small {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+        }
+
+        /* Logo Footer */
+        .logo-footer {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        /* Responsivo */
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 32px;
             }
             .type-selection {
                 grid-template-columns: 1fr;
+            }
+            .logo-header {
+                width: 50px;
+                height: 50px;
+            }
+            .logo-login {
+                width: 80px;
+                height: 80px;
+            }
+            .logo-sidebar {
+                width: 40px;
+                height: 40px;
             }
         }
     </style>
@@ -282,9 +339,8 @@
         
         <!-- Header -->
         <div class="header">
-            <!-- Se você tiver o logo, descomente a linha abaixo -->
-            <!-- <img src="/images/logo-bizmix.png" alt="Biz Mix" class="logo"> -->
-            <h1>🔐 Biz Mix</h1>
+            <img src="/images/logo-bizmix-branco.png" alt="Biz Mix" class="logo">
+            <h1>Biz Mix</h1>
             <p>Escolha o tipo de acesso</p>
         </div>
 
