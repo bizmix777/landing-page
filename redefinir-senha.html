@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Biz Mix</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+            padding-left: 5px;
+        }
+
+        .password-requirements li {
+            margin-bottom: 3px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .password-strength {
+            height: 5px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+        }
+
+        .strength-weak { 
+            width: 33%; 
+            background: #EF4444; 
+        }
+
+        .strength-medium { 
+            width: 66%; 
+            background: #F59E0B; 
+        }
+
+        .strength-strong { 
+            width: 100%; 
+            background: #10B981; 
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header .icon {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="header">
+            <div class="icon">🔒</div>
+            <h1>Redefinir Senha</h1>
+            <p>Crie uma nova senha segura para sua conta.</p>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <form id="formRedefinir" onsubmit="submitRedefinir(event)">
+            
+            <div class="form-group">
+                <label>Nova Senha *</label>
+                <input 
+                    type="password" 
+                    id="senha" 
+                    name="senha" 
+                    required 
+                    minlength="6"
+                    placeholder="Digite sua nova senha"
+                    oninput="checkPasswordStrength()">
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="strengthBar"></div>
+                </div>
+                <ul class="password-requirements">
+                    <li>• Mínimo de 6 caracteres</li>
+                    <li>• Recomendado: letras, números e símbolos</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label>Confirmar Nova Senha *</label>
+                <input 
+                    type="password" 
+                    id="confirmarSenha" 
+                    name="confirmarSenha" 
+                    required 
+                    minlength="6"
+                    placeholder="Digite novamente">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                🔒 Redefinir Senha
+            </button>
+
+        </form>
+
+    </div>
+
+    <script>
+        console.log('🔒 Página de redefinição de senha carregada');
+
+        // Verificar Supabase
+        if (typeof supabase === 'undefined') {
+            console.error('❌ Supabase não carregado!');
+            alert('❌ Erro ao carregar sistema. Recarregue a página.');
+        } else {
+            console.log('✅ Supabase carregado');
+        }
+
+        // Verificar se há sessão de recuperação
+        async function checkSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (!session) {
+                console.warn('⚠️ Nenhuma sessão de recuperação encontrada');
+                showMessage('⚠️ Link inválido ou expirado. Solicite um novo link de recuperação.', 'error');
+                document.getElementById('formRedefinir').style.display = 'none';
+                
+                setTimeout(() => {
+                    window.location.href = '/esqueci-senha';
+                }, 3000);
+            }
+        }
+
+        // Verificar força da senha
+        function checkPasswordStrength() {
+            const senha = document.getElementById('senha').value;
+            const strengthBar = document.getElementById('strengthBar');
+            
+            if (senha.length === 0) {
+                strengthBar.className = 'password-strength-bar';
+                return;
+            }
+            
+            let strength = 0;
+            
+            // Comprimento
+            if (senha.length >= 6) strength++;
+            if (senha.length >= 10) strength++;
+            
+            // Complexidade
+            if (/[a-z]/.test(senha) && /[A-Z]/.test(senha)) strength++;
+            if (/\d/.test(senha)) strength++;
+            if (/[^a-zA-Z\d]/.test(senha)) strength++;
+            
+            // Aplicar classe
+            strengthBar.className = 'password-strength-bar';
+            if (strength <= 2) {
+                strengthBar.classList.add('strength-weak');
+            } else if (strength <= 4) {
+                strengthBar.classList.add('strength-medium');
+            } else {
+                strengthBar.classList.add('strength-strong');
+            }
+        }
+
+        // Mostrar mensagem
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message show ${type}`;
+        }
+
+        // Esconder mensagem
+        function hideMessage() {
+            const messageDiv = document.getElementById('message');
+            messageDiv.classList.remove('show');
+        }
+
+        // Submeter formulário
+        async function submitRedefinir(event) {
+            event.preventDefault();
+            console.log('📤 Redefinindo senha...');
+
+            const submitBtn = document.getElementById('btnSubmit');
+            const senha = document.getElementById('senha').value;
+            const confirmarSenha = document.getElementById('confirmarSenha').value;
+            
+            // Validar senhas
+            if (senha !== confirmarSenha) {
+                showMessage('❌ As senhas não coincidem.', 'error');
+                return;
+            }
+
+            if (senha.length < 6) {
+                showMessage('❌ A senha deve ter no mínimo 6 caracteres.', 'error');
+                return;
+            }
+            
+            // Desabilitar botão
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔒 Redefinindo...';
+            hideMessage();
+
+            try {
+                // Atualizar senha
+                const { data, error } = await supabase.auth.updateUser({
+                    password: senha
+                });
+
+                if (error) {
+                    console.error('❌ Erro ao redefinir senha:', error);
+                    showMessage('❌ Erro ao redefinir senha: ' + error.message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '🔒 Redefinir Senha';
+                    return;
+                }
+
+                console.log('✅ Senha redefinida com sucesso:', data);
+
+                // Sucesso
+                showMessage('✅ Senha redefinida com sucesso! Redirecionando para o login...', 'success');
+                
+                // Fazer logout para limpar sessão
+                await supabase.auth.signOut();
+                
+                // Redirecionar após 2 segundos
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+
+            } catch (err) {
+                console.error('❌ Erro:', err);
+                showMessage('❌ Erro ao processar redefinição: ' + err.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🔒 Redefinir Senha';
+            }
+        }
+
+        // Verificar sessão ao carregar
+        window.addEventListener('DOMContentLoaded', checkSession);
+    </script>
+</body>
+</html>
