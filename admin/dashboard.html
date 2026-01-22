@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - Biz Mix</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-header .logo {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .sidebar-header h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu-item {
+            margin-bottom: 10px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+
+        .menu-item a:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .menu-item a.active {
+            background: rgba(255,255,255,0.25);
+            font-weight: 600;
+        }
+
+        .menu-item a .icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            margin: 20px 0;
+        }
+
+        .sidebar-footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            color: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .user-details h4 {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .user-details p {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-bar h1 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .top-bar .date {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-card-header .icon {
+            font-size: 32px;
+        }
+
+        .stat-card-header .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .trend {
+            font-size: 13px;
+            color: #10B981;
+        }
+
+        .stat-card .trend.down {
+            color: #EF4444;
+        }
+
+        /* Content Section */
+        .content-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background: #f8f9fa;
+        }
+
+        table th {
+            padding: 15px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            color: #333;
+        }
+
+        table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #EF4444;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                padding: 20px 10px;
+            }
+
+            .sidebar-header h2,
+            .sidebar-header p,
+            .menu-item a span,
+            .user-details,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .sidebar-header .logo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .menu-item a {
+                justify-content: center;
+                padding: 15px;
+            }
+
+            .menu-item a .icon {
+                margin-right: 0;
+                font-size: 24px;
+            }
+
+            .main-content {
+                margin-left: 80px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="/images/logo-bizmix-branco.png" alt="Biz Mix" class="logo">
+            <h2>Super Admin</h2>
+            <p>Painel de Controle</p>
+        </div>
+
+        <ul class="menu">
+            <li class="menu-item">
+                <a href="/admin/dashboard.html" class="active">
+                    <span class="icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/admin/usuarios.html">
+                    <span class="icon">👥</span>
+                    <span>Usuários</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/admin/vendas.html">
+                    <span class="icon">💰</span>
+                    <span>Vendas</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/admin/comissoes.html">
+                    <span class="icon">📈</span>
+                    <span>Comissões</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/admin/produtos.html">
+                    <span class="icon">📦</span>
+                    <span>Produtos</span>
+                </a>
+            </li>
+
+            <div class="menu-divider"></div>
+
+            <li class="menu-item">
+                <a href="/admin/relatorios.html">
+                    <span class="icon">📋</span>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/admin/configuracoes.html">
+                    <span class="icon">⚙️</span>
+                    <span>Configurações</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">H</div>
+                <div class="user-details">
+                    <h4 id="userName">Carregando...</h4>
+                    <p id="userEmail">...</p>
+                </div>
+            </div>
+            <button class="btn-logout" onclick="logout()">🚪 Sair</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div>
+                <h1>👑 Dashboard Super Admin</h1>
+                <p class="date" id="currentDate">Carregando...</p>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <span class="icon">👥</span>
+                    <span class="badge badge-info">Total</span>
+                </div>
+                <h3>Total de Usuários</h3>
+                <div class="value" id="totalUsuarios">-</div>
+                <div class="trend">
+                    <span id="trendUsuarios">↗ Carregando...</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <span class="icon">💰</span>
+                    <span class="badge badge-success">Vendas</span>
+                </div>
+                <h3>Total de Vendas</h3>
+                <div class="value" id="totalVendas">R$ -</div>
+                <div class="trend">
+                    <span id="trendVendas">↗ Carregando...</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <span class="icon">📈</span>
+                    <span class="badge badge-warning">Comissões</span>
+                </div>
+                <h3>Comissões Pendentes</h3>
+                <div class="value" id="comissoesPendentes">R$ -</div>
+                <div class="trend">
+                    <span id="trendComissoes">Carregando...</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <span class="icon">⛪</span>
+                    <span class="badge badge-info">Igrejas</span>
+                </div>
+                <h3>Total de Igrejas</h3>
+                <div class="value" id="totalIgrejas">-</div>
+                <div class="trend">
+                    <span id="trendIgrejas">Ativas</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="content-section">
+            <div class="section-header">
+                <h2>📋 Usuários Recentes</h2>
+                <button class="btn-primary" onclick="window.location.href='/admin/usuarios.html'">
+                    Ver Todos
+                </button>
+            </div>
+
+            <div class="table-container" id="usersTableContainer">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Carregando usuários...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Chart -->
+        <div class="content-section">
+            <div class="section-header">
+                <h2>📊 Vendas dos Últimos 30 Dias</h2>
+            </div>
+            <div class="chart-container">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        console.log('👑 Dashboard Super Admin carregado');
+
+        // Verificar Supabase
+        if (typeof supabase === 'undefined') {
+            console.error('❌ Supabase não carregado!');
+            alert('❌ Erro ao carregar sistema. Recarregue a página.');
+        } else {
+            console.log('✅ Supabase carregado');
+        }
+
+        // Verificar autenticação
+        async function checkAuth() {
+            const userId = localStorage.getItem('userId');
+            const isAdmin = localStorage.getItem('isAdmin');
+
+            if (!userId || isAdmin !== 'true') {
+                console.warn('⚠️ Acesso negado - não é admin');
+                alert('⚠️ Você não tem permissão para acessar esta página.');
+                window.location.href = '/login';
+                return false;
+            }
+
+            return true;
+        }
+
+        // Carregar dados do usuário
+        function loadUserInfo() {
+            const userName = localStorage.getItem('userName') || 'Usuário';
+            const userEmail = localStorage.getItem('userEmail') || 'email@exemplo.com';
+
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userEmail').textContent = userEmail;
+            document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        }
+
+        // Data atual
+        function updateDate() {
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const today = new Date().toLocaleDateString('pt-BR', options);
+            document.getElementById('currentDate').textContent = today;
+        }
+
+        // Carregar estatísticas
+        async function loadStats() {
+            try {
+                // Total de usuários
+                const { count: totalUsers } = await supabase
+                    .from('parceiros')
+                    .select('*', { count: 'exact', head: true });
+
+                document.getElementById('totalUsuarios').textContent = totalUsers || 0;
+                document.getElementById('trendUsuarios').textContent = `Total cadastrados`;
+
+                // Total de igrejas
+                const { count: totalChurches } = await supabase
+                    .from('parceiros')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('tipo_parceiro', 'igreja');
+
+                document.getElementById('totalIgrejas').textContent = totalChurches || 0;
+                document.getElementById('trendIgrejas').textContent = `${totalChurches} ativas`;
+
+                // Vendas e comissões (se tabela existir)
+                try {
+                    const { data: vendas } = await supabase
+                        .from('vendas')
+                        .select('valor_total');
+
+                    if (vendas && vendas.length > 0) {
+                        const totalVendas = vendas.reduce((sum, v) => sum + (parseFloat(v.valor_total) || 0), 0);
+                        document.getElementById('totalVendas').textContent = `R$ ${totalVendas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                        document.getElementById('trendVendas').textContent = `${vendas.length} vendas realizadas`;
+                    } else {
+                        document.getElementById('totalVendas').textContent = 'R$ 0,00';
+                        document.getElementById('trendVendas').textContent = '0 vendas';
+                    }
+
+                    // Comissões
+                    const { data: comissoes } = await supabase
+                        .from('comissoes')
+                        .select('valor')
+                        .eq('status', 'pendente');
+
+                    if (comissoes && comissoes.length > 0) {
+                        const totalComissoes = comissoes.reduce((sum, c) => sum + (parseFloat(c.valor) || 0), 0);
+                        document.getElementById('comissoesPendentes').textContent = `R$ ${totalComissoes.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                        document.getElementById('trendComissoes').textContent = `${comissoes.length} pendentes`;
+                    } else {
+                        document.getElementById('comissoesPendentes').textContent = 'R$ 0,00';
+                        document.getElementById('trendComissoes').textContent = '0 pendentes';
+                    }
+                } catch (err) {
+                    console.log('ℹ️ Tabelas de vendas/comissões não encontradas');
+                    document.getElementById('totalVendas').textContent = 'R$ 0,00';
+                    document.getElementById('comissoesPendentes').textContent = 'R$ 0,00';
+                }
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar estatísticas:', error);
+            }
+        }
+
+        // Carregar usuários recentes
+        async function loadRecentUsers() {
+            try {
+                const { data: users, error } = await supabase
+                    .from('parceiros')
+                    .select('id, nome_completo, email, tipo_parceiro, created_at, status')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                if (error) throw error;
+
+                const container = document.getElementById('usersTableContainer');
+
+                if (!users || users.length === 0) {
+                    container.innerHTML = '<p class="loading">Nenhum usuário encontrado.</p>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Data Cadastro</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                users.forEach(user => {
+                    const date = new Date(user.created_at).toLocaleDateString('pt-BR');
+                    const statusClass = user.status === 'ativo' ? 'status-active' : 
+                                       user.status === 'pendente' ? 'status-pending' : 'status-inactive';
+                    const statusText = user.status || 'ativo';
+                    const tipo = user.tipo_parceiro === 'igreja' ? '⛪ Igreja' : '🤝 Parceiro';
+
+                    tableHTML += `
+                        <tr>
+                            <td>${user.nome_completo || 'N/A'}</td>
+                            <td>${user.email}</td>
+                            <td>${tipo}</td>
+                            <td>${date}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>
+                                <button class="action-btn btn-edit" onclick="editUser('${user.id}')">✏️ Editar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+
+                container.innerHTML = tableHTML;
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar usuários:', error);
+                document.getElementById('usersTableContainer').innerHTML = 
+                    '<p class="loading">Erro ao carregar usuários.</p>';
+            }
+        }
+
+        // Criar gráfico de vendas
+        function createSalesChart() {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // Dados exemplo (substituir com dados reais depois)
+            const labels = [];
+            const data = [];
+            
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }));
+                data.push(Math.floor(Math.random() * 5000) + 1000);
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Vendas (R$)',
+                        data: data,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value.toLocaleString('pt-BR');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funções de ação
+        function editUser(userId) {
+            console.log('✏️ Editar usuário:', userId);
+            alert('Função de edição em desenvolvimento!');
+            // window.location.href = `/admin/usuarios.html?edit=${userId}`;
+        }
+
+        // Logout
+        async function logout() {
+            console.log('🚪 Fazendo logout...');
+            
+            try {
+                await supabase.auth.signOut();
+                localStorage.clear();
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('❌ Erro ao fazer logout:', error);
+                localStorage.clear();
+                window.location.href = '/login';
+            }
+        }
+
+        // Inicializar
+        async function init() {
+            const isAuthenticated = await checkAuth();
+            if (!isAuthenticated) return;
+
+            loadUserInfo();
+            updateDate();
+            await loadStats();
+            await loadRecentUsers();
+            createSalesChart();
+
+            console.log('✅ Dashboard carregado com sucesso!');
+        }
+
+        // Executar ao carregar
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+
+</body>
+</html>
