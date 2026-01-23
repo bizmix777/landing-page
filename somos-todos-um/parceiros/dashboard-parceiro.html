@@ -800,6 +800,8 @@
 
             <!-- Dashboard Section -->
             <section id="dashboard" class="dashboard-section active">
+                
+                <!-- CARDS DE VENDAS E COMISSÕES -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="icon">📦</div>
@@ -823,6 +825,33 @@
                     </div>
                 </div>
 
+                <!-- NOVO: CARDS DE ESTATÍSTICAS DE CLIQUES -->
+                <div class="section-card">
+                    <h2>📊 Estatísticas do Seu Link</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="icon">👁️</div>
+                            <div class="label">Total de Cliques</div>
+                            <div id="totalClicks" class="value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon">📈</div>
+                            <div class="label">Taxa de Conversão</div>
+                            <div id="conversionRate" class="value">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon">⏰</div>
+                            <div class="label">Cliques Hoje</div>
+                            <div id="clicksToday" class="value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon">📅</div>
+                            <div class="label">Cliques Este Mês</div>
+                            <div id="clicksMonth" class="value">0</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="section-card">
                     <h2>📈 Últimas Vendas</h2>
                     <div class="table-responsive">
@@ -843,9 +872,7 @@
                     </div>
                 </div>
 
-                <!-- ============================================ -->
-                <!-- SEÇÃO LINK ÚNICO - NOVA! -->
-                <!-- ============================================ -->
+                <!-- SEÇÃO LINK ÚNICO -->
                 <div class="link-unique-section">
                     <div class="link-unique-header">
                         <h2>🔗 Seu Link Único de Vendas</h2>
@@ -917,10 +944,9 @@
                     
                     <div class="info-box-blue">
                         <strong>📊 Estatísticas:</strong>
-                        <p>Em breve você poderá ver quantas pessoas clicaram no seu link e quantas vendas foram realizadas!</p>
+                        <p>Acompanhe acima quantas pessoas clicaram no seu link e a taxa de conversão em vendas!</p>
                     </div>
                 </div>
-                <!-- FIM DA SEÇÃO LINK ÚNICO -->
 
             </section>
 
@@ -1453,6 +1479,62 @@
             carregarLinkUnicoParceiro();
         };
 
+        // ============================================
+        // CARREGAR ESTATÍSTICAS DE CLIQUES
+        // ============================================
+        const loadClickStatistics = async () => {
+            try {
+                // Total de cliques
+                const { count: totalClicks } = await supabase
+                    .from('link_clicks')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('codigo_referencia', currentPartner.codigo_parceiro);
+
+                document.getElementById('totalClicks').textContent = totalClicks || 0;
+
+                // Cliques hoje
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayISO = today.toISOString();
+
+                const { count: clicksToday } = await supabase
+                    .from('link_clicks')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('codigo_referencia', currentPartner.codigo_parceiro)
+                    .gte('clicked_at', todayISO);
+
+                document.getElementById('clicksToday').textContent = clicksToday || 0;
+
+                // Cliques este mês
+                const firstDayOfMonth = new Date();
+                firstDayOfMonth.setDate(1);
+                firstDayOfMonth.setHours(0, 0, 0, 0);
+                const monthISO = firstDayOfMonth.toISOString();
+
+                const { count: clicksMonth } = await supabase
+                    .from('link_clicks')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('codigo_referencia', currentPartner.codigo_parceiro)
+                    .gte('clicked_at', monthISO);
+
+                document.getElementById('clicksMonth').textContent = clicksMonth || 0;
+
+                // Taxa de conversão
+                const totalSales = parseInt(totalSalesElem.textContent) || 0;
+                const conversionRate = totalClicks > 0 ? ((totalSales / totalClicks) * 100).toFixed(1) : 0;
+                document.getElementById('conversionRate').textContent = conversionRate + '%';
+
+                console.log('✅ Estatísticas de cliques carregadas');
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar estatísticas de cliques:', error);
+                document.getElementById('totalClicks').textContent = '0';
+                document.getElementById('clicksToday').textContent = '0';
+                document.getElementById('clicksMonth').textContent = '0';
+                document.getElementById('conversionRate').textContent = '0%';
+            }
+        };
+
         // Load Statistics
         const loadStatistics = async () => {
             try {
@@ -1477,6 +1559,10 @@
                 totalCommissionElem.textContent = formatCurrency(totalCommission);
                 pendingCommissionElem.textContent = formatCurrency(pendingCommission);
                 availableBalanceElem.textContent = formatCurrency(pendingCommission);
+                
+                // CARREGAR ESTATÍSTICAS DE CLIQUES
+                await loadClickStatistics();
+                
             } catch (error) {
                 console.error('❌ Erro ao carregar estatísticas:', error);
             }
