@@ -454,47 +454,6 @@
             color: var(--danger-red);
         }
 
-        /* Link Box */
-        .link-box {
-            background: var(--bg-light);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .link-box label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text-dark);
-        }
-
-        .link-box input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            background: white;
-            font-size: 14px;
-        }
-
-        .btn-copy {
-            margin-top: 10px;
-            background: var(--primary-blue);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-
-        .btn-copy:hover {
-            background: var(--primary-blue-dark);
-            transform: translateY(-2px);
-        }
-
         /* Dashboard Sections */
         .dashboard-section {
             display: none;
@@ -841,6 +800,8 @@
 
             <!-- Dashboard Section -->
             <section id="dashboard" class="dashboard-section active">
+                
+                <!-- CARDS DE VENDAS E COMISSÕES -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="icon">📦</div>
@@ -864,6 +825,33 @@
                     </div>
                 </div>
 
+                <!-- NOVO: CARDS DE ESTATÍSTICAS DE CLIQUES -->
+                <div class="section-card">
+                    <h2>📊 Estatísticas do Seu Link</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="icon">👁️</div>
+                            <div class="label">Total de Cliques</div>
+                            <div id="totalClicks" class="value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon">📈</div>
+                            <div class="label">Taxa de Conversão</div>
+                            <div id="conversionRate" class="value">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon">⏰</div>
+                            <div class="label">Cliques Hoje</div>
+                            <div id="clicksToday" class="value">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="icon">📅</div>
+                            <div class="label">Cliques Este Mês</div>
+                            <div id="clicksMonth" class="value">0</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="section-card">
                     <h2>📈 Últimas Vendas</h2>
                     <div class="table-responsive">
@@ -884,9 +872,7 @@
                     </div>
                 </div>
 
-                <!-- ============================================ -->
-                <!-- SEÇÃO LINK ÚNICO - NOVA! -->
-                <!-- ============================================ -->
+                <!-- SEÇÃO LINK ÚNICO -->
                 <div class="link-unique-section">
                     <div class="link-unique-header">
                         <h2>🔗 Seu Link Único de Vendas</h2>
@@ -958,10 +944,9 @@
                     
                     <div class="info-box-blue">
                         <strong>📊 Estatísticas:</strong>
-                        <p>Em breve você poderá ver quantas pessoas clicaram no seu link e quantas vendas foram realizadas!</p>
+                        <p>Acompanhe acima quantas pessoas clicaram no seu link e a taxa de conversão em vendas!</p>
                     </div>
                 </div>
-                <!-- FIM DA SEÇÃO LINK ÚNICO -->
 
             </section>
 
@@ -996,10 +981,10 @@
                     <p style="margin-bottom: 20px; color: var(--text-light);">
                         Use este link para divulgar o produto e garantir suas comissões. Cada venda realizada através dele será creditada a você!
                     </p>
-                    <div class="link-box">
-                        <label>Link do Checkout:</label>
-                        <input type="text" id="affiliateLink" readonly>
-                        <button id="copyLinkButton" class="btn-copy">📋 Copiar Link</button>
+                    <div style="background: var(--bg-light); padding: 20px; border-radius: 8px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 10px;">Link do Checkout:</label>
+                        <input type="text" id="affiliateLink" readonly style="width: 100%; padding: 12px; border: 1px solid var(--border-light); border-radius: 8px; background: white; font-size: 14px;">
+                        <button id="copyLinkButton" style="margin-top: 10px; background: var(--primary-blue); color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">📋 Copiar Link</button>
                     </div>
                     <p id="copyMessage" class="alert alert-success hidden" style="margin-top: 15px;">Link copiado com sucesso!</p>
                 </div>
@@ -1520,6 +1505,62 @@
             carregarLinkUnicoIgreja();
         };
 
+        // ============================================
+        // CARREGAR ESTATÍSTICAS DE CLIQUES
+        // ============================================
+        const loadClickStatistics = async () => {
+            try {
+                // Total de cliques
+                const { count: totalClicks } = await supabase
+                    .from('link_clicks')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('codigo_referencia', currentPartner.codigo_parceiro);
+
+                document.getElementById('totalClicks').textContent = totalClicks || 0;
+
+                // Cliques hoje
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayISO = today.toISOString();
+
+                const { count: clicksToday } = await supabase
+                    .from('link_clicks')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('codigo_referencia', currentPartner.codigo_parceiro)
+                    .gte('clicked_at', todayISO);
+
+                document.getElementById('clicksToday').textContent = clicksToday || 0;
+
+                // Cliques este mês
+                const firstDayOfMonth = new Date();
+                firstDayOfMonth.setDate(1);
+                firstDayOfMonth.setHours(0, 0, 0, 0);
+                const monthISO = firstDayOfMonth.toISOString();
+
+                const { count: clicksMonth } = await supabase
+                    .from('link_clicks')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('codigo_referencia', currentPartner.codigo_parceiro)
+                    .gte('clicked_at', monthISO);
+
+                document.getElementById('clicksMonth').textContent = clicksMonth || 0;
+
+                // Taxa de conversão
+                const totalSales = parseInt(totalSalesElem.textContent) || 0;
+                const conversionRate = totalClicks > 0 ? ((totalSales / totalClicks) * 100).toFixed(1) : 0;
+                document.getElementById('conversionRate').textContent = conversionRate + '%';
+
+                console.log('✅ Estatísticas de cliques carregadas');
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar estatísticas de cliques:', error);
+                document.getElementById('totalClicks').textContent = '0';
+                document.getElementById('clicksToday').textContent = '0';
+                document.getElementById('clicksMonth').textContent = '0';
+                document.getElementById('conversionRate').textContent = '0%';
+            }
+        };
+
         // Load Statistics
         const loadStatistics = async () => {
             try {
@@ -1535,6 +1576,9 @@
                     pendingCommissionElem.textContent = formatCurrency(0);
                     availableBalanceElem.textContent = formatCurrency(0);
                     salesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhum produto religioso disponível para esta igreja.</td></tr>';
+                    
+                    // Carregar estatísticas de cliques mesmo sem produtos
+                    await loadClickStatistics();
                     return;
                 }
 
@@ -1560,6 +1604,10 @@
                 totalCommissionElem.textContent = formatCurrency(totalCommission);
                 pendingCommissionElem.textContent = formatCurrency(pendingCommission);
                 availableBalanceElem.textContent = formatCurrency(pendingCommission);
+                
+                // CARREGAR ESTATÍSTICAS DE CLIQUES
+                await loadClickStatistics();
+                
             } catch (error) {
                 console.error('❌ Erro ao carregar estatísticas:', error);
             }
