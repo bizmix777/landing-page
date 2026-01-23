@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Portal da Igreja - Gerencie suas vendas e comissões.">
-    <title>Portal da Igreja - Somos Todos Um</title>
+    <title>Portal da Igreja - Biz Mix</title>
     <link rel="icon" href="https://bizmix.com.br/favicon.ico" type="image/x-icon">
     <style>
         /* Reset e Base */
@@ -520,6 +520,163 @@
             font-size: 24px;
         }
 
+        /* NOVO: Seção Link Único Estilizada */
+        .link-unique-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 30px;
+        }
+
+        .link-unique-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .link-unique-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .link-gradient-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            color: white;
+        }
+
+        .link-gradient-box h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .link-gradient-box p {
+            margin-bottom: 25px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .link-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .link-input-group input {
+            flex: 1;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            background: white;
+            color: #333;
+            font-family: monospace;
+        }
+
+        .btn-copy-link {
+            padding: 15px 30px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-copy-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .share-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .btn-share {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-share:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-whatsapp { background: #25D366; }
+        .btn-email { background: #EA4335; }
+        .btn-facebook { background: #1877F2; }
+        .btn-twitter { background: #1DA1F2; }
+
+        .tips-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .tips-box h4 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .tip-item span:first-child {
+            font-size: 24px;
+        }
+
+        .tip-item strong {
+            color: #333;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .tip-item p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .info-box-blue {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .info-box-blue strong {
+            color: #1565C0;
+        }
+
+        .info-box-blue p {
+            color: #1565C0;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
@@ -552,6 +709,14 @@
                 align-items: flex-start;
                 gap: 15px;
             }
+
+            .link-input-group {
+                flex-direction: column;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -564,7 +729,6 @@
                 <h1>🔐 Portal da Igreja</h1>
                 <p>Faça login para acessar sua área</p>
             </div>
-
             <div class="login-body">
                 <div id="alertContainer"></div>
 
@@ -580,14 +744,11 @@
                         <label for="email">Email</label>
                         <input type="email" id="email" placeholder="seu@email.com" required autocomplete="email">
                     </div>
-
                     <div class="form-group">
                         <label for="senha">Senha</label>
                         <input type="password" id="senha" placeholder="••••••••" required autocomplete="current-password">
                     </div>
-
                     <button type="submit" class="btn btn-primary" id="btnEmailLogin">Entrar</button>
-
                     <div class="loading" id="emailLoading">
                         <div class="spinner"></div>
                         <p style="margin-top: 10px; color: #666;">Autenticando...</p>
@@ -598,20 +759,17 @@
                 <form id="codeLoginForm" class="login-form">
                     <div class="form-group">
                         <label for="partnerCode">Código da Igreja</label>
-                        <input type="text" id="partnerCode" placeholder="Ex: IGREJA_PAZ" required>
+                        <input type="text" id="partnerCode" placeholder="Ex: IGR000001" required>
                     </div>
-
                     <button type="submit" class="btn btn-primary" id="btnCodeLogin">Entrar</button>
-
                     <div class="loading" id="codeLoading">
                         <div class="spinner"></div>
                         <p style="margin-top: 10px; color: #666;">Autenticando...</p>
                     </div>
                 </form>
             </div>
-
             <div class="login-footer">
-                <p>Ainda não é uma igreja parceira? <a href="registro.html">Cadastre-se aqui</a></p>
+                <p>Ainda não é uma igreja parceira? <a href="/cadastro">Cadastre-se aqui</a></p>
             </div>
         </div>
     </div>
@@ -623,7 +781,7 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="sidebar">
             <div class="sidebar-header">
-                <img src="https://bizmix.com.br/logo.png" alt="Logo">
+                <img src="https://bizmix.com.br/images/logo-bizmix-branco.png" alt="Biz Mix" onerror="this.src='https://bizmix.com.br/logo.png'">
                 <h3 id="partnerNameSidebar">Carregando...</h3>
                 <span class="partner-code" id="partnerCodeSidebar"></span>
             </div>
@@ -725,6 +883,86 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- ============================================ -->
+                <!-- SEÇÃO LINK ÚNICO - NOVA! -->
+                <!-- ============================================ -->
+                <div class="link-unique-section">
+                    <div class="link-unique-header">
+                        <h2>🔗 Seu Link Único de Vendas</h2>
+                    </div>
+                    
+                    <div class="link-gradient-box">
+                        <h3>💰 Ganhe Comissões Compartilhando</h3>
+                        <p>
+                            Compartilhe este link e receba comissão de <strong id="percentualComissaoIgreja">10%</strong> sobre cada venda!<br>
+                            Toda vez que alguém comprar através do seu link, você receberá automaticamente.
+                        </p>
+                        
+                        <div class="link-input-group">
+                            <input type="text" id="linkUnicoIgreja" readonly value="Carregando seu link único...">
+                            <button onclick="copiarLinkIgreja()" class="btn-copy-link">
+                                📋 Copiar
+                            </button>
+                        </div>
+                        
+                        <div class="share-buttons">
+                            <button onclick="compartilharWhatsAppIgreja()" class="btn-share btn-whatsapp">
+                                📱 WhatsApp
+                            </button>
+                            <button onclick="compartilharEmailIgreja()" class="btn-share btn-email">
+                                ✉️ Email
+                            </button>
+                            <button onclick="compartilharFacebookIgreja()" class="btn-share btn-facebook">
+                                📘 Facebook
+                            </button>
+                            <button onclick="compartilharTwitterIgreja()" class="btn-share btn-twitter">
+                                🐦 Twitter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="tips-box">
+                        <h4>💡 Dicas para Compartilhar:</h4>
+                        <div class="tips-grid">
+                            <div class="tip-item">
+                                <span>📱</span>
+                                <div>
+                                    <strong>Redes Sociais</strong>
+                                    <p>Compartilhe no Facebook, Instagram e grupos de WhatsApp da igreja</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span>📧</span>
+                                <div>
+                                    <strong>E-mail e Boletim</strong>
+                                    <p>Envie para membros por e-mail e inclua no boletim semanal</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span>⛪</span>
+                                <div>
+                                    <strong>Cultos e Reuniões</strong>
+                                    <p>Mencione durante cultos, células e eventos da igreja</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <span>🌐</span>
+                                <div>
+                                    <strong>Site e Blog</strong>
+                                    <p>Adicione em banners e posts no site/blog da igreja</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box-blue">
+                        <strong>📊 Estatísticas:</strong>
+                        <p>Em breve você poderá ver quantas pessoas clicaram no seu link e quantas vendas foram realizadas!</p>
+                    </div>
+                </div>
+                <!-- FIM DA SEÇÃO LINK ÚNICO -->
+
             </section>
 
             <!-- Sales Section -->
@@ -777,12 +1015,10 @@
                     <p style="margin-bottom: 20px; color: var(--text-light); font-size: 14px;">
                         O valor mínimo para saque é de R$ 50,00.
                     </p>
-
                     <div class="form-group">
                         <label for="withdrawalAmount">Valor do Saque (R$)</label>
                         <input type="number" id="withdrawalAmount" min="50" step="0.01" placeholder="Ex: 100.00">
                     </div>
-
                     <div class="form-group">
                         <label for="paymentMethod">Método de Pagamento</label>
                         <select id="paymentMethod">
@@ -791,12 +1027,10 @@
                             <option value="bank_transfer">Transferência Bancária</option>
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label for="paymentDetails">Detalhes do Pagamento (Chave PIX ou Dados Bancários)</label>
                         <textarea id="paymentDetails" rows="4" placeholder="Informe sua chave PIX ou dados bancários completos"></textarea>
                     </div>
-
                     <button id="requestWithdrawalButton" class="btn btn-primary">Solicitar Saque</button>
                     <p id="withdrawalMessage" class="alert hidden" style="margin-top: 15px;"></p>
                 </div>
@@ -807,7 +1041,7 @@
                 <div class="section-card">
                     <h2>⛪ Dados da Igreja</h2>
                     <form id="personalDataForm">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmin(300px, 1fr)); gap: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                             <div class="form-group">
                                 <label for="editNomeIgreja">Nome da Igreja *</label>
                                 <input type="text" id="editNomeIgreja" required>
@@ -829,7 +1063,6 @@
                                 <input type="text" id="editCNPJ" placeholder="00.000.000/0000-00">
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary" id="savePersonalDataButton">
                             💾 Salvar Dados da Igreja
                         </button>
@@ -840,37 +1073,31 @@
                 <div class="section-card">
                     <h2>📍 Endereço</h2>
                     <form id="addressForm">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmin(300px, 1fr)); gap: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                             <div class="form-group">
                                 <label for="editCEP">CEP</label>
                                 <input type="text" id="editCEP" placeholder="00000-000">
                             </div>
-
                             <div class="form-group">
                                 <label for="editEndereco">Endereço</label>
                                 <input type="text" id="editEndereco" placeholder="Rua, Avenida, etc.">
                             </div>
-
                             <div class="form-group">
                                 <label for="editNumero">Número</label>
                                 <input type="text" id="editNumero" placeholder="123">
                             </div>
-
                             <div class="form-group">
                                 <label for="editComplemento">Complemento</label>
                                 <input type="text" id="editComplemento" placeholder="Apto, Bloco, etc.">
                             </div>
-
                             <div class="form-group">
                                 <label for="editBairro">Bairro</label>
                                 <input type="text" id="editBairro">
                             </div>
-
                             <div class="form-group">
                                 <label for="editCidade">Cidade</label>
                                 <input type="text" id="editCidade">
                             </div>
-
                             <div class="form-group">
                                 <label for="editEstado">Estado</label>
                                 <select id="editEstado">
@@ -905,7 +1132,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary" id="saveAddressButton">
                             💾 Salvar Endereço
                         </button>
@@ -916,22 +1142,19 @@
                 <div class="section-card">
                     <h2>🏦 Dados Bancários</h2>
                     <form id="bankDataForm">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmin(300px, 1fr)); gap: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                             <div class="form-group">
                                 <label for="editBanco">Banco</label>
                                 <input type="text" id="editBanco" placeholder="Ex: Banco do Brasil">
                             </div>
-
                             <div class="form-group">
                                 <label for="editAgencia">Agência</label>
                                 <input type="text" id="editAgencia" placeholder="0000">
                             </div>
-
                             <div class="form-group">
                                 <label for="editConta">Conta</label>
                                 <input type="text" id="editConta" placeholder="00000-0">
                             </div>
-
                             <div class="form-group">
                                 <label for="editTipoConta">Tipo de Conta</label>
                                 <select id="editTipoConta">
@@ -940,7 +1163,6 @@
                                     <option value="Poupança">Poupança</option>
                                 </select>
                             </div>
-
                             <div class="form-group">
                                 <label for="editPixTipo">Tipo de Chave PIX</label>
                                 <select id="editPixTipo">
@@ -952,13 +1174,11 @@
                                     <option value="aleatoria">Chave Aleatória</option>
                                 </select>
                             </div>
-
                             <div class="form-group">
                                 <label for="editPixChave">Chave PIX</label>
                                 <input type="text" id="editPixChave" placeholder="Sua chave PIX">
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary" id="saveBankDataButton">
                             💾 Salvar Dados Bancários
                         </button>
@@ -972,23 +1192,20 @@
                         Disponível apenas para login com email/senha.
                     </p>
                     <form id="passwordForm">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmin(300px, 1fr)); gap: 20px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                             <div class="form-group">
                                 <label for="currentPassword">Senha Atual *</label>
                                 <input type="password" id="currentPassword" required>
                             </div>
-
                             <div class="form-group">
                                 <label for="newPassword">Nova Senha *</label>
                                 <input type="password" id="newPassword" required minlength="6">
                             </div>
-
                             <div class="form-group">
                                 <label for="confirmPassword">Confirmar Nova Senha *</label>
                                 <input type="password" id="confirmPassword" required minlength="6">
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary" id="changePasswordButton">
                             🔐 Alterar Senha
                         </button>
@@ -996,6 +1213,7 @@
                     </form>
                 </div>
             </section>
+
         </main>
     </div>
 
@@ -1011,7 +1229,7 @@
         const loginScreen = document.getElementById('loginScreen');
         const dashboardScreen = document.getElementById('dashboardScreen');
         const alertContainer = document.getElementById('alertContainer');
-        
+
         // Login Elements
         const loginTabs = document.querySelectorAll('.login-tab');
         const loginForms = document.querySelectorAll('.login-form');
@@ -1058,9 +1276,8 @@
         const editResponsavelIgreja = document.getElementById('editResponsavelIgreja');
         const editCNPJ = document.getElementById('editCNPJ');
 
-
         let currentPartner = null;
-        let churchProductIds = []; // Global variable to store allowed product IDs for the church
+        let churchProductIds = [];
 
         // Helper Functions
         const formatCurrency = (value) => {
@@ -1108,7 +1325,6 @@
             tab.addEventListener('click', () => {
                 loginTabs.forEach(t => t.classList.remove('active'));
                 loginForms.forEach(f => f.classList.remove('active'));
-                
                 tab.classList.add('active');
                 const tabName = tab.dataset.tab;
                 document.getElementById(`${tabName}LoginForm`).classList.add('active');
@@ -1117,7 +1333,6 @@
 
         // Check Login on Load
         const checkLogin = async () => {
-            // Check Supabase Auth Session
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 console.log('✅ Sessão Supabase Auth encontrada');
@@ -1125,12 +1340,10 @@
                 return;
             }
 
-            // Check localStorage (Code Login)
             const storedPartner = localStorage.getItem('partner');
             if (storedPartner) {
                 console.log('✅ Igreja encontrada no localStorage');
                 currentPartner = JSON.parse(storedPartner);
-                // Ensure it's an 'igreja' type
                 if (currentPartner.tipo_parceiro !== 'igreja') {
                     showAlert('Tipo de conta inválido para este portal. Faça login no portal de parceiros.', 'error');
                     localStorage.clear();
@@ -1140,12 +1353,11 @@
                 return;
             }
 
-            // No login found
             loginScreen.classList.remove('hidden');
             dashboardScreen.classList.add('hidden');
         };
 
-        // Login with Email/Password (Supabase Auth)
+        // Login with Email/Password
         emailLoginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1173,14 +1385,12 @@
 
             } catch (error) {
                 console.error('❌ Erro no login:', error);
-                
                 let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
                 if (error.message.includes('Invalid login credentials')) {
                     mensagemErro = 'Email ou senha incorretos.';
                 } else if (error.message.includes('Email not confirmed')) {
                     mensagemErro = 'Por favor, confirme seu email antes de fazer login.';
                 }
-
                 showAlert(mensagemErro, 'error');
             } finally {
                 btnEmailLogin.disabled = false;
@@ -1270,21 +1480,22 @@
             }
         };
 
-        // Function to load allowed products for the church
+        // Load Church Products
         const loadChurchProducts = async () => {
             try {
                 const { data: produtos, error } = await supabase
                     .from('produtos')
                     .select('id')
                     .eq('categoria', 'religioso')
-                    .contains('disponivel_para', ['igrejas']); // Use .contains for array column
+                    .contains('disponivel_para', ['igrejas']);
 
                 if (error) throw error;
+
                 churchProductIds = produtos.map(p => p.id);
                 console.log('✅ Produtos religiosos para igrejas carregados:', churchProductIds);
             } catch (error) {
                 console.error('❌ Erro ao carregar produtos para igrejas:', error);
-                churchProductIds = []; // Ensure it's empty on error
+                churchProductIds = [];
             }
         };
 
@@ -1292,28 +1503,32 @@
         const showDashboard = async () => {
             loginScreen.classList.add('hidden');
             dashboardScreen.classList.remove('hidden');
-
-            welcomePartnerName.textContent = currentPartner.nome_igreja;
-            partnerNameSidebar.textContent = currentPartner.nome_igreja;
+            
+            welcomePartnerName.textContent = currentPartner.nome_igreja || currentPartner.nome_completo;
+            partnerNameSidebar.textContent = currentPartner.nome_igreja || currentPartner.nome_completo;
             partnerCodeSidebar.textContent = currentPartner.codigo_parceiro;
+            
+            // Link antigo (mantido para compatibilidade)
+            affiliateLink.value = `https://somos.bizmix.com.br?ref=${currentPartner.codigo_parceiro}`;
 
-            affiliateLink.value = `https://bizmix.com.br/somos-todos-um/checkout-final.html?ref=${currentPartner.codigo_parceiro}`;
-
-            await loadChurchProducts(); // Load allowed products first
+            await loadChurchProducts();
             await loadStatistics();
             await loadSales();
             loadPartnerData();
+            
+            // NOVO: Carregar link único
+            carregarLinkUnicoIgreja();
         };
 
         // Load Statistics
         const loadStatistics = async () => {
             try {
-                // Ensure products are loaded before querying sales
                 if (churchProductIds.length === 0) {
-                    await loadChurchProducts(); // Load if not already loaded
+                    await loadChurchProducts();
                 }
+
                 if (churchProductIds.length === 0) {
-                    console.warn('Nenhum produto religioso disponível para esta igreja. Estatísticas podem estar incompletas.');
+                    console.warn('Nenhum produto religioso disponível para esta igreja.');
                     totalSalesElem.textContent = 0;
                     totalValueElem.textContent = formatCurrency(0);
                     totalCommissionElem.textContent = formatCurrency(0);
@@ -1327,7 +1542,7 @@
                     .from('vendas')
                     .select('*')
                     .eq('codigo_indicacao', currentPartner.codigo_parceiro)
-                    .in('produto_id', churchProductIds); // Filter by allowed products
+                    .in('produto_id', churchProductIds);
 
                 if (error) throw error;
 
@@ -1345,7 +1560,6 @@
                 totalCommissionElem.textContent = formatCurrency(totalCommission);
                 pendingCommissionElem.textContent = formatCurrency(pendingCommission);
                 availableBalanceElem.textContent = formatCurrency(pendingCommission);
-
             } catch (error) {
                 console.error('❌ Erro ao carregar estatísticas:', error);
             }
@@ -1357,6 +1571,7 @@
                 if (churchProductIds.length === 0) {
                     await loadChurchProducts();
                 }
+
                 if (churchProductIds.length === 0) {
                     salesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhum produto religioso disponível para esta igreja.</td></tr>';
                     allSalesTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;">Nenhum produto religioso disponível para esta igreja.</td></tr>';
@@ -1367,12 +1582,11 @@
                     .from('vendas')
                     .select('*')
                     .eq('codigo_indicacao', currentPartner.codigo_parceiro)
-                    .in('produto_id', churchProductIds) // Filter by allowed products
+                    .in('produto_id', churchProductIds)
                     .order('data_venda', { ascending: false });
 
                 if (error) throw error;
 
-                // Last 10 sales for dashboard
                 const lastSales = vendas.slice(0, 10);
                 salesTableBody.innerHTML = lastSales.length === 0 
                     ? '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhuma venda ainda.</td></tr>'
@@ -1386,7 +1600,6 @@
                         </tr>
                     `).join('');
 
-                // All sales
                 allSalesTableBody.innerHTML = vendas.length === 0 
                     ? '<tr><td colspan="6" style="text-align: center; padding: 30px;">Nenhuma venda ainda.</td></tr>'
                     : vendas.map(v => `
@@ -1407,7 +1620,140 @@
             }
         };
 
-        // Copy Affiliate Link
+        // ==================== FUNÇÕES DO LINK ÚNICO ====================
+        
+        // Carregar link único da igreja
+        async function carregarLinkUnicoIgreja() {
+            if (!currentPartner) {
+                console.error('❌ Parceiro não carregado');
+                return;
+            }
+            
+            try {
+                console.log('🔗 Carregando link único para:', currentPartner.codigo_parceiro);
+                
+                const linkUnico = `https://somos.bizmix.com.br?ref=${currentPartner.codigo_parceiro}`;
+                document.getElementById('linkUnicoIgreja').value = linkUnico;
+                document.getElementById('percentualComissaoIgreja').textContent = `${currentPartner.comissao_padrao || 10}%`;
+                
+                console.log('✅ Link único carregado:', linkUnico);
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar link:', error);
+                document.getElementById('linkUnicoIgreja').value = 'Erro ao carregar. Recarregue a página.';
+            }
+        }
+        
+        // Copiar link
+        window.copiarLinkIgreja = function() {
+            const input = document.getElementById('linkUnicoIgreja');
+            
+            if (input.value.includes('Erro') || input.value.includes('Carregando')) {
+                alert('⚠️ Link ainda não está disponível. Aguarde o carregamento.');
+                return;
+            }
+            
+            input.select();
+            input.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✅ Copiado!';
+                button.style.background = '#28a745';
+                button.style.color = 'white';
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = 'white';
+                    button.style.color = '#667eea';
+                }, 2000);
+                
+                console.log('✅ Link copiado!');
+                
+            } catch (err) {
+                alert('❌ Erro ao copiar. Selecione e copie manualmente (Ctrl+C).');
+                console.error('Erro ao copiar:', err);
+            }
+        };
+        
+        // Compartilhar WhatsApp
+        window.compartilharWhatsAppIgreja = function() {
+            const link = document.getElementById('linkUnicoIgreja').value;
+            
+            if (link.includes('Erro') || link.includes('Carregando')) {
+                alert('⚠️ Link ainda não está disponível.');
+                return;
+            }
+            
+            const texto = encodeURIComponent(
+                `📖 *Livro: SOMOS TODOS UM*\n\n` +
+                `A Verdade Bíblica Sobre a Unidade da Humanidade\n\n` +
+                `✅ Conteúdo profundo e transformador\n` +
+                `✅ Baseado nas Escrituras\n` +
+                `✅ Ideal para estudo em grupo\n\n` +
+                `Acesse: ${link}`
+            );
+            
+            window.open(`https://wa.me/?text=${texto}`, '_blank');
+            console.log('📱 Compartilhado via WhatsApp');
+        };
+        
+        // Compartilhar Email
+        window.compartilharEmailIgreja = function() {
+            const link = document.getElementById('linkUnicoIgreja').value;
+            
+            if (link.includes('Erro') || link.includes('Carregando')) {
+                alert('⚠️ Link ainda não está disponível.');
+                return;
+            }
+            
+            const assunto = encodeURIComponent('📖 Livro: SOMOS TODOS UM');
+            const corpo = encodeURIComponent(
+                `Olá!\n\n` +
+                `Gostaria de compartilhar com você o livro "SOMOS TODOS UM".\n\n` +
+                `É um conteúdo profundo sobre a unidade da humanidade sob a perspectiva bíblica.\n\n` +
+                `Acesse: ${link}\n\n` +
+                `Que Deus abençoe!\n`
+            );
+            
+            window.location.href = `mailto:?subject=${assunto}&body=${corpo}`;
+            console.log('✉️ Compartilhado via Email');
+        };
+        
+        // Compartilhar Facebook
+        window.compartilharFacebookIgreja = function() {
+            const link = document.getElementById('linkUnicoIgreja').value;
+            
+            if (link.includes('Erro') || link.includes('Carregando')) {
+                alert('⚠️ Link ainda não está disponível.');
+                return;
+            }
+            
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`, '_blank');
+            console.log('📘 Compartilhado via Facebook');
+        };
+        
+        // Compartilhar Twitter
+        window.compartilharTwitterIgreja = function() {
+            const link = document.getElementById('linkUnicoIgreja').value;
+            
+            if (link.includes('Erro') || link.includes('Carregando')) {
+                alert('⚠️ Link ainda não está disponível.');
+                return;
+            }
+            
+            const texto = encodeURIComponent(
+                `📖 Conheça o livro "SOMOS TODOS UM" - A verdade bíblica sobre a unidade da humanidade\n\n${link}`
+            );
+            
+            window.open(`https://twitter.com/intent/tweet?text=${texto}`, '_blank');
+            console.log('🐦 Compartilhado via Twitter');
+        };
+
+        // Copy Affiliate Link (antigo - mantido para compatibilidade)
         copyLinkButton.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(affiliateLink.value);
@@ -1467,11 +1813,11 @@
                 withdrawalMessage.textContent = 'Solicitação enviada com sucesso!';
                 withdrawalMessage.classList.remove('hidden', 'alert-error');
                 withdrawalMessage.classList.add('alert-success');
-
+                
                 withdrawalAmountInput.value = '';
                 paymentMethodSelect.value = '';
                 paymentDetailsTextarea.value = '';
-
+                
                 await loadStatistics();
 
             } catch (error) {
@@ -1485,20 +1831,16 @@
             }
         });
 
-        // ==================== MEUS DADOS - CARREGAR E SALVAR ====================
-
-        // Carregar dados da igreja nos formulários
+        // Load Partner Data
         const loadPartnerData = () => {
             if (!currentPartner) return;
 
-            // Dados da Igreja
             editNomeIgreja.value = currentPartner.nome_igreja || '';
             editResponsavelIgreja.value = currentPartner.responsavel_igreja || '';
             document.getElementById('editEmail').value = currentPartner.email || '';
             document.getElementById('editTelefone').value = currentPartner.telefone || '';
-            editCNPJ.value = currentPartner.cpf_cnpj || ''; // Using cpf_cnpj for CNPJ
+            editCNPJ.value = currentPartner.cpf_cnpj || '';
 
-            // Endereço
             document.getElementById('editCEP').value = currentPartner.cep || '';
             document.getElementById('editEndereco').value = currentPartner.endereco || '';
             document.getElementById('editNumero').value = currentPartner.numero || '';
@@ -1507,7 +1849,6 @@
             document.getElementById('editCidade').value = currentPartner.cidade || '';
             document.getElementById('editEstado').value = currentPartner.estado || '';
 
-            // Dados Bancários
             document.getElementById('editBanco').value = currentPartner.banco || '';
             document.getElementById('editAgencia').value = currentPartner.agencia || '';
             document.getElementById('editConta').value = currentPartner.conta || '';
@@ -1516,7 +1857,7 @@
             document.getElementById('editPixChave').value = currentPartner.pix_chave || '';
         };
 
-        // Salvar Dados da Igreja
+        // Save Personal Data
         document.getElementById('personalDataForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1525,12 +1866,12 @@
             const email = document.getElementById('editEmail').value.trim();
             const telefone = document.getElementById('editTelefone').value.trim();
             const cnpj = editCNPJ.value.trim();
-
             const saveButton = document.getElementById('savePersonalDataButton');
             const message = document.getElementById('personalDataMessage');
 
             message.classList.add('hidden');
 
+            if (!nomeIgreja || !responsavelIgreja || !email || !cnpj) {
                 message.textContent = 'Nome da Igreja, Responsável, Email e CNPJ são obrigatórios.';
                 message.classList.remove('hidden', 'alert-success');
                 message.classList.add('alert-error');
@@ -1548,14 +1889,13 @@
                         responsavel_igreja: responsavelIgreja,
                         email: email,
                         telefone: telefone,
-                        cpf_cnpj: cnpj, // Using cpf_cnpj for CNPJ
+                        cpf_cnpj: cnpj,
                         updated_at: new Date().toISOString()
                     })
                     .eq('id', currentPartner.id);
 
                 if (error) throw error;
 
-                // Atualizar dados locais
                 currentPartner.nome_igreja = nomeIgreja;
                 currentPartner.responsavel_igreja = responsavelIgreja;
                 currentPartner.email = email;
@@ -1563,7 +1903,6 @@
                 currentPartner.cpf_cnpj = cnpj;
                 localStorage.setItem('partner', JSON.stringify(currentPartner));
 
-                // Atualizar nome na interface
                 welcomePartnerName.textContent = nomeIgreja;
                 partnerNameSidebar.textContent = nomeIgreja;
 
@@ -1582,7 +1921,7 @@
             }
         });
 
-        // Salvar Endereço
+        // Save Address
         document.getElementById('addressForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1593,11 +1932,11 @@
             const bairro = document.getElementById('editBairro').value.trim();
             const cidade = document.getElementById('editCidade').value.trim();
             const estado = document.getElementById('editEstado').value;
-
             const saveButton = document.getElementById('saveAddressButton');
             const message = document.getElementById('addressMessage');
 
             message.classList.add('hidden');
+
             saveButton.disabled = true;
             saveButton.textContent = '💾 Salvando...';
 
@@ -1618,7 +1957,6 @@
 
                 if (error) throw error;
 
-                // Atualizar dados locais
                 currentPartner.cep = cep;
                 currentPartner.endereco = endereco;
                 currentPartner.numero = numero;
@@ -1643,7 +1981,7 @@
             }
         });
 
-        // Salvar Dados Bancários
+        // Save Bank Data
         document.getElementById('bankDataForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1653,11 +1991,11 @@
             const tipoConta = document.getElementById('editTipoConta').value;
             const pixTipo = document.getElementById('editPixTipo').value;
             const pixChave = document.getElementById('editPixChave').value.trim();
-
             const saveButton = document.getElementById('saveBankDataButton');
             const message = document.getElementById('bankDataMessage');
 
             message.classList.add('hidden');
+
             saveButton.disabled = true;
             saveButton.textContent = '💾 Salvando...';
 
@@ -1677,7 +2015,6 @@
 
                 if (error) throw error;
 
-                // Atualizar dados locais
                 currentPartner.banco = banco;
                 currentPartner.agencia = agencia;
                 currentPartner.conta = conta;
@@ -1689,7 +2026,6 @@
                 message.textContent = '✅ Dados bancários salvos com sucesso!';
                 message.classList.remove('hidden', 'alert-error');
                 message.classList.add('alert-success');
-
             } catch (error) {
                 console.error('❌ Erro ao salvar dados bancários:', error);
                 message.textContent = `Erro: ${error.message}`;
@@ -1701,20 +2037,18 @@
             }
         });
 
-        // Alterar Senha (apenas para login com Supabase Auth)
+        // Change Password
         document.getElementById('passwordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-
             const changeButton = document.getElementById('changePasswordButton');
             const message = document.getElementById('passwordMessage');
 
             message.classList.add('hidden');
 
-            // Validações
             if (newPassword.length < 6) {
                 message.textContent = 'A nova senha deve ter no mínimo 6 caracteres.';
                 message.classList.remove('hidden', 'alert-success');
@@ -1733,14 +2067,11 @@
             changeButton.textContent = '🔐 Alterando...';
 
             try {
-                // Verificar se há sessão ativa (login com email)
                 const { data: { session } } = await supabase.auth.getSession();
-                
                 if (!session) {
                     throw new Error('Alteração de senha disponível apenas para login com email/senha.');
                 }
 
-                // Tentar fazer login com a senha atual para validar
                 const { error: loginError } = await supabase.auth.signInWithPassword({
                     email: currentPartner.email,
                     password: currentPassword
@@ -1750,7 +2081,6 @@
                     throw new Error('Senha atual incorreta.');
                 }
 
-                // Alterar senha
                 const { error: updateError } = await supabase.auth.updateUser({
                     password: newPassword
                 });
@@ -1761,7 +2091,6 @@
                 message.classList.remove('hidden', 'alert-error');
                 message.classList.add('alert-success');
 
-                // Limpar campos
                 document.getElementById('currentPassword').value = '';
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmPassword').value = '';
@@ -1777,15 +2106,13 @@
             }
         });
 
-        // Busca CEP automaticamente (API ViaCEP)
+        // Busca CEP
         document.getElementById('editCEP').addEventListener('blur', async (e) => {
             const cep = e.target.value.replace(/\D/g, '');
-            
             if (cep.length === 8) {
                 try {
                     const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
                     const data = await response.json();
-                    
                     if (!data.erro) {
                         document.getElementById('editEndereco').value = data.logradouro || '';
                         document.getElementById('editBairro').value = data.bairro || '';
@@ -1825,5 +2152,6 @@
         // Initialize
         checkLogin();
     </script>
+
 </body>
 </html>
