@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obrigado pela Compra! - Biz Mix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .info-box p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+
+        .btn-home {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .social-share {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .social-share h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-whatsapp { background: #25D366; }
+        .btn-facebook { background: #1877F2; }
+        .btn-twitter { background: #1DA1F2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✅</div>
+        <h1>Compra Realizada com Sucesso!</h1>
+        <p class="subtitle">Obrigado por adquirir nosso produto!</p>
+
+        <div class="info-box">
+            <h3>📧 Próximos Passos:</h3>
+            <p><strong>1.</strong> Você receberá um email de confirmação em breve</p>
+            <p><strong>2.</strong> O acesso ao produto será enviado para: <strong id="userEmail">seu@email.com</strong></p>
+            <p><strong>3.</strong> Verifique sua caixa de entrada e spam</p>
+            <p><strong>4.</strong> Qualquer dúvida, entre em contato pelo suporte</p>
+        </div>
+
+        <div class="info-box">
+            <h3>💰 Informações do Pedido:</h3>
+            <p><strong>Número do Pedido:</strong> <span id="orderId">#000000</span></p>
+            <p><strong>Valor Total:</strong> <span id="orderValue">R$ 29,90</span></p>
+            <p><strong>Status:</strong> <span style="color: #28a745;">Pendente de Pagamento</span></p>
+        </div>
+
+        <a href="https://somos.bizmix.com.br" class="btn-home">🏠 Voltar ao Início</a>
+
+        <div class="social-share">
+            <h3>📢 Compartilhe com seus amigos:</h3>
+            <div class="social-buttons">
+                <button class="social-btn btn-whatsapp" onclick="shareWhatsApp()">📱 WhatsApp</button>
+                <button class="social-btn btn-facebook" onclick="shareFacebook()">📘 Facebook</button>
+                <button class="social-btn btn-twitter" onclick="shareTwitter()">🐦 Twitter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Pegar dados da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        const orderId = urlParams.get('orderId');
+        const value = urlParams.get('value');
+
+        if (email) document.getElementById('userEmail').textContent = email;
+        if (orderId) document.getElementById('orderId').textContent = '#' + orderId;
+        if (value) document.getElementById('orderValue').textContent = 'R$ ' + value;
+
+        function shareWhatsApp() {
+            const text = encodeURIComponent('Acabei de adquirir o livro "SOMOS TODOS UM"! 📖 Recomendo! https://somos.bizmix.com.br');
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        function shareFacebook() {
+            window.open('https://www.facebook.com/sharer/sharer.php?u=https://somos.bizmix.com.br', '_blank');
+        }
+
+        function shareTwitter() {
+            const text = encodeURIComponent('Acabei de adquirir o livro "SOMOS TODOS UM"! 📖 Recomendo!');
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=https://somos.bizmix.com.br`, '_blank');
+        }
+    </script>
+</body>
+</html>
