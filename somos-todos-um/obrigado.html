@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obrigado pela Compra! - Biz Mix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -28,6 +29,7 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             text-align: center;
             max-width: 600px;
+            width: 100%;
         }
 
         .success-icon {
@@ -126,11 +128,30 @@
 
         .social-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
         .btn-whatsapp { background: #25D366; }
         .btn-facebook { background: #1877F2; }
         .btn-twitter { background: #1DA1F2; }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .success-icon {
+                font-size: 60px;
+            }
+
+            .social-buttons {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -151,7 +172,7 @@
             <h3>💰 Informações do Pedido:</h3>
             <p><strong>Número do Pedido:</strong> <span id="orderId">#000000</span></p>
             <p><strong>Valor Total:</strong> <span id="orderValue">R$ 29,90</span></p>
-            <p><strong>Status:</strong> <span style="color: #28a745;">Pendente de Pagamento</span></p>
+            <p><strong>Status:</strong> <span style="color: #F59E0B; font-weight: 600;">Aguardando Pagamento</span></p>
         </div>
 
         <a href="https://somos.bizmix.com.br" class="btn-home">🏠 Voltar ao Início</a>
@@ -175,10 +196,10 @@
 
         if (email) document.getElementById('userEmail').textContent = email;
         if (orderId) document.getElementById('orderId').textContent = '#' + orderId;
-        if (value) document.getElementById('orderValue').textContent = 'R$ ' + value;
+        if (value) document.getElementById('orderValue').textContent = 'R$ ' + parseFloat(value).toFixed(2);
 
         function shareWhatsApp() {
-            const text = encodeURIComponent('Acabei de adquirir o livro "SOMOS TODOS UM"! 📖 Recomendo! https://somos.bizmix.com.br');
+            const text = encodeURIComponent('Acabei de adquirir o livro "SOMOS TODOS UM"! 📖 Conteúdo incrível sobre a unidade da humanidade. Recomendo! https://somos.bizmix.com.br');
             window.open(`https://wa.me/?text=${text}`, '_blank');
         }
 
@@ -187,7 +208,7 @@
         }
 
         function shareTwitter() {
-            const text = encodeURIComponent('Acabei de adquirir o livro "SOMOS TODOS UM"! 📖 Recomendo!');
+            const text = encodeURIComponent('Acabei de adquirir o livro "SOMOS TODOS UM"! 📖 Conteúdo transformador!');
             window.open(`https://twitter.com/intent/tweet?text=${text}&url=https://somos.bizmix.com.br`, '_blank');
         }
     </script>
