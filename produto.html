@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Produto - BizMix</title>
+    <meta name="description" id="pageDescription" content="Conheça nossos produtos">
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.95;
+        }
+
+        .hero .price-tag {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 20px 0;
+        }
+
+        .hero .price-original {
+            text-decoration: line-through;
+            opacity: 0.7;
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .btn-hero {
+            display: inline-block;
+            padding: 20px 60px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+            margin-top: 20px;
+        }
+
+        .btn-hero:hover {
+            background: #218838;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(40, 167, 69, 0.5);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            font-weight: 700;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .benefit-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .benefit-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .benefit-text {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 60px 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .guarantee {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .guarantee h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .guarantee p {
+            color: #856404;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .faq-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            background: #e9ecef;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            color: #666;
+            margin-top: 15px;
+            line-height: 1.8;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-text {
+            height: 24px;
+            margin-bottom: 15px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero .price-tag {
+                font-size: 2rem;
+            }
+
+            .btn-hero {
+                padding: 15px 40px;
+                font-size: 1.2rem;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero" id="heroSection">
+        <div class="skeleton skeleton-text" style="width: 60%; margin: 0 auto;"></div>
+        <div class="skeleton skeleton-text" style="width: 80%; margin: 20px auto;"></div>
+        <div class="skeleton skeleton-text" style="width: 40%; margin: 20px auto; height: 60px;"></div>
+    </div>
+
+    <div class="container">
+
+        <div id="errorMessage"></div>
+
+        <div class="section">
+            <h2 class="section-title">✨ Benefícios</h2>
+            <div class="benefits-grid" id="benefitsGrid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-title">Acesso Imediato</div>
+                    <div class="benefit-text">Receba instantaneamente após a confirmação do pagamento</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔒</div>
+                    <div class="benefit-title">100% Seguro</div>
+                    <div class="benefit-text">Pagamento protegido via Mercado Pago</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📱</div>
+                    <div class="benefit-title">Multiplataforma</div>
+                    <div class="benefit-text">Acesse de qualquer dispositivo</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">💬</div>
+                    <div class="benefit-title">Suporte Rápido</div>
+                    <div class="benefit-text">Equipe disponível para ajudar</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>🎯 Pronto para começar?</h2>
+            <p>Junte-se a centenas de pessoas satisfeitas!</p>
+            <a href="#" id="ctaButton" class="btn-hero">🛒 Comprar Agora</a>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">❓ Perguntas Frequentes</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    Como funciona o pagamento? 
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Aceitamos PIX (aprovação instantânea) e cartão de crédito. O pagamento é processado de forma 100% segura pelo Mercado Pago.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Quando recebo o produto? 
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Para produtos digitais, o acesso é liberado imediatamente após a confirmação do pagamento. Você receberá um email com as instruções.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Posso parcelar? 
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Sim! Com cartão de crédito você pode parcelar em até 12x sem juros (sujeito à análise do Mercado Pago).
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Tem garantia? 
+                    <span>▼</span>
+                </div>
+                <div class="faq-answer">
+                    Sim! Você tem 7 dias de garantia incondicional. Se não gostar, devolvemos 100% do seu dinheiro.
+                </div>
+            </div>
+        </div>
+
+        <div class="guarantee">
+            <h3>🛡️ Garantia de 7 Dias</h3>
+            <p>
+                Se por qualquer motivo você não estiver satisfeito com sua compra, devolvemos 100% do seu dinheiro em até 7 dias. 
+                Sem perguntas, sem complicações. Seu investimento está completamente protegido.
+            </p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>&copy; 2026 BizMix. Todos os direitos reservados.</p>
+        <p>Dúvidas? <a href="mailto:contato@bizmix.com.br">contato@bizmix.com.br</a></p>
+    </footer>
+
+    <script>
+        console.log('📄 Página de Produto Universal carregada');
+
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ============================================
+        // OBTER PARÂMETROS DA URL
+        // ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const produtoId = urlParams.get('id');
+        const refCode = urlParams.get('ref');
+
+        if (!produtoId) {
+            showError('❌ Produto não especificado. Use: ?id=PRODUTO_ID');
+        }
+
+        let produtoData = null;
+
+        // ============================================
+        // CARREGAR PRODUTO DO SUPABASE
+        // ============================================
+        async function carregarProduto() {
+            try {
+                console.log('📦 Carregando produto:', produtoId);
+
+                const { data: produto, error } = await supabaseClient
+                    .from('produtos')
+                    .select('*')
+                    .eq('id', produtoId)
+                    .eq('ativo', true)
+                    .single();
+
+                if (error || !produto) {
+                    throw new Error('Produto não encontrado ou inativo');
+                }
+
+                produtoData = produto;
+                console.log('✅ Produto carregado:', produto);
+
+                exibirProduto(produto);
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar produto:', error);
+                showError('❌ Produto não encontrado. Verifique o ID e tente novamente.');
+            }
+        }
+
+        // Exibir produto
+        function exibirProduto(produto) {
+            // Ícone do produto
+            const tipoIcon = produto.tipo === 'digital' ? '📱' : 
+                            produto.tipo === 'fisico' ? '📦' : 
+                            produto.tipo === 'livro' ? '📖' : '⚙️';
+
+            // Preço
+            const precoPromo = produto.preco_promocional || produto.preco;
+            const temDesconto = produto.preco_promocional && produto.preco_promocional < produto.preco;
+
+            // Hero Section
+            let heroHTML = `
+                <h1>${tipoIcon} ${produto.nome}</h1>
+                <p>${produto.descricao || 'Produto de alta qualidade'}</p>
+            `;
+
+            if (temDesconto) {
+                heroHTML += `<span class="price-original">De R$ ${produto.preco.toFixed(2)}</span>`;
+            }
+
+            heroHTML += `
+                <div class="price-tag">R$ ${precoPromo.toFixed(2)}</div>
+            `;
+
+            if (produto.parcelamento_max > 1) {
+                heroHTML += `<p style="font-size: 1.1rem;">ou ${produto.parcelamento_max}x de R$ ${(precoPromo / produto.parcelamento_max).toFixed(2)}</p>`;
+            }
+
+            const checkoutUrl = refCode 
+                ? `/checkout.html?produto=${produtoId}&ref=${refCode}`
+                : `/checkout.html?produto=${produtoId}`;
+
+            heroHTML += `<a href="${checkoutUrl}" class="btn-hero">🛒 Comprar Agora</a>`;
+
+            document.getElementById('heroSection').innerHTML = heroHTML;
+
+            // Atualizar CTA Button
+            document.getElementById('ctaButton').href = checkoutUrl;
+
+            // Atualizar título da página
+            document.getElementById('pageTitle').textContent = `${produto.nome} - BizMix`;
+            document.getElementById('pageDescription').content = produto.descricao || produto.nome;
+        }
+
+        // Mostrar erro
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `<div class="alert alert-error">${message}</div>`;
+            
+            document.getElementById('heroSection').innerHTML = `
+                <h1>😔 Produto Não Encontrado</h1>
+                <p>O produto que você está procurando não está disponível no momento.</p>
+                <a href="/" class="btn-hero">🏠 Voltar ao Início</a>
+            `;
+        }
+
+        // FAQ Toggle
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.faq-item')) {
+                const item = e.target.closest('.faq-item');
+                item.classList.toggle('active');
+            }
+        });
+
+        // Inicializar
+        window.addEventListener('DOMContentLoaded', async function() {
+            console.log('✅ Página de Produto inicializada');
+            console.log('🆔 Produto ID:', produtoId);
+            console.log('🔗 Código de Referência:', refCode || 'Nenhum');
+
+            await carregarProduto();
+        });
+    </script>
+
+</body>
+</html>
