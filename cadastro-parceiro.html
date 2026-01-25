@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Parceiro - BizMix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Config Centralizado -->
+    <script src="/supabase-config.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .benefits {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .benefit {
+            text-align: center;
+        }
+
+        .benefit-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .benefit-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .benefit-text {
+            font-size: 0.9rem;
+            opacity: 0.95;
+        }
+
+        .form-content {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            font-weight: 600;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tipo-parceiro-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tipo-option {
+            position: relative;
+        }
+
+        .tipo-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .tipo-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tipo-option input[type="radio"]:checked + label {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .tipo-option label:hover {
+            border-color: #667eea;
+        }
+
+        .tipo-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .tipo-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .checkbox-group a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .success-message h2 {
+            color: #28a745;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+
+        .success-message p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .codigo-parceiro {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .codigo-parceiro strong {
+            font-size: 1.5rem;
+            color: #28a745;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tipo-parceiro-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Processando cadastro...</h3>
+            <p id="loadingMessage">Aguarde um momento</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>🤝 Seja um Parceiro BizMix</h1>
+            <p>Junte-se a nós e comece a ganhar comissões compartilhando nossos produtos!</p>
+        </div>
+
+        <div class="benefits">
+            <div class="benefit">
+                <div class="benefit-icon">💰</div>
+                <div class="benefit-title">Ganhe Comissões</div>
+                <div class="benefit-text">Receba até 20% por venda</div>
+            </div>
+            <div class="benefit">
+                <div class="benefit-icon">📱</div>
+                <div class="benefit-title">Links Exclusivos</div>
+                <div class="benefit-text">Compartilhe facilmente</div>
+            </div>
+            <div class="benefit">
+                <div class="benefit-icon">📊</div>
+                <div class="benefit-title">Dashboard Completo</div>
+                <div class="benefit-text">Acompanhe suas vendas</div>
+            </div>
+        </div>
+
+        <div class="form-content">
+
+            <div id="alertBox" class="alert"></div>
+
+            <form id="cadastroForm" style="display: block;">
+
+                <div class="section-title">👤 Tipo de Parceiro</div>
+
+                <div class="tipo-parceiro-options">
+                    <div class="tipo-option">
+                        <input type="radio" name="tipo_parceiro" id="tipoFisica" value="pessoa_fisica" checked>
+                        <label for="tipoFisica">
+                            <div class="tipo-icon">👤</div>
+                            <div class="tipo-label">Pessoa Física</div>
+                        </label>
+                    </div>
+
+                    <div class="tipo-option">
+                        <input type="radio" name="tipo_parceiro" id="tipoIgreja" value="igreja">
+                        <label for="tipoIgreja">
+                            <div class="tipo-icon">⛪</div>
+                            <div class="tipo-label">Igreja</div>
+                        </label>
+                    </div>
+
+                    <div class="tipo-option">
+                        <input type="radio" name="tipo_parceiro" id="tipoEmpresa" value="empresa">
+                        <label for="tipoEmpresa">
+                            <div class="tipo-icon">💼</div>
+                            <div class="tipo-label">Empresa</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="section-title">📝 Dados Pessoais</div>
+
+                <div class="form-group">
+                    <label for="nomeCompleto">Nome Completo <span class="required">*</span></label>
+                    <input type="text" id="nomeCompleto" required placeholder="Digite seu nome completo">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">E-mail <span class="required">*</span></label>
+                        <input type="email" id="email" required placeholder="seu@email.com">
+                        <small>📧 Usaremos este e-mail para contato</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefone">Telefone/WhatsApp <span class="required">*</span></label>
+                        <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cpfCnpj">CPF/CNPJ <span class="required">*</span></label>
+                        <input type="text" id="cpfCnpj" required placeholder="000.000.000-00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataNascimento">Data de Nascimento</label>
+                        <input type="date" id="dataNascimento">
+                    </div>
+                </div>
+
+                <!-- CAMPOS ESPECÍFICOS IGREJA -->
+                <div id="camposIgreja" style="display: none;">
+                    <div class="section-title">⛪ Dados da Igreja</div>
+
+                    <div class="form-group">
+                        <label for="nomeIgreja">Nome da Igreja <span class="required">*</span></label>
+                        <input type="text" id="nomeIgreja" placeholder="Nome completo da igreja">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="denominacao">Denominação</label>
+                        <input type="text" id="denominacao" placeholder="Ex: Batista, Presbiteriana, Assembleia de Deus...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cargoIgreja">Seu Cargo na Igreja</label>
+                        <select id="cargoIgreja">
+                            <option value="">Selecione...</option>
+                            <option value="pastor">Pastor</option>
+                            <option value="lider">Líder</option>
+                            <option value="tesoureiro">Tesoureiro</option>
+                            <option value="secretario">Secretário</option>
+                            <option value="membro">Membro</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CAMPOS ESPECÍFICOS EMPRESA -->
+                <div id="camposEmpresa" style="display: none;">
+                    <div class="section-title">💼 Dados da Empresa</div>
+
+                    <div class="form-group">
+                        <label for="nomeEmpresa">Nome da Empresa <span class="required">*</span></label>
+                        <input type="text" id="nomeEmpresa" placeholder="Razão social ou nome fantasia">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="segmento">Segmento de Atuação</label>
+                        <input type="text" id="segmento" placeholder="Ex: Tecnologia, Educação, Varejo...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cargoEmpresa">Seu Cargo</label>
+                        <input type="text" id="cargoEmpresa" placeholder="Ex: Gerente, Diretor, Proprietário...">
+                    </div>
+                </div>
+
+                <div class="section-title">📍 Endereço</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cep">CEP</label>
+                        <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cidade">Cidade</label>
+                        <input type="text" id="cidade" placeholder="Sua cidade">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado">
+                            <option value="">Selecione...</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pais">País</label>
+                        <input type="text" id="pais" value="Brasil" readonly>
+                    </div>
+                </div>
+
+                <div class="section-title">💬 Informações Adicionais</div>
+
+                <div class="form-group">
+                    <label for="comoConheceu">Como conheceu a BizMix?</label>
+                    <select id="comoConheceu">
+                        <option value="">Selecione...</option>
+                        <option value="google">Google/Busca</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="facebook">Facebook</option>
+                        <option value="indicacao">Indicação</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">Observações</label>
+                    <textarea id="observacoes" placeholder="Alguma informação adicional que queira compartilhar..."></textarea>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="termos" required>
+                    <label for="termos">
+                        Aceito os <a href="/termos.html" target="_blank">Termos de Uso</a> e 
+                        <a href="/privacidade.html" target="_blank">Política de Privacidade</a> 
+                        <span class="required">*</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnSubmit">
+                    🚀 Cadastrar como Parceiro
+                </button>
+
+            </form>
+
+            <div id="successMessage" class="success-message">
+                <div class="success-icon">🎉</div>
+                <h2>Cadastro realizado com sucesso!</h2>
+                <p>Seu cadastro foi registrado e está em análise.</p>
+                
+                <div class="codigo-parceiro">
+                    <p style="margin-bottom: 10px;">Seu código de parceiro:</p>
+                    <strong id="codigoParceiro"></strong>
+                </div>
+
+                <p>Você receberá um e-mail com as instruções para acessar seu dashboard e começar a compartilhar seus links!</p>
+                <p><strong>Importante:</strong> Guarde seu código de parceiro em local seguro.</p>
+
+                <button class="btn-submit" onclick="window.location.href='/'">
+                    🏠 Voltar ao Início
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+        <script>
+        console.log('🤝 Cadastro de Parceiro carregado');
+
+        // ============================================
+        // CONFIGURAÇÃO (usando supabase-config.js)
+        // ============================================
+        console.log('✅ Usando configuração centralizada do Supabase');
+
+        // ============================================
+        // CONTROLE DE CAMPOS POR TIPO
+        // ============================================
+        document.querySelectorAll('input[name="tipo_parceiro"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const tipo = this.value;
+                
+                // Esconder todos os campos específicos
+                document.getElementById('camposIgreja').style.display = 'none';
+                document.getElementById('camposEmpresa').style.display = 'none';
+                
+                // Remover required dos campos específicos
+                document.getElementById('nomeIgreja').required = false;
+                document.getElementById('nomeEmpresa').required = false;
+                
+                // Mostrar campos do tipo selecionado
+                if (tipo === 'igreja') {
+                    document.getElementById('camposIgreja').style.display = 'block';
+                    document.getElementById('nomeIgreja').required = true;
+                } else if (tipo === 'empresa') {
+                    document.getElementById('camposEmpresa').style.display = 'block';
+                    document.getElementById('nomeEmpresa').required = true;
+                }
+            });
+        });
+
+        // ============================================
+        // MÁSCARAS
+        // ============================================
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                e.target.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                e.target.value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                e.target.value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            } else {
+                e.target.value = value.replace(/^(\d*)/, '($1');
+            }
+        });
+
+        document.getElementById('cpfCnpj').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length <= 11) {
+                // Máscara CPF
+                if (value.length > 11) value = value.slice(0, 11);
+                
+                if (value.length > 9) {
+                    e.target.value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                } else if (value.length > 6) {
+                    e.target.value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                } else if (value.length > 3) {
+                    e.target.value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
+                } else {
+                    e.target.value = value;
+                }
+            } else {
+                // Máscara CNPJ
+                if (value.length > 14) value = value.slice(0, 14);
+                
+                if (value.length > 12) {
+                    e.target.value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+                } else if (value.length > 8) {
+                    e.target.value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
+                } else if (value.length > 5) {
+                    e.target.value = value.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                } else if (value.length > 2) {
+                    e.target.value = value.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+                } else {
+                    e.target.value = value;
+                }
+            }
+        });
+
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 8) value = value.slice(0, 8);
+            
+            if (value.length > 5) {
+                e.target.value = value.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        // Buscar CEP
+        document.getElementById('cep').addEventListener('blur', async function(e) {
+            const cep = e.target.value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) return;
+            
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await response.json();
+                
+                if (dados.erro) {
+                    showAlert('❌ CEP não encontrado', 'error');
+                    return;
+                }
+                
+                document.getElementById('cidade').value = dados.localidade;
+                document.getElementById('estado').value = dados.uf;
+                
+                showAlert('✅ CEP encontrado!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao buscar CEP:', error);
+            }
+        });
+
+        // ============================================
+        // GERAR CÓDIGO ÚNICO DE PARCEIRO
+        // ============================================
+        function gerarCodigoParceiro() {
+            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let codigo = '';
+            
+            for (let i = 0; i < 8; i++) {
+                codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+            }
+            
+            return codigo;
+        }
+
+        // Verificar se código já existe
+        async function verificarCodigoExiste(codigo) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('parceiros')
+                    .select('codigo_parceiro')
+                    .eq('codigo_parceiro', codigo)
+                    .single();
+                
+                return !!data; // Retorna true se existir
+            } catch (error) {
+                return false; // Se der erro, considera que não existe
+            }
+        }
+
+        // Gerar código único
+        async function gerarCodigoUnico() {
+            let codigo = gerarCodigoParceiro();
+            let existe = await verificarCodigoExiste(codigo);
+            
+            // Se código já existe, gera outro
+            while (existe) {
+                codigo = gerarCodigoParceiro();
+                existe = await verificarCodigoExiste(codigo);
+            }
+            
+            return codigo;
+        }
+
+        // ============================================
+        // SUBMETER FORMULÁRIO
+        // ============================================
+        document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btnSubmit = document.getElementById('btnSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = '⏳ Processando...';
+            
+            showLoading('Gerando seu código de parceiro...');
+            
+            try {
+                // Gerar código único
+                const codigoParceiro = await gerarCodigoUnico();
+                console.log('✅ Código gerado:', codigoParceiro);
+                
+                showLoading('Registrando seus dados...');
+                
+                const tipoParceiro = document.querySelector('input[name="tipo_parceiro"]:checked').value;
+                
+                const dadosParceiro = {
+                    codigo_parceiro: codigoParceiro,
+                    tipo_parceiro: tipoParceiro,
+                    nome_completo: document.getElementById('nomeCompleto').value,
+                    email: document.getElementById('email').value,
+                    telefone: document.getElementById('telefone').value,
+                    cpf_cnpj: document.getElementById('cpfCnpj').value.replace(/\D/g, ''),
+                    data_nascimento: document.getElementById('dataNascimento').value || null,
+                    cep: document.getElementById('cep').value.replace(/\D/g, ''),
+                    cidade: document.getElementById('cidade').value,
+                    estado: document.getElementById('estado').value,
+                    pais: document.getElementById('pais').value,
+                    como_conheceu: document.getElementById('comoConheceu').value,
+                    observacoes: document.getElementById('observacoes').value,
+                    status: 'pendente',
+                    comissao_padrao: 10,
+                    data_cadastro: new Date().toISOString()
+                };
+                
+                // Adicionar campos específicos por tipo
+                if (tipoParceiro === 'igreja') {
+                    dadosParceiro.nome_igreja = document.getElementById('nomeIgreja').value;
+                    dadosParceiro.denominacao = document.getElementById('denominacao').value;
+                    dadosParceiro.cargo_igreja = document.getElementById('cargoIgreja').value;
+                } else if (tipoParceiro === 'empresa') {
+                    dadosParceiro.nome_empresa = document.getElementById('nomeEmpresa').value;
+                    dadosParceiro.segmento = document.getElementById('segmento').value;
+                    dadosParceiro.cargo_empresa = document.getElementById('cargoEmpresa').value;
+                }
+                
+                console.log('📦 Dados do parceiro:', dadosParceiro);
+                
+                // Inserir no Supabase
+                const { data, error } = await supabaseClient
+                    .from('parceiros')
+                    .insert([dadosParceiro])
+                    .select();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                console.log('✅ Parceiro cadastrado:', data);
+                
+                hideLoading();
+                
+                // Mostrar mensagem de sucesso
+                document.getElementById('cadastroForm').style.display = 'none';
+                document.getElementById('successMessage').classList.add('show');
+                document.getElementById('codigoParceiro').textContent = codigoParceiro;
+                
+                // Enviar email de confirmação (opcional - via webhook ou edge function)
+                try {
+                    await fetch(`${SUPABASE_URL}/functions/v1/notificar-whatsapp`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${SUPABASE_KEY}`
+                        },
+                        body: JSON.stringify({
+                            tipo: 'novo_parceiro',
+                            dados: {
+                                nome: dadosParceiro.nome_completo,
+                                tipo_parceiro: tipoParceiro,
+                                email: dadosParceiro.email
+                            }
+                        })
+                    });
+                    console.log('✅ Notificação WhatsApp enviada');
+                } catch (emailError) {
+                    console.warn('⚠️ Erro ao enviar notificação:', emailError);
+                }
+                
+            } catch (error) {
+                console.error('❌ Erro ao cadastrar:', error);
+                hideLoading();
+                showAlert('❌ Erro ao realizar cadastro: ' + error.message, 'error');
+                
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = '🚀 Cadastrar como Parceiro';
+            }
+        });
+
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 5000);
+        }
+
+        function showLoading(message) {
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Formulário de cadastro inicializado');
+        });
+    </script>
+
+</body>
+</html>
