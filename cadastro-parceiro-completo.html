@@ -9,9 +9,6 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Config Centralizado (fallback inline se não carregar) -->
-    <script src="/js/supabase-config.js"></script>
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
@@ -389,6 +386,10 @@
             font-family: 'Courier New', monospace;
         }
 
+        .hidden {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -439,12 +440,11 @@
             </div>
 
             <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 33%;">33%</div>
+                <div class="progress-fill" id="progressFill" style="width: 33%;">Step 1 de 3</div>
             </div>
 
             <div id="alertBox" class="alert"></div>
-
-            <form id="cadastroForm">
+                        <form id="cadastroForm">
 
                 <!-- STEP 1: DADOS PESSOAIS -->
                 <div class="step-content active" data-step="1">
@@ -508,7 +508,7 @@
                     </div>
 
                     <!-- CAMPOS IGREJA -->
-                    <div id="camposIgreja" style="display: none;">
+                    <div id="camposIgreja" class="hidden">
                         <div class="section-title">⛪ Dados da Igreja</div>
 
                         <div class="form-group">
@@ -537,7 +537,7 @@
                     </div>
 
                     <!-- CAMPOS EMPRESA -->
-                    <div id="camposEmpresa" style="display: none;">
+                    <div id="camposEmpresa" class="hidden">
                         <div class="section-title">💼 Dados da Empresa</div>
 
                         <div class="form-group">
@@ -559,12 +559,11 @@
                     </div>
 
                     <!-- VINCULO COM IGREJA (apenas para pessoa física) -->
-                    <div id="vinculoIgreja" style="display: block;">
+                    <div id="vinculoIgreja">
                         <div class="form-group">
                             <label for="igrejaVinculada">É membro de alguma igreja parceira? (Opcional)</label>
                             <select id="igrejaVinculada">
                                 <option value="">Não / Não tenho vínculo</option>
-                                <!-- Preenchido dinamicamente -->
                             </select>
                             <small>Se sua igreja já é parceira, selecione aqui</small>
                         </div>
@@ -626,7 +625,7 @@
                     </div>
 
                     <div class="btn-group">
-                        <button type="button" class="btn btn-primary" onclick="nextStep()">
+                        <button type="button" class="btn btn-primary" id="btnNext1">
                             Próximo ➔
                         </button>
                     </div>
@@ -690,10 +689,10 @@
                     </div>
 
                     <div class="btn-group">
-                        <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                        <button type="button" class="btn btn-secondary" id="btnPrev2">
                             ← Voltar
                         </button>
-                        <button type="button" class="btn btn-primary" onclick="nextStep()">
+                        <button type="button" class="btn btn-primary" id="btnNext2">
                             Próximo ➔
                         </button>
                     </div>
@@ -728,7 +727,7 @@
                     </div>
 
                     <div class="btn-group">
-                        <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                        <button type="button" class="btn btn-secondary" id="btnPrev3">
                             ← Voltar
                         </button>
                         <button type="submit" class="btn btn-success" id="btnSubmit">
@@ -763,49 +762,27 @@
     </div>
         <script>
         // ============================================
-        // CONFIGURAÇÃO INLINE (GARANTIA DE FUNCIONAMENTO) ✅
+        // CONFIGURAÇÃO SUPABASE INLINE ✅
         // ============================================
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
-        // Verificar se Supabase foi carregado
         let supabaseClient;
-        if (typeof supabase === 'undefined') {
-            console.error('❌ Biblioteca Supabase não carregada!');
-            alert('Erro: Biblioteca Supabase não encontrada. Verifique sua conexão com a internet.');
-        } else {
+        if (typeof supabase !== 'undefined') {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('✅ Supabase configurado (inline):', SUPABASE_URL);
+            console.log('✅ Supabase configurado');
+        } else {
+            console.error('❌ Supabase não carregado');
         }
-        
-        console.log('🤝 Cadastro de Parceiro (3 Steps) carregado');
 
         let currentStep = 1;
 
         // ============================================
-        // NAVEGAÇÃO ENTRE STEPS
+        // FUNÇÕES DE NAVEGAÇÃO
         // ============================================
-        function nextStep() {
-            if (!validarStepAtual()) {
-                return;
-            }
-
-            currentStep++;
-            if (currentStep > 3) currentStep = 3;
+        function irParaStep(step) {
+            currentStep = step;
             
-            mostrarStep(currentStep);
-            atualizarProgressBar();
-        }
-
-        function prevStep() {
-            currentStep--;
-            if (currentStep < 1) currentStep = 1;
-            
-            mostrarStep(currentStep);
-            atualizarProgressBar();
-        }
-
-        function mostrarStep(step) {
             // Esconder todos os steps
             document.querySelectorAll('.step-content').forEach(content => {
                 content.classList.remove('active');
@@ -825,24 +802,26 @@
                     stepEl.classList.add('active');
                 }
             });
-        }
 
-        function atualizarProgressBar() {
-            const progress = (currentStep / 3) * 100;
+            // Atualizar progress bar
+            const progress = (step / 3) * 100;
             const progressFill = document.getElementById('progressFill');
             progressFill.style.width = `${progress}%`;
-            progressFill.textContent = Math.round(progress) + '%';
-            console.log('📊 Progress bar atualizada:', progress + '%');
+            progressFill.textContent = `Step ${step} de 3`;
+            
+            console.log('📊 Navegou para Step', step);
         }
 
-        function validarStepAtual() {
-            const stepContent = document.querySelector(`.step-content[data-step="${currentStep}"]`);
-            const requiredInputs = stepContent.querySelectorAll('[required]');
+        function validarCamposObrigatorios(step) {
+            const stepContent = document.querySelector(`.step-content[data-step="${step}"]`);
+            const inputs = stepContent.querySelectorAll('input[required], select[required]');
             
             let valido = true;
-            
-            requiredInputs.forEach(input => {
-                if (!input.value.trim()) {
+            inputs.forEach(input => {
+                // Verificar se o campo está visível (não está em seção hidden)
+                const isVisible = input.offsetParent !== null;
+                
+                if (isVisible && !input.value.trim()) {
                     input.style.borderColor = '#e74c3c';
                     valido = false;
                 } else {
@@ -858,16 +837,48 @@
         }
 
         // ============================================
-        // CONTROLE DE CAMPOS POR TIPO ✅ CORRIGIDO
+        // EVENT LISTENERS DOS BOTÕES
+        // ============================================
+        document.getElementById('btnNext1').addEventListener('click', function() {
+            console.log('🔘 Clicou em Próximo (Step 1)');
+            if (validarCamposObrigatorios(1)) {
+                irParaStep(2);
+            }
+        });
+
+        document.getElementById('btnPrev2').addEventListener('click', function() {
+            console.log('🔘 Clicou em Voltar (Step 2)');
+            irParaStep(1);
+        });
+
+        document.getElementById('btnNext2').addEventListener('click', function() {
+            console.log('🔘 Clicou em Próximo (Step 2)');
+            if (validarCamposObrigatorios(2)) {
+                irParaStep(3);
+            }
+        });
+
+        document.getElementById('btnPrev3').addEventListener('click', function() {
+            console.log('🔘 Clicou em Voltar (Step 3)');
+            irParaStep(2);
+        });
+
+        // ============================================
+        // CONTROLE DE TIPO DE PARCEIRO ✅ CORRIGIDO
         // ============================================
         document.querySelectorAll('input[name="tipo_parceiro"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const tipo = this.value;
+                console.log('👤 Tipo alterado para:', tipo);
+                
+                const camposIgreja = document.getElementById('camposIgreja');
+                const camposEmpresa = document.getElementById('camposEmpresa');
+                const vinculoIgreja = document.getElementById('vinculoIgreja');
                 
                 // Esconder todos
-                document.getElementById('camposIgreja').style.display = 'none';
-                document.getElementById('camposEmpresa').style.display = 'none';
-                document.getElementById('vinculoIgreja').style.display = 'none';
+                camposIgreja.classList.add('hidden');
+                camposEmpresa.classList.add('hidden');
+                vinculoIgreja.classList.add('hidden');
                 
                 // Remover required
                 document.getElementById('nomeIgreja').required = false;
@@ -875,28 +886,26 @@
                 
                 // Mostrar campos do tipo
                 if (tipo === 'igreja') {
-                    document.getElementById('camposIgreja').style.display = 'block';
+                    camposIgreja.classList.remove('hidden');
                     document.getElementById('nomeIgreja').required = true;
-                    document.getElementById('vinculoIgreja').style.display = 'none'; // ✅ ESCONDER
+                    console.log('⛪ Campos de igreja exibidos');
                 } else if (tipo === 'empresa') {
-                    document.getElementById('camposEmpresa').style.display = 'block';
+                    camposEmpresa.classList.remove('hidden');
                     document.getElementById('nomeEmpresa').required = true;
-                    document.getElementById('vinculoIgreja').style.display = 'none'; // ✅ ESCONDER
+                    console.log('💼 Campos de empresa exibidos');
                 } else if (tipo === 'pessoa_fisica') {
-                    document.getElementById('vinculoIgreja').style.display = 'block';
+                    vinculoIgreja.classList.remove('hidden');
+                    console.log('👤 Campo de vínculo com igreja exibido');
                 }
             });
         });
 
         // ============================================
-        // CARREGAR IGREJAS PARA SELECT
+        // CARREGAR IGREJAS PARCEIRAS
         // ============================================
         async function carregarIgrejas() {
             try {
-                if (!supabaseClient) {
-                    console.warn('⚠️ Supabase não inicializado, pulando carregamento de igrejas');
-                    return;
-                }
+                if (!supabaseClient) return;
 
                 const { data: igrejas, error } = await supabaseClient
                     .from('parceiros')
@@ -917,8 +926,6 @@
                         select.appendChild(option);
                     });
                     console.log('✅ Igrejas carregadas:', igrejas.length);
-                } else {
-                    console.log('ℹ️ Nenhuma igreja parceira encontrada');
                 }
 
             } catch (error) {
@@ -927,7 +934,7 @@
         }
 
         // ============================================
-        // MÁSCARAS
+        // MÁSCARAS DE ENTRADA
         // ============================================
         document.getElementById('telefone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
@@ -989,15 +996,21 @@
             }
         });
 
-        // Buscar CEP
+        // ============================================
+        // BUSCAR CEP ✅ CORRIGIDO
+        // ============================================
         document.getElementById('cep').addEventListener('blur', async function(e) {
             const cep = e.target.value.replace(/\D/g, '');
             
             if (cep.length !== 8) return;
             
+            console.log('🔍 Buscando CEP:', cep);
+            
             try {
                 const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
                 const dados = await response.json();
+                
+                console.log('📦 Resposta ViaCEP:', dados);
                 
                 if (dados.erro) {
                     showAlert('❌ CEP não encontrado', 'error');
@@ -1008,9 +1021,11 @@
                 document.getElementById('estado').value = dados.uf;
                 
                 showAlert('✅ CEP encontrado!', 'success');
+                console.log('✅ Endereço preenchido:', dados.localidade, dados.uf);
                 
             } catch (error) {
                 console.error('❌ Erro ao buscar CEP:', error);
+                showAlert('❌ Erro ao buscar CEP', 'error');
             }
         });
 
@@ -1019,8 +1034,8 @@
         // ============================================
         document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            console.log('📝 Submetendo formulário');
 
-            // Validar senhas
             const senha = document.getElementById('senha').value;
             const senhaConfirm = document.getElementById('senhaConfirm').value;
 
@@ -1054,20 +1069,15 @@
                     cidade: document.getElementById('cidade').value,
                     estado: document.getElementById('estado').value,
                     pais: document.getElementById('pais').value,
-                    
-                    // Dados bancários
                     banco: document.getElementById('banco').value,
                     agencia: document.getElementById('agencia').value,
                     conta: document.getElementById('conta').value,
                     tipo_conta: document.getElementById('tipoConta').value,
                     pix_tipo: document.getElementById('pixTipo').value || null,
                     pix_chave: document.getElementById('pixChave').value || null,
-                    
-                    // Senha
                     senha: senha
                 };
                 
-                // Campos específicos por tipo
                 if (tipoParceiro === 'igreja') {
                     dadosParceiro.nome_igreja = document.getElementById('nomeIgreja').value;
                     dadosParceiro.denominacao = document.getElementById('denominacao').value;
@@ -1083,9 +1093,8 @@
                     }
                 }
                 
-                console.log('📦 Dados do parceiro:', dadosParceiro);
+                console.log('📦 Enviando dados:', dadosParceiro);
                 
-                // Chamar Edge Function
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/registrar-parceiro`, {
                     method: 'POST',
                     headers: {
@@ -1105,7 +1114,6 @@
                 
                 hideLoading();
                 
-                // Mostrar sucesso
                 document.getElementById('cadastroForm').style.display = 'none';
                 document.querySelector('.steps-indicator').style.display = 'none';
                 document.querySelector('.progress-bar').style.display = 'none';
@@ -1147,15 +1155,10 @@
         // ============================================
         // INICIALIZAR
         // ============================================
-        window.addEventListener('DOMContentLoaded', async function() {
-            console.log('✅ Formulário de cadastro inicializado');
-            
-            // Carregar igrejas para select
-            await carregarIgrejas();
-            
-            // Inicializar no step 1
-            mostrarStep(1);
-            atualizarProgressBar();
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Formulário inicializado');
+            carregarIgrejas();
+            irParaStep(1);
         });
     </script>
 
