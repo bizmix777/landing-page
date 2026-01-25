@@ -9,8 +9,8 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Config Centralizado -->
-    <script src="/supabase-config.js"></script>
+    <!-- Config Centralizado (fallback inline se não carregar) -->
+    <script src="/js/supabase-config.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -54,16 +54,23 @@
 
         .progress-bar {
             background: #f0f0f0;
-            height: 8px;
+            height: 15px;
             border-radius: 10px;
             overflow: hidden;
             margin: 20px 0;
+            border: 2px solid #e0e0e0;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .steps-indicator {
@@ -432,7 +439,7 @@
             </div>
 
             <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 33%;"></div>
+                <div class="progress-fill" id="progressFill" style="width: 33%;">33%</div>
             </div>
 
             <div id="alertBox" class="alert"></div>
@@ -584,8 +591,31 @@
                                 <option value="">Selecione...</option>
                                 <option value="AC">Acre</option>
                                 <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
                                 <option value="SP">São Paulo</option>
-                                <!-- ... outros estados ... -->
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
                             </select>
                         </div>
 
@@ -731,13 +761,24 @@
         </div>
 
     </div>
-      <script>
+        <script>
+        // ============================================
+        // CONFIGURAÇÃO INLINE (GARANTIA DE FUNCIONAMENTO) ✅
+        // ============================================
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        // Verificar se Supabase foi carregado
+        let supabaseClient;
+        if (typeof supabase === 'undefined') {
+            console.error('❌ Biblioteca Supabase não carregada!');
+            alert('Erro: Biblioteca Supabase não encontrada. Verifique sua conexão com a internet.');
+        } else {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('✅ Supabase configurado (inline):', SUPABASE_URL);
+        }
+        
         console.log('🤝 Cadastro de Parceiro (3 Steps) carregado');
-
-        // ============================================
-        // CONFIGURAÇÃO (usando supabase-config.js)
-        // ============================================
-        console.log('✅ Usando configuração centralizada do Supabase');
 
         let currentStep = 1;
 
@@ -788,7 +829,10 @@
 
         function atualizarProgressBar() {
             const progress = (currentStep / 3) * 100;
-            document.getElementById('progressFill').style.width = `${progress}%`;
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = `${progress}%`;
+            progressFill.textContent = Math.round(progress) + '%';
+            console.log('📊 Progress bar atualizada:', progress + '%');
         }
 
         function validarStepAtual() {
@@ -814,7 +858,7 @@
         }
 
         // ============================================
-        // CONTROLE DE CAMPOS POR TIPO
+        // CONTROLE DE CAMPOS POR TIPO ✅ CORRIGIDO
         // ============================================
         document.querySelectorAll('input[name="tipo_parceiro"]').forEach(radio => {
             radio.addEventListener('change', function() {
@@ -833,9 +877,11 @@
                 if (tipo === 'igreja') {
                     document.getElementById('camposIgreja').style.display = 'block';
                     document.getElementById('nomeIgreja').required = true;
+                    document.getElementById('vinculoIgreja').style.display = 'none'; // ✅ ESCONDER
                 } else if (tipo === 'empresa') {
                     document.getElementById('camposEmpresa').style.display = 'block';
                     document.getElementById('nomeEmpresa').required = true;
+                    document.getElementById('vinculoIgreja').style.display = 'none'; // ✅ ESCONDER
                 } else if (tipo === 'pessoa_fisica') {
                     document.getElementById('vinculoIgreja').style.display = 'block';
                 }
@@ -847,21 +893,33 @@
         // ============================================
         async function carregarIgrejas() {
             try {
+                if (!supabaseClient) {
+                    console.warn('⚠️ Supabase não inicializado, pulando carregamento de igrejas');
+                    return;
+                }
+
                 const { data: igrejas, error } = await supabaseClient
-                    .rpc('buscar_igrejas_ativas');
+                    .from('parceiros')
+                    .select('id, nome_igreja, cidade, estado')
+                    .eq('tipo_parceiro', 'igreja')
+                    .eq('status', 'ativo')
+                    .order('nome_igreja');
 
                 if (error) throw error;
 
                 const select = document.getElementById('igrejaVinculada');
                 
-                igrejas.forEach(igreja => {
-                    const option = document.createElement('option');
-                    option.value = igreja.id;
-                    option.textContent = `${igreja.nome_igreja} - ${igreja.cidade}/${igreja.estado}`;
-                    select.appendChild(option);
-                });
-
-                console.log('✅ Igrejas carregadas:', igrejas.length);
+                if (igrejas && igrejas.length > 0) {
+                    igrejas.forEach(igreja => {
+                        const option = document.createElement('option');
+                        option.value = igreja.id;
+                        option.textContent = `${igreja.nome_igreja} - ${igreja.cidade}/${igreja.estado}`;
+                        select.appendChild(option);
+                    });
+                    console.log('✅ Igrejas carregadas:', igrejas.length);
+                } else {
+                    console.log('ℹ️ Nenhuma igreja parceira encontrada');
+                }
 
             } catch (error) {
                 console.error('❌ Erro ao carregar igrejas:', error);
@@ -1103,4 +1161,3 @@
 
 </body>
 </html>
-    
