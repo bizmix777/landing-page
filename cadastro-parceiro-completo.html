@@ -6,8 +6,8 @@
     <title>Cadastro de Parceiro - BizMix</title>
     <link rel="icon" href="https://bizmix.com.br/favicon.ico">
     
-    <!-- Supabase v1 (mais compatível) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.35.7/dist/umd/supabase.min.js"></script>
+    <!-- Config Centralizado (SEM biblioteca Supabase) ✅ -->
+    <script src="/js/supabase-config.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -761,14 +761,7 @@
 
     </div>
         <script>
-                
-        let supabaseClient;
-        if (typeof supabase !== 'undefined') {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('✅ Supabase configurado');
-        } else {
-            console.error('❌ Supabase não carregado');
-        }
+        console.log('🤝 Cadastro de Parceiro carregado');
 
         let currentStep = 1;
 
@@ -813,7 +806,7 @@
             
             let valido = true;
             inputs.forEach(input => {
-                // Verificar se o campo está visível (não está em seção hidden)
+                // Verificar se o campo está visível
                 const isVisible = input.offsetParent !== null;
                 
                 if (isVisible && !input.value.trim()) {
@@ -859,7 +852,7 @@
         });
 
         // ============================================
-        // CONTROLE DE TIPO DE PARCEIRO ✅ CORRIGIDO
+        // CONTROLE DE TIPO DE PARCEIRO
         // ============================================
         document.querySelectorAll('input[name="tipo_parceiro"]').forEach(radio => {
             radio.addEventListener('change', function() {
@@ -896,21 +889,25 @@
         });
 
         // ============================================
-        // CARREGAR IGREJAS PARCEIRAS
+        // CARREGAR IGREJAS PARCEIRAS (usando supabase-config.js)
         // ============================================
         async function carregarIgrejas() {
             try {
-                if (!supabaseClient) return;
+                console.log('🔍 Carregando igrejas parceiras...');
 
-                const { data: igrejas, error } = await supabaseClient
-                    .from('parceiros')
-                    .select('id, nome_igreja, cidade, estado')
-                    .eq('tipo_parceiro', 'igreja')
-                    .eq('status', 'ativo')
-                    .order('nome_igreja');
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/parceiros?tipo_parceiro=eq.igreja&status=eq.ativo&select=id,nome_igreja,cidade,estado&order=nome_igreja`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
 
-                if (error) throw error;
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar igrejas');
+                }
 
+                const igrejas = await response.json();
                 const select = document.getElementById('igrejaVinculada');
                 
                 if (igrejas && igrejas.length > 0) {
@@ -992,7 +989,7 @@
         });
 
         // ============================================
-        // BUSCAR CEP ✅ CORRIGIDO
+        // BUSCAR CEP
         // ============================================
         document.getElementById('cep').addEventListener('blur', async function(e) {
             const cep = e.target.value.replace(/\D/g, '');
@@ -1025,7 +1022,7 @@
         });
 
         // ============================================
-        // SUBMETER FORMULÁRIO
+        // SUBMETER FORMULÁRIO (usando supabase-config.js)
         // ============================================
         document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -1090,6 +1087,7 @@
                 
                 console.log('📦 Enviando dados:', dadosParceiro);
                 
+                // USANDO AS CONSTANTES DO supabase-config.js ✅
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/registrar-parceiro`, {
                     method: 'POST',
                     headers: {
@@ -1099,7 +1097,10 @@
                     body: JSON.stringify(dadosParceiro)
                 });
                 
+                console.log('📡 Status da resposta:', response.status);
+                
                 const result = await response.json();
+                console.log('📦 Resultado:', result);
                 
                 if (!result.success) {
                     throw new Error(result.error || 'Erro ao registrar parceiro');
@@ -1116,7 +1117,7 @@
                 document.getElementById('codigoParceiro').textContent = result.codigo_parceiro;
                 
             } catch (error) {
-                console.error('❌ Erro ao cadastrar:', error);
+                console.error('❌ Erro completo:', error);
                 hideLoading();
                 showAlert('❌ Erro ao realizar cadastro: ' + error.message, 'error');
                 
