@@ -890,7 +890,165 @@
                 console.error('❌ Erro ao registrar clique:', error);
             }
         }
+        // ============================================
+        // SISTEMA DE CUPONS
+        // ============================================
+let cupomAtivo = null;
 
+async function aplicarCupom() {
+    const codigo = document.getElementById('cupomCodigo').value.trim();
+    const feedback = document.getElementById('cupomFeedback');
+    const btnAplicar = document.getElementById('btnAplicarCupom');
+    
+    if (!codigo) {
+        mostrarFeedbackCupom('Digite um código de cupom', 'error');
+        return;
+    }
+    
+    if (!produtoData) {
+        mostrarFeedbackCupom('Carregue o produto primeiro', 'error');
+        return;
+    }
+    
+    btnAplicar.disabled = true;
+    btnAplicar.textContent = 'Validando...';
+    
+    try {
+        const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+        const valorCompra = quantidade * (produtoData.preco_promocional || produtoData.preco);
+        
+        console.log('🎟️ Validando cupom:', codigo);
+        console.log('💰 Valor da compra:', valorCompra);
+        
+        const response = await fetch(`${SUPABASE_URL}/functions/v1/validar-cupom`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            },
+            body: JSON.stringify({
+                codigo: codigo,
+                valor_compra: valorCompra,
+                email: document.getElementById('email').value || ''
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (!result.valido) {
+            throw new Error(result.erro || 'Cupom inválido');
+        }
+        
+        // Cupom válido!
+        cupomAtivo = result;
+        
+        console.log('✅ Cupom aplicado:', result);
+        
+        // Mostrar cupom aplicado
+        document.getElementById('cupomAplicado').style.display = 'block';
+        document.getElementById('cupomDescricao').innerHTML = `
+            <strong>${result.codigo}</strong> - ${result.descricao}<br>
+            Desconto: R$ ${result.valor_desconto.toFixed(2)}
+        `;
+        
+        // Esconder input
+        document.getElementById('cupomCodigo').value = '';
+        document.querySelector('.coupon-section > div:first-child').style.display = 'none';
+        
+        // Atualizar totais
+        calcularTotal();
+        
+        mostrarFeedbackCupom('✅ Cupom aplicado com sucesso!', 'success');
+        
+    } catch (error) {
+        console.error('❌ Erro ao aplicar cupom:', error);
+        mostrarFeedbackCupom('❌ ' + error.message, 'error');
+        cupomAtivo = null;
+    } finally {
+        btnAplicar.disabled = false;
+        btnAplicar.textContent = 'Aplicar';
+    }
+}
+
+function removerCupom() {
+    cupomAtivo = null;
+    document.getElementById('cupomAplicado').style.display = 'none';
+    document.querySelector('.coupon-section > div:first-child').style.display = 'flex';
+    calcularTotal();
+    mostrarFeedbackCupom('Cupom removido', 'info');
+}
+
+function mostrarFeedbackCupom(mensagem, tipo) {
+    const feedback = document.getElementById('cupomFeedback');
+    
+    const cores = {
+        'success': { bg: '#d4edda', color: '#155724', border: '#c3e6cb' },
+        'error': { bg: '#f8d7da', color: '#721c24', border: '#f5c6cb' },
+        'info': { bg: '#d1ecf1', color: '#0c5460', border: '#bee5eb' }
+    };
+    
+    const estilo = cores[tipo] || cores.info;
+    
+    feedback.style.background = estilo.bg;
+    feedback.style.color = estilo.color;
+    feedback.style.border = `1px solid ${estilo.border}`;
+    feedback.textContent = mensagem;
+    feedback.style.display = 'block';
+    
+    setTimeout(() => {
+        feedback.style.display = 'none';
+    }, 4000);
+}
+
+// Atualizar função calcularTotal() existente para incluir cupom
+function calcularTotal() {
+    if (!produtoData) return;
+
+    const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+    const precoUnitario = produtoData.preco_promocional || produtoData.preco;
+    let total = quantidade * precoUnitario;
+    const totalSemDesconto = total;
+
+    document.getElementById('displayPrecoUnitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
+    document.getElementById('displayQtdTotal').textContent = quantidade;
+    document.getElementById('displayQtd').textContent = quantidade;
+
+    // Aplicar cupom se existir
+    let descontoCupom = 0;
+    if (cupomAtivo && cupomAtivo.valido) {
+        descontoCupom = cupomAtivo.valor_desconto;
+        total = total - descontoCupom;
+        
+        // Garantir que total não seja negativo
+        if (total < 0) total = 0;
+    }
+
+    // Atualizar display
+    const resumoDiv = document.querySelector('.total-section');
+    
+    // Adicionar linha de desconto se cupom ativo
+    let rowDesconto = document.getElementById('rowDesconto');
+    if (cupomAtivo && cupomAtivo.valido) {
+        if (!rowDesconto) {
+            rowDesconto = document.createElement('div');
+            rowDesconto.id = 'rowDesconto';
+            rowDesconto.className = 'total-row';
+            rowDesconto.style.color = '#28a745';
+            resumoDiv.insertBefore(rowDesconto, document.querySelector('.total-row.final'));
+        }
+        rowDesconto.innerHTML = `
+            <span>Desconto (${cupomAtivo.codigo}):</span>
+            <span>- R$ ${descontoCupom.toFixed(2)}</span>
+        `;
+        rowDesconto.style.display = 'flex';
+    } else if (rowDesconto) {
+        rowDesconto.style.display = 'none';
+    }
+
+    document.getElementById('totalValue').textContent = `R$ ${total.toFixed(2)}`;
+
+    calcularComissao(total);
+}
         // Mostrar mensagem de referência
         function mostrarMensagemReferencia() {
             if (!comissaoInfo.temComissao) return;
