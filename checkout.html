@@ -451,6 +451,107 @@
             100% { transform: rotate(360deg); }
         }
 
+        .coupon-section {
+            margin-bottom: 30px;
+        }
+
+        .coupon-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .coupon-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .coupon-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-coupon {
+            padding: 12px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-coupon:hover {
+            background: #764ba2;
+        }
+
+        .btn-coupon:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .coupon-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .coupon-feedback.show {
+            display: block;
+        }
+
+        .coupon-applied {
+            display: none;
+            margin-top: 15px;
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .coupon-applied.show {
+            display: block;
+        }
+
+        .coupon-applied-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coupon-applied-info {
+            color: #155724;
+        }
+
+        .coupon-applied-info strong {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .coupon-applied-info small {
+            font-size: 0.9rem;
+        }
+
+        .btn-remove-coupon {
+            background: transparent;
+            border: none;
+            color: #155724;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+        }
+
+        .btn-remove-coupon:hover {
+            color: #0c3d18;
+        }
+
         @media (max-width: 768px) {
             .product-card {
                 flex-direction: column;
@@ -468,6 +569,10 @@
             .security-badges {
                 flex-direction: column;
                 gap: 10px;
+            }
+
+            .coupon-input-group {
+                flex-direction: column;
             }
         }
     </style>
@@ -600,6 +705,44 @@
                     </div>
                 </div>
 
+                <div class="section-title">🎟️ Cupom de Desconto</div>
+
+                <div class="coupon-section">
+                    <div class="coupon-input-group" id="couponInputGroup">
+                        <input 
+                            type="text" 
+                            id="cupomCodigo" 
+                            class="coupon-input"
+                            placeholder="Digite o código do cupom"
+                        >
+                        <button 
+                            type="button" 
+                            id="btnAplicarCupom"
+                            class="btn-coupon"
+                        >
+                            Aplicar
+                        </button>
+                    </div>
+                    
+                    <div id="cupomFeedback" class="coupon-feedback"></div>
+                    
+                    <div id="cupomAplicado" class="coupon-applied">
+                        <div class="coupon-applied-header">
+                            <div class="coupon-applied-info">
+                                <strong>🎉 Cupom aplicado!</strong>
+                                <small id="cupomDescricao"></small>
+                            </div>
+                            <button 
+                                type="button"
+                                id="btnRemoverCupom"
+                                class="btn-remove-coupon"
+                            >
+                                ✖
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="section-title">📝 Resumo do Pedido</div>
 
                 <div class="total-section">
@@ -611,6 +754,10 @@
                         <span>Quantidade:</span>
                         <span id="displayQtdTotal">1</span>
                     </div>
+                    <div class="total-row" id="rowDesconto" style="display: none; color: #28a745;">
+                        <span>Desconto (<span id="displayCodigoCupom"></span>):</span>
+                        <span id="displayDescontoCupom">- R$ 0,00</span>
+                    </div>
                     <div class="total-row" id="rowComissao" style="display: none; color: #667eea;">
                         <span>Comissão para <span id="nomeParceiroResumo"></span>:</span>
                         <span id="displayComissao">R$ 0,00</span>
@@ -620,45 +767,7 @@
                         <span id="totalValue">R$ 0,00</span>
                     </div>
                 </div>
-                <!-- SEÇÃO DE CUPOM DE DESCONTO -->
-<div class="section-title">🎟️ Cupom de Desconto</div>
 
-<div class="coupon-section" style="margin-bottom: 30px;">
-    <div style="display: flex; gap: 10px;">
-        <input 
-            type="text" 
-            id="cupomCodigo" 
-            placeholder="Digite o código do cupom"
-            style="flex: 1; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1rem; text-transform: uppercase;"
-        >
-        <button 
-            type="button" 
-            id="btnAplicarCupom"
-            style="padding: 12px 25px; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;"
-            onclick="aplicarCupom()"
-        >
-            Aplicar
-        </button>
-    </div>
-    
-    <div id="cupomFeedback" style="margin-top: 10px; padding: 10px; border-radius: 6px; display: none;"></div>
-    
-    <div id="cupomAplicado" style="display: none; margin-top: 15px; background: #d4edda; border-left: 4px solid #28a745; padding: 15px; border-radius: 6px;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <strong style="color: #155724;">🎉 Cupom aplicado!</strong>
-                <div style="color: #155724; font-size: 0.9rem; margin-top: 5px;" id="cupomDescricao"></div>
-            </div>
-            <button 
-                type="button"
-                onclick="removerCupom()"
-                style="background: transparent; border: none; color: #155724; cursor: pointer; font-size: 1.2rem;"
-            >
-                ✖
-            </button>
-        </div>
-    </div>
-</div>
                 <div class="section-title">💳 Forma de Pagamento</div>
 
                 <div class="payment-methods">
@@ -701,679 +810,4 @@
         </div>
 
     </div>
-
-    <script>
-        console.log('🛒 Checkout Universal carregado');
-
-        // ============================================
-        // CONFIGURAÇÃO SUPABASE
-        // ============================================
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // ============================================
-        // CONFIGURAÇÃO MERCADO PAGO
-        // ============================================
-        const MERCADOPAGO_PUBLIC_KEY = 'TEST-3c85afff-0b3a-4907-855c-742b90d6cfce';
-
-        // ============================================
-        // SISTEMA DE DETECÇÃO DE REFERÊNCIA E PRODUTO
-        // ============================================
-        const urlParams = new URLSearchParams(window.location.search);
-        const refCode = urlParams.get('ref');
-        const produtoId = urlParams.get('produto');
-
-        if (!produtoId) {
-            showAlert('❌ Produto não especificado na URL.', 'error');
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 3000);
-        }
-
-        let parceiroData = null;
-        let produtoData = null;
-        let comissaoInfo = {
-            temComissao: false,
-            parceiro_id: null,
-            codigo_referencia: null,
-            valor_comissao: 0,
-            percentual_comissao: 0,
-            tipo_parceiro: null,
-            nome_parceiro: null
-        };
-
-        let selectedPaymentMethod = 'pix';
-
-        // ============================================
-        // CARREGAR PRODUTO DO SUPABASE
-        // ============================================
-        async function carregarProduto() {
-            try {
-                console.log('📦 Carregando produto:', produtoId);
-
-                const { data: produto, error } = await supabaseClient
-                    .from('produtos')
-                    .select('*')
-                    .eq('id', produtoId)
-                    .single();
-
-                if (error || !produto) {
-                    throw new Error('Produto não encontrado');
-                }
-
-                produtoData = produto;
-                console.log('✅ Produto carregado:', produto);
-
-                exibirProduto(produto);
-                calcularTotal();
-
-            } catch (error) {
-                console.error('❌ Erro ao carregar produto:', error);
-                showAlert('❌ Produto não encontrado.', 'error');
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 3000);
-            }
-        }
-
-        // Exibir produto
-        function exibirProduto(produto) {
-            const tipoIcon = produto.tipo === 'digital' ? '📱' : 
-                            produto.tipo === 'fisico' ? '📦' : 
-                            produto.tipo === 'livro' ? '📖' : '⚙️';
-
-            const tipoLabel = produto.tipo === 'digital' ? 'Digital' : 
-                             produto.tipo === 'fisico' ? 'Físico' : 
-                             produto.tipo === 'livro' ? 'Livro' : 'Serviço';
-
-            const precoPromo = produto.preco_promocional || produto.preco;
-            const temDesconto = produto.preco_promocional && produto.preco_promocional < produto.preco;
-
-            const imagemSrc = produto.imagem_url || '';
-            const imagemHtml = imagemSrc ? 
-                `<img src="${imagemSrc}" alt="${produto.nome}">` : 
-                `<span style="font-size: 60px;">${tipoIcon}</span>`;
-
-            document.getElementById('productCard').innerHTML = `
-                <div class="product-image">
-                    ${imagemHtml}
-                </div>
-                <div class="product-info">
-                    <span class="product-type">${tipoIcon} ${tipoLabel}</span>
-                    <div class="product-name">${produto.nome}</div>
-                    ${produto.descricao ? `<div class="product-description">${produto.descricao}</div>` : ''}
-                    <div class="product-price">
-                        ${temDesconto ? `<span class="price-original">De R$ ${produto.preco.toFixed(2)}</span>` : ''}
-                        <span class="price-current">R$ ${precoPromo.toFixed(2)}</span>
-                    </div>
-                    ${produto.parcelamento_max > 1 ? `<div style="color: #666; font-size: 0.85rem; margin-top: 5px;">ou ${produto.parcelamento_max}x de R$ ${(precoPromo / produto.parcelamento_max).toFixed(2)}</div>` : ''}
-                </div>
-            `;
-
-            // Mostrar endereço se produto físico
-            if (produto.tipo === 'fisico') {
-                document.getElementById('addressSection').style.display = 'block';
-            }
-        }
-
-        // Buscar parceiro por código de referência
-        async function buscarParceiroPorReferencia() {
-            if (!refCode) {
-                console.log('ℹ️ Venda direta (sem comissão)');
-                return;
-            }
-
-            console.log('🔗 Detectado código de referência:', refCode);
-
-            try {
-                const { data: parceiro, error } = await supabaseClient
-                    .from('parceiros')
-                    .select('id, nome_completo, nome_igreja, comissao_padrao, tipo_parceiro, status')
-                    .eq('codigo_parceiro', refCode)
-                    .single();
-
-                if (error || !parceiro) {
-                    console.warn('⚠️ Código de referência inválido:', refCode);
-                    return;
-                }
-
-                if (parceiro.status !== 'ativo') {
-                    console.warn('⚠️ Parceiro não está ativo:', refCode);
-                    return;
-                }
-
-                parceiroData = parceiro;
-                
-                comissaoInfo.temComissao = true;
-                comissaoInfo.parceiro_id = parceiro.id;
-                comissaoInfo.codigo_referencia = refCode;
-                comissaoInfo.percentual_comissao = parceiro.comissao_padrao || 10;
-                comissaoInfo.tipo_parceiro = parceiro.tipo_parceiro;
-                
-                if (parceiro.tipo_parceiro === 'igreja') {
-                    comissaoInfo.nome_parceiro = parceiro.nome_igreja || parceiro.nome_completo;
-                } else {
-                    comissaoInfo.nome_parceiro = parceiro.nome_completo;
-                }
-
-                console.log('✅ Parceiro encontrado:', parceiro);
-                console.log('💰 Comissão configurada:', comissaoInfo);
-
-                mostrarMensagemReferencia();
-                
-                await registrarClique(parceiro.id, refCode);
-
-            } catch (error) {
-                console.error('❌ Erro ao buscar parceiro:', error);
-            }
-        }
-
-        // Registrar clique no link
-        async function registrarClique(parceiroId, codigoRef) {
-            try {
-                const { error } = await supabaseClient
-                    .from('link_clicks')
-                    .insert([{
-                        parceiro_id: parceiroId,
-                        codigo_referencia: codigoRef,
-                        user_agent: navigator.userAgent,
-                        referer: document.referrer || 'direct'
-                    }]);
-                
-                if (!error) {
-                    console.log('✅ Clique registrado com sucesso!');
-                }
-            } catch (error) {
-                console.error('❌ Erro ao registrar clique:', error);
-            }
-        }
-        // ============================================
-        // SISTEMA DE CUPONS
-        // ============================================
-let cupomAtivo = null;
-
-async function aplicarCupom() {
-    const codigo = document.getElementById('cupomCodigo').value.trim();
-    const feedback = document.getElementById('cupomFeedback');
-    const btnAplicar = document.getElementById('btnAplicarCupom');
     
-    if (!codigo) {
-        mostrarFeedbackCupom('Digite um código de cupom', 'error');
-        return;
-    }
-    
-    if (!produtoData) {
-        mostrarFeedbackCupom('Carregue o produto primeiro', 'error');
-        return;
-    }
-    
-    btnAplicar.disabled = true;
-    btnAplicar.textContent = 'Validando...';
-    
-    try {
-        const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-        const valorCompra = quantidade * (produtoData.preco_promocional || produtoData.preco);
-        
-        console.log('🎟️ Validando cupom:', codigo);
-        console.log('💰 Valor da compra:', valorCompra);
-        
-        const response = await fetch(`${SUPABASE_URL}/functions/v1/validar-cupom`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            },
-            body: JSON.stringify({
-                codigo: codigo,
-                valor_compra: valorCompra,
-                email: document.getElementById('email').value || ''
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (!result.valido) {
-            throw new Error(result.erro || 'Cupom inválido');
-        }
-        
-        // Cupom válido!
-        cupomAtivo = result;
-        
-        console.log('✅ Cupom aplicado:', result);
-        
-        // Mostrar cupom aplicado
-        document.getElementById('cupomAplicado').style.display = 'block';
-        document.getElementById('cupomDescricao').innerHTML = `
-            <strong>${result.codigo}</strong> - ${result.descricao}<br>
-            Desconto: R$ ${result.valor_desconto.toFixed(2)}
-        `;
-        
-        // Esconder input
-        document.getElementById('cupomCodigo').value = '';
-        document.querySelector('.coupon-section > div:first-child').style.display = 'none';
-        
-        // Atualizar totais
-        calcularTotal();
-        
-        mostrarFeedbackCupom('✅ Cupom aplicado com sucesso!', 'success');
-        
-    } catch (error) {
-        console.error('❌ Erro ao aplicar cupom:', error);
-        mostrarFeedbackCupom('❌ ' + error.message, 'error');
-        cupomAtivo = null;
-    } finally {
-        btnAplicar.disabled = false;
-        btnAplicar.textContent = 'Aplicar';
-    }
-}
-
-function removerCupom() {
-    cupomAtivo = null;
-    document.getElementById('cupomAplicado').style.display = 'none';
-    document.querySelector('.coupon-section > div:first-child').style.display = 'flex';
-    calcularTotal();
-    mostrarFeedbackCupom('Cupom removido', 'info');
-}
-
-function mostrarFeedbackCupom(mensagem, tipo) {
-    const feedback = document.getElementById('cupomFeedback');
-    
-    const cores = {
-        'success': { bg: '#d4edda', color: '#155724', border: '#c3e6cb' },
-        'error': { bg: '#f8d7da', color: '#721c24', border: '#f5c6cb' },
-        'info': { bg: '#d1ecf1', color: '#0c5460', border: '#bee5eb' }
-    };
-    
-    const estilo = cores[tipo] || cores.info;
-    
-    feedback.style.background = estilo.bg;
-    feedback.style.color = estilo.color;
-    feedback.style.border = `1px solid ${estilo.border}`;
-    feedback.textContent = mensagem;
-    feedback.style.display = 'block';
-    
-    setTimeout(() => {
-        feedback.style.display = 'none';
-    }, 4000);
-}
-
-// Atualizar função calcularTotal() existente para incluir cupom
-function calcularTotal() {
-    if (!produtoData) return;
-
-    const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-    const precoUnitario = produtoData.preco_promocional || produtoData.preco;
-    let total = quantidade * precoUnitario;
-    const totalSemDesconto = total;
-
-    document.getElementById('displayPrecoUnitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
-    document.getElementById('displayQtdTotal').textContent = quantidade;
-    document.getElementById('displayQtd').textContent = quantidade;
-
-    // Aplicar cupom se existir
-    let descontoCupom = 0;
-    if (cupomAtivo && cupomAtivo.valido) {
-        descontoCupom = cupomAtivo.valor_desconto;
-        total = total - descontoCupom;
-        
-        // Garantir que total não seja negativo
-        if (total < 0) total = 0;
-    }
-
-    // Atualizar display
-    const resumoDiv = document.querySelector('.total-section');
-    
-    // Adicionar linha de desconto se cupom ativo
-    let rowDesconto = document.getElementById('rowDesconto');
-    if (cupomAtivo && cupomAtivo.valido) {
-        if (!rowDesconto) {
-            rowDesconto = document.createElement('div');
-            rowDesconto.id = 'rowDesconto';
-            rowDesconto.className = 'total-row';
-            rowDesconto.style.color = '#28a745';
-            resumoDiv.insertBefore(rowDesconto, document.querySelector('.total-row.final'));
-        }
-        rowDesconto.innerHTML = `
-            <span>Desconto (${cupomAtivo.codigo}):</span>
-            <span>- R$ ${descontoCupom.toFixed(2)}</span>
-        `;
-        rowDesconto.style.display = 'flex';
-    } else if (rowDesconto) {
-        rowDesconto.style.display = 'none';
-    }
-
-    document.getElementById('totalValue').textContent = `R$ ${total.toFixed(2)}`;
-
-    calcularComissao(total);
-}
-        // Mostrar mensagem de referência
-        function mostrarMensagemReferencia() {
-            if (!comissaoInfo.temComissao) return;
-
-            const icone = comissaoInfo.tipo_parceiro === 'igreja' ? '⛪' : 
-                          comissaoInfo.tipo_parceiro === 'empresa' ? '💼' : '🤝';
-
-            const alertDiv = document.getElementById('referralAlert');
-            alertDiv.innerHTML = `
-                <div class="referral-alert">
-                    <strong>${icone} Compra via indicação</strong>
-                    <div style="margin: 10px 0;">Você está comprando através de: <strong>${comissaoInfo.nome_parceiro}</strong></div>
-                    <small>Uma comissão de ${comissaoInfo.percentual_comissao}% será repassada.</small>
-                </div>
-            `;
-        }
-
-        // Calcular comissão
-        function calcularComissao(valorTotal) {
-            if (!comissaoInfo.temComissao) {
-                return 0;
-            }
-            
-            const valorComissao = valorTotal * (comissaoInfo.percentual_comissao / 100);
-            comissaoInfo.valor_comissao = valorComissao;
-            
-            console.log(`💰 Comissão calculada: R$ ${valorComissao.toFixed(2)} (${comissaoInfo.percentual_comissao}%)`);
-            
-            document.getElementById('rowComissao').style.display = 'flex';
-            document.getElementById('nomeParceiroResumo').textContent = comissaoInfo.nome_parceiro;
-            document.getElementById('displayComissao').textContent = `R$ ${valorComissao.toFixed(2)}`;
-            
-            return valorComissao;
-        }
-
-        // Calcular total
-        function calcularTotal() {
-            if (!produtoData) return;
-
-            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-            const precoUnitario = produtoData.preco_promocional || produtoData.preco;
-            const total = quantidade * precoUnitario;
-
-            document.getElementById('displayPrecoUnitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
-            document.getElementById('displayQtdTotal').textContent = quantidade;
-            document.getElementById('displayQtd').textContent = quantidade;
-            document.getElementById('totalValue').textContent = `R$ ${total.toFixed(2)}`;
-
-            calcularComissao(total);
-        }
-
-        // Controles de quantidade
-        document.getElementById('btnMinus').addEventListener('click', function() {
-            const input = document.getElementById('quantidade');
-            if (input.value > 1) {
-                input.value = parseInt(input.value) - 1;
-                calcularTotal();
-            }
-        });
-
-        document.getElementById('btnPlus').addEventListener('click', function() {
-            const input = document.getElementById('quantidade');
-            if (input.value < 100) {
-                input.value = parseInt(input.value) + 1;
-                calcularTotal();
-            }
-        });
-
-        // Máscaras
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            
-            if (value.length > 9) {
-                e.target.value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            } else if (value.length > 6) {
-                e.target.value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
-            } else if (value.length > 3) {
-                e.target.value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
-            } else {
-                e.target.value = value;
-            }
-        });
-
-        function mascaraTelefone(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            
-            if (value.length > 10) {
-                input.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-            } else if (value.length > 6) {
-                input.value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-            } else if (value.length > 2) {
-                input.value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-            } else {
-                input.value = value.replace(/^(\d*)/, '($1');
-            }
-        }
-
-        document.getElementById('telefone').addEventListener('input', function(e) {
-            mascaraTelefone(e.target);
-        });
-
-        document.getElementById('whatsapp').addEventListener('input', function(e) {
-            mascaraTelefone(e.target);
-        });
-
-        document.getElementById('cep').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 8) value = value.slice(0, 8);
-            
-            if (value.length > 5) {
-                e.target.value = value.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
-            } else {
-                e.target.value = value;
-            }
-        });
-
-        // Buscar CEP
-        document.getElementById('cep').addEventListener('blur', async function(e) {
-            const cep = e.target.value.replace(/\D/g, '');
-            
-            if (cep.length !== 8) return;
-            
-            try {
-                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                const dados = await response.json();
-                
-                if (dados.erro) {
-                    showAlert('❌ CEP não encontrado', 'error');
-                    return;
-                }
-                
-                document.getElementById('endereco').value = dados.logradouro;
-                document.getElementById('bairro').value = dados.bairro;
-                document.getElementById('cidade').value = dados.localidade;
-                document.getElementById('estado').value = dados.uf;
-                
-                showAlert('✅ CEP encontrado!', 'success');
-                
-            } catch (error) {
-                console.error('❌ Erro ao buscar CEP:', error);
-            }
-        });
-
-        // Payment method selection
-        document.querySelectorAll('.payment-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.payment-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                this.classList.add('selected');
-                const radio = this.querySelector('input[type="radio"]');
-                if (radio) {
-                    radio.checked = true;
-                    selectedPaymentMethod = radio.value;
-                    console.log('💳 Método selecionado:', selectedPaymentMethod);
-                }
-            });
-        });
-
-        // Submeter formulário
-        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-            
-            if (paymentMethod === 'card') {
-                showAlert('⚠️ Pagamento com cartão em desenvolvimento. Use PIX por enquanto.', 'info');
-                return;
-            }
-            
-            await processarCompraPIX();
-        });
-
-        // Processar compra PIX
-        async function processarCompraPIX() {
-            const btnSubmit = document.getElementById('btnSubmit');
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<span>⏳</span><span>Processando...</span>';
-            
-            showLoading('Registrando sua compra...');
-            
-            try {
-                const quantidade = parseInt(document.getElementById('quantidade').value);
-                const precoUnitario = produtoData.preco_promocional || produtoData.preco;
-                const valorTotal = quantidade * precoUnitario;
-                const valorComissao = calcularComissao(valorTotal);
-                
-                const vendaData = {
-                    produto_id: produtoData.id,
-                    nome_comprador: document.getElementById('nome').value,
-                    email_comprador: document.getElementById('email').value,
-                    cpf_comprador: document.getElementById('cpf').value.replace(/\D/g, ''),
-                    telefone_comprador: document.getElementById('telefone').value,
-                    whatsapp_comprador: document.getElementById('whatsapp').value,
-                    quantidade: quantidade,
-                    valor_unitario: precoUnitario,
-                    valor_total: valorTotal,
-                    forma_pagamento: 'pix',
-                    status_pagamento: 'pending',
-                    parceiro_id: comissaoInfo.parceiro_id,
-                    igreja_id: comissaoInfo.tipo_parceiro === 'igreja' ? comissaoInfo.parceiro_id : null,
-                    codigo_referencia: comissaoInfo.codigo_referencia,
-                    codigo_indicacao: comissaoInfo.codigo_referencia,
-                    valor_comissao: valorComissao,
-                    percentual_comissao: comissaoInfo.percentual_comissao,
-                    origem: comissaoInfo.temComissao ? 'venda_referencia' : 'venda_direta',
-                    data_venda: new Date().toISOString()
-                };
-                
-                if (produtoData.tipo === 'fisico') {
-                    vendaData.endereco_entrega = {
-                        cep: document.getElementById('cep').value.replace(/\D/g, ''),
-                        endereco: document.getElementById('endereco').value,
-                        numero: document.getElementById('numero').value,
-                        complemento: document.getElementById('complemento').value,
-                        bairro: document.getElementById('bairro').value,
-                        cidade: document.getElementById('cidade').value,
-                        estado: document.getElementById('estado').value
-                    };
-                }
-                
-                console.log('📦 Registrando venda:', vendaData);
-                
-                const { data, error } = await supabaseClient
-                    .from('vendas')
-                    .insert([vendaData])
-                    .select();
-                
-                if (error) {
-                    throw error;
-                }
-                
-                console.log('✅ Venda registrada:', data);
-                
-                hideLoading();
-                showAlert('✅ Pedido registrado! Criando pagamento...', 'success');
-                
-                const vendaId = data[0].id;
-                
-                showLoading('Criando pagamento PIX...');
-                
-                const paymentData = {
-                    transaction_amount: valorTotal,
-                    description: produtoData.nome,
-                    payment_method_id: 'pix',
-                    payer: {
-                        email: document.getElementById('email').value,
-                        first_name: document.getElementById('nome').value.split(' ')[0],
-                        last_name: document.getElementById('nome').value.split(' ').slice(1).join(' '),
-                        identification: {
-                            type: 'CPF',
-                            number: document.getElementById('cpf').value.replace(/\D/g, '')
-                        }
-                    },
-                    external_reference: vendaId
-                };
-                
-                console.log('💳 Criando pagamento Mercado Pago:', paymentData);
-                
-                const response = await fetch(`${SUPABASE_URL}/functions/v1/create-payment-mp`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    },
-                    body: JSON.stringify(paymentData)
-                });
-                
-                const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'Erro ao criar pagamento');
-                }
-                
-                console.log('✅ Pagamento criado:', result);
-                
-                hideLoading();
-                
-                window.location.href = `/pix.html?payment_id=${result.payment_id}&venda_id=${vendaId}`;
-                
-            } catch (error) {
-                console.error('❌ Erro:', error);
-                hideLoading();
-                showAlert('❌ Erro ao processar compra: ' + error.message, 'error');
-                
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<span>🔒</span><span>Finalizar Compra Segura</span>';
-            }
-        }
-// Dentro de processarCompraPIX(), adicionar ao vendaData:
-if (cupomAtivo && cupomAtivo.valido) {
-    vendaData.cupom_codigo = cupomAtivo.codigo;
-    vendaData.cupom_desconto = cupomAtivo.valor_desconto;
-    vendaData.valor_sem_desconto = totalSemDesconto;
-}
-        // Funções auxiliares
-        function showAlert(message, type) {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.textContent = message;
-            alertBox.className = `alert alert-${type} show`;
-            
-            setTimeout(() => {
-                alertBox.classList.remove('show');
-            }, 5000);
-        }
-
-        function showLoading(message) {
-            document.getElementById('loadingMessage').textContent = message;
-            document.getElementById('loadingOverlay').classList.add('show');
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.remove('show');
-        }
-
-        // Inicializar
-        window.addEventListener('DOMContentLoaded', async function() {
-            console.log('✅ Checkout Universal inicializado');
-            
-            await carregarProduto();
-            await buscarParceiroPorReferencia();
-        });
-    </script>
-
-</body>
-</html>
