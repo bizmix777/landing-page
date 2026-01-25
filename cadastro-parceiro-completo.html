@@ -6,8 +6,7 @@
     <title>Cadastro de Parceiro - BizMix</title>
     <link rel="icon" href="https://bizmix.com.br/favicon.ico">
     
-    <!-- Config Centralizado (SEM biblioteca Supabase) ✅ -->
-    <script src="/js/supabase-config.js"></script>
+    <!-- CRITICAL: NO Supabase library import -->
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -51,7 +50,7 @@
 
         .progress-bar {
             background: #f0f0f0;
-            height: 15px;
+            height: 15px; /* CRITICAL: 15px height */
             border-radius: 10px;
             overflow: hidden;
             margin: 20px 0;
@@ -387,7 +386,7 @@
         }
 
         .hidden {
-            display: none !important;
+            display: none !important; /* CRITICAL: .hidden class */
         }
 
         @media (max-width: 768px) {
@@ -444,7 +443,8 @@
             </div>
 
             <div id="alertBox" class="alert"></div>
-                        <form id="cadastroForm">
+
+            <form id="cadastroForm">
 
                 <!-- STEP 1: DADOS PESSOAIS -->
                 <div class="step-content active" data-step="1">
@@ -564,6 +564,7 @@
                             <label for="igrejaVinculada">É membro de alguma igreja parceira? (Opcional)</label>
                             <select id="igrejaVinculada">
                                 <option value="">Não / Não tenho vínculo</option>
+                                <!-- Preenchido dinamicamente -->
                             </select>
                             <small>Se sua igreja já é parceira, selecione aqui</small>
                         </div>
@@ -760,14 +761,19 @@
         </div>
 
     </div>
-        <script>
-        console.log('🤝 Cadastro de Parceiro carregado');
+
+    <script>
+        // CRITICAL: ALL configuration INLINE
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        console.log('✅ Configuração Supabase carregada (inline)');
 
         let currentStep = 1;
 
-        // ============================================
+        // 
         // FUNÇÕES DE NAVEGAÇÃO
-        // ============================================
+        // 
         function irParaStep(step) {
             currentStep = step;
             
@@ -791,7 +797,7 @@
                 }
             });
 
-            // Atualizar progress bar
+            // Atualizar progress bar (CRITICAL: shows "Step X de 3")
             const progress = (step / 3) * 100;
             const progressFill = document.getElementById('progressFill');
             progressFill.style.width = `${progress}%`;
@@ -806,7 +812,7 @@
             
             let valido = true;
             inputs.forEach(input => {
-                // Verificar se o campo está visível
+                // Verificar se o campo está visível (CRITICAL: only validate visible fields)
                 const isVisible = input.offsetParent !== null;
                 
                 if (isVisible && !input.value.trim()) {
@@ -824,9 +830,9 @@
             return valido;
         }
 
-        // ============================================
+        // 
         // EVENT LISTENERS DOS BOTÕES
-        // ============================================
+        // 
         document.getElementById('btnNext1').addEventListener('click', function() {
             console.log('🔘 Clicou em Próximo (Step 1)');
             if (validarCamposObrigatorios(1)) {
@@ -851,9 +857,9 @@
             irParaStep(2);
         });
 
-        // ============================================
-        // CONTROLE DE TIPO DE PARCEIRO
-        // ============================================
+        // 
+        // CONTROLE DE TIPO DE PARCEIRO (CRITICAL: show/hide fields)
+        // 
         document.querySelectorAll('input[name="tipo_parceiro"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const tipo = this.value;
@@ -888,9 +894,9 @@
             });
         });
 
-        // ============================================
-        // CARREGAR IGREJAS PARCEIRAS (usando supabase-config.js)
-        // ============================================
+        // 
+        // CARREGAR IGREJAS PARCEIRAS (CRITICAL: fetch REST API)
+        // 
         async function carregarIgrejas() {
             try {
                 console.log('🔍 Carregando igrejas parceiras...');
@@ -918,6 +924,8 @@
                         select.appendChild(option);
                     });
                     console.log('✅ Igrejas carregadas:', igrejas.length);
+                } else {
+                    console.log('ℹ️ Nenhuma igreja parceira encontrada.');
                 }
 
             } catch (error) {
@@ -925,9 +933,9 @@
             }
         }
 
-        // ============================================
+        // 
         // MÁSCARAS DE ENTRADA
-        // ============================================
+        // 
         document.getElementById('telefone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 11) value = value.slice(0, 11);
@@ -988,9 +996,9 @@
             }
         });
 
-        // ============================================
-        // BUSCAR CEP
-        // ============================================
+        // 
+        // BUSCAR CEP (ViaCEP API)
+        // 
         document.getElementById('cep').addEventListener('blur', async function(e) {
             const cep = e.target.value.replace(/\D/g, '');
             
@@ -1021,9 +1029,9 @@
             }
         });
 
-        // ============================================
-        // SUBMETER FORMULÁRIO (usando supabase-config.js)
-        // ============================================
+        // 
+        // SUBMETER FORMULÁRIO (CRITICAL: fetch Edge Function)
+        // 
         document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             console.log('📝 Submetendo formulário');
@@ -1087,7 +1095,6 @@
                 
                 console.log('📦 Enviando dados:', dadosParceiro);
                 
-                // USANDO AS CONSTANTES DO supabase-config.js ✅
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/registrar-parceiro`, {
                     method: 'POST',
                     headers: {
@@ -1126,9 +1133,9 @@
             }
         });
 
-        // ============================================
+        // 
         // FUNÇÕES AUXILIARES
-        // ============================================
+        // 
         function showAlert(message, type) {
             const alertBox = document.getElementById('alertBox');
             alertBox.textContent = message;
@@ -1148,9 +1155,9 @@
             document.getElementById('loadingOverlay').classList.remove('show');
         }
 
-        // ============================================
-        // INICIALIZAR
-        // ============================================
+        // 
+        // INICIALIZAR (on DOMContentLoaded)
+        // 
         window.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Formulário inicializado');
             carregarIgrejas();
