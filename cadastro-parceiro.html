@@ -9,8 +9,8 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Config Centralizado -->
-    <script src="/supabase-config.js"></script>
+    <!-- Config Centralizado ✅ CORRIGIDO -->
+    <script src="/js/supabase-config.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
@@ -29,7 +29,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -50,35 +50,66 @@
         .header p {
             color: #666;
             font-size: 1rem;
-            line-height: 1.6;
         }
 
-        .benefits {
+        .progress-bar {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            transition: width 0.3s ease;
         }
 
-        .benefit {
+        .steps-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            flex: 1;
             text-align: center;
+            position: relative;
         }
 
-        .benefit-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #e0e0e0;
+            color: #999;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
         }
 
-        .benefit-title {
+        .step.active .step-number {
+            background: #667eea;
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .step.active .step-label {
+            color: #667eea;
             font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .benefit-text {
-            font-size: 0.9rem;
-            opacity: 0.95;
         }
 
         .form-content {
@@ -88,12 +119,25 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .alert {
             padding: 15px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
             display: none;
-            animation: slideDown 0.3s ease;
         }
 
         .alert.show {
@@ -112,34 +156,13 @@
             border: 1px solid #f5c6cb;
         }
 
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .section-title {
             font-size: 1.3rem;
             color: #333;
-            margin: 30px 0 20px 0;
+            margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 2px solid #f0f0f0;
             font-weight: 600;
-        }
-
-        .section-title:first-child {
-            margin-top: 0;
         }
 
         .form-group {
@@ -176,11 +199,6 @@
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
         }
 
         .form-group small {
@@ -243,53 +261,54 @@
             color: #333;
         }
 
-        .checkbox-group {
+        .btn-group {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: auto;
-            cursor: pointer;
-        }
-
-        .checkbox-group label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 400;
-        }
-
-        .checkbox-group a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .checkbox-group a:hover {
-            text-decoration: underline;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            gap: 15px;
             margin-top: 30px;
         }
 
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .btn-submit:disabled {
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
@@ -349,19 +368,6 @@
             margin-bottom: 20px;
         }
 
-        .success-message h2 {
-            color: #28a745;
-            margin-bottom: 15px;
-            font-size: 2rem;
-        }
-
-        .success-message p {
-            color: #666;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            margin-bottom: 15px;
-        }
-
         .codigo-parceiro {
             background: #f8f9fa;
             padding: 20px;
@@ -377,20 +383,16 @@
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .benefits {
-                grid-template-columns: 1fr;
-            }
-
             .form-row {
                 grid-template-columns: 1fr;
             }
 
             .tipo-parceiro-options {
                 grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
             }
         }
     </style>
@@ -400,7 +402,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="spinner"></div>
-            <h3>Processando cadastro...</h3>
+            <h3>Processando...</h3>
             <p id="loadingMessage">Aguarde um momento</p>
         </div>
     </div>
@@ -408,247 +410,344 @@
     <div class="container">
 
         <div class="header">
-            <h1>🤝 Seja um Parceiro BizMix</h1>
-            <p>Junte-se a nós e comece a ganhar comissões compartilhando nossos produtos!</p>
-        </div>
-
-        <div class="benefits">
-            <div class="benefit">
-                <div class="benefit-icon">💰</div>
-                <div class="benefit-title">Ganhe Comissões</div>
-                <div class="benefit-text">Receba até 20% por venda</div>
-            </div>
-            <div class="benefit">
-                <div class="benefit-icon">📱</div>
-                <div class="benefit-title">Links Exclusivos</div>
-                <div class="benefit-text">Compartilhe facilmente</div>
-            </div>
-            <div class="benefit">
-                <div class="benefit-icon">📊</div>
-                <div class="benefit-title">Dashboard Completo</div>
-                <div class="benefit-text">Acompanhe suas vendas</div>
-            </div>
+            <h1>🤝 Cadastro de Parceiro</h1>
+            <p>Complete as 3 etapas para se tornar um parceiro BizMix</p>
         </div>
 
         <div class="form-content">
 
+            <div class="steps-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Dados Pessoais</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Dados Bancários</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Segurança</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 33%;"></div>
+            </div>
+
             <div id="alertBox" class="alert"></div>
 
-            <form id="cadastroForm" style="display: block;">
+            <form id="cadastroForm">
 
-                <div class="section-title">👤 Tipo de Parceiro</div>
+                <!-- STEP 1: DADOS PESSOAIS -->
+                <div class="step-content active" data-step="1">
+                    <div class="section-title">👤 Tipo de Parceiro</div>
 
-                <div class="tipo-parceiro-options">
-                    <div class="tipo-option">
-                        <input type="radio" name="tipo_parceiro" id="tipoFisica" value="pessoa_fisica" checked>
-                        <label for="tipoFisica">
-                            <div class="tipo-icon">👤</div>
-                            <div class="tipo-label">Pessoa Física</div>
+                    <div class="tipo-parceiro-options">
+                        <div class="tipo-option">
+                            <input type="radio" name="tipo_parceiro" id="tipoFisica" value="pessoa_fisica" checked>
+                            <label for="tipoFisica">
+                                <div class="tipo-icon">👤</div>
+                                <div class="tipo-label">Pessoa Física</div>
+                            </label>
+                        </div>
+
+                        <div class="tipo-option">
+                            <input type="radio" name="tipo_parceiro" id="tipoIgreja" value="igreja">
+                            <label for="tipoIgreja">
+                                <div class="tipo-icon">⛪</div>
+                                <div class="tipo-label">Igreja</div>
+                            </label>
+                        </div>
+
+                        <div class="tipo-option">
+                            <input type="radio" name="tipo_parceiro" id="tipoEmpresa" value="empresa">
+                            <label for="tipoEmpresa">
+                                <div class="tipo-icon">💼</div>
+                                <div class="tipo-label">Empresa</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="section-title">📝 Informações Básicas</div>
+
+                    <div class="form-group">
+                        <label for="nomeCompleto">Nome Completo <span class="required">*</span></label>
+                        <input type="text" id="nomeCompleto" required placeholder="Digite seu nome completo">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail <span class="required">*</span></label>
+                            <input type="email" id="email" required placeholder="seu@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone/WhatsApp <span class="required">*</span></label>
+                            <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cpfCnpj">CPF/CNPJ <span class="required">*</span></label>
+                            <input type="text" id="cpfCnpj" required placeholder="000.000.000-00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dataNascimento">Data de Nascimento</label>
+                            <input type="date" id="dataNascimento">
+                        </div>
+                    </div>
+
+                    <!-- CAMPOS IGREJA -->
+                    <div id="camposIgreja" style="display: none;">
+                        <div class="section-title">⛪ Dados da Igreja</div>
+
+                        <div class="form-group">
+                            <label for="nomeIgreja">Nome da Igreja <span class="required">*</span></label>
+                            <input type="text" id="nomeIgreja" placeholder="Nome completo da igreja">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="denominacao">Denominação</label>
+                                <input type="text" id="denominacao" placeholder="Ex: Batista, Presbiteriana...">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cargoIgreja">Seu Cargo</label>
+                                <select id="cargoIgreja">
+                                    <option value="">Selecione...</option>
+                                    <option value="pastor">Pastor</option>
+                                    <option value="lider">Líder</option>
+                                    <option value="tesoureiro">Tesoureiro</option>
+                                    <option value="secretario">Secretário</option>
+                                    <option value="membro">Membro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CAMPOS EMPRESA -->
+                    <div id="camposEmpresa" style="display: none;">
+                        <div class="section-title">💼 Dados da Empresa</div>
+
+                        <div class="form-group">
+                            <label for="nomeEmpresa">Nome da Empresa <span class="required">*</span></label>
+                            <input type="text" id="nomeEmpresa" placeholder="Razão social ou nome fantasia">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="segmento">Segmento</label>
+                                <input type="text" id="segmento" placeholder="Ex: Tecnologia, Educação...">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cargoEmpresa">Seu Cargo</label>
+                                <input type="text" id="cargoEmpresa" placeholder="Ex: Gerente, Diretor...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VINCULO COM IGREJA (apenas para pessoa física) -->
+                    <div id="vinculoIgreja" style="display: block;">
+                        <div class="form-group">
+                            <label for="igrejaVinculada">É membro de alguma igreja parceira? (Opcional)</label>
+                            <select id="igrejaVinculada">
+                                <option value="">Não / Não tenho vínculo</option>
+                                <!-- Preenchido dinamicamente -->
+                            </select>
+                            <small>Se sua igreja já é parceira, selecione aqui</small>
+                        </div>
+                    </div>
+
+                    <div class="section-title">📍 Endereço</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" placeholder="Sua cidade">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado">
+                                <option value="">Selecione...</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pais">País</label>
+                            <input type="text" id="pais" value="Brasil" readonly>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">
+                            Próximo ➔
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: DADOS BANCÁRIOS -->
+                <div class="step-content" data-step="2">
+                    <div class="section-title">💳 Dados Bancários</div>
+
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Essas informações são necessárias para o pagamento das suas comissões.
+                    </p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="banco">Banco <span class="required">*</span></label>
+                            <input type="text" id="banco" required placeholder="Ex: Banco do Brasil, Caixa, Nubank...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipoConta">Tipo de Conta <span class="required">*</span></label>
+                            <select id="tipoConta" required>
+                                <option value="">Selecione...</option>
+                                <option value="corrente">Conta Corrente</option>
+                                <option value="poupanca">Conta Poupança</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="agencia">Agência <span class="required">*</span></label>
+                            <input type="text" id="agencia" required placeholder="0000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="conta">Conta (com dígito) <span class="required">*</span></label>
+                            <input type="text" id="conta" required placeholder="00000-0">
+                        </div>
+                    </div>
+
+                    <div class="section-title">🔑 Chave PIX (Opcional)</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pixTipo">Tipo de Chave PIX</label>
+                            <select id="pixTipo">
+                                <option value="">Não cadastrar PIX</option>
+                                <option value="cpf">CPF</option>
+                                <option value="cnpj">CNPJ</option>
+                                <option value="email">E-mail</option>
+                                <option value="telefone">Telefone</option>
+                                <option value="aleatoria">Chave Aleatória</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pixChave">Chave PIX</label>
+                            <input type="text" id="pixChave" placeholder="Digite a chave PIX">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                            ← Voltar
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="nextStep()">
+                            Próximo ➔
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: SEGURANÇA -->
+                <div class="step-content" data-step="3">
+                    <div class="section-title">🔒 Segurança da Conta</div>
+
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Crie uma senha forte para proteger sua conta.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="senha">Senha <span class="required">*</span></label>
+                        <input type="password" id="senha" required placeholder="Mínimo 6 caracteres">
+                        <small>Use letras, números e símbolos para maior segurança</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senhaConfirm">Confirmar Senha <span class="required">*</span></label>
+                        <input type="password" id="senhaConfirm" required placeholder="Digite a senha novamente">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="termos" required>
+                            Aceito os <a href="/termos.html" target="_blank">Termos de Uso</a> e 
+                            <a href="/privacidade.html" target="_blank">Política de Privacidade</a>
+                            <span class="required">*</span>
                         </label>
                     </div>
 
-                    <div class="tipo-option">
-                        <input type="radio" name="tipo_parceiro" id="tipoIgreja" value="igreja">
-                        <label for="tipoIgreja">
-                            <div class="tipo-icon">⛪</div>
-                            <div class="tipo-label">Igreja</div>
-                        </label>
-                    </div>
-
-                    <div class="tipo-option">
-                        <input type="radio" name="tipo_parceiro" id="tipoEmpresa" value="empresa">
-                        <label for="tipoEmpresa">
-                            <div class="tipo-icon">💼</div>
-                            <div class="tipo-label">Empresa</div>
-                        </label>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                            ← Voltar
+                        </button>
+                        <button type="submit" class="btn btn-success" id="btnSubmit">
+                            🚀 Finalizar Cadastro
+                        </button>
                     </div>
                 </div>
-
-                <div class="section-title">📝 Dados Pessoais</div>
-
-                <div class="form-group">
-                    <label for="nomeCompleto">Nome Completo <span class="required">*</span></label>
-                    <input type="text" id="nomeCompleto" required placeholder="Digite seu nome completo">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">E-mail <span class="required">*</span></label>
-                        <input type="email" id="email" required placeholder="seu@email.com">
-                        <small>📧 Usaremos este e-mail para contato</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="telefone">Telefone/WhatsApp <span class="required">*</span></label>
-                        <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="cpfCnpj">CPF/CNPJ <span class="required">*</span></label>
-                        <input type="text" id="cpfCnpj" required placeholder="000.000.000-00">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="dataNascimento">Data de Nascimento</label>
-                        <input type="date" id="dataNascimento">
-                    </div>
-                </div>
-
-                <!-- CAMPOS ESPECÍFICOS IGREJA -->
-                <div id="camposIgreja" style="display: none;">
-                    <div class="section-title">⛪ Dados da Igreja</div>
-
-                    <div class="form-group">
-                        <label for="nomeIgreja">Nome da Igreja <span class="required">*</span></label>
-                        <input type="text" id="nomeIgreja" placeholder="Nome completo da igreja">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="denominacao">Denominação</label>
-                        <input type="text" id="denominacao" placeholder="Ex: Batista, Presbiteriana, Assembleia de Deus...">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cargoIgreja">Seu Cargo na Igreja</label>
-                        <select id="cargoIgreja">
-                            <option value="">Selecione...</option>
-                            <option value="pastor">Pastor</option>
-                            <option value="lider">Líder</option>
-                            <option value="tesoureiro">Tesoureiro</option>
-                            <option value="secretario">Secretário</option>
-                            <option value="membro">Membro</option>
-                            <option value="outro">Outro</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- CAMPOS ESPECÍFICOS EMPRESA -->
-                <div id="camposEmpresa" style="display: none;">
-                    <div class="section-title">💼 Dados da Empresa</div>
-
-                    <div class="form-group">
-                        <label for="nomeEmpresa">Nome da Empresa <span class="required">*</span></label>
-                        <input type="text" id="nomeEmpresa" placeholder="Razão social ou nome fantasia">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="segmento">Segmento de Atuação</label>
-                        <input type="text" id="segmento" placeholder="Ex: Tecnologia, Educação, Varejo...">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cargoEmpresa">Seu Cargo</label>
-                        <input type="text" id="cargoEmpresa" placeholder="Ex: Gerente, Diretor, Proprietário...">
-                    </div>
-                </div>
-
-                <div class="section-title">📍 Endereço</div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="cep">CEP</label>
-                        <input type="text" id="cep" placeholder="00000-000" maxlength="9">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="cidade">Cidade</label>
-                        <input type="text" id="cidade" placeholder="Sua cidade">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="estado">Estado</label>
-                        <select id="estado">
-                            <option value="">Selecione...</option>
-                            <option value="AC">Acre</option>
-                            <option value="AL">Alagoas</option>
-                            <option value="AP">Amapá</option>
-                            <option value="AM">Amazonas</option>
-                            <option value="BA">Bahia</option>
-                            <option value="CE">Ceará</option>
-                            <option value="DF">Distrito Federal</option>
-                            <option value="ES">Espírito Santo</option>
-                            <option value="GO">Goiás</option>
-                            <option value="MA">Maranhão</option>
-                            <option value="MT">Mato Grosso</option>
-                            <option value="MS">Mato Grosso do Sul</option>
-                            <option value="MG">Minas Gerais</option>
-                            <option value="PA">Pará</option>
-                            <option value="PB">Paraíba</option>
-                            <option value="PR">Paraná</option>
-                            <option value="PE">Pernambuco</option>
-                            <option value="PI">Piauí</option>
-                            <option value="RJ">Rio de Janeiro</option>
-                            <option value="RN">Rio Grande do Norte</option>
-                            <option value="RS">Rio Grande do Sul</option>
-                            <option value="RO">Rondônia</option>
-                            <option value="RR">Roraima</option>
-                            <option value="SC">Santa Catarina</option>
-                            <option value="SP">São Paulo</option>
-                            <option value="SE">Sergipe</option>
-                            <option value="TO">Tocantins</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="pais">País</label>
-                        <input type="text" id="pais" value="Brasil" readonly>
-                    </div>
-                </div>
-
-                <div class="section-title">💬 Informações Adicionais</div>
-
-                <div class="form-group">
-                    <label for="comoConheceu">Como conheceu a BizMix?</label>
-                    <select id="comoConheceu">
-                        <option value="">Selecione...</option>
-                        <option value="google">Google/Busca</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="indicacao">Indicação</option>
-                        <option value="whatsapp">WhatsApp</option>
-                        <option value="outro">Outro</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="observacoes">Observações</label>
-                    <textarea id="observacoes" placeholder="Alguma informação adicional que queira compartilhar..."></textarea>
-                </div>
-
-                <div class="checkbox-group">
-                    <input type="checkbox" id="termos" required>
-                    <label for="termos">
-                        Aceito os <a href="/termos.html" target="_blank">Termos de Uso</a> e 
-                        <a href="/privacidade.html" target="_blank">Política de Privacidade</a> 
-                        <span class="required">*</span>
-                    </label>
-                </div>
-
-                <button type="submit" class="btn-submit" id="btnSubmit">
-                    🚀 Cadastrar como Parceiro
-                </button>
 
             </form>
 
+            <!-- MENSAGEM DE SUCESSO -->
             <div id="successMessage" class="success-message">
                 <div class="success-icon">🎉</div>
-                <h2>Cadastro realizado com sucesso!</h2>
-                <p>Seu cadastro foi registrado e está em análise.</p>
+                <h2>Cadastro Concluído!</h2>
+                <p>Bem-vindo(a) ao time de parceiros BizMix!</p>
                 
                 <div class="codigo-parceiro">
                     <p style="margin-bottom: 10px;">Seu código de parceiro:</p>
                     <strong id="codigoParceiro"></strong>
                 </div>
 
-                <p>Você receberá um e-mail com as instruções para acessar seu dashboard e começar a compartilhar seus links!</p>
-                <p><strong>Importante:</strong> Guarde seu código de parceiro em local seguro.</p>
+                <p>Você pode acessar seu dashboard com o e-mail e senha cadastrados.</p>
+                <p><strong>Importante:</strong> Guarde seu código em local seguro!</p>
 
-                <button class="btn-submit" onclick="window.location.href='/'">
-                    🏠 Voltar ao Início
+                <button class="btn btn-success" onclick="window.location.href='/login.html'">
+                    🔐 Fazer Login
                 </button>
             </div>
 
@@ -656,12 +755,87 @@
 
     </div>
         <script>
-        console.log('🤝 Cadastro de Parceiro carregado');
+        console.log('🤝 Cadastro de Parceiro (3 Steps) carregado');
 
         // ============================================
-        // CONFIGURAÇÃO (usando supabase-config.js)
+        // CONFIGURAÇÃO (usando js/supabase-config.js) ✅ CORRIGIDO
         // ============================================
         console.log('✅ Usando configuração centralizada do Supabase');
+
+        let currentStep = 1;
+
+        // ============================================
+        // NAVEGAÇÃO ENTRE STEPS
+        // ============================================
+        function nextStep() {
+            if (!validarStepAtual()) {
+                return;
+            }
+
+            currentStep++;
+            if (currentStep > 3) currentStep = 3;
+            
+            mostrarStep(currentStep);
+            atualizarProgressBar();
+        }
+
+        function prevStep() {
+            currentStep--;
+            if (currentStep < 1) currentStep = 1;
+            
+            mostrarStep(currentStep);
+            atualizarProgressBar();
+        }
+
+        function mostrarStep(step) {
+            // Esconder todos os steps
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Mostrar step atual
+            document.querySelector(`.step-content[data-step="${step}"]`).classList.add('active');
+
+            // Atualizar indicadores
+            document.querySelectorAll('.step').forEach((stepEl, index) => {
+                const stepNum = index + 1;
+                stepEl.classList.remove('active', 'completed');
+                
+                if (stepNum < step) {
+                    stepEl.classList.add('completed');
+                } else if (stepNum === step) {
+                    stepEl.classList.add('active');
+                }
+            });
+        }
+
+        function atualizarProgressBar() {
+            const progress = (currentStep / 3) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            console.log('📊 Progress bar atualizada:', progress + '%');
+        }
+
+        function validarStepAtual() {
+            const stepContent = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+            const requiredInputs = stepContent.querySelectorAll('[required]');
+            
+            let valido = true;
+            
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.style.borderColor = '#e74c3c';
+                    valido = false;
+                } else {
+                    input.style.borderColor = '#e0e0e0';
+                }
+            });
+
+            if (!valido) {
+                showAlert('❌ Preencha todos os campos obrigatórios', 'error');
+            }
+
+            return valido;
+        }
 
         // ============================================
         // CONTROLE DE CAMPOS POR TIPO
@@ -670,24 +844,53 @@
             radio.addEventListener('change', function() {
                 const tipo = this.value;
                 
-                // Esconder todos os campos específicos
+                // Esconder todos
                 document.getElementById('camposIgreja').style.display = 'none';
                 document.getElementById('camposEmpresa').style.display = 'none';
+                document.getElementById('vinculoIgreja').style.display = 'none';
                 
-                // Remover required dos campos específicos
+                // Remover required
                 document.getElementById('nomeIgreja').required = false;
                 document.getElementById('nomeEmpresa').required = false;
                 
-                // Mostrar campos do tipo selecionado
+                // Mostrar campos do tipo
                 if (tipo === 'igreja') {
                     document.getElementById('camposIgreja').style.display = 'block';
                     document.getElementById('nomeIgreja').required = true;
                 } else if (tipo === 'empresa') {
                     document.getElementById('camposEmpresa').style.display = 'block';
                     document.getElementById('nomeEmpresa').required = true;
+                } else if (tipo === 'pessoa_fisica') {
+                    document.getElementById('vinculoIgreja').style.display = 'block';
                 }
             });
         });
+
+        // ============================================
+        // CARREGAR IGREJAS PARA SELECT
+        // ============================================
+        async function carregarIgrejas() {
+            try {
+                const { data: igrejas, error } = await supabaseClient
+                    .rpc('buscar_igrejas_ativas');
+
+                if (error) throw error;
+
+                const select = document.getElementById('igrejaVinculada');
+                
+                igrejas.forEach(igreja => {
+                    const option = document.createElement('option');
+                    option.value = igreja.id;
+                    option.textContent = `${igreja.nome_igreja} - ${igreja.cidade}/${igreja.estado}`;
+                    select.appendChild(option);
+                });
+
+                console.log('✅ Igrejas carregadas:', igrejas.length);
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar igrejas:', error);
+            }
+        }
 
         // ============================================
         // MÁSCARAS
@@ -711,7 +914,7 @@
             let value = e.target.value.replace(/\D/g, '');
             
             if (value.length <= 11) {
-                // Máscara CPF
+                // CPF
                 if (value.length > 11) value = value.slice(0, 11);
                 
                 if (value.length > 9) {
@@ -724,7 +927,7 @@
                     e.target.value = value;
                 }
             } else {
-                // Máscara CNPJ
+                // CNPJ
                 if (value.length > 14) value = value.slice(0, 14);
                 
                 if (value.length > 12) {
@@ -778,71 +981,35 @@
         });
 
         // ============================================
-        // GERAR CÓDIGO ÚNICO DE PARCEIRO
-        // ============================================
-        function gerarCodigoParceiro() {
-            const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let codigo = '';
-            
-            for (let i = 0; i < 8; i++) {
-                codigo += caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-            }
-            
-            return codigo;
-        }
-
-        // Verificar se código já existe
-        async function verificarCodigoExiste(codigo) {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('parceiros')
-                    .select('codigo_parceiro')
-                    .eq('codigo_parceiro', codigo)
-                    .single();
-                
-                return !!data; // Retorna true se existir
-            } catch (error) {
-                return false; // Se der erro, considera que não existe
-            }
-        }
-
-        // Gerar código único
-        async function gerarCodigoUnico() {
-            let codigo = gerarCodigoParceiro();
-            let existe = await verificarCodigoExiste(codigo);
-            
-            // Se código já existe, gera outro
-            while (existe) {
-                codigo = gerarCodigoParceiro();
-                existe = await verificarCodigoExiste(codigo);
-            }
-            
-            return codigo;
-        }
-
-        // ============================================
         // SUBMETER FORMULÁRIO
         // ============================================
         document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
+            // Validar senhas
+            const senha = document.getElementById('senha').value;
+            const senhaConfirm = document.getElementById('senhaConfirm').value;
+
+            if (senha.length < 6) {
+                showAlert('❌ A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+
+            if (senha !== senhaConfirm) {
+                showAlert('❌ As senhas não coincidem', 'error');
+                return;
+            }
+
             const btnSubmit = document.getElementById('btnSubmit');
             btnSubmit.disabled = true;
             btnSubmit.textContent = '⏳ Processando...';
             
-            showLoading('Gerando seu código de parceiro...');
+            showLoading('Registrando seus dados...');
             
             try {
-                // Gerar código único
-                const codigoParceiro = await gerarCodigoUnico();
-                console.log('✅ Código gerado:', codigoParceiro);
-                
-                showLoading('Registrando seus dados...');
-                
                 const tipoParceiro = document.querySelector('input[name="tipo_parceiro"]:checked').value;
                 
                 const dadosParceiro = {
-                    codigo_parceiro: codigoParceiro,
                     tipo_parceiro: tipoParceiro,
                     nome_completo: document.getElementById('nomeCompleto').value,
                     email: document.getElementById('email').value,
@@ -853,14 +1020,20 @@
                     cidade: document.getElementById('cidade').value,
                     estado: document.getElementById('estado').value,
                     pais: document.getElementById('pais').value,
-                    como_conheceu: document.getElementById('comoConheceu').value,
-                    observacoes: document.getElementById('observacoes').value,
-                    status: 'pendente',
-                    comissao_padrao: 10,
-                    data_cadastro: new Date().toISOString()
+                    
+                    // Dados bancários
+                    banco: document.getElementById('banco').value,
+                    agencia: document.getElementById('agencia').value,
+                    conta: document.getElementById('conta').value,
+                    tipo_conta: document.getElementById('tipoConta').value,
+                    pix_tipo: document.getElementById('pixTipo').value || null,
+                    pix_chave: document.getElementById('pixChave').value || null,
+                    
+                    // Senha
+                    senha: senha
                 };
                 
-                // Adicionar campos específicos por tipo
+                // Campos específicos por tipo
                 if (tipoParceiro === 'igreja') {
                     dadosParceiro.nome_igreja = document.getElementById('nomeIgreja').value;
                     dadosParceiro.denominacao = document.getElementById('denominacao').value;
@@ -869,50 +1042,41 @@
                     dadosParceiro.nome_empresa = document.getElementById('nomeEmpresa').value;
                     dadosParceiro.segmento = document.getElementById('segmento').value;
                     dadosParceiro.cargo_empresa = document.getElementById('cargoEmpresa').value;
+                } else if (tipoParceiro === 'pessoa_fisica') {
+                    const igrejaVinculadaId = document.getElementById('igrejaVinculada').value;
+                    if (igrejaVinculadaId) {
+                        dadosParceiro.igreja_vinculada_id = igrejaVinculadaId;
+                    }
                 }
                 
                 console.log('📦 Dados do parceiro:', dadosParceiro);
                 
-                // Inserir no Supabase
-                const { data, error } = await supabaseClient
-                    .from('parceiros')
-                    .insert([dadosParceiro])
-                    .select();
+                // Chamar Edge Function
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/registrar-parceiro`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify(dadosParceiro)
+                });
                 
-                if (error) {
-                    throw error;
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || 'Erro ao registrar parceiro');
                 }
                 
-                console.log('✅ Parceiro cadastrado:', data);
+                console.log('✅ Parceiro registrado:', result);
                 
                 hideLoading();
                 
-                // Mostrar mensagem de sucesso
+                // Mostrar sucesso
                 document.getElementById('cadastroForm').style.display = 'none';
+                document.querySelector('.steps-indicator').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'none';
                 document.getElementById('successMessage').classList.add('show');
-                document.getElementById('codigoParceiro').textContent = codigoParceiro;
-                
-                // Enviar email de confirmação (opcional - via webhook ou edge function)
-                try {
-                    await fetch(`${SUPABASE_URL}/functions/v1/notificar-whatsapp`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${SUPABASE_KEY}`
-                        },
-                        body: JSON.stringify({
-                            tipo: 'novo_parceiro',
-                            dados: {
-                                nome: dadosParceiro.nome_completo,
-                                tipo_parceiro: tipoParceiro,
-                                email: dadosParceiro.email
-                            }
-                        })
-                    });
-                    console.log('✅ Notificação WhatsApp enviada');
-                } catch (emailError) {
-                    console.warn('⚠️ Erro ao enviar notificação:', emailError);
-                }
+                document.getElementById('codigoParceiro').textContent = result.codigo_parceiro;
                 
             } catch (error) {
                 console.error('❌ Erro ao cadastrar:', error);
@@ -920,7 +1084,7 @@
                 showAlert('❌ Erro ao realizar cadastro: ' + error.message, 'error');
                 
                 btnSubmit.disabled = false;
-                btnSubmit.textContent = '🚀 Cadastrar como Parceiro';
+                btnSubmit.textContent = '🚀 Finalizar Cadastro';
             }
         });
 
@@ -949,8 +1113,15 @@
         // ============================================
         // INICIALIZAR
         // ============================================
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', async function() {
             console.log('✅ Formulário de cadastro inicializado');
+            
+            // Carregar igrejas para select
+            await carregarIgrejas();
+            
+            // Inicializar no step 1
+            mostrarStep(1);
+            atualizarProgressBar();
         });
     </script>
 
