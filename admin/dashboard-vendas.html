@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Vendas - BizMix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
+    
+    <!-- Supabase (necessário) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Chart.js LEVE (~200KB) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .stat-change.positive {
+            color: #28a745;
+        }
+
+        .stat-change.negative {
+            color: #dc3545;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-container.tall {
+            height: 400px;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-filter {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            align-self: flex-end;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-filter:hover {
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-card.full-width {
+                grid-column: 1;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-filter {
+                align-self: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>📊 Dashboard de Vendas</h1>
+            <p>Análise completa em tempo real</p>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label for="periodo">Período</label>
+                <select id="periodo">
+                    <option value="7">Últimos 7 dias</option>
+                    <option value="15">Últimos 15 dias</option>
+                    <option value="30" selected>Últimos 30 dias</option>
+                    <option value="60">Últimos 60 dias</option>
+                    <option value="90">Últimos 90 dias</option>
+                    <option value="365">Último ano</option>
+                    <option value="all">Todo o período</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="status">Status</label>
+                <select id="status">
+                    <option value="all">Todos</option>
+                    <option value="approved" selected>Aprovados</option>
+                    <option value="pending">Pendentes</option>
+                    <option value="rejected">Rejeitados</option>
+                </select>
+            </div>
+
+            <button class="btn-filter" onclick="carregarDashboard()">🔍 Atualizar</button>
+        </div>
+
+        <div id="loadingSection" class="loading">
+            <div class="spinner"></div>
+            <p>Carregando dados...</p>
+        </div>
+
+        <div id="dashboardContent" style="display: none;">
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Receita Total</div>
+                    <div class="stat-value" id="receitaTotal">R$ 0,00</div>
+                    <div class="stat-change positive" id="receitaChange">+0%</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-label">Total de Vendas</div>
+                    <div class="stat-value" id="totalVendas">0</div>
+                    <div class="stat-change positive" id="vendasChange">+0%</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💳</div>
+                    <div class="stat-label">Ticket Médio</div>
+                    <div class="stat-value" id="ticketMedio">R$ 0,00</div>
+                    <div class="stat-change" id="ticketChange">-</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💸</div>
+                    <div class="stat-label">Comissões Pagas</div>
+                    <div class="stat-value" id="comissoesTotal">R$ 0,00</div>
+                    <div class="stat-change" id="comissoesChange">-</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+
+                <div class="chart-card full-width">
+                    <div class="chart-title">📈 Vendas ao Longo do Tempo</div>
+                    <div class="chart-container tall">
+                        <canvas id="chartVendasTempo"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">🏆 Produtos Mais Vendidos</div>
+                    <div class="chart-container">
+                        <canvas id="chartProdutos"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">💳 Formas de Pagamento</div>
+                    <div class="chart-container">
+                        <canvas id="chartPagamento"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">📊 Status dos Pedidos</div>
+                    <div class="chart-container">
+                        <canvas id="chartStatus"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">🤝 Vendas por Parceiro</div>
+                    <div class="chart-container">
+                        <canvas id="chartParceiros"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        console.log('📊 Dashboard de Vendas carregado');
+
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let charts = {};
+
+        // ============================================
+        // CARREGAR DASHBOARD
+        // ============================================
+        async function carregarDashboard() {
+            try {
+                document.getElementById('loadingSection').style.display = 'block';
+                document.getElementById('dashboardContent').style.display = 'none';
+
+                const periodo = parseInt(document.getElementById('periodo').value);
+                const status = document.getElementById('status').value;
+
+                // Calcular data inicial
+                let dataInicial = null;
+                if (periodo !== 'all') {
+                    dataInicial = new Date();
+                    dataInicial.setDate(dataInicial.getDate() - periodo);
+                }
+
+                // Query base
+                let query = supabaseClient
+                    .from('vendas')
+                    .select(`
+                        *,
+                        produtos:produto_id (nome, tipo),
+                        parceiros:parceiro_id (nome_completo, tipo_parceiro)
+                    `);
+
+                if (dataInicial) {
+                    query = query.gte('data_venda', dataInicial.toISOString());
+                }
+
+                if (status !== 'all') {
+                    query = query.eq('status_pagamento', status);
+                }
+
+                const { data: vendas, error } = await query.order('data_venda', { ascending: true });
+
+                if (error) throw error;
+
+                console.log('✅ Vendas carregadas:', vendas.length);
+
+                // Processar dados
+                processarDados(vendas);
+
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar dashboard:', error);
+                alert('Erro ao carregar dados. Verifique o console.');
+            }
+        }
+
+        // ============================================
+        // PROCESSAR DADOS
+        // ============================================
+        function processarDados(vendas) {
+            // Calcular estatísticas
+            const receitaTotal = vendas.reduce((sum, v) => sum + (v.valor_total || 0), 0);
+            const totalVendas = vendas.length;
+            const ticketMedio = totalVendas > 0 ? receitaTotal / totalVendas : 0;
+            const comissoesTotal = vendas.reduce((sum, v) => sum + (v.valor_comissao || 0), 0);
+
+            // Atualizar cards
+            document.getElementById('receitaTotal').textContent = `R$ ${receitaTotal.toFixed(2)}`;
+            document.getElementById('totalVendas').textContent = totalVendas;
+            document.getElementById('ticketMedio').textContent = `R$ ${ticketMedio.toFixed(2)}`;
+            document.getElementById('comissoesTotal').textContent = `R$ ${comissoesTotal.toFixed(2)}`;
+
+            // Gráficos
+            criarGraficoVendasTempo(vendas);
+            criarGraficoProdutos(vendas);
+            criarGraficoPagamento(vendas);
+            criarGraficoStatus(vendas);
+            criarGraficoParceiros(vendas);
+        }
+
+        // ============================================
+        // GRÁFICO: VENDAS AO LONGO DO TEMPO
+        // ============================================
+        function criarGraficoVendasTempo(vendas) {
+            const ctx = document.getElementById('chartVendasTempo').getContext('2d');
+
+            // Agrupar por data
+            const vendasPorDia = {};
+            vendas.forEach(v => {
+                const data = new Date(v.data_venda).toLocaleDateString('pt-BR');
+                if (!vendasPorDia[data]) {
+                    vendasPorDia[data] = { vendas: 0, receita: 0 };
+                }
+                vendasPorDia[data].vendas++;
+                vendasPorDia[data].receita += v.valor_total || 0;
+            });
+
+            const labels = Object.keys(vendasPorDia);
+            const dataVendas = labels.map(d => vendasPorDia[d].vendas);
+            const dataReceita = labels.map(d => vendasPorDia[d].receita);
+
+            if (charts.vendasTempo) charts.vendasTempo.destroy();
+
+            charts.vendasTempo = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Número de Vendas',
+                            data: dataVendas,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Receita (R$)',
+                            data: dataReceita,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Quantidade'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Receita (R$)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // GRÁFICO: PRODUTOS MAIS VENDIDOS
+        // ============================================
+        function criarGraficoProdutos(vendas) {
+            const ctx = document.getElementById('chartProdutos').getContext('2d');
+
+            const produtosCount = {};
+            vendas.forEach(v => {
+                const nome = v.produtos?.nome || 'Produto Desconhecido';
+                produtosCount[nome] = (produtosCount[nome] || 0) + v.quantidade;
+            });
+
+            const sorted = Object.entries(produtosCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+            if (charts.produtos) charts.produtos.destroy();
+
+            charts.produtos = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(p => p[0]),
+                    datasets: [{
+                        label: 'Quantidade Vendida',
+                        data: sorted.map(p => p[1]),
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // GRÁFICO: FORMAS DE PAGAMENTO
+        // ============================================
+        function criarGraficoPagamento(vendas) {
+            const ctx = document.getElementById('chartPagamento').getContext('2d');
+
+            const pagamentoCount = {};
+            vendas.forEach(v => {
+                const forma = v.forma_pagamento || 'Não definido';
+                pagamentoCount[forma] = (pagamentoCount[forma] || 0) + 1;
+            });
+
+            if (charts.pagamento) charts.pagamento.destroy();
+
+            charts.pagamento = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(pagamentoCount),
+                    datasets: [{
+                        data: Object.values(pagamentoCount),
+                        backgroundColor: [
+                            '#667eea',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // ============================================
+        // GRÁFICO: STATUS DOS PEDIDOS
+        // ============================================
+        function criarGraficoStatus(vendas) {
+            const ctx = document.getElementById('chartStatus').getContext('2d');
+
+            const statusCount = {};
+            vendas.forEach(v => {
+                const status = v.status_pagamento || 'pending';
+                statusCount[status] = (statusCount[status] || 0) + 1;
+            });
+
+            const statusLabels = {
+                'approved': 'Aprovados',
+                'pending': 'Pendentes',
+                'rejected': 'Rejeitados',
+                'cancelled': 'Cancelados'
+            };
+
+            if (charts.status) charts.status.destroy();
+
+            charts.status = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(statusCount).map(s => statusLabels[s] || s),
+                    datasets: [{
+                        data: Object.values(statusCount),
+                        backgroundColor: [
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545',
+                            '#6c757d'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // ============================================
+        // GRÁFICO: VENDAS POR PARCEIRO
+        // ============================================
+        function criarGraficoParceiros(vendas) {
+            const ctx = document.getElementById('chartParceiros').getContext('2d');
+
+            const parceirosReceita = {};
+            vendas.forEach(v => {
+                if (v.parceiro_id && v.parceiros) {
+                    const nome = v.parceiros.nome_completo || 'Parceiro Desconhecido';
+                    parceirosReceita[nome] = (parceirosReceita[nome] || 0) + (v.valor_total || 0);
+                }
+            });
+
+            const sorted = Object.entries(parceirosReceita).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+            if (charts.parceiros) charts.parceiros.destroy();
+
+            charts.parceiros = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(p => p[0]),
+                    datasets: [{
+                        label: 'Receita Gerada (R$)',
+                        data: sorted.map(p => p[1]),
+                        backgroundColor: '#28a745'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        // Inicializar
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Dashboard inicializado');
+            carregarDashboard();
+        });
+    </script>
+
+</body>
+</html>
