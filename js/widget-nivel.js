@@ -3,7 +3,7 @@
  * Componente reutilizável para exibir nível do parceiro
  * 
  * USO:
- * 1. Incluir o script: <script src="/widget-nivel.js"></script>
+ * 1. Incluir o script: <script src="/jc/widget-nivel.js"></script>
  * 2. Adicionar div: <div id="widget-nivel" data-parceiro-id="UUID"></div>
  * 3. Chamar: WidgetNivel.init();
  */
