@@ -1340,7 +1340,12 @@ function calcularTotal() {
                 btnSubmit.innerHTML = '<span>🔒</span><span>Finalizar Compra Segura</span>';
             }
         }
-
+// Dentro de processarCompraPIX(), adicionar ao vendaData:
+if (cupomAtivo && cupomAtivo.valido) {
+    vendaData.cupom_codigo = cupomAtivo.codigo;
+    vendaData.cupom_desconto = cupomAtivo.valor_desconto;
+    vendaData.valor_sem_desconto = totalSemDesconto;
+}
         // Funções auxiliares
         function showAlert(message, type) {
             const alertBox = document.getElementById('alertBox');
