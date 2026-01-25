@@ -12,6 +12,9 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- 🔥 CONFIG CENTRALIZADO -->
+    <script src="/supabase-config.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
@@ -808,6 +811,682 @@
 
             </form>
         </div>
-
     </div>
-    
+       <script>
+        console.log('🛒 Checkout Universal carregado');
+
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE (usando config centralizado)
+        // ============================================
+        // O supabaseClient já está disponível via supabase-config.js
+        console.log('✅ Usando configuração centralizada do Supabase');
+
+        // ============================================
+        // CONFIGURAÇÃO MERCADO PAGO
+        // ============================================
+        const MERCADOPAGO_PUBLIC_KEY = 'TEST-3c85afff-0b3a-4907-855c-742b90d6cfce';
+
+        // ============================================
+        // SISTEMA DE DETECÇÃO DE REFERÊNCIA E PRODUTO
+        // ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        const produtoId = urlParams.get('produto');
+
+        if (!produtoId) {
+            showAlert('❌ Produto não especificado na URL.', 'error');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 3000);
+        }
+
+        let parceiroData = null;
+        let produtoData = null;
+        let cupomAtivo = null;
+        let comissaoInfo = {
+            temComissao: false,
+            parceiro_id: null,
+            codigo_referencia: null,
+            valor_comissao: 0,
+            percentual_comissao: 0,
+            tipo_parceiro: null,
+            nome_parceiro: null
+        };
+
+        let selectedPaymentMethod = 'pix';
+
+        // ============================================
+        // CARREGAR PRODUTO DO SUPABASE
+        // ============================================
+        async function carregarProduto() {
+            try {
+                console.log('📦 Carregando produto:', produtoId);
+
+                const { data: produto, error } = await supabaseClient
+                    .from('produtos')
+                    .select('*')
+                    .eq('id', produtoId)
+                    .single();
+
+                if (error || !produto) {
+                    throw new Error('Produto não encontrado');
+                }
+
+                produtoData = produto;
+                console.log('✅ Produto carregado:', produto);
+
+                exibirProduto(produto);
+                calcularTotal();
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar produto:', error);
+                showAlert('❌ Produto não encontrado.', 'error');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+            }
+        }
+
+        // Exibir produto
+        function exibirProduto(produto) {
+            const tipoIcon = produto.tipo === 'digital' ? '📱' : 
+                            produto.tipo === 'fisico' ? '📦' : 
+                            produto.tipo === 'livro' ? '📖' : '⚙️';
+
+            const tipoLabel = produto.tipo === 'digital' ? 'Digital' : 
+                             produto.tipo === 'fisico' ? 'Físico' : 
+                             produto.tipo === 'livro' ? 'Livro' : 'Serviço';
+
+            const precoPromo = produto.preco_promocional || produto.preco;
+            const temDesconto = produto.preco_promocional && produto.preco_promocional < produto.preco;
+
+            const imagemSrc = produto.imagem_url || '';
+            const imagemHtml = imagemSrc ? 
+                `<img src="${imagemSrc}" alt="${produto.nome}">` : 
+                `<span style="font-size: 60px;">${tipoIcon}</span>`;
+
+            document.getElementById('productCard').innerHTML = `
+                <div class="product-image">
+                    ${imagemHtml}
+                </div>
+                <div class="product-info">
+                    <span class="product-type">${tipoIcon} ${tipoLabel}</span>
+                    <div class="product-name">${produto.nome}</div>
+                    ${produto.descricao ? `<div class="product-description">${produto.descricao}</div>` : ''}
+                    <div class="product-price">
+                        ${temDesconto ? `<span class="price-original">De R$ ${produto.preco.toFixed(2)}</span>` : ''}
+                        <span class="price-current">R$ ${precoPromo.toFixed(2)}</span>
+                    </div>
+                    ${produto.parcelamento_max > 1 ? `<div style="color: #666; font-size: 0.85rem; margin-top: 5px;">ou ${produto.parcelamento_max}x de R$ ${(precoPromo / produto.parcelamento_max).toFixed(2)}</div>` : ''}
+                </div>
+            `;
+
+            // Mostrar endereço se produto físico
+            if (produto.tipo === 'fisico') {
+                document.getElementById('addressSection').style.display = 'block';
+            }
+        }
+
+        // Buscar parceiro por código de referência
+        async function buscarParceiroPorReferencia() {
+            if (!refCode) {
+                console.log('ℹ️ Venda direta (sem comissão)');
+                return;
+            }
+
+            console.log('🔗 Detectado código de referência:', refCode);
+
+            try {
+                const { data: parceiro, error } = await supabaseClient
+                    .from('parceiros')
+                    .select('id, nome_completo, nome_igreja, comissao_padrao, tipo_parceiro, status')
+                    .eq('codigo_parceiro', refCode)
+                    .single();
+
+                if (error || !parceiro) {
+                    console.warn('⚠️ Código de referência inválido:', refCode);
+                    return;
+                }
+
+                if (parceiro.status !== 'ativo') {
+                    console.warn('⚠️ Parceiro não está ativo:', refCode);
+                    return;
+                }
+
+                parceiroData = parceiro;
+                
+                comissaoInfo.temComissao = true;
+                comissaoInfo.parceiro_id = parceiro.id;
+                comissaoInfo.codigo_referencia = refCode;
+                comissaoInfo.percentual_comissao = parceiro.comissao_padrao || 10;
+                comissaoInfo.tipo_parceiro = parceiro.tipo_parceiro;
+                
+                if (parceiro.tipo_parceiro === 'igreja') {
+                    comissaoInfo.nome_parceiro = parceiro.nome_igreja || parceiro.nome_completo;
+                } else {
+                    comissaoInfo.nome_parceiro = parceiro.nome_completo;
+                }
+
+                console.log('✅ Parceiro encontrado:', parceiro);
+                console.log('💰 Comissão configurada:', comissaoInfo);
+
+                mostrarMensagemReferencia();
+                
+                await registrarClique(parceiro.id, refCode);
+
+            } catch (error) {
+                console.error('❌ Erro ao buscar parceiro:', error);
+            }
+        }
+
+        // Registrar clique no link
+        async function registrarClique(parceiroId, codigoRef) {
+            try {
+                const { error } = await supabaseClient
+                    .from('link_clicks')
+                    .insert([{
+                        parceiro_id: parceiroId,
+                        codigo_referencia: codigoRef,
+                        user_agent: navigator.userAgent,
+                        referer: document.referrer || 'direct'
+                    }]);
+                
+                if (!error) {
+                    console.log('✅ Clique registrado com sucesso!');
+                }
+            } catch (error) {
+                console.error('❌ Erro ao registrar clique:', error);
+            }
+        }
+
+        // Mostrar mensagem de referência
+        function mostrarMensagemReferencia() {
+            if (!comissaoInfo.temComissao) return;
+
+            const icone = comissaoInfo.tipo_parceiro === 'igreja' ? '⛪' : 
+                          comissaoInfo.tipo_parceiro === 'empresa' ? '💼' : '🤝';
+
+            const alertDiv = document.getElementById('referralAlert');
+            alertDiv.innerHTML = `
+                <div class="referral-alert">
+                    <strong>${icone} Compra via indicação</strong>
+                    <div style="margin: 10px 0;">Você está comprando através de: <strong>${comissaoInfo.nome_parceiro}</strong></div>
+                    <small>Uma comissão de ${comissaoInfo.percentual_comissao}% será repassada.</small>
+                </div>
+            `;
+        }
+
+        // Calcular comissão
+        function calcularComissao(valorTotal) {
+            if (!comissaoInfo.temComissao) {
+                return 0;
+            }
+            
+            const valorComissao = valorTotal * (comissaoInfo.percentual_comissao / 100);
+            comissaoInfo.valor_comissao = valorComissao;
+            
+            console.log(`💰 Comissão calculada: R$ ${valorComissao.toFixed(2)} (${comissaoInfo.percentual_comissao}%)`);
+            
+            document.getElementById('rowComissao').style.display = 'flex';
+            document.getElementById('nomeParceiroResumo').textContent = comissaoInfo.nome_parceiro;
+            document.getElementById('displayComissao').textContent = `R$ ${valorComissao.toFixed(2)}`;
+            
+            return valorComissao;
+        }
+
+        // ============================================
+        // SISTEMA DE CUPONS
+        // ============================================
+        async function aplicarCupom() {
+            const codigo = document.getElementById('cupomCodigo').value.trim();
+            const btnAplicar = document.getElementById('btnAplicarCupom');
+            
+            if (!codigo) {
+                mostrarFeedbackCupom('Digite um código de cupom', 'error');
+                return;
+            }
+            
+            if (!produtoData) {
+                mostrarFeedbackCupom('Carregue o produto primeiro', 'error');
+                return;
+            }
+            
+            btnAplicar.disabled = true;
+            btnAplicar.textContent = 'Validando...';
+            
+            try {
+                const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+                const precoUnitario = produtoData.preco_promocional || produtoData.preco;
+                const valorCompra = quantidade * precoUnitario;
+                
+                console.log('🎟️ Validando cupom:', codigo);
+                console.log('💰 Valor da compra:', valorCompra);
+                
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/validar-cupom`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({
+                        codigo: codigo,
+                        valor_compra: valorCompra,
+                        email: document.getElementById('email').value || ''
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.valido) {
+                    throw new Error(result.erro || 'Cupom inválido');
+                }
+                
+                // Cupom válido!
+                cupomAtivo = result;
+                
+                console.log('✅ Cupom aplicado:', result);
+                
+                // Mostrar cupom aplicado
+                document.getElementById('cupomAplicado').classList.add('show');
+                document.getElementById('cupomDescricao').innerHTML = `
+                    <strong>${result.codigo}</strong> - ${result.descricao}<br>
+                    Desconto: R$ ${result.valor_desconto.toFixed(2)}
+                `;
+                
+                // Esconder input
+                document.getElementById('cupomCodigo').value = '';
+                document.getElementById('couponInputGroup').style.display = 'none';
+                
+                // Atualizar totais
+                calcularTotal();
+                
+                mostrarFeedbackCupom('✅ Cupom aplicado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao aplicar cupom:', error);
+                mostrarFeedbackCupom('❌ ' + error.message, 'error');
+                cupomAtivo = null;
+            } finally {
+                btnAplicar.disabled = false;
+                btnAplicar.textContent = 'Aplicar';
+            }
+        }
+
+        function removerCupom() {
+            cupomAtivo = null;
+            document.getElementById('cupomAplicado').classList.remove('show');
+            document.getElementById('couponInputGroup').style.display = 'flex';
+            calcularTotal();
+            mostrarFeedbackCupom('Cupom removido', 'info');
+        }
+
+        function mostrarFeedbackCupom(mensagem, tipo) {
+            const feedback = document.getElementById('cupomFeedback');
+            
+            const cores = {
+                'success': { bg: '#d4edda', color: '#155724', border: '#c3e6cb' },
+                'error': { bg: '#f8d7da', color: '#721c24', border: '#f5c6cb' },
+                'info': { bg: '#d1ecf1', color: '#0c5460', border: '#bee5eb' }
+            };
+            
+            const estilo = cores[tipo] || cores.info;
+            
+            feedback.style.background = estilo.bg;
+            feedback.style.color = estilo.color;
+            feedback.style.border = `1px solid ${estilo.border}`;
+            feedback.textContent = mensagem;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 4000);
+        }
+
+        // Eventos dos botões de cupom
+        document.getElementById('btnAplicarCupom').addEventListener('click', aplicarCupom);
+        document.getElementById('btnRemoverCupom').addEventListener('click', removerCupom);
+
+        // Permitir aplicar cupom com Enter
+        document.getElementById('cupomCodigo').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                aplicarCupom();
+            }
+        });
+
+        // ============================================
+        // CALCULAR TOTAL (COM CUPOM)
+        // ============================================
+        function calcularTotal() {
+            if (!produtoData) return;
+
+            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+            const precoUnitario = produtoData.preco_promocional || produtoData.preco;
+            let total = quantidade * precoUnitario;
+            const totalSemDesconto = total;
+
+            document.getElementById('displayPrecoUnitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
+            document.getElementById('displayQtdTotal').textContent = quantidade;
+            document.getElementById('displayQtd').textContent = quantidade;
+
+            // Aplicar cupom se existir
+            let descontoCupom = 0;
+            if (cupomAtivo && cupomAtivo.valido) {
+                descontoCupom = cupomAtivo.valor_desconto;
+                total = total - descontoCupom;
+                
+                // Garantir que total não seja negativo
+                if (total < 0) total = 0;
+                
+                // Mostrar linha de desconto
+                document.getElementById('rowDesconto').style.display = 'flex';
+                document.getElementById('displayCodigoCupom').textContent = cupomAtivo.codigo;
+                document.getElementById('displayDescontoCupom').textContent = `- R$ ${descontoCupom.toFixed(2)}`;
+            } else {
+                document.getElementById('rowDesconto').style.display = 'none';
+            }
+
+            document.getElementById('totalValue').textContent = `R$ ${total.toFixed(2)}`;
+
+            calcularComissao(total);
+        }
+
+        // Controles de quantidade
+        document.getElementById('btnMinus').addEventListener('click', function() {
+            const input = document.getElementById('quantidade');
+            if (input.value > 1) {
+                input.value = parseInt(input.value) - 1;
+                calcularTotal();
+            }
+        });
+
+        document.getElementById('btnPlus').addEventListener('click', function() {
+            const input = document.getElementById('quantidade');
+            if (input.value < 100) {
+                input.value = parseInt(input.value) + 1;
+                calcularTotal();
+            }
+        });
+
+        // ============================================
+        // MÁSCARAS
+        // ============================================
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 9) {
+                e.target.value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+            } else if (value.length > 6) {
+                e.target.value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+            } else if (value.length > 3) {
+                e.target.value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        function mascaraTelefone(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                input.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                input.value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                input.value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            } else {
+                input.value = value.replace(/^(\d*)/, '($1');
+            }
+        }
+
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            mascaraTelefone(e.target);
+        });
+
+        document.getElementById('whatsapp').addEventListener('input', function(e) {
+            mascaraTelefone(e.target);
+        });
+
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 8) value = value.slice(0, 8);
+            
+            if (value.length > 5) {
+                e.target.value = value.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        // Buscar CEP
+        document.getElementById('cep').addEventListener('blur', async function(e) {
+            const cep = e.target.value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) return;
+            
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await response.json();
+                
+                if (dados.erro) {
+                    showAlert('❌ CEP não encontrado', 'error');
+                    return;
+                }
+                
+                document.getElementById('endereco').value = dados.logradouro;
+                document.getElementById('bairro').value = dados.bairro;
+                document.getElementById('cidade').value = dados.localidade;
+                document.getElementById('estado').value = dados.uf;
+                
+                showAlert('✅ CEP encontrado!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Erro ao buscar CEP:', error);
+            }
+        });
+
+        // Payment method selection
+        document.querySelectorAll('.payment-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.payment-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                const radio = this.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    selectedPaymentMethod = radio.value;
+                    console.log('💳 Método selecionado:', selectedPaymentMethod);
+                }
+            });
+        });
+
+        // ============================================
+        // SUBMETER FORMULÁRIO
+        // ============================================
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            
+            if (paymentMethod === 'card') {
+                showAlert('⚠️ Pagamento com cartão em desenvolvimento. Use PIX por enquanto.', 'info');
+                return;
+            }
+            
+            await processarCompraPIX();
+        });
+
+        // ============================================
+        // PROCESSAR COMPRA PIX (COM CUPOM)
+        // ============================================
+        async function processarCompraPIX() {
+            const btnSubmit = document.getElementById('btnSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span>⏳</span><span>Processando...</span>';
+            
+            showLoading('Registrando sua compra...');
+            
+            try {
+                const quantidade = parseInt(document.getElementById('quantidade').value);
+                const precoUnitario = produtoData.preco_promocional || produtoData.preco;
+                let valorTotal = quantidade * precoUnitario;
+                const valorSemDesconto = valorTotal;
+                
+                // Aplicar desconto do cupom
+                let descontoCupom = 0;
+                if (cupomAtivo && cupomAtivo.valido) {
+                    descontoCupom = cupomAtivo.valor_desconto;
+                    valorTotal = valorTotal - descontoCupom;
+                    if (valorTotal < 0) valorTotal = 0;
+                }
+                
+                const valorComissao = calcularComissao(valorTotal);
+                
+                const vendaData = {
+                    produto_id: produtoData.id,
+                    nome_comprador: document.getElementById('nome').value,
+                    email_comprador: document.getElementById('email').value,
+                    cpf_comprador: document.getElementById('cpf').value.replace(/\D/g, ''),
+                    telefone_comprador: document.getElementById('telefone').value,
+                    whatsapp_comprador: document.getElementById('whatsapp').value,
+                    quantidade: quantidade,
+                    valor_unitario: precoUnitario,
+                    valor_total: valorTotal,
+                    forma_pagamento: 'pix',
+                    status_pagamento: 'pending',
+                    parceiro_id: comissaoInfo.parceiro_id,
+                    igreja_id: comissaoInfo.tipo_parceiro === 'igreja' ? comissaoInfo.parceiro_id : null,
+                    codigo_referencia: comissaoInfo.codigo_referencia,
+                    codigo_indicacao: comissaoInfo.codigo_referencia,
+                    valor_comissao: valorComissao,
+                    percentual_comissao: comissaoInfo.percentual_comissao,
+                    origem: comissaoInfo.temComissao ? 'venda_referencia' : 'venda_direta',
+                    data_venda: new Date().toISOString()
+                };
+                
+                // Adicionar dados do cupom se aplicado
+                if (cupomAtivo && cupomAtivo.valido) {
+                    vendaData.cupom_codigo = cupomAtivo.codigo;
+                    vendaData.cupom_desconto = descontoCupom;
+                    vendaData.valor_sem_desconto = valorSemDesconto;
+                }
+                
+                if (produtoData.tipo === 'fisico') {
+                    vendaData.endereco_entrega = {
+                        cep: document.getElementById('cep').value.replace(/\D/g, ''),
+                        endereco: document.getElementById('endereco').value,
+                        numero: document.getElementById('numero').value,
+                        complemento: document.getElementById('complemento').value,
+                        bairro: document.getElementById('bairro').value,
+                        cidade: document.getElementById('cidade').value,
+                        estado: document.getElementById('estado').value
+                    };
+                }
+                
+                console.log('📦 Registrando venda:', vendaData);
+                
+                const { data, error } = await supabaseClient
+                    .from('vendas')
+                    .insert([vendaData])
+                    .select();
+                
+                if (error) {
+                    throw error;
+                }
+                
+                console.log('✅ Venda registrada:', data);
+                
+                hideLoading();
+                showAlert('✅ Pedido registrado! Criando pagamento...', 'success');
+                
+                const vendaId = data[0].id;
+                
+                showLoading('Criando pagamento PIX...');
+                
+                const paymentData = {
+                    transaction_amount: valorTotal,
+                    description: produtoData.nome,
+                    payment_method_id: 'pix',
+                    payer: {
+                        email: document.getElementById('email').value,
+                        first_name: document.getElementById('nome').value.split(' ')[0],
+                        last_name: document.getElementById('nome').value.split(' ').slice(1).join(' '),
+                        identification: {
+                            type: 'CPF',
+                            number: document.getElementById('cpf').value.replace(/\D/g, '')
+                        }
+                    },
+                    external_reference: vendaId
+                };
+                
+                console.log('💳 Criando pagamento Mercado Pago:', paymentData);
+                
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/create-payment-mp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro ao criar pagamento');
+                }
+                
+                console.log('✅ Pagamento criado:', result);
+                
+                hideLoading();
+                
+                window.location.href = `/pix.html?payment_id=${result.payment_id}&venda_id=${vendaId}`;
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                hideLoading();
+                showAlert('❌ Erro ao processar compra: ' + error.message, 'error');
+                
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = '<span>🔒</span><span>Finalizar Compra Segura</span>';
+            }
+        }
+
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 5000);
+        }
+
+        function showLoading(message) {
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        window.addEventListener('DOMContentLoaded', async function() {
+            console.log('✅ Checkout Universal inicializado');
+            
+            await carregarProduto();
+            await buscarParceiroPorReferencia();
+        });
+    </script>
+
+</body>
+</html> 
