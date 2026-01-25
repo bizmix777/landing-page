@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios em PDF - BizMix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .card-header p {
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
+        .card-body {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-generate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+
+        .info-box h3 {
+            color: #1565C0;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .info-box ul {
+            color: #1565C0;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            margin-left: 20px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .btn-generate {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Gerando relatório...</h3>
+            <p id="loadingMessage">Aguarde um momento</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1>📄 Relatórios em PDF</h1>
+                <p>Gere relatórios completos de vendas</p>
+            </div>
+
+            <div class="card-body">
+
+                <div id="alertBox" class="alert"></div>
+
+                <form id="formRelatorio">
+
+                    <div class="form-group">
+                        <label for="tipoRelatorio">Tipo de Relatório</label>
+                        <select id="tipoRelatorio" required>
+                            <option value="vendas">Vendas Completo</option>
+                            <option value="comissoes">Comissões</option>
+                            <option value="produtos">Produtos</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="periodo">Período</label>
+                        <select id="periodo">
+                            <option value="7">Últimos 7 dias</option>
+                            <option value="15">Últimos 15 dias</option>
+                            <option value="30" selected>Últimos 30 dias</option>
+                            <option value="60">Últimos 60 dias</option>
+                            <option value="90">Últimos 90 dias</option>
+                            <option value="365">Último ano</option>
+                            <option value="all">Todo o período</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status">
+                            <option value="all">Todos</option>
+                            <option value="approved" selected>Aprovados</option>
+                            <option value="pending">Pendentes</option>
+                            <option value="rejected">Rejeitados</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-generate" id="btnGenerate">
+                        <span>📄</span>
+                        <span>Gerar Relatório PDF</span>
+                    </button>
+
+                </form>
+
+                <div class="info-box">
+                    <h3>ℹ️ Informações</h3>
+                    <ul>
+                        <li>O relatório será aberto em uma nova aba</li>
+                        <li>Use Ctrl+P (ou Cmd+P no Mac) para imprimir/salvar como PDF</li>
+                        <li>O arquivo é gerado em tempo real com dados atualizados</li>
+                        <li>Não ocupará espaço no servidor</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('📄 Página de Relatórios carregada');
+
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+
+        // ============================================
+        // GERAR RELATÓRIO
+        // ============================================
+        document.getElementById('formRelatorio').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const btnGenerate = document.getElementById('btnGenerate');
+            btnGenerate.disabled = true;
+
+            showLoading('Buscando dados...');
+
+            try {
+                const tipo = document.getElementById('tipoRelatorio').value;
+                const periodo = document.getElementById('periodo').value;
+                const status = document.getElementById('status').value;
+
+                console.log('📊 Gerando relatório:', { tipo, periodo, status });
+
+                // Chamar Edge Function
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/gerar-relatorio-pdf`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({
+                        tipo: tipo,
+                        periodo: periodo,
+                        status: status
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.error || 'Erro ao gerar relatório');
+                }
+
+                console.log('✅ Relatório gerado:', result.total_registros, 'registros');
+
+                hideLoading();
+
+                // Abrir em nova janela
+                const novaJanela = window.open('', '_blank');
+                novaJanela.document.write(result.html);
+                novaJanela.document.close();
+
+                // Aguardar 1 segundo e abrir diálogo de impressão
+                setTimeout(() => {
+                    novaJanela.print();
+                }, 1000);
+
+                showAlert(`✅ Relatório gerado com ${result.total_registros} registros!`, 'success');
+
+            } catch (error) {
+                console.error('❌ Erro ao gerar relatório:', error);
+                hideLoading();
+                showAlert('❌ Erro ao gerar relatório: ' + error.message, 'error');
+            } finally {
+                btnGenerate.disabled = false;
+            }
+        });
+
+        // Funções auxiliares
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 5000);
+        }
+
+        function showLoading(message) {
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+    </script>
+
+</body>
+</html>
