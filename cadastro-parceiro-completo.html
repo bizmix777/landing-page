@@ -6,8 +6,6 @@
     <title>Cadastro de Parceiro - BizMix</title>
     <link rel="icon" href="https://bizmix.com.br/favicon.ico">
     
-    <!-- CRITICAL: NO Supabase library import -->
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
@@ -50,7 +48,7 @@
 
         .progress-bar {
             background: #f0f0f0;
-            height: 15px; /* CRITICAL: 15px height */
+            height: 15px;
             border-radius: 10px;
             overflow: hidden;
             margin: 20px 0;
@@ -386,7 +384,7 @@
         }
 
         .hidden {
-            display: none !important; /* CRITICAL: .hidden class */
+            display: none !important;
         }
 
         @media (max-width: 768px) {
@@ -441,10 +439,8 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill" style="width: 33%;">Step 1 de 3</div>
             </div>
-
             <div id="alertBox" class="alert"></div>
-
-            <form id="cadastroForm">
+                        <form id="cadastroForm">
 
                 <!-- STEP 1: DADOS PESSOAIS -->
                 <div class="step-content active" data-step="1">
@@ -564,7 +560,6 @@
                             <label for="igrejaVinculada">É membro de alguma igreja parceira? (Opcional)</label>
                             <select id="igrejaVinculada">
                                 <option value="">Não / Não tenho vínculo</option>
-                                <!-- Preenchido dinamicamente -->
                             </select>
                             <small>Se sua igreja já é parceira, selecione aqui</small>
                         </div>
@@ -757,13 +752,12 @@
                     🔐 Fazer Login
                 </button>
             </div>
-
         </div>
-
     </div>
-
-    <script>
-        // CRITICAL: ALL configuration INLINE
+        <script>
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE (INLINE) ✅
+        // ============================================
         const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
         
@@ -771,9 +765,9 @@
 
         let currentStep = 1;
 
-        // 
+        // ============================================
         // FUNÇÕES DE NAVEGAÇÃO
-        // 
+        // ============================================
         function irParaStep(step) {
             currentStep = step;
             
@@ -797,7 +791,7 @@
                 }
             });
 
-            // Atualizar progress bar (CRITICAL: shows "Step X de 3")
+            // Atualizar progress bar
             const progress = (step / 3) * 100;
             const progressFill = document.getElementById('progressFill');
             progressFill.style.width = `${progress}%`;
@@ -812,7 +806,7 @@
             
             let valido = true;
             inputs.forEach(input => {
-                // Verificar se o campo está visível (CRITICAL: only validate visible fields)
+                // Verificar se o campo está visível
                 const isVisible = input.offsetParent !== null;
                 
                 if (isVisible && !input.value.trim()) {
@@ -830,9 +824,9 @@
             return valido;
         }
 
-        // 
+        // ============================================
         // EVENT LISTENERS DOS BOTÕES
-        // 
+        // ============================================
         document.getElementById('btnNext1').addEventListener('click', function() {
             console.log('🔘 Clicou em Próximo (Step 1)');
             if (validarCamposObrigatorios(1)) {
@@ -857,9 +851,9 @@
             irParaStep(2);
         });
 
-        // 
-        // CONTROLE DE TIPO DE PARCEIRO (CRITICAL: show/hide fields)
-        // 
+        // ============================================
+        // CONTROLE DE TIPO DE PARCEIRO ✅ LÓGICA CORRIGIDA
+        // ============================================
         document.querySelectorAll('input[name="tipo_parceiro"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const tipo = this.value;
@@ -869,7 +863,7 @@
                 const camposEmpresa = document.getElementById('camposEmpresa');
                 const vinculoIgreja = document.getElementById('vinculoIgreja');
                 
-                // Esconder todos
+                // RESETAR TUDO PRIMEIRO
                 camposIgreja.classList.add('hidden');
                 camposEmpresa.classList.add('hidden');
                 vinculoIgreja.classList.add('hidden');
@@ -878,25 +872,32 @@
                 document.getElementById('nomeIgreja').required = false;
                 document.getElementById('nomeEmpresa').required = false;
                 
-                // Mostrar campos do tipo
-                if (tipo === 'igreja') {
+                // LÓGICA CORRIGIDA ✅
+                if (tipo === 'pessoa_fisica') {
+                    // Pessoa Física: MOSTRAR campo "igreja parceira"
+                    vinculoIgreja.classList.remove('hidden');
+                    console.log('👤 Pessoa Física selecionada - Campo igreja parceira VISÍVEL');
+                    
+                } else if (tipo === 'igreja') {
+                    // Igreja: MOSTRAR campos de igreja + ESCONDER "igreja parceira"
                     camposIgreja.classList.remove('hidden');
                     document.getElementById('nomeIgreja').required = true;
-                    console.log('⛪ Campos de igreja exibidos');
+                    vinculoIgreja.classList.add('hidden');
+                    console.log('⛪ Igreja selecionada - Campos igreja VISÍVEIS, campo igreja parceira ESCONDIDO');
+                    
                 } else if (tipo === 'empresa') {
+                    // Empresa: MOSTRAR campos de empresa + ESCONDER "igreja parceira"
                     camposEmpresa.classList.remove('hidden');
                     document.getElementById('nomeEmpresa').required = true;
-                    console.log('💼 Campos de empresa exibidos');
-                } else if (tipo === 'pessoa_fisica') {
-                    vinculoIgreja.classList.remove('hidden');
-                    console.log('👤 Campo de vínculo com igreja exibido');
+                    vinculoIgreja.classList.add('hidden');
+                    console.log('💼 Empresa selecionada - Campos empresa VISÍVEIS, campo igreja parceira ESCONDIDO');
                 }
             });
         });
 
-        // 
-        // CARREGAR IGREJAS PARCEIRAS (CRITICAL: fetch REST API)
-        // 
+        // ============================================
+        // CARREGAR IGREJAS PARCEIRAS (VIA FETCH)
+        // ============================================
         async function carregarIgrejas() {
             try {
                 console.log('🔍 Carregando igrejas parceiras...');
@@ -924,8 +925,6 @@
                         select.appendChild(option);
                     });
                     console.log('✅ Igrejas carregadas:', igrejas.length);
-                } else {
-                    console.log('ℹ️ Nenhuma igreja parceira encontrada.');
                 }
 
             } catch (error) {
@@ -933,9 +932,9 @@
             }
         }
 
-        // 
+        // ============================================
         // MÁSCARAS DE ENTRADA
-        // 
+        // ============================================
         document.getElementById('telefone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length > 11) value = value.slice(0, 11);
@@ -996,9 +995,9 @@
             }
         });
 
-        // 
-        // BUSCAR CEP (ViaCEP API)
-        // 
+        // ============================================
+        // BUSCAR CEP
+        // ============================================
         document.getElementById('cep').addEventListener('blur', async function(e) {
             const cep = e.target.value.replace(/\D/g, '');
             
@@ -1029,9 +1028,9 @@
             }
         });
 
-        // 
-        // SUBMETER FORMULÁRIO (CRITICAL: fetch Edge Function)
-        // 
+        // ============================================
+        // SUBMETER FORMULÁRIO (FETCH DIRETO) ✅
+        // ============================================
         document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             console.log('📝 Submetendo formulário');
@@ -1095,6 +1094,7 @@
                 
                 console.log('📦 Enviando dados:', dadosParceiro);
                 
+                // FETCH DIRETO PARA EDGE FUNCTION ✅
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/registrar-parceiro`, {
                     method: 'POST',
                     headers: {
@@ -1133,9 +1133,9 @@
             }
         });
 
-        // 
+        // ============================================
         // FUNÇÕES AUXILIARES
-        // 
+        // ============================================
         function showAlert(message, type) {
             const alertBox = document.getElementById('alertBox');
             alertBox.textContent = message;
@@ -1155,9 +1155,9 @@
             document.getElementById('loadingOverlay').classList.remove('show');
         }
 
-        // 
-        // INICIALIZAR (on DOMContentLoaded)
-        // 
+        // ============================================
+        // INICIALIZAR
+        // ============================================
         window.addEventListener('DOMContentLoaded', function() {
             console.log('✅ Formulário inicializado');
             carregarIgrejas();
