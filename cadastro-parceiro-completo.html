@@ -1109,8 +1109,17 @@
                 const result = await response.json();
                 console.log('📦 Resultado:', result);
                 
-                if (!result.success) {
-                    throw new Error(result.error || 'Erro ao registrar parceiro');
+                    if (!result.success) {
+                    // Mensagens de erro mais amigáveis
+                    let mensagemErro = result.error || 'Erro ao registrar parceiro';
+                    
+                    if (mensagemErro.includes('duplicate key') && mensagemErro.includes('cpf_cnpj')) {
+                        mensagemErro = 'Este CPF/CNPJ já está cadastrado. Por favor, verifique seus dados ou entre em contato com o suporte.';
+                    } else if (mensagemErro.includes('duplicate key') && mensagemErro.includes('email')) {
+                        mensagemErro = 'Este e-mail já está cadastrado. Por favor, use outro e-mail ou recupere sua senha.';
+                    }
+                    
+                    throw new Error(mensagemErro);
                 }
                 
                 console.log('✅ Parceiro registrado:', result);
