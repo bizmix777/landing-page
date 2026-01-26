@@ -3,21 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - BizMix</title>
-    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
-    
-    <!-- Mercado Pago SDK -->
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <title>Checkout - Somos Todos Um</title>
     
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- 🔥 CONFIG CENTRALIZADO -->
-    <script src="/supabase-config.js"></script>
+    <!-- Mercado Pago SDK -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
         * {
             margin: 0;
             padding: 0;
@@ -25,437 +19,190 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-            text-align: center;
+        .checkout-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-top: 30px;
         }
 
-        .header h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 2rem;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 1rem;
-        }
-
-        .alert {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideDown 0.3s ease;
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .referral-alert {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        .referral-alert strong {
-            font-size: 1.1em;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .product-section {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-        }
-
-        .product-card {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .product-image {
-            width: 120px;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 60px;
-            overflow: hidden;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-info {
-            flex: 1;
-        }
-
-        .product-type {
-            display: inline-block;
-            padding: 5px 12px;
-            background: #667eea;
-            color: white;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .product-name {
-            font-size: 1.4rem;
-            color: #333;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .product-description {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-
-        .product-price {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .price-original {
-            text-decoration: line-through;
-            color: #999;
-            font-size: 1rem;
-        }
-
-        .price-current {
-            font-size: 2rem;
-            color: #28a745;
-            font-weight: 700;
-        }
-
-        .skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s ease-in-out infinite;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .skeleton-text {
-            height: 20px;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .form-content {
+        .checkout-form {
             background: white;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        .section-title {
-            font-size: 1.3rem;
+        .order-summary {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        h1 {
             color: #333;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
-        .form-group label {
+        label {
             display: block;
             margin-bottom: 8px;
             color: #333;
             font-weight: 600;
-            font-size: 0.95rem;
         }
 
-        .form-group label .required {
-            color: #e74c3c;
-        }
-
-        .form-group input, .form-group select {
+        input, select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 1rem;
-            font-family: 'Poppins', sans-serif;
             transition: all 0.3s ease;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .address-section {
-            margin-top: 30px;
-        }
-
-        .quantity-section {
-            margin-bottom: 30px;
-        }
-
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .quantity-btn {
-            width: 40px;
-            height: 40px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .quantity-btn:hover {
-            background: #764ba2;
-            transform: scale(1.05);
-        }
-
-        .quantity-input {
-            width: 80px;
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .total-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 1rem;
-        }
-
-        .total-row:last-child {
-            border-bottom: none;
-        }
-
-        .total-row.final {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: #667eea;
-            margin-top: 10px;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
         }
 
         .payment-methods {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 30px;
         }
 
-        .payment-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .payment-button {
             padding: 20px;
             border: 2px solid #e0e0e0;
             border-radius: 10px;
+            background: white;
             cursor: pointer;
             transition: all 0.3s ease;
-        }
-
-        .payment-option:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 10px rgba(102, 126, 234, 0.2);
-        }
-
-        .payment-option.selected {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
-
-        .payment-icon {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        .payment-label {
             font-size: 1.1rem;
             font-weight: 600;
-            color: #333;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.3rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
         }
 
-        .btn-submit:hover {
+        .payment-button:hover {
+            border-color: #667eea;
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .btn-submit:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
+        .payment-button.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
         }
 
-        .security-badges {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid #f0f0f0;
+        .pix-button {
+            color: #00a868;
         }
 
-        .security-badges .badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #666;
-            font-size: 0.9rem;
+        .card-button {
+            color: #667eea;
         }
 
-        .security-badges .badge span:first-child {
-            font-size: 1.2rem;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .submit-button {
             width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .loading-overlay.show {
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+
+        .submit-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .product-info {
             display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid #f0f0f0;
         }
 
-        .loading-content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
+        .product-image {
+            width: 100px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+        .product-details h3 {
+            color: #333;
+            margin-bottom: 5px;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .product-price {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .summary-row.total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+            margin-top: 15px;
         }
 
         .coupon-section {
-            margin-bottom: 30px;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
         }
 
         .coupon-input-group {
@@ -463,1030 +210,750 @@
             gap: 10px;
         }
 
-        .coupon-input {
+        .coupon-input-group input {
             flex: 1;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            text-transform: uppercase;
-            font-family: 'Poppins', sans-serif;
         }
 
-        .coupon-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn-coupon {
+        .apply-coupon-btn {
             padding: 12px 25px;
             background: #667eea;
             color: white;
             border: none;
             border-radius: 8px;
+            cursor: pointer;
             font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .btn-coupon:hover {
-            background: #764ba2;
+        .apply-coupon-btn:hover {
+            background: #5568d3;
         }
 
-        .btn-coupon:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .coupon-feedback {
+        .discount-applied {
+            color: #00a868;
+            font-weight: 600;
             margin-top: 10px;
-            padding: 10px;
-            border-radius: 6px;
-            display: none;
         }
 
-        .coupon-feedback.show {
-            display: block;
-        }
-
-        .coupon-applied {
-            display: none;
-            margin-top: 15px;
-            background: #d4edda;
-            border-left: 4px solid #28a745;
-            padding: 15px;
-            border-radius: 6px;
-        }
-
-        .coupon-applied.show {
-            display: block;
-        }
-
-        .coupon-applied-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .coupon-applied-info {
-            color: #155724;
-        }
-
-        .coupon-applied-info strong {
-            display: block;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .coupon-applied-info small {
+        .error-message {
+            color: #dc3545;
             font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
         }
 
-        .btn-remove-coupon {
-            background: transparent;
-            border: none;
+        .success-message {
+            background: #d4edda;
             color: #155724;
-            cursor: pointer;
-            font-size: 1.2rem;
-            padding: 5px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
         }
 
-        .btn-remove-coupon:hover {
-            color: #0c3d18;
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal PIX */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #000;
+        }
+
+        .qr-code-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .qr-code-container img {
+            max-width: 300px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .pix-code {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+
+        .copy-button {
+            padding: 12px 30px;
+            background: #00a868;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .copy-button:hover {
+            background: #008c56;
         }
 
         @media (max-width: 768px) {
-            .product-card {
-                flex-direction: column;
-                text-align: center;
+            .checkout-wrapper {
+                grid-template-columns: 1fr;
             }
 
-            .form-row {
-                grid-template-columns: 1fr;
+            .order-summary {
+                position: static;
             }
 
             .payment-methods {
                 grid-template-columns: 1fr;
             }
+        }
 
-            .security-badges {
-                flex-direction: column;
-                gap: 10px;
-            }
+        .header {
+            text-align: center;
+            color: white;
+            padding: 20px 0;
+        }
 
-            .coupon-input-group {
-                flex-direction: column;
-            }
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <h3>Processando...</h3>
-            <p id="loadingMessage">Aguarde um momento</p>
-        </div>
-    </div>
-
     <div class="container">
-
         <div class="header">
             <h1>🛒 Finalizar Compra</h1>
-            <p>Pagamento 100% seguro via Mercado Pago</p>
-        </div>
-
-        <div id="alertBox" class="alert"></div>
-
-        <div id="referralAlert"></div>
-
-        <div class="product-section">
-            <div class="product-card" id="productCard">
-                <div class="product-image skeleton">
-                    <span style="font-size: 60px;">📦</span>
-                </div>
-                <div class="product-info" style="flex: 1;">
-                    <div class="skeleton-text skeleton" style="width: 60%;"></div>
-                    <div class="skeleton-text skeleton" style="width: 100%;"></div>
-                    <div class="skeleton-text skeleton" style="width: 80%;"></div>
-                </div>
+            <p>Complete seus dados para receber o livro digital</p>
+            <div class="security-badges">
+                <div class="badge">🔒 Pagamento Seguro</div>
+                <div class="badge">⚡ Entrega Imediata</div>
+                <div class="badge">✅ Garantia de 7 Dias</div>
             </div>
         </div>
 
-        <div class="form-content">
-            <form id="checkoutForm">
+        <div class="checkout-wrapper">
+            <!-- FORMULÁRIO DE CHECKOUT -->
+            <div class="checkout-form">
+                <h1>Dados Pessoais</h1>
+                <p class="subtitle">Preencha com seus dados para receber o livro</p>
 
-                <div class="section-title">👤 Seus Dados</div>
-
-                <div class="form-group">
-                    <label for="nome">Nome Completo <span class="required">*</span></label>
-                    <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo">
+                <div class="success-message" id="successMessage">
+                    ✅ Pagamento confirmado! Você receberá o livro por email em breve.
                 </div>
 
-                <div class="form-row">
+                <form id="checkoutForm">
                     <div class="form-group">
-                        <label for="email">E-mail <span class="required">*</span></label>
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+                        <span class="error-message" id="nomeError">Por favor, preencha seu nome</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail *</label>
                         <input type="email" id="email" name="email" required placeholder="seu@email.com">
-                        <small>📧 Enviaremos informações do pedido para este e-mail</small>
+                        <span class="error-message" id="emailError">Por favor, insira um email válido</span>
                     </div>
 
                     <div class="form-group">
-                        <label for="cpf">CPF <span class="required">*</span></label>
+                        <label for="cpf">CPF *</label>
                         <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00" maxlength="14">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="telefone">Telefone <span class="required">*</span></label>
-                        <input type="tel" id="telefone" name="telefone" required placeholder="(00) 00000-0000">
+                        <span class="error-message" id="cpfError">Por favor, insira um CPF válido</span>
                     </div>
 
                     <div class="form-group">
-                        <label for="whatsapp">WhatsApp <span class="required">*</span></label>
-                        <input type="tel" id="whatsapp" name="whatsapp" required placeholder="(00) 00000-0000">
-                        <small>💬 Para contato sobre o pedido</small>
-                    </div>
-                </div>
-
-                <div class="address-section" id="addressSection" style="display: none;">
-                    <div class="section-title">📍 Endereço de Entrega</div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="cep">CEP <span class="required">*</span></label>
-                            <input type="text" id="cep" name="cep" placeholder="00000-000" maxlength="9">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="estado">Estado <span class="required">*</span></label>
-                            <input type="text" id="estado" name="estado" placeholder="SP" maxlength="2">
-                        </div>
+                        <label for="telefone">Telefone (opcional)</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" maxlength="15">
                     </div>
 
-                    <div class="form-group">
-                        <label for="cidade">Cidade <span class="required">*</span></label>
-                        <input type="text" id="cidade" name="cidade" placeholder="Sua cidade">
+                    <!-- CUPOM DE DESCONTO -->
+                    <div class="coupon-section">
+                        <label for="cupom">Cupom de Desconto</label>
+                        <div class="coupon-input-group">
+                            <input type="text" id="cupom" name="cupom" placeholder="Digite o cupom">
+                            <button type="button" class="apply-coupon-btn" onclick="aplicarCupom()">Aplicar</button>
+                        </div>
+                        <div class="discount-applied" id="discountMessage"></div>
                     </div>
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="bairro">Bairro <span class="required">*</span></label>
-                            <input type="text" id="bairro" name="bairro" placeholder="Seu bairro">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="endereco">Rua <span class="required">*</span></label>
-                            <input type="text" id="endereco" name="endereco" placeholder="Nome da rua">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="numero">Número <span class="required">*</span></label>
-                            <input type="text" id="numero" name="numero" placeholder="123">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="complemento">Complemento</label>
-                            <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco, etc (opcional)">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-title">📦 Quantidade</div>
-
-                <div class="quantity-section">
-                    <div class="quantity-control">
-                        <button type="button" class="quantity-btn" id="btnMinus">−</button>
-                        <input type="number" id="quantidade" name="quantidade" value="1" min="1" max="100" class="quantity-input" readonly>
-                        <button type="button" class="quantity-btn" id="btnPlus">+</button>
-                        <span style="margin-left: auto; font-size: 16px; color: #6c757d;">
-                            <strong id="displayQtd">1</strong> unidade(s)
-                        </span>
-                    </div>
-                </div>
-
-                <div class="section-title">🎟️ Cupom de Desconto</div>
-
-                <div class="coupon-section">
-                    <div class="coupon-input-group" id="couponInputGroup">
-                        <input 
-                            type="text" 
-                            id="cupomCodigo" 
-                            class="coupon-input"
-                            placeholder="Digite o código do cupom"
-                        >
-                        <button 
-                            type="button" 
-                            id="btnAplicarCupom"
-                            class="btn-coupon"
-                        >
-                            Aplicar
+                    <!-- MÉTODO DE PAGAMENTO -->
+                    <h2 style="margin-top: 30px; margin-bottom: 15px;">Método de Pagamento</h2>
+                    <div class="payment-methods">
+                        <button type="button" class="payment-button pix-button" id="pixButton">
+                            🟢 PAGAR COM PIX
+                        </button>
+                        <button type="button" class="payment-button card-button" id="cardButton">
+                            💳 PAGAR COM CARTÃO
                         </button>
                     </div>
-                    
-                    <div id="cupomFeedback" class="coupon-feedback"></div>
-                    
-                    <div id="cupomAplicado" class="coupon-applied">
-                        <div class="coupon-applied-header">
-                            <div class="coupon-applied-info">
-                                <strong>🎉 Cupom aplicado!</strong>
-                                <small id="cupomDescricao"></small>
-                            </div>
-                            <button 
-                                type="button"
-                                id="btnRemoverCupom"
-                                class="btn-remove-coupon"
-                            >
-                                ✖
-                            </button>
-                        </div>
+
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p>Processando pagamento...</p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RESUMO DO PEDIDO -->
+            <div class="order-summary">
+                <h2 style="margin-bottom: 20px;">Resumo do Pedido</h2>
+
+                <div class="product-info" id="productInfo">
+                    <img src="images/capa-livro.jpg" alt="Capa do Livro" class="product-image" id="productImage">
+                    <div class="product-details">
+                        <h3 id="productName">Carregando...</h3>
+                        <p class="product-price" id="productPrice">R$ --,--</p>
                     </div>
                 </div>
 
-                <div class="section-title">📝 Resumo do Pedido</div>
-
-                <div class="total-section">
-                    <div class="total-row">
-                        <span>Preço Unitário:</span>
-                        <span id="displayPrecoUnitario">R$ 0,00</span>
-                    </div>
-                    <div class="total-row">
-                        <span>Quantidade:</span>
-                        <span id="displayQtdTotal">1</span>
-                    </div>
-                    <div class="total-row" id="rowDesconto" style="display: none; color: #28a745;">
-                        <span>Desconto (<span id="displayCodigoCupom"></span>):</span>
-                        <span id="displayDescontoCupom">- R$ 0,00</span>
-                    </div>
-                    <div class="total-row" id="rowComissao" style="display: none; color: #667eea;">
-                        <span>Comissão para <span id="nomeParceiroResumo"></span>:</span>
-                        <span id="displayComissao">R$ 0,00</span>
-                    </div>
-                    <div class="total-row final">
-                        <span>TOTAL:</span>
-                        <span id="totalValue">R$ 0,00</span>
-                    </div>
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">R$ 0,00</span>
                 </div>
 
-                <div class="section-title">💳 Forma de Pagamento</div>
-
-                <div class="payment-methods">
-                    <label class="payment-option selected" for="paymentPix" style="cursor: pointer;">
-                        <input type="radio" name="payment" id="paymentPix" value="pix" checked style="display: none;">
-                        <div class="payment-icon">🎫</div>
-                        <div class="payment-label">PIX</div>
-                        <small style="color: #666; margin-top: 5px;">Aprovação instantânea</small>
-                    </label>
-
-                    <label class="payment-option" for="paymentCard" style="cursor: pointer;">
-                        <input type="radio" name="payment" id="paymentCard" value="card" style="display: none;">
-                        <div class="payment-icon">💳</div>
-                        <div class="payment-label">Cartão de Crédito</div>
-                        <small style="color: #666; margin-top: 5px;">Em desenvolvimento</small>
-                    </label>
+                <div class="summary-row" id="discountRow" style="display: none;">
+                    <span>Desconto:</span>
+                    <span id="discount" style="color: #00a868;">- R$ 0,00</span>
                 </div>
 
-                <button type="submit" class="btn-submit" id="btnSubmit">
-                    <span>🔒</span>
-                    <span>Finalizar Compra Segura</span>
-                </button>
-
-                <div class="security-badges">
-                    <div class="badge">
-                        <span>🔒</span>
-                        <span>Compra 100% Segura</span>
-                    </div>
-                    <div class="badge">
-                        <span>✅</span>
-                        <span>Dados Protegidos</span>
-                    </div>
-                    <div class="badge">
-                        <span>📧</span>
-                        <span>Suporte Rápido</span>
-                    </div>
+                <div class="summary-row" id="comissaoRow" style="display: none;">
+                    <span>Comissão Parceiro:</span>
+                    <span id="comissao">R$ 0,00</span>
                 </div>
 
-            </form>
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span id="total">R$ 0,00</span>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem; color: #666;">
+                    ℹ️ Você receberá o livro digital em PDF no seu e-mail em até 30 minutos após a confirmação do pagamento.
+                </div>
+            </div>
         </div>
     </div>
-       <script>
-        console.log('🛒 Checkout Universal carregado');
+
+    <!-- MODAL PIX -->
+    <div id="pixModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="fecharModalPix()">&times;</span>
+            <div class="qr-code-container">
+                <h2>🟢 Pague com PIX</h2>
+                <p>Escaneie o QR Code ou copie o código:</p>
+                
+                <img id="qrCodeImage" src="" alt="QR Code PIX" style="display: none;">
+                
+                <div class="pix-code" id="pixCode"></div>
+                
+                <button class="copy-button" onclick="copiarCodigoPix()">
+                    📋 Copiar Código PIX
+                </button>
+
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px;">
+                    <p><strong>⏰ Aguardando pagamento...</strong></p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">Após pagar, aguarde alguns instantes. Você receberá o livro por email automaticamente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3MTA5NzksImV4cCI6MjA1MjI4Njk3OX0.TkZ8_L3fHx-lqwFKzSsWWh-zSE9ipPC4l50YfkDPGmo';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // ============================================
-        // CONFIGURAÇÃO SUPABASE (usando config centralizado)
+        // VARIÁVEIS GLOBAIS
         // ============================================
-        // O supabaseClient já está disponível via supabase-config.js
-        console.log('✅ Usando configuração centralizada do Supabase');
+        let produtoAtual = null;
+        let parceiroAtual = null;
+        let cupomAplicado = null;
+        let valorOriginal = 0;
+        let valorFinal = 0;
+        let metodoPagamento = null;
 
         // ============================================
-        // CONFIGURAÇÃO MERCADO PAGO
+        // INICIALIZAÇÃO
         // ============================================
-        const MERCADOPAGO_PUBLIC_KEY = 'TEST-3c85afff-0b3a-4907-855c-742b90d6cfce';
-
-        // ============================================
-        // SISTEMA DE DETECÇÃO DE REFERÊNCIA E PRODUTO
-        // ============================================
-        const urlParams = new URLSearchParams(window.location.search);
-        const refCode = urlParams.get('ref');
-        const produtoId = urlParams.get('produto');
-
-        if (!produtoId) {
-            showAlert('❌ Produto não especificado na URL.', 'error');
-            setTimeout(() => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('✅ Checkout carregado');
+            
+            // Pegar produto_id e parceiro da URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const produtoId = urlParams.get('produto');
+            const parceiroId = urlParams.get('parceiro');
+            
+            if (!produtoId) {
+                alert('❌ Produto não encontrado. Retorne à página inicial.');
                 window.location.href = '/';
-            }, 3000);
-        }
+                return;
+            }
 
-        let parceiroData = null;
-        let produtoData = null;
-        let cupomAtivo = null;
-        let comissaoInfo = {
-            temComissao: false,
-            parceiro_id: null,
-            codigo_referencia: null,
-            valor_comissao: 0,
-            percentual_comissao: 0,
-            tipo_parceiro: null,
-            nome_parceiro: null
-        };
+            await carregarProduto(produtoId);
+            
+            if (parceiroId) {
+                await carregarParceiro(parceiroId);
+            } else {
+                console.log('ℹ️ Venda direta (sem comissão)');
+            }
 
-        let selectedPaymentMethod = 'pix';
+            // Máscaras de input
+            aplicarMascaras();
+
+            // Conectar botões de pagamento
+            document.getElementById('pixButton').onclick = processarPagamentoPix;
+            document.getElementById('cardButton').onclick = processarPagamentoCartao;
+
+            console.log('✅ Checkout inicializado');
+        });
 
         // ============================================
-        // CARREGAR PRODUTO DO SUPABASE
+        // CARREGAR PRODUTO
         // ============================================
-        async function carregarProduto() {
+        async function carregarProduto(produtoId) {
             try {
-                console.log('📦 Carregando produto:', produtoId);
-
-                const { data: produto, error } = await supabaseClient
+                const { data, error } = await supabase
                     .from('produtos')
                     .select('*')
                     .eq('id', produtoId)
                     .single();
 
-                if (error || !produto) {
-                    throw new Error('Produto não encontrado');
+                if (error || !data) {
+                    alert('❌ Produto não encontrado.');
+                    window.location.href = '/';
+                    return;
                 }
 
-                produtoData = produto;
-                console.log('✅ Produto carregado:', produto);
+                produtoAtual = data;
+                valorOriginal = parseFloat(data.preco);
+                valorFinal = valorOriginal;
 
-                exibirProduto(produto);
-                calcularTotal();
+                // Atualizar interface
+                document.getElementById('productName').textContent = data.nome;
+                document.getElementById('productPrice').textContent = `R$ ${valorOriginal.toFixed(2).replace('.', ',')}`;
+                
+                if (data.imagem_url) {
+                    document.getElementById('productImage').src = data.imagem_url;
+                }
+
+                atualizarResumo();
 
             } catch (error) {
                 console.error('❌ Erro ao carregar produto:', error);
-                showAlert('❌ Produto não encontrado.', 'error');
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 3000);
+                alert('Erro ao carregar produto. Tente novamente.');
             }
         }
 
-        // Exibir produto
-        function exibirProduto(produto) {
-            const tipoIcon = produto.tipo === 'digital' ? '📱' : 
-                            produto.tipo === 'fisico' ? '📦' : 
-                            produto.tipo === 'livro' ? '📖' : '⚙️';
-
-            const tipoLabel = produto.tipo === 'digital' ? 'Digital' : 
-                             produto.tipo === 'fisico' ? 'Físico' : 
-                             produto.tipo === 'livro' ? 'Livro' : 'Serviço';
-
-            const precoPromo = produto.preco_promocional || produto.preco;
-            const temDesconto = produto.preco_promocional && produto.preco_promocional < produto.preco;
-
-            const imagemSrc = produto.imagem_url || '';
-            const imagemHtml = imagemSrc ? 
-                `<img src="${imagemSrc}" alt="${produto.nome}">` : 
-                `<span style="font-size: 60px;">${tipoIcon}</span>`;
-
-            document.getElementById('productCard').innerHTML = `
-                <div class="product-image">
-                    ${imagemHtml}
-                </div>
-                <div class="product-info">
-                    <span class="product-type">${tipoIcon} ${tipoLabel}</span>
-                    <div class="product-name">${produto.nome}</div>
-                    ${produto.descricao ? `<div class="product-description">${produto.descricao}</div>` : ''}
-                    <div class="product-price">
-                        ${temDesconto ? `<span class="price-original">De R$ ${produto.preco.toFixed(2)}</span>` : ''}
-                        <span class="price-current">R$ ${precoPromo.toFixed(2)}</span>
-                    </div>
-                    ${produto.parcelamento_max > 1 ? `<div style="color: #666; font-size: 0.85rem; margin-top: 5px;">ou ${produto.parcelamento_max}x de R$ ${(precoPromo / produto.parcelamento_max).toFixed(2)}</div>` : ''}
-                </div>
-            `;
-
-            // Mostrar endereço se produto físico
-            if (produto.tipo === 'fisico') {
-                document.getElementById('addressSection').style.display = 'block';
-            }
-        }
-
-        // Buscar parceiro por código de referência
-        async function buscarParceiroPorReferencia() {
-            if (!refCode) {
-                console.log('ℹ️ Venda direta (sem comissão)');
-                return;
-            }
-
-            console.log('🔗 Detectado código de referência:', refCode);
-
+        // ============================================
+        // CARREGAR PARCEIRO
+        // ============================================
+        async function carregarParceiro(parceiroId) {
             try {
-                const { data: parceiro, error } = await supabaseClient
+                const { data, error } = await supabase
                     .from('parceiros')
-                    .select('id, nome_completo, nome_igreja, comissao_padrao, tipo_parceiro, status')
-                    .eq('codigo_parceiro', refCode)
+                    .select('*')
+                    .eq('codigo', parceiroId)
+                    .eq('ativo', true)
                     .single();
 
-                if (error || !parceiro) {
-                    console.warn('⚠️ Código de referência inválido:', refCode);
-                    return;
-                }
-
-                if (parceiro.status !== 'ativo') {
-                    console.warn('⚠️ Parceiro não está ativo:', refCode);
-                    return;
-                }
-
-                parceiroData = parceiro;
-                
-                comissaoInfo.temComissao = true;
-                comissaoInfo.parceiro_id = parceiro.id;
-                comissaoInfo.codigo_referencia = refCode;
-                comissaoInfo.percentual_comissao = parceiro.comissao_padrao || 10;
-                comissaoInfo.tipo_parceiro = parceiro.tipo_parceiro;
-                
-                if (parceiro.tipo_parceiro === 'igreja') {
-                    comissaoInfo.nome_parceiro = parceiro.nome_igreja || parceiro.nome_completo;
-                } else {
-                    comissaoInfo.nome_parceiro = parceiro.nome_completo;
-                }
-
-                console.log('✅ Parceiro encontrado:', parceiro);
-                console.log('💰 Comissão configurada:', comissaoInfo);
-
-                mostrarMensagemReferencia();
-                
-                await registrarClique(parceiro.id, refCode);
-
-            } catch (error) {
-                console.error('❌ Erro ao buscar parceiro:', error);
-            }
-        }
-
-        // Registrar clique no link
-        async function registrarClique(parceiroId, codigoRef) {
-            try {
-                const { error } = await supabaseClient
-                    .from('link_clicks')
-                    .insert([{
-                        parceiro_id: parceiroId,
-                        codigo_referencia: codigoRef,
-                        user_agent: navigator.userAgent,
-                        referer: document.referrer || 'direct'
-                    }]);
-                
-                if (!error) {
-                    console.log('✅ Clique registrado com sucesso!');
+                if (data) {
+                    parceiroAtual = data;
+                    console.log('✅ Parceiro identificado:', data.nome);
+                    
+                    // Mostrar comissão no resumo
+                    const comissaoValor = (valorOriginal * data.comissao_percentual / 100).toFixed(2);
+                    document.getElementById('comissaoRow').style.display = 'flex';
+                    document.getElementById('comissao').textContent = `R$ ${comissaoValor.replace('.', ',')}`;
                 }
             } catch (error) {
-                console.error('❌ Erro ao registrar clique:', error);
+                console.error('⚠️ Erro ao carregar parceiro:', error);
             }
-        }
-
-        // Mostrar mensagem de referência
-        function mostrarMensagemReferencia() {
-            if (!comissaoInfo.temComissao) return;
-
-            const icone = comissaoInfo.tipo_parceiro === 'igreja' ? '⛪' : 
-                          comissaoInfo.tipo_parceiro === 'empresa' ? '💼' : '🤝';
-
-            const alertDiv = document.getElementById('referralAlert');
-            alertDiv.innerHTML = `
-                <div class="referral-alert">
-                    <strong>${icone} Compra via indicação</strong>
-                    <div style="margin: 10px 0;">Você está comprando através de: <strong>${comissaoInfo.nome_parceiro}</strong></div>
-                    <small>Uma comissão de ${comissaoInfo.percentual_comissao}% será repassada.</small>
-                </div>
-            `;
-        }
-
-        // Calcular comissão
-        function calcularComissao(valorTotal) {
-            if (!comissaoInfo.temComissao) {
-                return 0;
-            }
-            
-            const valorComissao = valorTotal * (comissaoInfo.percentual_comissao / 100);
-            comissaoInfo.valor_comissao = valorComissao;
-            
-            console.log(`💰 Comissão calculada: R$ ${valorComissao.toFixed(2)} (${comissaoInfo.percentual_comissao}%)`);
-            
-            document.getElementById('rowComissao').style.display = 'flex';
-            document.getElementById('nomeParceiroResumo').textContent = comissaoInfo.nome_parceiro;
-            document.getElementById('displayComissao').textContent = `R$ ${valorComissao.toFixed(2)}`;
-            
-            return valorComissao;
         }
 
         // ============================================
-        // SISTEMA DE CUPONS
+        // APLICAR CUPOM
         // ============================================
         async function aplicarCupom() {
-            const codigo = document.getElementById('cupomCodigo').value.trim();
-            const btnAplicar = document.getElementById('btnAplicarCupom');
+            const codigoCupom = document.getElementById('cupom').value.trim().toUpperCase();
             
-            if (!codigo) {
-                mostrarFeedbackCupom('Digite um código de cupom', 'error');
+            if (!codigoCupom) {
+                alert('Digite um código de cupom');
                 return;
             }
-            
-            if (!produtoData) {
-                mostrarFeedbackCupom('Carregue o produto primeiro', 'error');
-                return;
-            }
-            
-            btnAplicar.disabled = true;
-            btnAplicar.textContent = 'Validando...';
-            
+
             try {
-                const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-                const precoUnitario = produtoData.preco_promocional || produtoData.preco;
-                const valorCompra = quantidade * precoUnitario;
-                
-                console.log('🎟️ Validando cupom:', codigo);
-                console.log('💰 Valor da compra:', valorCompra);
-                
-                const response = await fetch(`${SUPABASE_URL}/functions/v1/validar-cupom`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    },
-                    body: JSON.stringify({
-                        codigo: codigo,
-                        valor_compra: valorCompra,
-                        email: document.getElementById('email').value || ''
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (!result.valido) {
-                    throw new Error(result.erro || 'Cupom inválido');
-                }
-                
-                // Cupom válido!
-                cupomAtivo = result;
-                
-                console.log('✅ Cupom aplicado:', result);
-                
-                // Mostrar cupom aplicado
-                document.getElementById('cupomAplicado').classList.add('show');
-                document.getElementById('cupomDescricao').innerHTML = `
-                    <strong>${result.codigo}</strong> - ${result.descricao}<br>
-                    Desconto: R$ ${result.valor_desconto.toFixed(2)}
-                `;
-                
-                // Esconder input
-                document.getElementById('cupomCodigo').value = '';
-                document.getElementById('couponInputGroup').style.display = 'none';
-                
-                // Atualizar totais
-                calcularTotal();
-                
-                mostrarFeedbackCupom('✅ Cupom aplicado com sucesso!', 'success');
-                
-            } catch (error) {
-                console.error('❌ Erro ao aplicar cupom:', error);
-                mostrarFeedbackCupom('❌ ' + error.message, 'error');
-                cupomAtivo = null;
-            } finally {
-                btnAplicar.disabled = false;
-                btnAplicar.textContent = 'Aplicar';
-            }
-        }
+                const { data, error } = await supabase
+                    .from('cupons')
+                    .select('*')
+                    .eq('codigo', codigoCupom)
+                    .eq('ativo', true)
+                    .single();
 
-        function removerCupom() {
-            cupomAtivo = null;
-            document.getElementById('cupomAplicado').classList.remove('show');
-            document.getElementById('couponInputGroup').style.display = 'flex';
-            calcularTotal();
-            mostrarFeedbackCupom('Cupom removido', 'info');
-        }
-
-        function mostrarFeedbackCupom(mensagem, tipo) {
-            const feedback = document.getElementById('cupomFeedback');
-            
-            const cores = {
-                'success': { bg: '#d4edda', color: '#155724', border: '#c3e6cb' },
-                'error': { bg: '#f8d7da', color: '#721c24', border: '#f5c6cb' },
-                'info': { bg: '#d1ecf1', color: '#0c5460', border: '#bee5eb' }
-            };
-            
-            const estilo = cores[tipo] || cores.info;
-            
-            feedback.style.background = estilo.bg;
-            feedback.style.color = estilo.color;
-            feedback.style.border = `1px solid ${estilo.border}`;
-            feedback.textContent = mensagem;
-            feedback.classList.add('show');
-            
-            setTimeout(() => {
-                feedback.classList.remove('show');
-            }, 4000);
-        }
-
-        // Eventos dos botões de cupom
-        document.getElementById('btnAplicarCupom').addEventListener('click', aplicarCupom);
-        document.getElementById('btnRemoverCupom').addEventListener('click', removerCupom);
-
-        // Permitir aplicar cupom com Enter
-        document.getElementById('cupomCodigo').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                aplicarCupom();
-            }
-        });
-
-        // ============================================
-        // CALCULAR TOTAL (COM CUPOM)
-        // ============================================
-        function calcularTotal() {
-            if (!produtoData) return;
-
-            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-            const precoUnitario = produtoData.preco_promocional || produtoData.preco;
-            let total = quantidade * precoUnitario;
-            const totalSemDesconto = total;
-
-            document.getElementById('displayPrecoUnitario').textContent = `R$ ${precoUnitario.toFixed(2)}`;
-            document.getElementById('displayQtdTotal').textContent = quantidade;
-            document.getElementById('displayQtd').textContent = quantidade;
-
-            // Aplicar cupom se existir
-            let descontoCupom = 0;
-            if (cupomAtivo && cupomAtivo.valido) {
-                descontoCupom = cupomAtivo.valor_desconto;
-                total = total - descontoCupom;
-                
-                // Garantir que total não seja negativo
-                if (total < 0) total = 0;
-                
-                // Mostrar linha de desconto
-                document.getElementById('rowDesconto').style.display = 'flex';
-                document.getElementById('displayCodigoCupom').textContent = cupomAtivo.codigo;
-                document.getElementById('displayDescontoCupom').textContent = `- R$ ${descontoCupom.toFixed(2)}`;
-            } else {
-                document.getElementById('rowDesconto').style.display = 'none';
-            }
-
-            document.getElementById('totalValue').textContent = `R$ ${total.toFixed(2)}`;
-
-            calcularComissao(total);
-        }
-
-        // Controles de quantidade
-        document.getElementById('btnMinus').addEventListener('click', function() {
-            const input = document.getElementById('quantidade');
-            if (input.value > 1) {
-                input.value = parseInt(input.value) - 1;
-                calcularTotal();
-            }
-        });
-
-        document.getElementById('btnPlus').addEventListener('click', function() {
-            const input = document.getElementById('quantidade');
-            if (input.value < 100) {
-                input.value = parseInt(input.value) + 1;
-                calcularTotal();
-            }
-        });
-
-        // ============================================
-        // MÁSCARAS
-        // ============================================
-        document.getElementById('cpf').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            
-            if (value.length > 9) {
-                e.target.value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-            } else if (value.length > 6) {
-                e.target.value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
-            } else if (value.length > 3) {
-                e.target.value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
-            } else {
-                e.target.value = value;
-            }
-        });
-
-        function mascaraTelefone(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value.length > 11) value = value.slice(0, 11);
-            
-            if (value.length > 10) {
-                input.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-            } else if (value.length > 6) {
-                input.value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-            } else if (value.length > 2) {
-                input.value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
-            } else {
-                input.value = value.replace(/^(\d*)/, '($1');
-            }
-        }
-
-        document.getElementById('telefone').addEventListener('input', function(e) {
-            mascaraTelefone(e.target);
-        });
-
-        document.getElementById('whatsapp').addEventListener('input', function(e) {
-            mascaraTelefone(e.target);
-        });
-
-        document.getElementById('cep').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 8) value = value.slice(0, 8);
-            
-            if (value.length > 5) {
-                e.target.value = value.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
-            } else {
-                e.target.value = value;
-            }
-        });
-
-        // Buscar CEP
-        document.getElementById('cep').addEventListener('blur', async function(e) {
-            const cep = e.target.value.replace(/\D/g, '');
-            
-            if (cep.length !== 8) return;
-            
-            try {
-                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                const dados = await response.json();
-                
-                if (dados.erro) {
-                    showAlert('❌ CEP não encontrado', 'error');
+                if (error || !data) {
+                    document.getElementById('discountMessage').textContent = '❌ Cupom inválido ou expirado';
+                    document.getElementById('discountMessage').style.color = '#dc3545';
                     return;
                 }
-                
-                document.getElementById('endereco').value = dados.logradouro;
-                document.getElementById('bairro').value = dados.bairro;
-                document.getElementById('cidade').value = dados.localidade;
-                document.getElementById('estado').value = dados.uf;
-                
-                showAlert('✅ CEP encontrado!', 'success');
-                
-            } catch (error) {
-                console.error('❌ Erro ao buscar CEP:', error);
-            }
-        });
 
-        // Payment method selection
-        document.querySelectorAll('.payment-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.payment-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                this.classList.add('selected');
-                const radio = this.querySelector('input[type="radio"]');
-                if (radio) {
-                    radio.checked = true;
-                    selectedPaymentMethod = radio.value;
-                    console.log('💳 Método selecionado:', selectedPaymentMethod);
+                // Verificar validade
+                const hoje = new Date();
+                const validade = new Date(data.data_validade);
+                
+                if (validade < hoje) {
+                    document.getElementById('discountMessage').textContent = '❌ Cupom expirado';
+                    document.getElementById('discountMessage').style.color = '#dc3545';
+                    return;
                 }
-            });
-        });
+
+                // Aplicar desconto
+                cupomAplicado = data;
+                const desconto = (valorOriginal * data.desconto_percentual / 100);
+                valorFinal = valorOriginal - desconto;
+
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('discount').textContent = `- R$ ${desconto.toFixed(2).replace('.', ',')}`;
+                document.getElementById('discountMessage').textContent = `✅ Cupom aplicado! ${data.desconto_percentual}% de desconto`;
+                document.getElementById('discountMessage').style.color = '#00a868';
+
+                atualizarResumo();
+
+            } catch (error) {
+                console.error('❌ Erro ao aplicar cupom:', error);
+                alert('Erro ao aplicar cupom. Tente novamente.');
+            }
+        }
 
         // ============================================
-        // SUBMETER FORMULÁRIO
+        // ATUALIZAR RESUMO
         // ============================================
-        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-            
-            if (paymentMethod === 'card') {
-                showAlert('⚠️ Pagamento com cartão em desenvolvimento. Use PIX por enquanto.', 'info');
+        function atualizarResumo() {
+            document.getElementById('subtotal').textContent = `R$ ${valorOriginal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('total').textContent = `R$ ${valorFinal.toFixed(2).replace('.', ',')}`;
+        }
+
+        // ============================================
+        // VALIDAR FORMULÁRIO
+        // ============================================
+        function validarFormulario() {
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
+
+            let valido = true;
+
+            if (!nome || nome.length < 3) {
+                document.getElementById('nomeError').style.display = 'block';
+                valido = false;
+            } else {
+                document.getElementById('nomeError').style.display = 'none';
+            }
+
+            if (!email || !email.includes('@')) {
+                document.getElementById('emailError').style.display = 'block';
+                valido = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+
+            if (!cpf || cpf.length !== 11) {
+                document.getElementById('cpfError').style.display = 'block';
+                valido = false;
+            } else {
+                document.getElementById('cpfError').style.display = 'none';
+            }
+
+            return valido;
+        }
+
+        // ============================================
+        // PROCESSAR PAGAMENTO PIX
+        // ============================================
+        async function processarPagamentoPix() {
+            console.log('🟢 Processando PIX...');
+
+            if (!validarFormulario()) {
+                alert('❌ Por favor, preencha todos os campos obrigatórios corretamente.');
                 return;
             }
-            
-            await processarCompraPIX();
-        });
 
-        // ============================================
-        // PROCESSAR COMPRA PIX (COM CUPOM)
-        // ============================================
-        async function processarCompraPIX() {
-            const btnSubmit = document.getElementById('btnSubmit');
-            btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<span>⏳</span><span>Processando...</span>';
-            
-            showLoading('Registrando sua compra...');
-            
+            metodoPagamento = 'pix';
+
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
+            const telefone = document.getElementById('telefone').value.replace(/\D/g, '');
+
+            document.getElementById('loading').style.display = 'block';
+
             try {
-                const quantidade = parseInt(document.getElementById('quantidade').value);
-                const precoUnitario = produtoData.preco_promocional || produtoData.preco;
-                let valorTotal = quantidade * precoUnitario;
-                const valorSemDesconto = valorTotal;
-                
-                // Aplicar desconto do cupom
-                let descontoCupom = 0;
-                if (cupomAtivo && cupomAtivo.valido) {
-                    descontoCupom = cupomAtivo.valor_desconto;
-                    valorTotal = valorTotal - descontoCupom;
-                    if (valorTotal < 0) valorTotal = 0;
-                }
-                
-                const valorComissao = calcularComissao(valorTotal);
-                
-                const vendaData = {
-                    produto_id: produtoData.id,
-                    nome_comprador: document.getElementById('nome').value,
-                    email_comprador: document.getElementById('email').value,
-                    cpf_comprador: document.getElementById('cpf').value.replace(/\D/g, ''),
-                    telefone_comprador: document.getElementById('telefone').value,
-                    whatsapp_comprador: document.getElementById('whatsapp').value,
-                    quantidade: quantidade,
-                    valor_unitario: precoUnitario,
-                    valor_total: valorTotal,
-                    forma_pagamento: 'pix',
-                    status_pagamento: 'pending',
-                    parceiro_id: comissaoInfo.parceiro_id,
-                    igreja_id: comissaoInfo.tipo_parceiro === 'igreja' ? comissaoInfo.parceiro_id : null,
-                    codigo_referencia: comissaoInfo.codigo_referencia,
-                    codigo_indicacao: comissaoInfo.codigo_referencia,
-                    valor_comissao: valorComissao,
-                    percentual_comissao: comissaoInfo.percentual_comissao,
-                    origem: comissaoInfo.temComissao ? 'venda_referencia' : 'venda_direta',
-                    data_venda: new Date().toISOString()
-                };
-                
-                // Adicionar dados do cupom se aplicado
-                if (cupomAtivo && cupomAtivo.valido) {
-                    vendaData.cupom_codigo = cupomAtivo.codigo;
-                    vendaData.cupom_desconto = descontoCupom;
-                    vendaData.valor_sem_desconto = valorSemDesconto;
-                }
-                
-                if (produtoData.tipo === 'fisico') {
-                    vendaData.endereco_entrega = {
-                        cep: document.getElementById('cep').value.replace(/\D/g, ''),
-                        endereco: document.getElementById('endereco').value,
-                        numero: document.getElementById('numero').value,
-                        complemento: document.getElementById('complemento').value,
-                        bairro: document.getElementById('bairro').value,
-                        cidade: document.getElementById('cidade').value,
-                        estado: document.getElementById('estado').value
-                    };
-                }
-                
-                console.log('📦 Registrando venda:', vendaData);
-                
-                const { data, error } = await supabaseClient
-                    .from('vendas')
-                    .insert([vendaData])
-                    .select();
-                
-                if (error) {
-                    throw error;
-                }
-                
-                console.log('✅ Venda registrada:', data);
-                
-                hideLoading();
-                showAlert('✅ Pedido registrado! Criando pagamento...', 'success');
-                
-                const vendaId = data[0].id;
-                
-                showLoading('Criando pagamento PIX...');
-                
-                const paymentData = {
-                    transaction_amount: valorTotal,
-                    description: produtoData.nome,
-                    payment_method_id: 'pix',
-                    payer: {
-                        email: document.getElementById('email').value,
-                        first_name: document.getElementById('nome').value.split(' ')[0],
-                        last_name: document.getElementById('nome').value.split(' ').slice(1).join(' '),
-                        identification: {
-                            type: 'CPF',
-                            number: document.getElementById('cpf').value.replace(/\D/g, '')
-                        }
-                    },
-                    external_reference: vendaId
-                };
-                
-                console.log('💳 Criando pagamento Mercado Pago:', paymentData);
-                
+                // Chamar Edge Function create-payment-mp
                 const response = await fetch(`${SUPABASE_URL}/functions/v1/create-payment-mp`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${SUPABASE_KEY}`
                     },
-                    body: JSON.stringify(paymentData)
+                    body: JSON.stringify({
+                        amount: valorFinal,
+                        payment_method: 'pix',
+                        payer: {
+                            name: nome,
+                            email: email,
+                            identification: {
+                                type: 'CPF',
+                                number: cpf
+                            }
+                        },
+                        description: `Livro Digital: ${produtoAtual.nome}`,
+                        produto_id: produtoAtual.id,
+                        parceiro_id: parceiroAtual ? parceiroAtual.id : null,
+                        cupom_id: cupomAplicado ? cupomAplicado.id : null,
+                        metadata: {
+                            nome_comprador: nome,
+                            email_comprador: email,
+                            cpf_comprador: cpf,
+                            telefone_comprador: telefone
+                        }
+                    })
                 });
-                
+
                 const result = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(result.error || 'Erro ao criar pagamento');
+                console.log('📦 Resultado PIX:', result);
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (result.qr_code) {
+                    // Mostrar modal com QR Code
+                    mostrarModalPix(result.qr_code, result.qr_code_base64);
+                } else {
+                    alert('❌ Erro ao gerar PIX. Tente novamente.');
                 }
-                
-                console.log('✅ Pagamento criado:', result);
-                
-                hideLoading();
-                
-                window.location.href = `/pix.html?payment_id=${result.payment_id}&venda_id=${vendaId}`;
-                
+
             } catch (error) {
-                console.error('❌ Erro:', error);
-                hideLoading();
-                showAlert('❌ Erro ao processar compra: ' + error.message, 'error');
-                
-                btnSubmit.disabled = false;
-                btnSubmit.innerHTML = '<span>🔒</span><span>Finalizar Compra Segura</span>';
+                console.error('❌ Erro ao processar PIX:', error);
+                document.getElementById('loading').style.display = 'none';
+                alert('❌ Erro ao processar pagamento. Tente novamente.');
             }
         }
 
         // ============================================
-        // FUNÇÕES AUXILIARES
+        // PROCESSAR PAGAMENTO CARTÃO
         // ============================================
-        function showAlert(message, type) {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.textContent = message;
-            alertBox.className = `alert alert-${type} show`;
+        async function processarPagamentoCartao() {
+            console.log('💳 Processando Cartão...');
+
+            if (!validarFormulario()) {
+                alert('❌ Por favor, preencha todos os campos obrigatórios corretamente.');
+                return;
+            }
+
+            metodoPagamento = 'cartao';
+
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
+            const telefone = document.getElementById('telefone').value.replace(/\D/g, '');
+
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                // Criar preferência de pagamento no Mercado Pago
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/create-payment-mp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({
+                        amount: valorFinal,
+                        payment_method: 'credit_card',
+                        payer: {
+                            name: nome,
+                            email: email,
+                            identification: {
+                                type: 'CPF',
+                                number: cpf
+                            }
+                        },
+                        description: `Livro Digital: ${produtoAtual.nome}`,
+                        produto_id: produtoAtual.id,
+                        parceiro_id: parceiroAtual ? parceiroAtual.id : null,
+                        cupom_id: cupomAplicado ? cupomAplicado.id : null,
+                        metadata: {
+                            nome_comprador: nome,
+                            email_comprador: email,
+                            cpf_comprador: cpf,
+                            telefone_comprador: telefone
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                console.log('📦 Resultado Cartão:', result);
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (result.init_point) {
+                    // Redirecionar para checkout Mercado Pago
+                    window.location.href = result.init_point;
+                } else {
+                    alert('❌ Erro ao processar pagamento. Tente novamente.');
+                }
+
+            } catch (error) {
+                console.error('❌ Erro ao processar cartão:', error);
+                document.getElementById('loading').style.display = 'none';
+                alert('❌ Erro ao processar pagamento. Tente novamente.');
+            }
+        }
+
+        // ============================================
+        // MOSTRAR MODAL PIX
+        // ============================================
+        function mostrarModalPix(codigoPix, qrCodeBase64) {
+            document.getElementById('pixCode').textContent = codigoPix;
             
-            setTimeout(() => {
-                alertBox.classList.remove('show');
-            }, 5000);
-        }
+            if (qrCodeBase64) {
+                document.getElementById('qrCodeImage').src = qrCodeBase64;
+                document.getElementById('qrCodeImage').style.display = 'block';
+            }
 
-        function showLoading(message) {
-            document.getElementById('loadingMessage').textContent = message;
-            document.getElementById('loadingOverlay').classList.add('show');
-        }
-
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.remove('show');
+            document.getElementById('pixModal').style.display = 'block';
         }
 
         // ============================================
-        // INICIALIZAR
+        // FECHAR MODAL PIX
         // ============================================
-        window.addEventListener('DOMContentLoaded', async function() {
-            console.log('✅ Checkout Universal inicializado');
-            
-            await carregarProduto();
-            await buscarParceiroPorReferencia();
-        });
+        function fecharModalPix() {
+            document.getElementById('pixModal').style.display = 'none';
+        }
+
+        // ============================================
+        // COPIAR CÓDIGO PIX
+        // ============================================
+        function copiarCodigoPix() {
+            const codigo = document.getElementById('pixCode').textContent;
+            navigator.clipboard.writeText(codigo).then(() => {
+                alert('✅ Código PIX copiado!');
+            });
+        }
+
+        // ============================================
+        // MÁSCARAS DE INPUT
+        // ============================================
+        function aplicarMascaras() {
+            // Máscara CPF
+            document.getElementById('cpf').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                    value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    e.target.value = value;
+                }
+            });
+
+            // Máscara Telefone
+            document.getElementById('telefone').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+                    value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+                    e.target.value = value;
+                }
+            });
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('pixModal');
+            if (event.target == modal) {
+                fecharModalPix();
+            }
+        }
     </script>
 
 </body>
-</html> 
+</html>
