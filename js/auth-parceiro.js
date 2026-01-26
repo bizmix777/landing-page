@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Redirecionar para dashboard de parceiro
             setTimeout(() => {
-                window.location.href = '/dashboard-parceiro.html';
+                window.location.href = '/login/dashboard-parceiro.html';  // ✅ CORRIGIDO
             }, 1500);
 
         } catch (error) {
@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const dadosParceiro = JSON.parse(parceiro);
                 console.log('✅ Parceiro já logado:', dadosParceiro.nome_completo);
                 console.log('🔄 Redirecionando para dashboard...');
-                window.location.href = '/dashboard-parceiro.html';
+                window.location.href = '/login/dashboard-parceiro.html';  // ✅ CORRIGIDO
             } catch (e) {
                 console.error('❌ Erro ao ler dados do parceiro:', e);
                 localStorage.removeItem('bizmix_parceiro');
