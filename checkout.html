@@ -3,144 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - BizMix</title>
+    <title>Checkout - Somos Todos Um</title>
     <link rel="stylesheet" href="/css/style.css">
-    <script src="https://sdk.mercadopago.com/js/v2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="/images/capa-livro.png" as="image">
     <style>
-        /* Minimal inline styling for basic layout and responsiveness.
-           Full styling (gradients, colors, fonts, etc.) is expected from /css/style.css */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Poppins', sans-serif;
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #f0f2f5 0%, #e0e5ec 100%); /* Example gradient */
+            padding: 0;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
             color: #333;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
         }
         .container {
             background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             padding: 30px;
             max-width: 900px;
             width: 100%;
             display: flex;
             flex-wrap: wrap;
             gap: 30px;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
-        .product-summary, .checkout-form-section {
+        .product-summary, .checkout-form {
             flex: 1;
             min-width: 300px;
         }
         .product-summary {
-            padding-right: 20px;
-            border-right: 1px solid #eee;
-        }
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                padding: 20px;
-            }
-            .product-summary {
-                border-right: none;
-                border-bottom: 1px solid #eee;
-                padding-right: 0;
-                padding-bottom: 20px;
-            }
-        }
-        h1, h2, h3 {
-            color: #222;
-            margin-top: 0;
-        }
-        .product-card {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            margin-bottom: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
         }
-        .product-card img {
+        .product-summary img {
             max-width: 180px;
-            height: auto;
             border-radius: 8px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        .product-card h2 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-        .product-card p {
-            font-size: 1em;
-            color: #555;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-        .product-card .price {
-            font-size: 2em;
-            color: #007bff;
-            font-weight: bold;
-        }
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #007bff;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-            display: none; /* Hidden by default */
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .error-message {
-            color: #dc3545;
-            font-size: 0.9em;
-            margin-top: 5px;
-            display: block;
-        }
-        .tabs {
-            display: flex;
             margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        .tab-button {
-            flex: 1;
-            padding: 12px 15px;
-            cursor: pointer;
-            border: none;
-            background-color: transparent;
-            font-size: 1.1em;
-            color: #777;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
+        .product-summary h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8em;
         }
-        .tab-button.active {
-            color: #007bff;
-            border-bottom-color: #007bff;
-            font-weight: bold;
-        }
-        .tab-button:hover:not(.active) {
+        .product-summary p {
             color: #555;
+            font-size: 1.1em;
+            margin-bottom: 5px;
         }
-        .payment-section {
-            display: none;
+        .product-summary .price {
+            font-size: 2.2em;
+            color: #2575fc;
+            font-weight: 700;
+            margin-top: 15px;
         }
-        .payment-section.active {
-            display: block;
+        .checkout-form h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 2em;
+            text-align: center;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-weight: 600;
             color: #444;
         }
         .form-group input[type="text"],
@@ -148,751 +92,803 @@
         .form-group input[type="tel"],
         .form-group input[type="number"] {
             width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             font-size: 1em;
             transition: border-color 0.3s ease;
         }
-        .form-group input:focus {
-            border-color: #007bff;
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="number"]:focus {
+            border-color: #2575fc;
             outline: none;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+            box-shadow: 0 0 5px rgba(37, 117, 252, 0.3);
         }
-        button[type="submit"] {
+        .form-group .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+        .payment-methods {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .payment-methods h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.5em;
+        }
+        .payment-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .payment-option {
+            background-color: #f0f0f0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #555;
+        }
+        .payment-option:hover {
+            border-color: #a0a0a0;
+            background-color: #e8e8e8;
+        }
+        .payment-option.selected {
+            border-color: #2575fc;
+            background-color: #e6f0ff;
+            color: #2575fc;
+            box-shadow: 0 0 10px rgba(37, 117, 252, 0.3);
+        }
+        .payment-option img {
+            height: 30px;
+        }
+        .payment-form-container {
+            margin-top: 20px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fcfcfc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .payment-form-container #paymentBrick_container,
+        .payment-form-container #pixPayment_container {
+            min-height: 200px; /* Ensure space for the brick */
+        }
+        .submit-button {
             background-color: #28a745;
             color: white;
-            padding: 12px 25px;
+            padding: 15px 25px;
             border: none;
             border-radius: 8px;
             font-size: 1.1em;
+            font-weight: 700;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
             width: 100%;
-            margin-top: 20px;
+            margin-top: 30px;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
-        button[type="submit"]:hover {
+        .submit-button:hover {
             background-color: #218838;
             transform: translateY(-2px);
         }
-        button[type="submit"]:disabled {
+        .submit-button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
+            box-shadow: none;
         }
-        #cardPaymentBrickContainer {
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            gap: 20px;
+            font-size: 1.2em;
+            color: #333;
+            display: none; /* Hidden by default */
+        }
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #2575fc;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
             margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            text-align: center;
+            display: none;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 20px;
+            }
+            .product-summary, .checkout-form {
+                min-width: unset;
+                width: 100%;
+            }
+            .product-summary img {
+                max-width: 150px;
+            }
+            .payment-options {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p id="loadingMessage">Processando sua compra...</p>
+    </div>
+
     <div class="container">
         <div class="product-summary">
-            <h1>Finalizar Compra</h1>
-            <div id="product-display">
-                <div class="loading-spinner" id="product-loading"></div>
-                <div id="product-details" style="display: none;">
-                    <div class="product-card">
-                        <img id="product-image" src="/images/capa-livro.png" alt="Capa do Produto">
-                        <h2 id="product-name"></h2>
-                        <p id="product-description"></p>
-                        <p class="price" id="product-price"></p>
-                    </div>
-                </div>
-                <div id="product-error" class="error-message" style="display: none;"></div>
-            </div>
+            <img src="/images/capa-livro.png" alt="Capa do livro">
+            <h2>Livro Digital: Somos Todos Um</h2>
+            <p>Autor: Henrique Bizmix</p>
+            <p>Formato: E-book (PDF)</p>
+            <div class="price" id="productPrice">R$ 0,00</div>
         </div>
 
-        <div class="checkout-form-section">
-            <h2>Seus Dados</h2>
-            <form id="checkout-form">
+        <div class="checkout-form">
+            <h2>Finalizar Compra</h2>
+            <form id="checkoutForm">
+                <h3>Dados Pessoais</h3>
                 <div class="form-group">
-                    <label for="nome_comprador">Nome Completo:</label>
-                    <input type="text" id="nome_comprador" name="nome_comprador" minlength="3" required>
-                    <span class="error-message" id="error-nome_comprador"></span>
+                    <label for="nome">Nome Completo *</label>
+                    <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+                    <div class="error-message" id="nomeError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="email_comprador">E-mail:</label>
-                    <input type="email" id="email_comprador" name="email_comprador" required>
-                    <span class="error-message" id="error-email_comprador"></span>
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                    <div class="error-message" id="emailError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="cpf_comprador">CPF:</label>
-                    <input type="text" id="cpf_comprador" name="cpf_comprador" required maxlength="14">
-                    <span class="error-message" id="error-cpf_comprador"></span>
+                    <label for="cpf">CPF *</label>
+                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required maxlength="14">
+                    <div class="error-message" id="cpfError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="cep_comprador">CEP:</label>
-                    <input type="text" id="cep_comprador" name="cep_comprador" required maxlength="9">
-                    <span class="error-message" id="error-cep_comprador"></span>
-                    <div class="loading-spinner" id="cep-loading" style="display: none; width: 20px; height: 20px; margin: 5px 0;"></div>
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" id="telefone" name="telefone" placeholder="(11) 3333-4444">
+                    <div class="error-message" id="telefoneError"></div>
                 </div>
                 <div class="form-group">
-                    <label for="endereco_comprador">Endereço:</label>
-                    <input type="text" id="endereco_comprador" name="endereco_comprador" required>
-                    <span class="error-message" id="error-endereco_comprador"></span>
-                </div>
-                <div class="form-group">
-                    <label for="numero_comprador">Número:</label>
-                    <input type="text" id="numero_comprador" name="numero_comprador" required>
-                    <span class="error-message" id="error-numero_comprador"></span>
-                </div>
-                <div class="form-group">
-                    <label for="complemento_comprador">Complemento (opcional):</label>
-                    <input type="text" id="complemento_comprador" name="complemento_comprador">
-                </div>
-                <div class="form-group">
-                    <label for="bairro_comprador">Bairro:</label>
-                    <input type="text" id="bairro_comprador" name="bairro_comprador" required>
-                    <span class="error-message" id="error-bairro_comprador"></span>
-                </div>
-                <div class="form-group">
-                    <label for="cidade_comprador">Cidade:</label>
-                    <input type="text" id="cidade_comprador" name="cidade_comprador" required>
-                    <span class="error-message" id="error-cidade_comprador"></span>
-                </div>
-                <div class="form-group">
-                    <label for="estado_comprador">Estado (UF):</label>
-                    <input type="text" id="estado_comprador" name="estado_comprador" required maxlength="2">
-                    <span class="error-message" id="error-estado_comprador"></span>
-                </div>
-                <div class="form-group">
-                    <label for="telefone_comprador">Telefone (opcional):</label>
-                    <input type="tel" id="telefone_comprador" name="telefone_comprador" maxlength="15">
-                    <span class="error-message" id="error-telefone_comprador"></span>
-                </div>
-                <div class="form-group">
-                    <label for="whatsapp_comprador">WhatsApp:</label>
-                    <input type="tel" id="whatsapp_comprador" name="whatsapp_comprador" required maxlength="15">
-                    <span class="error-message" id="error-whatsapp_comprador"></span>
+                    <label for="whatsapp">WhatsApp *</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" 
+                           placeholder="(11) 99999-9999" 
+                           required
+                           minlength="10"
+                           pattern="[0-9\s\(\)\-]+"
+                           title="WhatsApp deve ter no mínimo 10 dígitos">
+                    <div class="error-message" id="whatsappError"></div>
                 </div>
 
-                <h2>Método de Pagamento</h2>
-                <div class="tabs">
-                    <button type="button" class="tab-button active" data-tab="pix">PIX</button>
-                    <button type="button" class="tab-button" data-tab="credit-card">Cartão de Crédito</button>
+                <h3>Endereço de Entrega</h3>
+                <div class="form-group">
+                    <label for="cep">CEP *</label>
+                    <input type="text" id="cep" name="cep" placeholder="00000-000" required maxlength="9">
+                    <div class="error-message" id="cepError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="endereco">Endereço *</label>
+                    <input type="text" id="endereco" name="endereco" placeholder="Rua, Avenida, etc." required readonly>
+                    <div class="error-message" id="enderecoError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="numero">Número *</label>
+                    <input type="text" id="numero" name="numero" placeholder="123" required>
+                    <div class="error-message" id="numeroError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="complemento">Complemento</label>
+                    <input type="text" id="complemento" name="complemento" placeholder="Apto 101, Bloco B">
+                </div>
+                <div class="form-group">
+                    <label for="bairro">Bairro *</label>
+                    <input type="text" id="bairro" name="bairro" placeholder="Seu bairro" required readonly>
+                    <div class="error-message" id="bairroError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="cidade">Cidade *</label>
+                    <input type="text" id="cidade" name="cidade" placeholder="Sua cidade" required readonly>
+                    <div class="error-message" id="cidadeError"></div>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado *</label>
+                    <input type="text" id="estado" name="estado" placeholder="Seu estado" required readonly>
+                    <div class="error-message" id="estadoError"></div>
                 </div>
 
-                <div id="pix-payment-section" class="payment-section active">
-                    <p>Pague com PIX e receba acesso imediato ao produto!</p>
-                    <button type="submit" id="pix-submit-button">Pagar com PIX</button>
+                <div class="payment-methods">
+                    <h3>Escolha a forma de pagamento</h3>
+                    <div class="payment-options">
+                        <div class="payment-option" id="option-pix" data-method="pix">
+                            <img src="https://img.icons8.com/color/48/000000/pix.png" alt="PIX">
+                            <span>PIX</span>
+                        </div>
+                        <div class="payment-option" id="option-credit-card" data-method="credit_card">
+                            <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Cartão de Crédito">
+                            <span>Cartão de Crédito</span>
+                        </div>
+                    </div>
                 </div>
 
-                <div id="credit-card-payment-section" class="payment-section">
-                    <p>Preencha os dados do seu cartão de crédito.</p>
-                    <div id="cardPaymentBrickContainer"></div>
-                    <button type="submit" id="card-submit-button" style="display: none;">Pagar com Cartão</button>
+                <div class="payment-form-container" id="paymentFormContainer" style="display: none;">
+                    <div id="paymentBrick_container" style="display: none;"></div>
+                    <div id="pixPayment_container" style="display: none;"></div>
                 </div>
-                <div class="loading-spinner" id="payment-loading" style="display: none;"></div>
-                <div id="payment-error" class="error-message" style="display: none;"></div>
+                
+                <button type="submit" class="submit-button" id="submitButton" disabled>Finalizar Compra</button>
+                <div class="message" id="formMessage"></div>
             </form>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>
-        // Supabase Client Initialization
-        const supabaseUrl = 'https://pafzmwhpotdohipumqei.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBhZnptd2hwb3Rkb2hpcHVtcWVpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc0ODM3NzgsImV4cCI6MjA1MzA1OTc3OH0.S_LCxGwL4Lv_eHiEuqhJ_u8Zgy2D7HtjIqvv5l5yTFA';
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        // Supabase Initialization
+        const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDYzNTUwNTcsImV4cCI6MjA1MTkzMTA1N30.iGxMslGTzEfBgEEu5d4-gTjV-PgC31u4Ig9X0v50jkA';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        let currentProduct = null;
-        let activePaymentMethod = 'pix'; // Default active payment method
-
-        // --- Utility Functions ---
-        function showLoading(elementId) {
-            document.getElementById(elementId).style.display = 'block';
-        }
-
-        function hideLoading(elementId) {
-            document.getElementById(elementId).style.display = 'none';
-        }
-
-        function showErrorMessage(fieldId, message) {
-            const errorElement = document.getElementById(`error-${fieldId}`);
-            if (errorElement) {
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-            }
-        }
-
-        function hideErrorMessage(fieldId) {
-            const errorElement = document.getElementById(`error-${fieldId}`);
-            if (errorElement) {
-                errorElement.textContent = '';
-                errorElement.style.display = 'none';
-            }
-        }
-
-        function clearAllErrorMessages() {
-            document.querySelectorAll('.error-message').forEach(el => {
-                el.textContent = '';
-                el.style.display = 'none';
-            });
-        }
-
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(value);
-        }
-
-        function removeMask(value) {
-            return value.replace(/\D/g, '');
-        }
-
-        // --- Input Masking Functions ---
-        function maskCPF(value) {
-            value = removeMask(value);
-            if (value.length > 11) value = value.substring(0, 11);
-            return value.replace(/(\d{3})(\d)/, '$1.$2')
-                        .replace(/(\d{3})(\d)/, '$1.$2')
-                        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-        }
-
-        function maskCEP(value) {
-            value = removeMask(value);
-            if (value.length > 8) value = value.substring(0, 8);
-            return value.replace(/(\d{5})(\d)/, '$1-$2');
-        }
-
-        function maskPhone(value) {
-            value = removeMask(value);
-            if (value.length > 11) value = value.substring(0, 11);
-            if (value.length > 10) {
-                return value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-            }
-            return value.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-        }
-
-        function maskWhatsApp(value) {
-            value = removeMask(value);
-            if (value.length > 11) value = value.substring(0, 11);
-            return value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-        }
-
-        // --- Apply Masks ---
-        document.getElementById('cpf_comprador').addEventListener('input', (e) => {
-            e.target.value = maskCPF(e.target.value);
-            hideErrorMessage('cpf_comprador');
+        // MercadoPago Initialization
+        const mp = new MercadoPago('APP_USR-e02e5be1-5802-47c6-8ec6-4146afcc61f5', {
+            locale: 'pt-BR'
         });
+        const bricksBuilder = mp.bricks();
 
-        document.getElementById('cep_comprador').addEventListener('input', (e) => {
-            e.target.value = maskCEP(e.target.value);
-            hideErrorMessage('cep_comprador');
-        });
+        let selectedPaymentMethod = null;
+        let produtoId = null;
+        let valorProduto = 0;
 
-        document.getElementById('telefone_comprador').addEventListener('input', (e) => {
-            e.target.value = maskPhone(e.target.value);
-            hideErrorMessage('telefone_comprador');
-        });
+        const elements = {
+            loadingOverlay: document.getElementById('loadingOverlay'),
+            loadingMessage: document.getElementById('loadingMessage'),
+            productPrice: document.getElementById('productPrice'),
+            checkoutForm: document.getElementById('checkoutForm'),
+            paymentOptions: document.querySelectorAll('.payment-option'),
+            paymentFormContainer: document.getElementById('paymentFormContainer'),
+            paymentBrickContainer: document.getElementById('paymentBrick_container'),
+            pixPaymentContainer: document.getElementById('pixPayment_container'),
+            submitButton: document.getElementById('submitButton'),
+            formMessage: document.getElementById('formMessage'),
+            nome: document.getElementById('nome'),
+            email: document.getElementById('email'),
+            cpf: document.getElementById('cpf'),
+            telefone: document.getElementById('telefone'),
+            whatsapp: document.getElementById('whatsapp'),
+            cep: document.getElementById('cep'),
+            endereco: document.getElementById('endereco'),
+            numero: document.getElementById('numero'),
+            complemento: document.getElementById('complemento'),
+            bairro: document.getElementById('bairro'),
+            cidade: document.getElementById('cidade'),
+            estado: document.getElementById('estado'),
+        };
 
-        document.getElementById('whatsapp_comprador').addEventListener('input', (e) => {
-            e.target.value = maskWhatsApp(e.target.value);
-            hideErrorMessage('whatsapp_comprador');
-        });
+        const errorMessages = {
+            nome: document.getElementById('nomeError'),
+            email: document.getElementById('emailError'),
+            cpf: document.getElementById('cpfError'),
+            telefone: document.getElementById('telefoneError'),
+            whatsapp: document.getElementById('whatsappError'),
+            cep: document.getElementById('cepError'),
+            endereco: document.getElementById('enderecoError'),
+            numero: document.getElementById('numeroError'),
+            bairro: document.getElementById('bairroError'),
+            cidade: document.getElementById('cidadeError'),
+            estado: document.getElementById('estadoError'),
+        };
 
-        // --- CEP Auto-fill ---
-        document.getElementById('cep_comprador').addEventListener('blur', async (e) => {
-            const cep = removeMask(e.target.value);
-            if (cep.length === 8) {
-                showLoading('cep-loading');
-                hideErrorMessage('cep_comprador');
-                try {
-                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                    const data = await response.json();
-                    if (data.erro) {
-                        showErrorMessage('cep_comprador', 'CEP não encontrado.');
-                        clearAddressFields();
-                    } else {
-                        document.getElementById('endereco_comprador').value = data.logradouro;
-                        document.getElementById('bairro_comprador').value = data.bairro;
-                        document.getElementById('cidade_comprador').value = data.localidade;
-                        document.getElementById('estado_comprador').value = data.uf;
-                        document.getElementById('numero_comprador').focus(); // Focus on number field
-                    }
-                } catch (error) {
-                    console.error('Erro ao buscar CEP:', error);
-                    showErrorMessage('cep_comprador', 'Erro ao buscar CEP. Tente novamente.');
-                    clearAddressFields();
-                } finally {
-                    hideLoading('cep-loading');
-                }
-            } else if (cep.length > 0 && cep.length < 8) {
-                showErrorMessage('cep_comprador', 'CEP inválido. Digite 8 dígitos.');
-                clearAddressFields();
-            }
-        });
-
-        function clearAddressFields() {
-            document.getElementById('endereco_comprador').value = '';
-            document.getElementById('bairro_comprador').value = '';
-            document.getElementById('cidade_comprador').value = '';
-            document.getElementById('estado_comprador').value = '';
+        function showLoading(message = 'Processando sua compra...') {
+            elements.loadingMessage.textContent = message;
+            elements.loadingOverlay.style.display = 'flex';
         }
 
-        // --- Product Loading ---
-        async function loadProduct() {
-            showLoading('product-loading');
-            document.getElementById('product-details').style.display = 'none';
-            document.getElementById('product-error').style.display = 'none';
-
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('produto');
-
-            if (!productId) {
-                document.getElementById('product-error').textContent = 'ID do produto não fornecido na URL.';
-                document.getElementById('product-error').style.display = 'block';
-                hideLoading('product-loading');
-                return;
-            }
-
-            try {
-                const { data, error } = await supabase
-                    .from('produtos')
-                    .select('*')
-                    .eq('id', productId)
-                    .single();
-
-                if (error) {
-                    throw error;
-                }
-
-                if (data) {
-                    currentProduct = data;
-                    document.getElementById('product-image').src = currentProduct.imagem_url || '/images/capa-livro.png';
-                    document.getElementById('product-name').textContent = currentProduct.nome;
-                    document.getElementById('product-description').textContent = currentProduct.descricao;
-                    document.getElementById('product-price').textContent = formatCurrency(currentProduct.preco);
-                    document.getElementById('product-details').style.display = 'block';
-                } else {
-                    document.getElementById('product-error').textContent = 'Produto não encontrado.';
-                    document.getElementById('product-error').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Erro ao carregar produto:', error);
-                document.getElementById('product-error').textContent = `Erro ao carregar produto: ${error.message || error.details || 'Verifique o console.'}`;
-                document.getElementById('product-error').style.display = 'block';
-            } finally {
-                hideLoading('product-loading');
-            }
+        function hideLoading() {
+            elements.loadingOverlay.style.display = 'none';
         }
 
-        // --- Form Validation ---
+        function showMessage(message, type = 'error') {
+            elements.formMessage.textContent = message;
+            elements.formMessage.className = `message ${type}`;
+            elements.formMessage.style.display = 'block';
+        }
+
+        function hideMessage() {
+            elements.formMessage.style.display = 'none';
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function validateCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+            let sum = 0;
+            let remainder;
+            for (let i = 1; i <= 9; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+            remainder = (sum * 10) % 11;
+            if ((remainder === 10) || (remainder === 11)) remainder = 0;
+            if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+            sum = 0;
+            for (let i = 1; i <= 10; i++) sum = sum + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+            remainder = (sum * 10) % 11;
+            if ((remainder === 10) || (remainder === 11)) remainder = 0;
+            if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+            return true;
+        }
+
         function validateForm() {
-            clearAllErrorMessages();
             let isValid = true;
+            hideMessage();
 
-            const fields = [
-                { id: 'nome_comprador', minLength: 3, message: 'Nome completo é obrigatório e deve ter no mínimo 3 caracteres.' },
-                { id: 'email_comprador', type: 'email', message: 'E-mail inválido.' },
-                { id: 'cpf_comprador', type: 'cpf', message: 'CPF inválido.' },
-                { id: 'cep_comprador', type: 'cep', message: 'CEP inválido.' },
-                { id: 'endereco_comprador', message: 'Endereço é obrigatório.' },
-                { id: 'numero_comprador', message: 'Número é obrigatório.' },
-                { id: 'bairro_comprador', message: 'Bairro é obrigatório.' },
-                { id: 'cidade_comprador', message: 'Cidade é obrigatória.' },
-                { id: 'estado_comprador', type: 'uf', message: 'Estado é obrigatório e deve ter 2 letras.' },
-                { id: 'whatsapp_comprador', type: 'whatsapp', message: 'WhatsApp é obrigatório e deve ter no mínimo 10 dígitos.' }
-            ];
+            // Clear previous errors
+            Object.values(errorMessages).forEach(el => el.style.display = 'none');
 
-            for (const field of fields) {
-                const input = document.getElementById(field.id);
-                if (!input) continue; // Skip if element not found
-
-                let value = input.value.trim();
-                let unmaskedValue = removeMask(value);
-
-                if (input.required && value === '') {
-                    showErrorMessage(field.id, field.message);
-                    isValid = false;
-                    continue;
-                }
-
-                if (field.minLength && value.length < field.minLength) {
-                    showErrorMessage(field.id, field.message);
-                    isValid = false;
-                    continue;
-                }
-
-                switch (field.type) {
-                    case 'email':
-                        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                            showErrorMessage(field.id, field.message);
-                            isValid = false;
-                        }
-                        break;
-                    case 'cpf':
-                        if (unmaskedValue.length !== 11) {
-                            showErrorMessage(field.id, field.message);
-                            isValid = false;
-                        }
-                        break;
-                    case 'cep':
-                        if (unmaskedValue.length !== 8) {
-                            showErrorMessage(field.id, field.message);
-                            isValid = false;
-                        }
-                        break;
-                    case 'uf':
-                        if (value.length !== 2) {
-                            showErrorMessage(field.id, field.message);
-                            isValid = false;
-                        }
-                        break;
-                    case 'whatsapp':
-                        if (unmaskedValue.length < 10) {
-                            showErrorMessage(field.id, field.message);
-                            isValid = false;
-                        }
-                        break;
-                }
+            if (!elements.nome.value.trim()) {
+                errorMessages.nome.textContent = 'Nome completo é obrigatório.';
+                errorMessages.nome.style.display = 'block';
+                isValid = false;
             }
+            if (!elements.email.value.trim() || !validateEmail(elements.email.value)) {
+                errorMessages.email.textContent = 'Email inválido ou obrigatório.';
+                errorMessages.email.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.cpf.value.trim() || !validateCPF(elements.cpf.value)) {
+                errorMessages.cpf.textContent = 'CPF inválido ou obrigatório.';
+                errorMessages.cpf.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.whatsapp.value.trim() || elements.whatsapp.value.replace(/\D/g, '').length < 10) {
+                errorMessages.whatsapp.textContent = 'WhatsApp é obrigatório e deve ter no mínimo 10 dígitos.';
+                errorMessages.whatsapp.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.cep.value.trim() || elements.cep.value.replace(/\D/g, '').length !== 8) {
+                errorMessages.cep.textContent = 'CEP inválido ou obrigatório.';
+                errorMessages.cep.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.endereco.value.trim()) {
+                errorMessages.endereco.textContent = 'Endereço é obrigatório.';
+                errorMessages.endereco.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.numero.value.trim()) {
+                errorMessages.numero.textContent = 'Número é obrigatório.';
+                errorMessages.numero.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.bairro.value.trim()) {
+                errorMessages.bairro.textContent = 'Bairro é obrigatório.';
+                errorMessages.bairro.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.cidade.value.trim()) {
+                errorMessages.cidade.textContent = 'Cidade é obrigatória.';
+                errorMessages.cidade.style.display = 'block';
+                isValid = false;
+            }
+            if (!elements.estado.value.trim()) {
+                errorMessages.estado.textContent = 'Estado é obrigatório.';
+                errorMessages.estado.style.display = 'block';
+                isValid = false;
+            }
+
+            if (!selectedPaymentMethod) {
+                showMessage('Por favor, selecione uma forma de pagamento.', 'error');
+                isValid = false;
+            }
+
+            elements.submitButton.disabled = !isValid;
             return isValid;
         }
 
-        // --- Payment Tab Switching ---
-        document.querySelectorAll('.tab-button').forEach(button => {
-            button.addEventListener('click', () => {
-                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.payment-section').forEach(sec => sec.classList.remove('active'));
-
-                button.classList.add('active');
-                activePaymentMethod = button.dataset.tab;
-                document.getElementById(`${activePaymentMethod}-payment-section`).classList.add('active');
-
-                // Show/hide submit buttons based on active tab
-                document.getElementById('pix-submit-button').style.display = (activePaymentMethod === 'pix' ? 'block' : 'none');
-                document.getElementById('card-submit-button').style.display = (activePaymentMethod === 'credit-card' ? 'block' : 'none');
-            });
-        });
-
-        // --- PIX Payment Flow ---
-        async function handlePixPayment(event) {
-            event.preventDefault();
-            if (!validateForm()) {
-                document.getElementById('payment-error').textContent = 'Por favor, corrija os erros no formulário.';
-                document.getElementById('payment-error').style.display = 'block';
-                return;
-            }
-            if (!currentProduct) {
-                document.getElementById('payment-error').textContent = 'Erro: Produto não carregado.';
-                document.getElementById('payment-error').style.display = 'block';
-                return;
-            }
-
-            showLoading('payment-loading');
-            document.getElementById('payment-error').style.display = 'none';
-            document.getElementById('pix-submit-button').disabled = true;
-
-            try {
-                const nome_comprador = document.getElementById('nome_comprador').value;
-                const email_comprador = document.getElementById('email_comprador').value;
-                const cpf_comprador = removeMask(document.getElementById('cpf_comprador').value);
-                const telefone_comprador = removeMask(document.getElementById('telefone_comprador').value);
-                const whatsapp_comprador = removeMask(document.getElementById('whatsapp_comprador').value);
-                const endereco = document.getElementById('endereco_comprador').value;
-                const numero = document.getElementById('numero_comprador').value;
-                const complemento = document.getElementById('complemento_comprador').value;
-                const bairro = document.getElementById('bairro_comprador').value;
-                const cidade = document.getElementById('cidade_comprador').value;
-                const estado = document.getElementById('estado_comprador').value;
-                const cep = document.getElementById('cep_comprador').value;
-
-                const endereco_completo = `${endereco}, ${numero}${complemento ? ' - ' + complemento : ''}, ${bairro}, ${cidade} - ${estado}, CEP ${cep}`;
-
-                // Step 1: Register sale in Supabase 'vendas' table
-                const { data: vendaData, error: vendaError } = await supabase
-                    .from('vendas')
-                    .insert([
-                        {
-                            produto_id: currentProduct.id,
-                            nome_comprador: nome_comprador,
-                            email_comprador: email_comprador,
-                            cpf_comprador: cpf_comprador,
-                            telefone_comprador: telefone_comprador,
-                            whatsapp_comprador: whatsapp_comprador,
-                            endereco_completo: endereco_completo,
-                            valor_total: currentProduct.preco,
-                            metodo_pagamento: "pix",
-                            status_pagamento: "pendente",
-                            mercadopago_payment_id: null,
-                            mercadopago_status: null,
-                            data_venda: new Date().toISOString()
-                        }
-                    ])
-                    .select()
-                    .single();
-
-                if (vendaError) {
-                    throw new Error(`Erro ao registrar venda: ${vendaError.message}`);
-                }
-
-                const venda_id = vendaData.id;
-                console.log('Venda registrada com ID:', venda_id);
-
-                // Step 2: Call Edge Function to create PIX
-                const pixResponse = await fetch(`${supabaseUrl}/functions/v1/create-pix`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${supabaseKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        transaction_amount: currentProduct.preco,
-                        description: currentProduct.nome,
-                        payment_method_id: "pix",
-                        payer: {
-                            email: email_comprador,
-                            first_name: nome_comprador.split(' ')[0], // Use first name
-                            identification: { type: "CPF", number: cpf_comprador }
-                        }
-                    }),
-                });
-
-                if (!pixResponse.ok) {
-                    const errorData = await pixResponse.json();
-                    throw new Error(`Erro ao criar PIX: ${errorData.message || JSON.stringify(errorData)}`);
-                }
-
-                const pixPayment = await pixResponse.json();
-                console.log('PIX Payment created:', pixPayment);
-
-                // Step 3: Update sale with payment_id
-                const { error: updateError } = await supabase
-                    .from('vendas')
-                    .update({
-                        mercadopago_payment_id: pixPayment.id,
-                        mercadopago_status: pixPayment.status
-                    })
-                    .eq('id', venda_id);
-
-                if (updateError) {
-                    throw new Error(`Erro ao atualizar venda com payment_id: ${updateError.message}`);
-                }
-
-                // Step 4: Redirect to PIX page
-                window.location.href = `/pix.html?payment_id=${pixPayment.id}&venda_id=${venda_id}`;
-
-            } catch (error) {
-                console.error('Erro no fluxo de pagamento PIX:', error);
-                document.getElementById('payment-error').textContent = `Erro no pagamento: ${error.message}. Tente novamente.`;
-                document.getElementById('payment-error').style.display = 'block';
-            } finally {
-                hideLoading('payment-loading');
-                document.getElementById('pix-submit-button').disabled = false;
-            }
+        // Masking functions
+        function applyCpfMask(value) {
+            value = value.replace(/\D/g, '');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            return value;
         }
 
-        // --- Credit Card Payment Flow (Placeholder) ---
-        let cardPaymentBrick;
-        async function initializeCardPayment() {
-            const mp = new MercadoPago('APP_USR-d59eff57-b1a2-446d-bf3e-0bc0804aad8e', {
-                locale: 'pt-BR'
-            });
-
-            const bricksBuilder = mp.bricks();
-            cardPaymentBrick = bricksBuilder.create('cardPayment', 'cardPaymentBrickContainer', {
-                initialization: {
-                    amount: currentProduct ? currentProduct.preco : 0, // Set initial amount
-                    payer: {
-                        email: document.getElementById('email_comprador').value || 'test_payer@example.com',
-                    },
-                },
-                customization: {
-                    visual: {
-                        style: {
-                            theme: 'bootstrap' // or 'dark', 'flat', 'material'
-                        }
-                    },
-                    paymentMethods: {
-                        creditCard: 'all',
-                        debitCard: 'all',
-                        maxInstallments: 12,
-                    },
-                },
-                callbacks: {
-                    onReady: () => {
-                        console.log('Card Payment Brick is ready');
-                        document.getElementById('card-submit-button').style.display = 'block';
-                    },
-                    onSubmit: (cardFormData) => {
-                        // This callback is triggered when the user submits the card form.
-                        // You would typically send cardFormData to your backend (Edge Function)
-                        // to process the payment securely.
-                        console.log('Card form submitted:', cardFormData);
-                        handleCardPayment(cardFormData);
-                    },
-                    onError: (error) => {
-                        console.error('Mercado Pago Card Brick error:', error);
-                        document.getElementById('payment-error').textContent = 'Erro no formulário do cartão. Verifique os dados.';
-                        document.getElementById('payment-error').style.display = 'block';
-                    },
-                },
-            });
+        function applyPhoneMask(value) {
+            value = value.replace(/\D/g, '');
+            if (value.length > 10) {
+                value = value.replace(/^(\d\d)(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                value = value.replace(/^(\d\d)(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                value = value.replace(/^(\d\d)(\d{0,5})/, '($1) $2');
+            } else {
+                value = value.replace(/^(\d*)/, '($1');
+            }
+            return value;
         }
 
-        async function handleCardPayment(cardFormData) {
-            // This function would be called by the onSubmit callback of the Card Payment Brick
-            // or by the card-submit-button click if you manually trigger it.
-            event.preventDefault(); // Prevent default form submission if triggered by button
-
-            if (!validateForm()) {
-                document.getElementById('payment-error').textContent = 'Por favor, corrija os erros no formulário.';
-                document.getElementById('payment-error').style.display = 'block';
-                return;
-            }
-            if (!currentProduct) {
-                document.getElementById('payment-error').textContent = 'Erro: Produto não carregado.';
-                document.getElementById('payment-error').style.display = 'block';
-                return;
-            }
-
-            showLoading('payment-loading');
-            document.getElementById('payment-error').style.display = 'none';
-            document.getElementById('card-submit-button').disabled = true;
-
-            try {
-                const nome_comprador = document.getElementById('nome_comprador').value;
-                const email_comprador = document.getElementById('email_comprador').value;
-                const cpf_comprador = removeMask(document.getElementById('cpf_comprador').value);
-                const telefone_comprador = removeMask(document.getElementById('telefone_comprador').value);
-                const whatsapp_comprador = removeMask(document.getElementById('whatsapp_comprador').value);
-                const endereco = document.getElementById('endereco_comprador').value;
-                const numero = document.getElementById('numero_comprador').value;
-                const complemento = document.getElementById('complemento_comprador').value;
-                const bairro = document.getElementById('bairro_comprador').value;
-                const cidade = document.getElementById('cidade_comprador').value;
-                const estado = document.getElementById('estado_comprador').value;
-                const cep = document.getElementById('cep_comprador').value;
-
-                const endereco_completo = `${endereco}, ${numero}${complemento ? ' - ' + complemento : ''}, ${bairro}, ${cidade} - ${estado}, CEP ${cep}`;
-
-                // Step 1: Register sale in Supabase 'vendas' table
-                const { data: vendaData, error: vendaError } = await supabase
-                    .from('vendas')
-                    .insert([
-                        {
-                            produto_id: currentProduct.id,
-                            nome_comprador: nome_comprador,
-                            email_comprador: email_comprador,
-                            cpf_comprador: cpf_comprador,
-                            telefone_comprador: telefone_comprador,
-                            whatsapp_comprador: whatsapp_comprador,
-                            endereco_completo: endereco_completo,
-                            valor_total: currentProduct.preco,
-                            metodo_pagamento: "credit_card",
-                            status_pagamento: "pendente", // Will be updated after payment
-                            mercadopago_payment_id: null,
-                            mercadopago_status: null,
-                            data_venda: new Date().toISOString()
-                        }
-                    ])
-                    .select()
-                    .single();
-
-                if (vendaError) {
-                    throw new Error(`Erro ao registrar venda (cartão): ${vendaError.message}`);
-                }
-
-                const venda_id = vendaData.id;
-                console.log('Venda (cartão) registrada com ID:', venda_id);
-
-                // Step 2: Call Edge Function to create Credit Card Payment
-                // This is a placeholder. You need to create an Edge Function
-                // (e.g., 'create-card-payment') that handles the Mercado Pago
-                // payment creation using the cardFormData.
-                const cardPaymentResponse = await fetch(`${supabaseUrl}/functions/v1/create-card-payment`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${supabaseKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        transaction_amount: currentProduct.preco,
-                        description: currentProduct.nome,
-                        payment_method_id: cardFormData.paymentMethodId, // From MP Brick
-                        token: cardFormData.token, // From MP Brick
-                        installments: cardFormData.installments, // From MP Brick
-                        issuer_id: cardFormData.issuerId, // From MP Brick
-                        payer: {
-                            email: email_comprador,
-                            first_name: nome_comprador.split(' ')[0],
-                            identification: { type: "CPF", number: cpf_comprador }
-                        },
-                        // Add any other necessary data from cardFormData or form
-                    }),
-                });
-
-                if (!cardPaymentResponse.ok) {
-                    const errorData = await cardPaymentResponse.json();
-                    throw new Error(`Erro ao processar pagamento com cartão: ${errorData.message || JSON.stringify(errorData)}`);
-                }
-
-                const cardPayment = await cardPaymentResponse.json();
-                console.log('Card Payment processed:', cardPayment);
-
-                // Step 3: Update sale with payment_id and status
-                const { error: updateError } = await supabase
-                    .from('vendas')
-                    .update({
-                        mercadopago_payment_id: cardPayment.id,
-                        mercadopago_status: cardPayment.status,
-                        status_pagamento: cardPayment.status === 'approved' ? 'aprovado' : 'rejeitado' // Or other statuses
-                    })
-                    .eq('id', venda_id);
-
-                if (updateError) {
-                    throw new Error(`Erro ao atualizar venda com payment_id (cartão): ${updateError.message}`);
-                }
-
-                // Step 4: Redirect to a confirmation/status page
-                window.location.href = `/status.html?payment_id=${cardPayment.id}&venda_id=${venda_id}&status=${cardPayment.status}`;
-
-            } catch (error) {
-                console.error('Erro no fluxo de pagamento com cartão:', error);
-                document.getElementById('payment-error').textContent = `Erro no pagamento com cartão: ${error.message}. Tente novamente.`;
-                document.getElementById('payment-error').style.display = 'block';
-            } finally {
-                hideLoading('payment-loading');
-                document.getElementById('card-submit-button').disabled = false;
-            }
+        function applyCepMask(value) {
+            value = value.replace(/\D/g, '');
+            value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+            return value;
         }
 
-        // --- Event Listeners ---
-        document.getElementById('checkout-form').addEventListener('submit', (event) => {
-            if (activePaymentMethod === 'pix') {
-                handlePixPayment(event);
-            } else if (activePaymentMethod === 'credit-card') {
-                // The cardPaymentBrick handles its own submission via onSubmit callback
-                // If you want to manually trigger it from the button, you'd call:
-                // cardPaymentBrick.submit();
-                // For now, the onSubmit callback is sufficient.
-                event.preventDefault(); // Prevent default form submission
-                document.getElementById('payment-error').textContent = 'Por favor, use o formulário do cartão acima para submeter.';
-                document.getElementById('payment-error').style.display = 'block';
-            }
-        });
+        // Event Listeners for Masks
+        elements.cpf.addEventListener('input', (e) => e.target.value = applyCpfMask(e.target.value));
+        elements.telefone.addEventListener('input', (e) => e.target.value = applyPhoneMask(e.target.value));
+        elements.whatsapp.addEventListener('input', (e) => e.target.value = applyPhoneMask(e.target.value));
+        elements.cep.addEventListener('input', (e) => e.target.value = applyCepMask(e.target.value));
 
-        // Initialize Card Payment Brick when the tab is clicked
-        document.querySelector('.tab-button[data-tab="credit-card"]').addEventListener('click', () => {
-            if (!cardPaymentBrick && currentProduct) {
-                initializeCardPayment();
-            } else if (cardPaymentBrick && currentProduct) {
-                // If product is loaded and brick exists, update amount if necessary
-                cardPaymentBrick.update({
-                    initialization: {
-                        amount: currentProduct.preco,
-                        payer: {
-                            email: document.getElementById('email_comprador').value || 'test_payer@example.com',
-                        },
+        // CEP Auto-fill
+        elements.cep.addEventListener('blur', async function() {
+            const cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                showLoading('Buscando endereço...');
+                try {
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await response.json();
+                    if (!data.erro) {
+                        elements.endereco.value = data.logradouro;
+                        elements.bairro.value = data.bairro;
+                        elements.cidade.value = data.localidade;
+                        elements.estado.value = data.uf;
+                        elements.numero.focus();
+                        errorMessages.cep.style.display = 'none';
+                    } else {
+                        errorMessages.cep.textContent = 'CEP não encontrado.';
+                        errorMessages.cep.style.display = 'block';
+                        clearAddressFields();
                     }
+                } catch (error) {
+                    console.error('Erro ao buscar CEP:', error);
+                    errorMessages.cep.textContent = 'Erro ao buscar CEP. Tente novamente.';
+                    errorMessages.cep.style.display = 'block';
+                    clearAddressFields();
+                } finally {
+                    hideLoading();
+                }
+            } else if (cep.length > 0) {
+                errorMessages.cep.textContent = 'CEP inválido. Digite 8 dígitos.';
+                errorMessages.cep.style.display = 'block';
+                clearAddressFields();
+            } else {
+                errorMessages.cep.style.display = 'none';
+                clearAddressFields();
+            }
+            validateForm(); // Re-validate after CEP fill
+        });
+
+        function clearAddressFields() {
+            elements.endereco.value = '';
+            elements.bairro.value = '';
+            elements.cidade.value = '';
+            elements.estado.value = '';
+        }
+
+        // Fetch product details
+        async function fetchProductDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            produtoId = urlParams.get('produto');
+
+            if (!produtoId) {
+                showMessage('ID do produto não encontrado na URL.', 'error');
+                return;
+            }
+
+            showLoading('Carregando detalhes do produto...');
+            try {
+                const { data: produto, error } = await supabase
+                    .from('produtos')
+                    .select('*')
+                    .eq('id', produtoId)
+                    .single();
+
+                if (error) throw error;
+
+                if (produto) {
+                    valorProduto = produto.preco;
+                    elements.productPrice.textContent = `R$ ${valorProduto.toFixed(2).replace('.', ',')}`;
+                    // Update product name/description if needed
+                } else {
+                    showMessage('Produto não encontrado.', 'error');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar detalhes do produto:', error);
+                showMessage('Erro ao carregar detalhes do produto. Tente novamente.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Payment method selection
+        elements.paymentOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                elements.paymentOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedPaymentMethod = option.dataset.method;
+                renderPaymentBrick();
+                validateForm();
+            });
+        });
+
+        let paymentBrick = null;
+        let pixPaymentBrick = null;
+
+        async function renderPaymentBrick() {
+            elements.paymentFormContainer.style.display = 'block';
+            elements.paymentBrickContainer.style.display = 'none';
+            elements.pixPaymentContainer.style.display = 'none';
+
+            if (selectedPaymentMethod === 'credit_card') {
+                elements.paymentBrickContainer.style.display = 'block';
+                if (!paymentBrick) {
+                    paymentBrick = await bricksBuilder.create('payment', 'paymentBrick_container', {
+                        initialization: {
+                            amount: valorProduto, // valor do produto
+                            payer: {
+                                email: elements.email.value,
+                            },
+                        },
+                        customization: {
+                            visual: {
+                                style: {
+                                    theme: 'bootstrap',
+                                    customVariables: {
+                                        formBackgroundColor: '#fcfcfc',
+                                        baseColor: '#2575fc',
+                                        outlineColor: '#2575fc',
+                                    }
+                                }
+                            },
+                            paymentMethods: {
+                                creditCard: 'all',
+                                debitCard: 'all',
+                                ticket: 'all',
+                                bankTransfer: 'all',
+                                atm: 'all',
+                                ondc: 'all',
+                                wallet: 'all',
+                            }
+                        },
+                        callbacks: {
+                            onReady: () => {
+                                console.log('Payment Brick pronto');
+                            },
+                            onSubmit: (cardFormData) => {
+                                return new Promise((resolve, reject) => {
+                                    finalizarCompra('credit_card', cardFormData)
+                                        .then(() => resolve())
+                                        .catch((error) => reject(error));
+                                });
+                            },
+                            onError: (error) => {
+                                console.error('Erro no Payment Brick:', error);
+                                showMessage('Erro ao processar o pagamento com cartão. Verifique os dados.', 'error');
+                            },
+                        },
+                    });
+                }
+            } else if (selectedPaymentMethod === 'pix') {
+                elements.pixPaymentContainer.style.display = 'block';
+                if (!pixPaymentBrick) {
+                    pixPaymentBrick = await bricksBuilder.create('payment', 'pixPayment_container', {
+                        initialization: {
+                            amount: valorProduto,
+                            payer: {
+                                email: elements.email.value,
+                            },
+                        },
+                        customization: {
+                            visual: {
+                                style: {
+                                    theme: 'bootstrap',
+                                    customVariables: {
+                                        formBackgroundColor: '#fcfcfc',
+                                        baseColor: '#2575fc',
+                                        outlineColor: '#2575fc',
+                                    }
+                                }
+                            },
+                            paymentMethods: {
+                                ticket: 'all',
+                                bankTransfer: 'all',
+                                atm: 'all',
+                                ondc: 'all',
+                                wallet: 'all',
+                            }
+                        },
+                        callbacks: {
+                            onReady: () => {
+                                console.log('PIX Brick pronto');
+                            },
+                            onSubmit: (pixFormData) => {
+                                return new Promise((resolve, reject) => {
+                                    finalizarCompra('pix', pixFormData)
+                                        .then(() => resolve())
+                                        .catch((error) => reject(error));
+                                });
+                            },
+                            onError: (error) => {
+                                console.error('Erro no PIX Brick:', error);
+                                showMessage('Erro ao gerar o PIX. Tente novamente.', 'error');
+                            },
+                        },
+                    });
+                }
+            }
+        }
+
+        async function finalizarCompra(metodoPagamento, paymentFormData = {}) {
+            if (!validateForm()) {
+                hideLoading();
+                return;
+            }
+
+            showLoading('Registrando sua venda...');
+            try {
+                // 1️⃣ PRIMEIRO: Registrar venda no Supabase
+                const { data: vendaData, error: vendaError } = await supabase
+                    .from('vendas')
+                    .insert([{
+                        produto_id: produtoId,
+                        nome_comprador: elements.nome.value,
+                        email_comprador: elements.email.value,
+                        cpf_comprador: elements.cpf.value.replace(/\D/g, ''),
+                        telefone_comprador: elements.telefone.value.replace(/\D/g, ''),
+                        whatsapp_comprador: elements.whatsapp.value.replace(/\D/g, ''),
+                        cep_comprador: elements.cep.value.replace(/\D/g, ''),
+                        endereco_comprador: elements.endereco.value,
+                        numero_comprador: elements.numero.value,
+                        complemento_comprador: elements.complemento.value,
+                        bairro_comprador: elements.bairro.value,
+                        cidade_comprador: elements.cidade.value,
+                        estado_comprador: elements.estado.value,
+                        status_pagamento: 'pending',
+                        metodo_pagamento: metodoPagamento
+                    }])
+                    .select()
+                    .single();
+
+                if (vendaError) throw vendaError;
+                
+                const vendaId = vendaData.id;
+                console.log('Venda registrada no Supabase:', vendaId);
+
+                showLoading('Processando pagamento...');
+
+                // 2️⃣ DEPOIS: Chamar Edge Function para criar PIX/Cartão
+                const response = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/create-payment-mp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${supabaseKey}` // Passa a chave para a Edge Function
+                    },
+                    body: JSON.stringify({
+                        transaction_amount: valorProduto,
+                        description: 'Livro Digital: Somos Todos Um',
+                        payment_method_id: metodoPagamento, // 'pix' or 'credit_card'
+                        payer: {
+                            email: elements.email.value,
+                            first_name: elements.nome.value.split(' ')[0],
+                            last_name: elements.nome.value.split(' ').slice(1).join(' '),
+                            identification: {
+                                type: 'CPF',
+                                number: elements.cpf.value.replace(/\D/g, '')
+                            }
+                        },
+                        external_reference: vendaId,
+                        // Adiciona dados do cartão se for crédito
+                        ... (metodoPagamento === 'credit_card' && paymentFormData.token ? { token: paymentFormData.token } : {}),
+                        ... (metodoPagamento === 'credit_card' && paymentFormData.installments ? { installments: paymentFormData.installments } : {}),
+                        ... (metodoPagamento === 'credit_card' && paymentFormData.issuer_id ? { issuer_id: paymentFormData.issuer_id } : {}),
+                    })
                 });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erro ao chamar Edge Function.');
+                }
+
+                const paymentData = await response.json();
+                console.log('Resposta da Edge Function:', paymentData);
+
+                if (!paymentData.payment_id) {
+                    throw new Error('ID de pagamento não retornado pela Edge Function.');
+                }
+
+                // 3️⃣ Atualizar venda com payment_id
+                await supabase
+                    .from('vendas')
+                    .update({ mercadopago_payment_id: paymentData.payment_id })
+                    .eq('id', vendaId);
+                
+                console.log('Venda atualizada com payment_id:', paymentData.payment_id);
+
+                // 4️⃣ Redirecionar
+                window.location.href = `/pix.html?payment_id=${paymentData.payment_id}&venda_id=${vendaId}`;
+                
+            } catch (error) {
+                console.error('❌ Erro ao finalizar compra:', error);
+                showMessage(`Erro ao processar pagamento: ${error.message || 'Ocorreu um erro inesperado.'}`, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        elements.checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (validateForm()) {
+                // If using Bricks, the onSubmit callback will handle finalization
+                // If not using Bricks (e.g., a simple button for PIX without a brick), call it directly
+                if (selectedPaymentMethod === 'pix' && pixPaymentBrick) {
+                    // The PIX brick's onSubmit callback will be triggered
+                    // No need to call finalizarCompra directly here for PIX if brick is used
+                } else if (selectedPaymentMethod === 'credit_card' && paymentBrick) {
+                    // The Payment brick's onSubmit callback will be triggered
+                    // No need to call finalizarCompra directly here for Credit Card if brick is used
+                } else {
+                    // Fallback or if a custom PIX button is used without a brick
+                    await finalizarCompra(selectedPaymentMethod);
+                }
             }
         });
 
-        // --- On Page Load ---
+        // Initial validation for button state
+        elements.checkoutForm.addEventListener('input', validateForm);
+        elements.checkoutForm.addEventListener('change', validateForm); // For radio buttons/selects
+
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', () => {
-            loadProduct();
+            fetchProductDetails();
+            validateForm(); // Set initial button state
         });
     </script>
 </body>
