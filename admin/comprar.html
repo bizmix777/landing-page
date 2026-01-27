@@ -6,10 +6,7 @@
     <title>Finalizar Compra - BizMix</title>
     <link rel="icon" href="https://bizmix.com.br/favicon.ico">
     
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Configuração centralizada (SE VOCÊ JÁ TEM, use o caminho correto) -->
+    <!-- Configuração centralizada (FETCH DIRETO) -->
     <script src="/js/supabase-config.js"></script>
     
     <style>
@@ -256,15 +253,10 @@
         // ============================================
         // VERIFICAR SE CONFIG EXISTE
         // ============================================
-        if (typeof getSupabaseClient === 'undefined' || typeof CONFIG === 'undefined') {
+        if (typeof SUPABASE_URL === 'undefined' || typeof supabaseFetch === 'undefined') {
             alert('❌ Erro: arquivo supabase-config.js não encontrado!');
             throw new Error('supabase-config.js não carregado');
         }
-
-        // ============================================
-        // INICIALIZAR SUPABASE
-        // ============================================
-        const supabase = getSupabaseClient();
 
         // ============================================
         // OBTER PRODUTO DA URL
@@ -282,21 +274,20 @@
         let produtoSelecionado = null;
 
         // ============================================
-        // CARREGAR PRODUTO
+        // CARREGAR PRODUTO (USA supabaseFetch)
         // ============================================
         async function carregarProduto() {
             try {
                 console.log('📦 Buscando produto:', produtoId);
 
-                const { data, error } = await supabase
-                    .from('produtos')
-                    .select('*')
-                    .eq('id', produtoId)
-                    .single();
+                // Usando supabaseFetch do config
+                const produtos = await supabaseFetch(`produtos?id=eq.${produtoId}&select=*`);
 
-                if (error) throw error;
+                if (!produtos || produtos.length === 0) {
+                    throw new Error('Produto não encontrado');
+                }
 
-                produtoSelecionado = data;
+                produtoSelecionado = produtos[0];
                 console.log('✅ Produto carregado:', produtoSelecionado);
 
                 // Atualizar tela
@@ -347,79 +338,63 @@
 
                 const valorTotal = produtoSelecionado.preco * quantidade;
 
-                console.log('💳 Criando pagamento PIX...');
+                console.log('💳 Criando pagamento PIX via Edge Function...');
                 console.log('📊 Dados:', { nome, sobrenome, email, cpf, valorTotal });
 
                 // ============================================
-                // CHAMAR EDGE FUNCTION
+                // CHAMAR EDGE FUNCTION (USA supabaseFunction)
                 // ============================================
-                const response = await fetch(CONFIG.edgeFunctions.createPaymentMp, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': CONFIG.supabase.anonKey,
-                        'Authorization': `Bearer ${CONFIG.supabase.anonKey}`
+                const paymentData = await supabaseFunction('create-payment-mp', {
+                    transaction_amount: valorTotal,
+                    description: `${produtoSelecionado.nome} - ${quantidade}x`,
+                    payment_method_id: 'pix',
+                    payer: {
+                        email: email,
+                        first_name: nome,
+                        last_name: sobrenome,
+                        identification: {
+                            type: 'CPF',
+                            number: cpf
+                        }
                     },
-                    body: JSON.stringify({
-                        transaction_amount: valorTotal,
-                        description: `${produtoSelecionado.nome} - ${quantidade}x`,
-                        payment_method_id: 'pix',
-                        payer: {
-                            email: email,
-                            first_name: nome,
-                            last_name: sobrenome,
-                            identification: {
-                                type: 'CPF',
-                                number: cpf
-                            }
-                        },
-                        external_reference: `produto_${produtoId}`
-                    })
+                    external_reference: `produto_${produtoId}`
                 });
 
-                console.log('📡 Resposta Edge Function:', response.status);
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('❌ Erro Edge Function:', errorData);
-                    throw new Error(errorData.error || 'Erro ao criar pagamento');
-                }
-
-                const paymentData = await response.json();
-                console.log('✅ Pagamento criado:', paymentData);
+                console.log('✅ Resposta Edge Function:', paymentData);
 
                 if (!paymentData.success || !paymentData.payment_id) {
-                    throw new Error('Falha ao criar pagamento no Mercado Pago');
+                    throw new Error(paymentData.error || 'Falha ao criar pagamento no Mercado Pago');
                 }
 
                 // ============================================
-                // INSERIR VENDA NO BANCO
+                // INSERIR VENDA NO BANCO (USA supabaseFetch)
                 // ============================================
                 console.log('💾 Salvando venda no banco...');
 
-                const { data: venda, error: vendaError } = await supabase
-                    .from('vendas')
-                    .insert([{
-                        produto_id: produtoId,
-                        quantidade: quantidade,
-                        valor_unitario: produtoSelecionado.preco,
-                        valor_total: valorTotal,
-                        comprador_nome: `${nome} ${sobrenome}`,
-                        comprador_email: email,
-                        comprador_cpf: cpf,
-                        comprador_telefone: telefone || null,
-                        status: 'pending',
-                        payment_id: paymentData.payment_id,
-                        payment_status: paymentData.status
-                    }])
-                    .select()
-                    .single();
+                const vendaData = {
+                    produto_id: produtoId,
+                    quantidade: quantidade,
+                    valor_unitario: produtoSelecionado.preco,
+                    valor_total: valorTotal,
+                    comprador_nome: `${nome} ${sobrenome}`,
+                    comprador_email: email,
+                    comprador_cpf: cpf,
+                    comprador_telefone: telefone || null,
+                    status: 'pending',
+                    payment_id: paymentData.payment_id,
+                    payment_status: paymentData.status
+                };
 
-                if (vendaError) {
-                    console.error('❌ Erro ao salvar venda:', vendaError);
+                const vendas = await supabaseFetch('vendas', {
+                    method: 'POST',
+                    body: JSON.stringify(vendaData)
+                });
+
+                if (!vendas || vendas.length === 0) {
                     throw new Error('Erro ao registrar venda no banco');
                 }
 
+                const venda = vendas[0];
                 console.log('✅ Venda salva:', venda);
 
                 // ============================================
