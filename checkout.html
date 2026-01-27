@@ -255,6 +255,7 @@
             }
         }
     </style>
+    ✅ <script src="/js/supabase-config.js"></script>
 </head>
 <body>
     <div class="loading-overlay" id="loadingOverlay">
@@ -370,10 +371,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://sdk.mercadopago.com/js/v2"></script>
     <script>
-        // Supabase Initialization
-        const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDYzNTUwNTcsImV4cCI6MjA1MTkzMTA1N30.iGxMslGTzEfBgEEu5d4-gTjV-PgC31u4Ig9X0v50jkA';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         // MercadoPago Initialization
         const mp = new MercadoPago('APP_USR-e02e5be1-5802-47c6-8ec6-4146afcc61f5', {
