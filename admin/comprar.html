@@ -255,17 +255,17 @@
     <script>
         console.log('🛒 Página de checkout carregada');
 
-        // ============================================
+        // 
         // VERIFICAR SE CONFIG EXISTE
-        // ============================================
+        // 
         if (typeof SUPABASE_URL === 'undefined' || typeof supabaseFetch === 'undefined') {
             alert('❌ Erro: arquivo supabase-config.js não encontrado!');
             throw new Error('supabase-config.js não carregado');
         }
 
-        // ============================================
+        // 
         // OBTER PRODUTO DA URL
-        // ============================================
+        // 
         const urlParams = new URLSearchParams(window.location.search);
         const produtoId = urlParams.get('produto');
 
@@ -278,9 +278,9 @@
 
         let produtoSelecionado = null;
 
-        // ============================================
+        // 
         // CARREGAR PRODUTO (USA supabaseFetch)
-        // ============================================
+        // 
         async function carregarProduto() {
             try {
                 console.log('📦 Buscando produto:', produtoId);
@@ -313,9 +313,9 @@
             }
         }
 
-        // ============================================
+        // 
         // PROCESSAR PAGAMENTO
-        // ============================================
+        // 
         document.getElementById('formCheckout').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -334,7 +334,6 @@
                 const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
 
                 // Validações
-                if (!nome || !sobrenome || !email || !cpf || !whatsapp) {
                     throw new Error('Preencha todos os campos obrigatórios!');
                 }
 
@@ -351,9 +350,9 @@
                 console.log('💳 Criando pagamento PIX via Edge Function...');
                 console.log('📊 Dados:', { nome, sobrenome, email, cpf, whatsapp, valorTotal });
 
-                // ============================================
+                // 
                 // CHAMAR EDGE FUNCTION (USA supabaseFunction)
-                // ============================================
+                // 
                 const paymentData = await supabaseFunction('create-payment-mp', {
                     transaction_amount: valorTotal,
                     description: `${produtoSelecionado.nome} - ${quantidade}x`,
@@ -376,9 +375,9 @@
                     throw new Error(paymentData.error || 'Falha ao criar pagamento no Mercado Pago');
                 }
 
-                // ============================================
+                // 
                 // INSERIR VENDA NO BANCO (NOMES CORRETOS)
-                // ============================================
+                // 
                 console.log('💾 Salvando venda no banco...');
 
                 const vendaData = {
@@ -391,9 +390,9 @@
                     cpf_comprador: cpf,
                     telefone_comprador: telefone || null,
                     whatsapp_comprador: whatsapp,
-                    status: 'pending',
-                    payment_id: paymentData.payment_id,
-                    payment_status: paymentData.status
+                    status_pagamento: 'pending',
+                    mercadopago_payment_id: paymentData.payment_id,
+                    mercadopago_status: paymentData.status
                 };
 
                 const vendas = await supabaseFetch('vendas', {
@@ -408,9 +407,9 @@
                 const venda = vendas[0];
                 console.log('✅ Venda salva:', venda);
 
-                // ============================================
+                // 
                 // REDIRECIONAR PARA PIX.HTML (CORRIGIDO)
-                // ============================================
+                // 
                 const redirectUrl = `/pix.html?payment_id=${paymentData.payment_id}&venda_id=${venda.id}`;
                 
                 console.log('🔄 Redirecionando para:', redirectUrl);
@@ -425,9 +424,9 @@
             }
         });
 
-        // ============================================
+        // 
         // MÁSCARA CPF
-        // ============================================
+        // 
         document.getElementById('cpf').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             if (value.length <= 11) {
@@ -438,9 +437,9 @@
             }
         });
 
-        // ============================================
+        // 
         // MÁSCARA TELEFONE E WHATSAPP
-        // ============================================
+        // 
         function aplicarMascaraTelefone(input) {
             input.addEventListener('input', function(e) {
                 let value = e.target.value.replace(/\D/g, '');
@@ -460,9 +459,9 @@
         aplicarMascaraTelefone(document.getElementById('telefone'));
         aplicarMascaraTelefone(document.getElementById('whatsapp'));
 
-        // ============================================
+        // 
         // FUNÇÕES AUXILIARES
-        // ============================================
+        // 
         function showAlert(message) {
             const alertBox = document.getElementById('alertBox');
             alertBox.textContent = message;
@@ -473,9 +472,9 @@
             }, 5000);
         }
 
-        // ============================================
+        // 
         // INICIALIZAR
-        // ============================================
+        // 
         window.addEventListener('DOMContentLoaded', function() {
             console.log('✅ DOM carregado, iniciando...');
             carregarProduto();
