@@ -226,7 +226,12 @@
 
                 <div class="form-group">
                     <label for="telefone">Telefone (opcional)</label>
-                    <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+                    <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" maxlength="15">
+                </div>
+
+                <div class="form-group">
+                    <label for="whatsapp">WhatsApp *</label>
+                    <input type="tel" id="whatsapp" name="whatsapp" required placeholder="(00) 00000-0000" maxlength="15">
                 </div>
 
                 <div class="form-group">
@@ -325,10 +330,11 @@
                 const email = document.getElementById('email').value.trim();
                 const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
                 const telefone = document.getElementById('telefone').value.replace(/\D/g, '');
+                const whatsapp = document.getElementById('whatsapp').value.replace(/\D/g, '');
                 const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
 
                 // Validações
-                if (!nome || !sobrenome || !email || !cpf) {
+                if (!nome || !sobrenome || !email || !cpf || !whatsapp) {
                     throw new Error('Preencha todos os campos obrigatórios!');
                 }
 
@@ -336,10 +342,14 @@
                     throw new Error('CPF inválido! Deve ter 11 dígitos.');
                 }
 
+                if (whatsapp.length < 10) {
+                    throw new Error('WhatsApp inválido!');
+                }
+
                 const valorTotal = produtoSelecionado.preco * quantidade;
 
                 console.log('💳 Criando pagamento PIX via Edge Function...');
-                console.log('📊 Dados:', { nome, sobrenome, email, cpf, valorTotal });
+                console.log('📊 Dados:', { nome, sobrenome, email, cpf, whatsapp, valorTotal });
 
                 // ============================================
                 // CHAMAR EDGE FUNCTION (USA supabaseFunction)
@@ -367,7 +377,7 @@
                 }
 
                 // ============================================
-                // INSERIR VENDA NO BANCO (USA supabaseFetch)
+                // INSERIR VENDA NO BANCO (NOMES CORRETOS)
                 // ============================================
                 console.log('💾 Salvando venda no banco...');
 
@@ -376,10 +386,11 @@
                     quantidade: quantidade,
                     valor_unitario: produtoSelecionado.preco,
                     valor_total: valorTotal,
-                    comprador_nome: `${nome} ${sobrenome}`,
-                    comprador_email: email,
-                    comprador_cpf: cpf,
-                    comprador_telefone: telefone || null,
+                    nome_comprador: `${nome} ${sobrenome}`,
+                    email_comprador: email,
+                    cpf_comprador: cpf,
+                    telefone_comprador: telefone || null,
+                    whatsapp_comprador: whatsapp,
                     status: 'pending',
                     payment_id: paymentData.payment_id,
                     payment_status: paymentData.status
@@ -398,9 +409,9 @@
                 console.log('✅ Venda salva:', venda);
 
                 // ============================================
-                // REDIRECIONAR PARA PÁGINA DE PAGAMENTO PIX
+                // REDIRECIONAR PARA PIX.HTML (CORRIGIDO)
                 // ============================================
-                const redirectUrl = `/somos-todos-um/parceiros/pagamento-pix.html?payment_id=${paymentData.payment_id}&venda_id=${venda.id}`;
+                const redirectUrl = `/pix.html?payment_id=${paymentData.payment_id}&venda_id=${venda.id}`;
                 
                 console.log('🔄 Redirecionando para:', redirectUrl);
                 window.location.href = redirectUrl;
@@ -426,6 +437,28 @@
                 e.target.value = value;
             }
         });
+
+        // ============================================
+        // MÁSCARA TELEFONE E WHATSAPP
+        // ============================================
+        function aplicarMascaraTelefone(input) {
+            input.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length <= 11) {
+                    if (value.length <= 10) {
+                        value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                    } else {
+                        value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                        value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                    }
+                    e.target.value = value;
+                }
+            });
+        }
+
+        aplicarMascaraTelefone(document.getElementById('telefone'));
+        aplicarMascaraTelefone(document.getElementById('whatsapp'));
 
         // ============================================
         // FUNÇÕES AUXILIARES
