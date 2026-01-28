@@ -8,7 +8,7 @@
     <!-- CRITICAL: Link para o CSS principal -->
     <link rel="stylesheet" href="/css/style.css">
     <!-- Preload da imagem principal do produto para carregamento rápido -->
-    <link rel="preload" href="/images/capa-livro.png" as="image">
+    <link rel="preload" href="/images/capa-livro.jpg" as="image">
 
     <!-- CRITICAL: Inclui as configurações do Supabase (URL e KEY) -->
     <!-- Este script deve inicializar a variável global 'supabase' -->
@@ -294,7 +294,7 @@
             <div class="checkout-wrapper">
                 <!-- Seção de Informações do Produto -->
                 <div class="product-info">
-                    <img src="/images/capa-livro.png" alt="Capa do livro" id="productImage">
+                    <img src="/images/capa-livro.jpg" alt="Capa do livro" id="productImage">
                     <h2 id="productTitle">Carregando Produto...</h2>
                     <p id="productDescription">Aguarde enquanto carregamos os detalhes do produto.</p>
                     <div class="product-price" id="productPrice">R$ 0,00</div>
@@ -464,7 +464,7 @@
                     if (produtoAtual.imagem_url) {
                         productImageElem.src = produtoAtual.imagem_url;
                     } else {
-                        productImageElem.src = '/images/capa-livro.png'; // Fallback
+                        productImageElem.src = '/images/capa-livro.jpg'; // Fallback
                     }
                     console.log('✅ Produto carregado:', produtoAtual);
                 } else {
