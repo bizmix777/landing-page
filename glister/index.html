@@ -1340,6 +1340,155 @@
       </div>
     </div>
   </footer>
+<!-- ====================================
+       MODAL DE CADASTRO
+       ==================================== -->
+  <div id="cadastroModal" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      
+      <!-- Botão Fechar -->
+      <button class="modal-close" id="closeModal">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      
+      <!-- Header do Modal -->
+      <div class="modal-header">
+        <div class="modal-badge">⭐ MAIS POPULAR</div>
+        <h2 class="modal-title">Compra com Desconto</h2>
+        <p class="modal-subtitle">Cadastre-se e economize 30% em todas as compras futuras</p>
+      </div>
+      
+      <!-- Formulário -->
+      <form id="cadastroForm" class="cadastro-form">
+        
+        <!-- Dados Pessoais -->
+        <div class="form-section">
+          <h3 class="form-section-title">📋 Dados Pessoais</h3>
+          
+          <div class="form-group">
+            <label for="nome">Nome Completo *</label>
+            <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo">
+            <span class="form-error" id="nomeError"></span>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cpf">CPF *</label>
+              <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00" maxlength="14">
+              <span class="form-error" id="cpfError"></span>
+            </div>
+            
+            <div class="form-group">
+              <label for="dataNascimento">Data de Nascimento *</label>
+              <input type="date" id="dataNascimento" name="dataNascimento" required>
+              <span class="form-error" id="dataNascimentoError"></span>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="celular">Celular *</label>
+            <input type="tel" id="celular" name="celular" required placeholder="55 99 99999-9999" maxlength="16">
+            <span class="form-error" id="celularError"></span>
+          </div>
+        </div>
+        
+        <!-- Dados de Acesso -->
+        <div class="form-section">
+          <h3 class="form-section-title">🔐 Dados de Acesso</h3>
+          
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required placeholder="seuemail@exemplo.com">
+            <span class="form-error" id="emailError"></span>
+          </div>
+          
+          <div class="form-group">
+            <label for="emailConfirm">Confirme seu Email *</label>
+            <input type="email" id="emailConfirm" name="emailConfirm" required placeholder="Digite o email novamente">
+            <span class="form-error" id="emailConfirmError"></span>
+          </div>
+          
+          <div class="form-group">
+            <label for="senha">Senha *</label>
+            <input type="password" id="senha" name="senha" required placeholder="Mínimo 8 caracteres">
+            <div class="password-requirements">
+              <small>Mínimo 8 caracteres, 1 maiúscula, 1 minúscula, 1 número e 1 caractere especial</small>
+            </div>
+            <span class="form-error" id="senhaError"></span>
+          </div>
+          
+          <div class="form-group">
+            <label for="senhaConfirm">Confirme sua Senha *</label>
+            <input type="password" id="senhaConfirm" name="senhaConfirm" required placeholder="Digite a senha novamente">
+            <span class="form-error" id="senhaConfirmError"></span>
+          </div>
+        </div>
+        
+        <!-- Endereço -->
+        <div class="form-section">
+          <h3 class="form-section-title">📍 Endereço</h3>
+          
+          <div class="form-group">
+            <label for="cep">CEP *</label>
+            <input type="text" id="cep" name="cep" required placeholder="00000-000" maxlength="9">
+            <span class="form-error" id="cepError"></span>
+            <span class="form-loading" id="cepLoading">🔄 Buscando CEP...</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="rua">Rua/Avenida *</label>
+            <input type="text" id="rua" name="rua" required readonly placeholder="Será preenchido automaticamente">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="numero">Número/Quadra/Lote *</label>
+              <input type="text" id="numero" name="numero" required placeholder="Ex: 123, Quadra 5 Lote 10">
+            </div>
+            
+            <div class="form-group">
+              <label for="complemento">Complemento</label>
+              <input type="text" id="complemento" name="complemento" placeholder="Apto, Casa, etc. (opcional)">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="bairro">Bairro *</label>
+            <input type="text" id="bairro" name="bairro" required readonly placeholder="Será preenchido automaticamente">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cidade">Cidade *</label>
+              <input type="text" id="cidade" name="cidade" required readonly placeholder="Será preenchido automaticamente">
+            </div>
+            
+            <div class="form-group">
+              <label for="estado">Estado *</label>
+              <input type="text" id="estado" name="estado" required readonly placeholder="UF" maxlength="2">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Botões -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary btn-block" id="cancelarCadastro">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-block" id="submitCadastro">
+            <span class="btn-text">Finalizar Cadastro</span>
+            <span class="btn-loading hidden">🔄 Processando...</span>
+          </button>
+        </div>
+        
+        <!-- Mensagem de Sucesso/Erro -->
+        <div class="form-message hidden" id="formMessage"></div>
+        
+      </form>
+      
+    </div>
+  </div>
 
   <!-- JavaScript -->
   <script src="./js/script.js"></script>
