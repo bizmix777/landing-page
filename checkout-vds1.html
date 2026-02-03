@@ -4,1003 +4,817 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - Somos Todos Um</title>
+    <link rel="icon" type="image/png" href="/somos-todos-um/images/favicon.png">
+    <!-- Links para CSS originais do site -->
+    <link rel="stylesheet" href="/somos-todos-um/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
-        /* CSS INLINE */
-        :root {
-            --primary-color: #2c3e50;<br/>
-            --accent-color: #3498db;<br/>
-            --success-color: #27ae60;<br/>
-            --error-color: #e74c3c;<br/>
-            --text-color: #333;<br/>
-            --light-gray: #f4f4f4;<br/>
-            --border-color: #ddd;<br/>
-            --shadow-color: rgba(0, 0, 0, 0.1);
-        }
-
+        /* CSS corrigido (sem as tags <br/>) */
         * {
-            box-sizing: border-box;<br/>
             margin: 0;<br/>
-            padding: 0;
+            padding: 0;<br/>
+            box-sizing: border-box;
         }
-
         body {
-            font-family: 'Open Sans', sans-serif; /* Assuming Open Sans is loaded elsewhere or fallback */<br/>
-            line-height: 1.6;<br/>
-            color: var(--text-color);<br/>
-            background-color: var(--light-gray);<br/>
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;<br/>
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);<br/>
+            min-height: 100vh;<br/>
+            padding: 20px;<br/>
             display: flex;<br/>
             justify-content: center;<br/>
-            align-items: flex-start;<br/>
-            min-height: 100vh;<br/>
-            padding: 20px;
-        }
-
-        .checkout-container {
-            background-color: #fff;<br/>
-            border-radius: 8px;<br/>
-            box-shadow: 0 4px 15px var(--shadow-color);<br/>
-            width: 100%;<br/>
-            max-width: 700px;<br/>
-            padding: 30px;<br/>
-            margin-top: 20px;
-        }
-
-        h1, h2, h3 {
-            color: var(--primary-color);<br/>
-            margin-bottom: 20px;<br/>
-            text-align: center;
-        }
-
-        h2 {
-            font-size: 1.8em;<br/>
-            border-bottom: 2px solid var(--border-color);<br/>
-            padding-bottom: 10px;<br/>
-            margin-top: 30px;
-        }
-
-        h3 {
-            font-size: 1.4em;<br/>
-            margin-top: 25px;
-        }
-
-        .product-summary {
-            display: flex;<br/>
             align-items: center;<br/>
-            gap: 20px;<br/>
-            padding: 20px;<br/>
-            border: 1px solid var(--border-color);<br/>
+            color: #333;
+        }
+        .container {
+            background-color: #fff;<br/>
+            border-radius: 10px;<br/>
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);<br/>
+            padding: 30px;<br/>
+            max-width: 800px;<br/>
+            width: 100%;<br/>
+            display: flex;<br/>
+            flex-wrap: wrap;<br/>
+            gap: 30px;
+        }
+        .checkout-form {
+            flex: 2;<br/>
+            min-width: 300px;
+        }
+        .order-summary {
+            flex: 1;<br/>
+            min-width: 250px;<br/>
+            background-color: #f9f9f9;<br/>
             border-radius: 8px;<br/>
+            padding: 20px;<br/>
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        h1 {
+            text-align: center;<br/>
+            color: #4a4a4a;<br/>
             margin-bottom: 30px;<br/>
-            background-color: var(--light-gray);
+            font-size: 2em;
         }
-
-        .product-summary img {
-            width: 100px;<br/>
-            height: auto;<br/>
-            border-radius: 4px;<br/>
-            box-shadow: 0 2px 5px var(--shadow-color);
+        h2 {
+            color: #5a5a5a;<br/>
+            margin-bottom: 20px;<br/>
+            border-bottom: 1px solid #eee;<br/>
+            padding-bottom: 10px;<br/>
+            font-size: 1.5em;
         }
-
-        .product-details {
-            flex-grow: 1;
-        }
-
-        .product-details h3 {
-            margin: 0 0 5px 0;<br/>
-            color: var(--primary-color);<br/>
-            text-align: left;
-        }
-
-        .product-details p {
-            margin: 0;<br/>
-            font-size: 1.1em;<br/>
-            font-weight: bold;<br/>
-            color: var(--accent-color);
-        }
-
         .form-section {
             margin-bottom: 30px;
         }
-
         .form-group {
             margin-bottom: 15px;
         }
-
         .form-group label {
             display: block;<br/>
-            margin-bottom: 5px;<br/>
-            font-weight: bold;<br/>
-            color: var(--primary-color);
+            margin-bottom: 8px;<br/>
+            font-weight: 600;<br/>
+            color: #555;
         }
-
         .form-group input[type="text"],
         .form-group input[type="email"],
         .form-group input[type="tel"],
-        .form-group input[type="date"],
-        .form-group textarea,
-        .form-group select {
+        .form-group input[type="password"],
+        .form-group select,
+        .form-group textarea {
             width: 100%;<br/>
             padding: 12px;<br/>
-            border: 1px solid var(--border-color);<br/>
+            border: 1px solid #ddd;<br/>
             border-radius: 5px;<br/>
             font-size: 1em;<br/>
-            color: var(--text-color);<br/>
+            box-sizing: border-box;<br/>
             transition: border-color 0.3s ease;
         }
-
-        .form-group input:focus,<br/>
-        .form-group textarea:focus,<br/>
-        .form-group select:focus {<br/>
-            border-color: var(--accent-color);<br/>
-            outline: none;<br/>
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        .form-group input[type="text"]:focus,<br/>
+        .form-group input[type="email"]:focus,<br/>
+        .form-group input[type="tel"]:focus,<br/>
+        .form-group input[type="password"]:focus,<br/>
+        .form-group select:focus,<br/>
+        .form-group textarea:focus {<br/>
+            border-color: #667eea;<br/>
+            outline: none;
         }
-
         .form-group textarea {
-            resize: vertical;<br/>
-            min-height: 80px;
+            resize: vertical;
         }
-
-        .checkbox-group {
+        .payment-methods {
             display: flex;<br/>
-            align-items: center;<br/>
-            margin-bottom: 15px;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 10px;<br/>
-            width: 20px;<br/>
-            height: 20px;<br/>
-            cursor: pointer;
-        }
-
-        .checkbox-group label {
-            font-weight: bold;<br/>
-            color: var(--primary-color);<br/>
-            cursor: pointer;
-        }
-
-        .gift-section {
-            border: 1px dashed var(--accent-color);<br/>
-            padding: 20px;<br/>
-            border-radius: 8px;<br/>
-            background-color: #e8f4f8; /* Light blue background for gift section */<br/>
-            margin-top: 20px;
-        }
-
-        .gift-section h3 {
-            color: var(--accent-color);<br/>
-            margin-top: 0;<br/>
-            margin-bottom: 15px;<br/>
-            text-align: left;
-        }
-
-        .payment-options {
-            display: flex;<br/>
-            flex-direction: column;<br/>
             gap: 15px;<br/>
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
-
-        .payment-method {
-            border: 1px solid var(--border-color);<br/>
-            border-radius: 8px;<br/>
+        .payment-method-option {
+            flex: 1;<br/>
             padding: 15px;<br/>
+            border: 2px solid #ddd;<br/>
+            border-radius: 8px;<br/>
+            text-align: center;<br/>
             cursor: pointer;<br/>
             transition: all 0.3s ease;<br/>
-            background-color: #fdfdfd;
-        }
-
-        .payment-method:hover {<br/>
-            border-color: var(--accent-color);<br/>
-            box-shadow: 0 2px 8px var(--shadow-color);
-        }
-
-        .payment-method.selected {
-            border-color: var(--accent-color);<br/>
-            box-shadow: 0 0 0 2px var(--accent-color);<br/>
-            background-color: #e8f4f8;
-        }
-
-        .payment-method label {
             display: flex;<br/>
+            flex-direction: column;<br/>
             align-items: center;<br/>
-            font-weight: bold;<br/>
-            color: var(--primary-color);<br/>
-            cursor: pointer;
+            justify-content: center;
         }
-
-        .payment-method input[type="radio"] {
-            margin-right: 10px;<br/>
-            width: 18px;<br/>
-            height: 18px;
+        .payment-method-option.selected {
+            border-color: #667eea;<br/>
+            background-color: #eef2ff;<br/>
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.2);
         }
-
+        .payment-method-option img {
+            max-width: 60px;<br/>
+            margin-bottom: 10px;
+        }
+        .payment-method-option span {
+            font-weight: 600;<br/>
+            color: #555;
+        }
         .payment-details {
-            margin-top: 15px;<br/>
-            padding-top: 15px;<br/>
-            border-top: 1px dashed var(--border-color);
+            border: 1px solid #eee;<br/>
+            padding: 20px;<br/>
+            border-radius: 8px;<br/>
+            margin-top: 20px;<br/>
+            background-color: #fcfcfc;
         }
-
-        .pix-details, .card-details {
-            display: none;
-        }
-
-        .pix-details img {
-            max-width: 150px;<br/>
-            height: auto;<br/>
-            display: block;<br/>
-            margin: 15px auto;<br/>
-            border: 1px solid var(--border-color);<br/>
-            border-radius: 4px;
-        }
-
-        .pix-code-container {
-            display: flex;<br/>
-            align-items: center;<br/>
-            gap: 10px;<br/>
-            margin-top: 10px;
-        }
-
-        .pix-code-container input {
-            flex-grow: 1;<br/>
-            background-color: var(--light-gray);<br/>
-            cursor: text;
-        }
-
-        .copy-button {
-            background-color: var(--accent-color);<br/>
-            color: #fff;<br/>
-            border: none;<br/>
-            border-radius: 5px;<br/>
-            padding: 10px 15px;<br/>
-            cursor: pointer;<br/>
-            font-size: 0.9em;<br/>
-            transition: background-color 0.3s ease;
-        }
-
-        .copy-button:hover {<br/>
-            background-color: #2980b9;
-        }
-
-        .submit-button {
-            background-color: var(--success-color);<br/>
-            color: #fff;<br/>
-            border: none;<br/>
-            border-radius: 5px;<br/>
-            padding: 15px 25px;<br/>
+        .payment-details h3 {
+            margin-top: 0;<br/>
+            color: #667eea;<br/>
             font-size: 1.2em;<br/>
-            font-weight: bold;<br/>
-            cursor: pointer;<br/>
+            margin-bottom: 15px;
+        }
+        .order-summary-item {
+            display: flex;<br/>
+            justify-content: space-between;<br/>
+            margin-bottom: 10px;<br/>
+            font-size: 0.95em;
+        }
+        .order-summary-item.total {
+            font-weight: 700;<br/>
+            font-size: 1.2em;<br/>
+            border-top: 1px solid #eee;<br/>
+            padding-top: 15px;<br/>
+            margin-top: 15px;<br/>
+            color: #4a4a4a;
+        }
+        .btn-submit {
             width: 100%;<br/>
+            padding: 15px;<br/>
+            background-color: #667eea;<br/>
+            color: #fff;<br/>
+            border: none;<br/>
+            border-radius: 5px;<br/>
+            font-size: 1.1em;<br/>
+            font-weight: 700;<br/>
+            cursor: pointer;<br/>
             transition: background-color 0.3s ease, transform 0.1s ease;<br/>
-            margin-top: 30px;
+            margin-top: 20px;
         }
-
-        .submit-button:hover:not(:disabled) {<br/>
-            background-color: #229a53;<br/>
-            transform: translateY(-2px);
+        .btn-submit:hover {<br/>
+            background-color: #5a6ad0;<br/>
+            transform: translateY(-1px);
         }
-
-        .submit-button:disabled {<br/>
-            background-color: #cccccc;<br/>
-            cursor: not-allowed;
+        .btn-submit:active {<br/>
+            transform: translateY(0);
         }
-
         .error-message {
-            color: var(--error-color);<br/>
+            color: #e74c3c;<br/>
             font-size: 0.9em;<br/>
             margin-top: 5px;<br/>
-            display: none; /* Hidden by default */
+            display: none;
         }
-
-        .form-group.has-error input,
-        .form-group.has-error textarea,
-        .form-group.has-error select {
-            border-color: var(--error-color);
-        }
-
         .loading-overlay {
             position: fixed;<br/>
             top: 0;<br/>
             left: 0;<br/>
             width: 100%;<br/>
             height: 100%;<br/>
-            background-color: rgba(255, 255, 255, 0.8);<br/>
+            background: rgba(255, 255, 255, 0.8);<br/>
             display: flex;<br/>
             justify-content: center;<br/>
             align-items: center;<br/>
             z-index: 1000;<br/>
-            display: none; /* Hidden by default */
+            visibility: hidden;<br/>
+            opacity: 0;<br/>
+            transition: visibility 0s, opacity 0.3s linear;
         }
-
+        .loading-overlay.visible {
+            visibility: visible;<br/>
+            opacity: 1;
+        }
         .spinner {
-            border: 8px solid var(--border-color);<br/>
-            border-top: 8px solid var(--accent-color);<br/>
+            border: 4px solid rgba(0, 0, 0, 0.1);<br/>
+            border-left-color: #667eea;<br/>
             border-radius: 50%;<br/>
-            width: 60px;<br/>
-            height: 60px;<br/>
+            width: 40px;<br/>
+            height: 40px;<br/>
             animation: spin 1s linear infinite;
         }
-
         @keyframes spin {
-            0% { transform: rotate(0deg); }<br/>
-            100% { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
-
-        .success-message, .payment-error-message {
-            padding: 15px;<br/>
-            border-radius: 5px;<br/>
+        .gift-section {
+            border: 1px solid #eee;<br/>
+            padding: 20px;<br/>
+            border-radius: 8px;<br/>
             margin-top: 20px;<br/>
-            text-align: center;<br/>
-            font-weight: bold;
+            background-color: #fcfcfc;
         }
-
-        .success-message {
-            background-color: #d4edda;<br/>
-            color: #155724;<br/>
-            border: 1px solid #c3e6cb;
+        .gift-section-toggle {
+            display: flex;<br/>
+            align-items: center;<br/>
+            margin-bottom: 15px;<br/>
+            cursor: pointer;
         }
-
-        .payment-error-message {
-            background-color: #f8d7da;<br/>
-            color: #721c24;<br/>
-            border: 1px solid #f5c6cb;
+        .gift-section-toggle input[type="checkbox"] {
+            margin-right: 10px;<br/>
+            transform: scale(1.2);
         }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .checkout-container {
+        .gift-details {
+            display: none;<br/>
+            margin-top: 15px;
+        }
+        .gift-details.active {
+            display: block;
+        }
+        .product-image {
+            max-width: 100px;<br/>
+            height: auto;<br/>
+            border-radius: 5px;<br/>
+            margin-right: 15px;
+        }
+        .product-info {
+            display: flex;<br/>
+            align-items: center;<br/>
+            margin-bottom: 20px;<br/>
+            padding-bottom: 20px;<br/>
+            border-bottom: 1px solid #eee;
+        }
+        .product-info h3 {
+            margin: 0;<br/>
+            font-size: 1.2em;<br/>
+            color: #4a4a4a;
+        }
+        .product-info p {
+            margin: 5px 0 0;<br/>
+            color: #777;
+        }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;<br/>
                 padding: 20px;
             }
-            .product-summary {
-                flex-direction: column;<br/>
-                text-align: center;
-            }
-            .product-details h3 {
-                text-align: center;
-            }
-            .payment-method label {
-                flex-direction: column;<br/>
-                align-items: flex-start;
-            }
-            .payment-method input[type="radio"] {
-                margin-bottom: 5px;
+            .checkout-form, .order-summary {
+                min-width: unset;<br/>
+                width: 100%;
             }
         }
     </style>
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://js.stripe.com/v3/"></script><br/>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
     </div>
 
-    <div class="checkout-container">
-        <h1>Finalizar Compra</h1>
+    <div class="container">
+        <div class="checkout-form">
+            <h1>Finalizar Compra</h1>
+            <form id="checkoutForm">
+                <div class="form-section">
+                    <h2>Seus Dados</h2>
+                    <div class="form-group">
+                        <label for="nomeCompleto">Nome Completo</label>
+                        <input type="text" id="nomeCompleto" name="nomeCompleto" required>
+                        <div class="error-message" id="nomeCompletoError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp">WhatsApp (com DDD)</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" placeholder="(XX) XXXXX-XXXX" required>
+                        <div class="error-message" id="whatsappError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpfCnpj">CPF ou CNPJ</label>
+                        <input type="text" id="cpfCnpj" name="cpfCnpj" placeholder="000.000.000-00 ou 00.000.000/0000-00" required>
+                        <div class="error-message" id="cpfCnpjError"></div>
+                    </div>
+                </div>
 
-        <div class="product-summary">
-            <img src="/somos-todos-um/images/capa-livro.jpg" alt="Capa do livro Somos Todos Um">
-            <div class="product-details">
-                <h3>Somos Todos Um</h3>
-                <p id="product-price">R$ 29,90</p>
-            </div>
+                <div class="form-section">
+                    <h2>Endereço de Entrega</h2>
+                    <div class="form-group">
+                        <label for="cep">CEP</label>
+                        <input type="text" id="cep" name="cep" placeholder="00000-000" required>
+                        <div class="error-message" id="cepError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="endereco">Endereço</label>
+                        <input type="text" id="endereco" name="endereco" required>
+                        <div class="error-message" id="enderecoError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="numero">Número</label>
+                        <input type="text" id="numero" name="numero" required>
+                        <div class="error-message" id="numeroError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="complemento">Complemento (Opcional)</label>
+                        <input type="text" id="complemento" name="complemento">
+                    </div>
+                    <div class="form-group">
+                        <label for="bairro">Bairro</label>
+                        <input type="text" id="bairro" name="bairro" required>
+                        <div class="error-message" id="bairroError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cidade">Cidade</label>
+                        <input type="text" id="cidade" name="cidade" required>
+                        <div class="error-message" id="cidadeError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado" required>
+                            <option value="">Selecione</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PR">Paraná</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
+                        <div class="error-message" id="estadoError"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Personalização do Livro</h2>
+                    <div class="form-group">
+                        <label>Escolha o estilo da personalização:</label>
+                        
+                        <div style="margin: 15px 0;"><br/>
+                            <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer;"><br/>
+                                <input type="radio" name="personalizacaoEstilo" value="opcao1" checked style="margin-right: 10px;"><br/>
+                                <span><strong>Opção 1:</strong> "Para [nome], com amor - [assinatura]"</span>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer;"><br/>
+                                <input type="radio" name="personalizacaoEstilo" value="opcao2" style="margin-right: 10px;"><br/>
+                                <span><strong>Opção 2:</strong> "Dedicado a [nome] em [data]"</span>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; margin-bottom: 10px; cursor: pointer;"><br/>
+                                <input type="radio" name="personalizacaoEstilo" value="opcao3" style="margin-right: 10px;"><br/>
+                                <span><strong>Opção 3:</strong> Personalização livre (escreva sua mensagem)</span>
+                            </label>
+                        </div>
+                        
+                        <textarea 
+                            id="personalizacao" 
+                            name="personalizacao" 
+                            rows="3" 
+                            maxlength="200"
+                            placeholder="Digite sua personalização aqui..."
+                        ></textarea>
+                        <small>Máximo de 200 caracteres</small>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Enviar como Presente?</h2>
+                    <div class="gift-section-toggle">
+                        <input type="checkbox" id="isGift" name="isGift">
+                        <label for="isGift">Sim, este é um presente!</label>
+                    </div>
+                    <div class="gift-details" id="giftDetails">
+                        <div class="form-group">
+                            <label for="nomePresenteado">Nome do Presenteado</label>
+                            <input type="text" id="nomePresenteado" name="nomePresenteado">
+                            <div class="error-message" id="nomePresenteadoError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mensagemPresente">Mensagem de Presente (Opcional)</label>
+                            <textarea id="mensagemPresente" name="mensagemPresente" rows="3" maxlength="150" placeholder="Escreva uma mensagem curta para o presenteado..."></textarea>
+                            <small>Máximo de 150 caracteres</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Forma de Pagamento</h2>
+                    <div class="payment-methods">
+                        <div class="payment-method-option selected" data-method="pix">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Logo_Pix_%28Brazil%29.svg/1200px-Logo_Pix_%28Brazil%29.svg.png" alt="PIX">
+                            <span>PIX</span>
+                        </div>
+                        <div class="payment-method-option" data-method="credit-card">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1200px-Mastercard-logo.svg.png" alt="Cartão de Crédito">
+                            <span>Cartão de Crédito</span>
+                        </div>
+                    </div>
+
+                    <div id="pixDetails" class="payment-details">
+                        <h3>Pague com PIX</h3>
+                        <p>Após clicar em "Finalizar Compra", um QR Code PIX será gerado para você.</p>
+                    </div>
+
+                    <div id="creditCardDetails" class="payment-details" style="display: none;">
+                        <h3>Dados do Cartão de Crédito</h3>
+                        <div class="form-group">
+                            <label for="cardNumber">Número do Cartão</label>
+                            <input type="text" id="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000">
+                            <div class="error-message" id="cardNumberError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cardName">Nome no Cartão</label>
+                            <input type="text" id="cardName" name="cardName" placeholder="Como no cartão">
+                            <div class="error-message" id="cardNameError"></div>
+                        </div>
+                        <div class="form-group" style="display: flex; gap: 15px;"><br/>
+                            <div style="flex: 1;">
+                                <label for="cardExpiry">Validade</label>
+                                <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/AA">
+                                <div class="error-message" id="cardExpiryError"></div>
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="cardCvc">CVC</label>
+                                <input type="text" id="cardCvc" name="cardCvc" placeholder="XXX">
+                                <div class="error-message" id="cardCvcError"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="installments">Parcelas</label>
+                            <select id="installments" name="installments">
+                                <option value="1">1x de R$ 97,00</option>
+                                <option value="2">2x de R$ 48,50</option>
+                                <option value="3">3x de R$ 32,33</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Finalizar Compra</button>
+            </form>
         </div>
 
-        <form id="checkoutForm">
-            <div class="form-section">
-                <h2>Seus Dados</h2>
-                <div class="form-group" id="group-nome">
-                    <label for="nome">Nome Completo <span style="color: var(--error-color);">*</span></label>
-                    <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
-                    <div class="error-message"></div>
-                </div>
-                <div class="form-group" id="group-email">
-                    <label for="email">E-mail <span style="color: var(--error-color);">*</span></label>
-                    <input type="email" id="email" name="email" required placeholder="seu.email@exemplo.com">
-                    <div class="error-message"></div>
-                </div>
-                <div class="form-group" id="group-whatsapp">
-                    <label for="whatsapp">WhatsApp <span style="color: var(--error-color);">*</span></label>
-                    <input type="tel" id="whatsapp" name="whatsapp" required placeholder="(99) 99999-9999" maxlength="15">
-                    <div class="error-message"></div>
+        <div class="order-summary">
+            <h2>Resumo do Pedido</h2>
+            <div class="product-info">
+                <img src="/somos-todos-um/images/book-cover.png" alt="Capa do Livro" class="product-image">
+                <div>
+                    <h3>Livro "Somos Todos Um"</h3>
+                    <p>Edição Especial</p>
                 </div>
             </div>
-
-            <div class="form-section">
-                <h2>Personalização do Livro</h2>
-                <div class="form-group">
-                    <label for="personalizacao">Personalização do Rodapé (Opcional)</label>
-                    <textarea id="personalizacao" name="personalizacao" rows="3" 
-                              placeholder="Digite aqui a mensagem que deseja no rodapé do seu livro (máx. 200 caracteres)" 
-                              maxlength="200"></textarea>
-                    <small style="color: #666; font-size: 0.9em;">Exemplo: "Para Maria, com todo meu amor - João"</small>
-                </div>
+            <div class="order-summary-item">
+                <span>Subtotal</span>
+                <span>R$ 97,00</span>
             </div>
-
-            <div class="form-section">
-                <h2>Enviar como Presente?</h2>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="isGift" name="isGift">
-                    <label for="isGift">Sim, quero enviar como presente!</label>
-                </div>
-
-                <div class="gift-section" id="giftSection" style="display: none;">
-                    <h3>Detalhes do Presente</h3>
-                    <div class="form-group" id="group-nomePresenteador">
-                        <label for="nomePresenteador">Seu Nome (Quem presenteia) <span style="color: var(--error-color);">*</span></label>
-                        <input type="text" id="nomePresenteador" name="nomePresenteador" placeholder="Seu nome">
-                        <div class="error-message"></div>
-                    </div>
-                    <div class="form-group" id="group-nomePresenteado">
-                        <label for="nomePresenteado">Nome do Presenteado <span style="color: var(--error-color);">*</span></label>
-                        <input type="text" id="nomePresenteado" name="nomePresenteado" placeholder="Nome de quem vai receber o livro">
-                        <div class="error-message"></div>
-                    </div>
-                    <div class="form-group" id="group-dataPresente">
-                        <label for="dataPresente">Data do Presente <span style="color: var(--error-color);">*</span></label>
-                        <input type="date" id="dataPresente" name="dataPresente">
-                        <div class="error-message"></div>
-                    </div>
-                    <div class="form-group" id="group-emailPresenteado">
-                        <label for="emailPresenteado">E-mail do Presenteado <span style="color: var(--error-color);">*</span></label>
-                        <input type="email" id="emailPresenteado" name="emailPresenteado" placeholder="email.do.presenteado@exemplo.com">
-                        <div class="error-message"></div>
-                    </div>
-                </div>
+            <div class="order-summary-item">
+                <span>Frete</span>
+                <span>Grátis</span>
             </div>
-
-            <div class="form-section">
-                <h2>Método de Pagamento</h2>
-                <div class="payment-options">
-                    <div class="payment-method" id="method-pix">
-                        <label>
-                            <input type="radio" name="paymentMethod" value="pix" checked>
-                            PIX
-                        </label>
-                        <div class="payment-details pix-details" id="pixDetails">
-                            <p>Após finalizar a compra, você será redirecionado para a página do PIX para concluir o pagamento.</p>
-                        </div>
-                    </div>
-                    <div class="payment-method" id="method-card">
-                        <label>
-                            <input type="radio" name="paymentMethod" value="credit_card">
-                            Cartão de Crédito
-                        </label>
-                        <div class="payment-details card-details" id="cardDetails">
-                            <div class="form-group">
-                                <label for="cardNumber">Número do Cartão <span style="color: var(--error-color);">*</span></label>
-                                <input type="text" id="cardNumber" name="cardNumber" placeholder="**** **** **** ****" maxlength="19">
-                                <div class="error-message"></div>
-                            </div>
-                            <div class="form-group">
-                                <label for="cardName">Nome no Cartão <span style="color: var(--error-color);">*</span></label>
-                                <input type="text" id="cardName" name="cardName" placeholder="Nome impresso no cartão">
-                                <div class="error-message"></div>
-                            </div>
-                            <div class="form-group" style="display: flex; gap: 15px;"><br/>
-                                <div style="flex: 2;"><br/>
-                                    <label for="cardExpiry">Validade <span style="color: var(--error-color);">*</span></label>
-                                    <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/AA" maxlength="5">
-                                    <div class="error-message"></div>
-                                </div>
-                                <div style="flex: 1;"><br/>
-                                    <label for="cardCvv">CVV <span style="color: var(--error-color);">*</span></label>
-                                    <input type="text" id="cardCvv" name="cardCvv" placeholder="***" maxlength="4">
-                                    <div class="error-message"></div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="installments">Parcelas</label>
-                                <select id="installments" name="installments">
-                                    <option value="1">1x de R$ 29,90</option>
-                                    <!-- Add more installment options dynamically if needed -->
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="order-summary-item total">
+                <span>Total</span>
+                <span id="totalAmount">R$ 97,00</span>
             </div>
-
-            <button type="submit" class="submit-button" id="submitButton">Finalizar Compra</button>
-            <div class="payment-error-message" id="paymentErrorMessage" style="display: none;"></div>
-        </form>
+        </div>
     </div>
 
     <script>
-        // Supabase Client Initialization
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5MjYwNzksImV4cCI6MjA1MTUwMjA3OX0.SW_rz6Lo-2OV05mQkI2U83kQR6V5QFe-oWwIGc7xDaU';
+        // Supabase configuration
+        const SUPABASE_URL = 'https://abc.supabase.co'; // Replace with your Supabase URL
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your Supabase Anon Key
         const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Edge Function URLs
-        const PIX_EDGE_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/criar-pagamento-pix';<br/>
-        const CARD_EDGE_FUNCTION_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/create-payment-mp';
+        // Stripe configuration (for credit card payments)
+        const stripe = Stripe('pk_test_YOUR_STRIPE_PUBLIC_KEY'); // Replace with your Stripe Public Key
 
-        // Redirect URLs
-        const PIX_REDIRECT_URL = '/somos-todos-um/pix.html';
-        const SUCCESS_REDIRECT_URL = '/somos-todos-um/sucesso.html';
-
-        // Product Details (hardcoded as per prompt, fetched from URL for ID)
-        const PRODUCT_ID_DEFAULT = '1f19140d-d466-4d14-b64c-c6c2ae9c22df';
-        const PRODUCT_PRICE = 29.90; // R$ 29,90
-
-        // DOM Elements
         const checkoutForm = document.getElementById('checkoutForm');
-        const nomeInput = document.getElementById('nome');
-        const emailInput = document.getElementById('email');
-        const whatsappInput = document.getElementById('whatsapp');
-        const personalizacaoInput = document.getElementById('personalizacao');
-        const isGiftCheckbox = document.getElementById('isGift');
-        const giftSection = document.getElementById('giftSection');
-        const nomePresenteadorInput = document.getElementById('nomePresenteador');
-        const nomePresenteadoInput = document.getElementById('nomePresenteado');
-        const dataPresenteInput = document.getElementById('dataPresente');
-        const emailPresenteadoInput = document.getElementById('emailPresenteado');
-        const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
-        const pixMethod = document.getElementById('method-pix');
-        const cardMethod = document.getElementById('method-card');
-        const pixDetails = document.getElementById('pixDetails');
-        const cardDetails = document.getElementById('cardDetails');
-        const cardNumberInput = document.getElementById('cardNumber');
-        const cardNameInput = document.getElementById('cardName');
-        const cardExpiryInput = document.getElementById('cardExpiry');
-        const cardCvvInput = document.getElementById('cardCvv');
-        const installmentsSelect = document.getElementById('installments');
-        const submitButton = document.getElementById('submitButton');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const paymentErrorMessage = document.getElementById('paymentErrorMessage');
+        const personalizacaoTextarea = document.getElementById('personalizacao');
+        const personalizacaoEstiloRadios = document.querySelectorAll('input[name="personalizacaoEstilo"]');
 
-        let currentProductId = PRODUCT_ID_DEFAULT;
-
-        // --- Helper Functions ---
-
-        function getProductIdFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('produto') || PRODUCT_ID_DEFAULT;
-        }
-
+        // Function to show/hide loading overlay
         function showLoading() {
-            loadingOverlay.style.display = 'flex';
-            submitButton.disabled = true;
+            loadingOverlay.classList.add('visible');
         }
 
         function hideLoading() {
-            loadingOverlay.style.display = 'none';
-            submitButton.disabled = false;
+            loadingOverlay.classList.remove('visible');
         }
 
-        function showError(element, message) {
-            const formGroup = element.closest('.form-group');
-            if (formGroup) {
-                formGroup.classList.add('has-error');
-                const errorMessageDiv = formGroup.querySelector('.error-message');
-                if (errorMessageDiv) {
-                    errorMessageDiv.textContent = message;
-                    errorMessageDiv.style.display = 'block';
-                }
-            }
-        }
-
-        function hideError(element) {
-            const formGroup = element.closest('.form-group');
-            if (formGroup) {
-                formGroup.classList.remove('has-error');
-                const errorMessageDiv = formGroup.querySelector('.error-message');
-                if (errorMessageDiv) {
-                    errorMessageDiv.textContent = '';
-                    errorMessageDiv.style.display = 'none';
-                }
-            }
-        }
-
-        function isValidEmail(email) {
-            const re = /^(([^<>()[\]\.,;:\s@"]+(\.[^<>()[\]\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        }
-
-        function applyWhatsAppMask(value) {
-            value = value.replace(/\D/g, ""); // Remove tudo o que não é dígito
-            value = value.replace(/^(\d{2})(\d)/g, "($1) $2"); // Coloca parênteses em volta dos dois primeiros dígitos
-            value = value.replace(/(\d)(\d{4})$/, "$1-$2"); // Coloca hífen entre o quarto e o quinto dígitos
-            return value;
-        }
-
-        function applyCardNumberMask(value) {
-            value = value.replace(/\D/g, ""); // Remove tudo o que não é dígito
-            value = value.replace(/(\d{4})(?=\d)/g, "$1 "); // Adiciona espaço a cada 4 dígitos
-            return value;
-        }
-
-        function applyCardExpiryMask(value) {
-            value = value.replace(/\D/g, ""); // Remove tudo o que não é dígito
-            if (value.length > 2) {
-                value = value.substring(0, 2) + '/' + value.substring(2, 4);
-            }
-            return value;
-        }
-
-        function generateGiftMessage(presenteador, presenteado, data) {
-            const dataFormatada = new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
-            return `Eu ${presenteador} entrego este presente para ${presenteado} em ${dataFormatada}.`;
-        }
-
-        // --- Event Listeners ---
-
-        document.addEventListener('DOMContentLoaded', () => {
-            currentProductId = getProductIdFromUrl();
-            // Initialize payment method display
-            paymentMethods.forEach(method => {
-                if (method.checked) {
-                    document.getElementById(`method-${method.value}`).classList.add('selected');
-                    if (method.value === 'pix') {
-                        pixDetails.style.display = 'block';
-                        cardDetails.style.display = 'none';
+        // Input Masks
+        function applyMask(input, mask) {
+            input.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+                let maskedValue = '';
+                let maskIndex = 0;
+                for (let i = 0; i < value.length && maskIndex < mask.length; i++) {
+                    if (mask[maskIndex] === '0') {
+                        maskedValue += value[i];
+                        maskIndex++;
                     } else {
-                        pixDetails.style.display = 'none';
-                        cardDetails.style.display = 'block';
+                        maskedValue += mask[maskIndex];
+                        maskIndex++;
+                        i--; // Re-evaluate current digit with new mask char
                     }
+                }
+                e.target.value = maskedValue;
+            });
+        }
+
+        applyMask(document.getElementById('whatsapp'), '(00) 00000-0000');
+        applyMask(document.getElementById('cep'), '00000-000');
+        applyMask(document.getElementById('cardNumber'), '0000 0000 0000 0000');
+        applyMask(document.getElementById('cardExpiry'), '00/00');
+        applyMask(document.getElementById('cardCvc'), '000');
+
+        // CPF/CNPJ Mask
+        document.getElementById('cpfCnpj').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) { // CPF
+                e.target.value = value.replace(/(\d{3})(\d)/, '$1.$2')
+                                    .replace(/(\d{3})(\d)/, '$1.$2')
+                                    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+            } else { // CNPJ
+                e.target.value = value.replace(/^(\d{2})(\d)/, '$1.$2')
+                                    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+                                    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+                                    .replace(/(\d{4})(\d)/, '$1-$2');
+            }
+        });
+
+        // CEP Lookup
+        document.getElementById('cep').addEventListener('blur', async (e) => {
+            const cep = e.target.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                try {
+                    showLoading();
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await response.json();
+                    if (data.erro) {
+                        alert('CEP não encontrado.');
+                        document.getElementById('endereco').value = '';
+                        document.getElementById('bairro').value = '';
+                        document.getElementById('cidade').value = '';
+                        document.getElementById('estado').value = '';
+                    } else {
+                        document.getElementById('endereco').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('estado').value = data.uf;
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar CEP:', error);
+                    alert('Erro ao buscar CEP. Tente novamente.');
+                } finally {
+                    hideLoading();
+                }
+            }
+        });
+
+        // Payment Method Toggle
+        const paymentMethodOptions = document.querySelectorAll('.payment-method-option');
+        const pixDetails = document.getElementById('pixDetails');
+        const creditCardDetails = document.getElementById('creditCardDetails');
+        let selectedPaymentMethod = 'pix';
+
+        paymentMethodOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                paymentMethodOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                selectedPaymentMethod = option.dataset.method;
+
+                if (selectedPaymentMethod === 'pix') {
+                    pixDetails.style.display = 'block';
+                    creditCardDetails.style.display = 'none';
+                } else {
+                    pixDetails.style.display = 'none';
+                    creditCardDetails.style.display = 'block';
                 }
             });
         });
 
-        whatsappInput.addEventListener('input', (e) => {
-            e.target.value = applyWhatsAppMask(e.target.value);
-            hideError(e.target);
-        });
-
-        cardNumberInput.addEventListener('input', (e) => {
-            e.target.value = applyCardNumberMask(e.target.value);
-            hideError(e.target);
-        });
-
-        cardExpiryInput.addEventListener('input', (e) => {
-            e.target.value = applyCardExpiryMask(e.target.value);
-            hideError(e.target);
-        });
-
-        cardCvvInput.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/\D/g, ""); // Only digits
-            hideError(e.target);
-        });
-
-        emailInput.addEventListener('input', (e) => hideError(e.target));
-        nomeInput.addEventListener('input', (e) => hideError(e.target));
-        personalizacaoInput.addEventListener('input', (e) => hideError(e.target));
-        nomePresenteadorInput.addEventListener('input', (e) => hideError(e.target));
-        nomePresenteadoInput.addEventListener('input', (e) => hideError(e.target));
-        dataPresenteInput.addEventListener('input', (e) => hideError(e.target));
-        emailPresenteadoInput.addEventListener('input', (e) => hideError(e.target));
+        // Gift Section Toggle
+        const isGiftCheckbox = document.getElementById('isGift');
+        const giftDetails = document.getElementById('giftDetails');
 
         isGiftCheckbox.addEventListener('change', () => {
             if (isGiftCheckbox.checked) {
-                giftSection.style.display = 'block';
-                // Make gift fields required when checked
-                nomePresenteadorInput.required = true;
-                nomePresenteadoInput.required = true;
-                dataPresenteInput.required = true;
-                emailPresenteadoInput.required = true;
+                giftDetails.classList.add('active');
             } else {
-                giftSection.style.display = 'none';
-                // Make gift fields not required and clear errors when unchecked
-                nomePresenteadorInput.required = false;
-                nomePresenteadoInput.required = false;
-                dataPresenteInput.required = false;
-                emailPresenteadoInput.required = false;
-                [nomePresenteadorInput, nomePresenteadoInput, dataPresenteInput, emailPresenteadoInput].forEach(input => {
-                    hideError(input);
-                    input.value = ''; // Clear values
-                });
+                giftDetails.classList.remove('active');
             }
         });
 
-        paymentMethods.forEach(method => {
-            method.addEventListener('change', (e) => {
-                document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
-                e.target.closest('.payment-method').classList.add('selected');
+        // Personalization Radio Button Logic
+        function updatePersonalizationPlaceholder() {
+            const selectedOption = document.querySelector('input[name="personalizacaoEstilo"]:checked').value;
+            switch (selectedOption) {
+                case 'opcao1':<br/>
+                    personalizacaoTextarea.placeholder = 'Ex: Para João, com amor - Maria';
+                    break;
+                case 'opcao2':<br/>
+                    personalizacaoTextarea.placeholder = 'Ex: Dedicado a Ana em 25/12/2023';
+                    break;
+                case 'opcao3':
+                    personalizacaoTextarea.placeholder = 'Digite sua personalização livre aqui...';
+                    break;
+                default:
+                    personalizacaoTextarea.placeholder = 'Digite sua personalização aqui...';
+            }
+        }
 
-                if (e.target.value === 'pix') {
-                    pixDetails.style.display = 'block';
-                    cardDetails.style.display = 'none';
-                    // Make card fields not required
-                    [cardNumberInput, cardNameInput, cardExpiryInput, cardCvvInput].forEach(input => {
-                        input.required = false;
-                        hideError(input);
-                    });
-                } else {
-                    pixDetails.style.display = 'none';
-                    cardDetails.style.display = 'block';
-                    // Make card fields required
-                    [cardNumberInput, cardNameInput, cardExpiryInput, cardCvvInput].forEach(input => input.required = true);
-                }
-            });
+        personalizacaoEstiloRadios.forEach(radio => {
+            radio.addEventListener('change', updatePersonalizationPlaceholder);
         });
+
+        // Initial placeholder update
+        updatePersonalizationPlaceholder();
+
+        // Form Validation
+        function validateField(field, errorElement, regex, errorMessage) {
+            if (!field.value.trim()) {
+                errorElement.textContent = 'Este campo é obrigatório.';
+                errorElement.style.display = 'block';
+                return false;
+            }
+            if (regex && !regex.test(field.value)) {
+                errorElement.textContent = errorMessage;
+                errorElement.style.display = 'block';
+                return false;
+            }
+            errorElement.style.display = 'none';
+            return true;
+        }
 
         checkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            paymentErrorMessage.style.display = 'none'; // Hide previous errors
+            showLoading();
 
-            if (!validateForm()) {
+            let isValid = true;
+
+            // Validate personal data
+            isValid = validateField(document.getElementById('nomeCompleto'), document.getElementById('nomeCompletoError'), null, '') && isValid;
+            isValid = validateField(document.getElementById('email'), document.getElementById('emailError'), /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'E-mail inválido.') && isValid;
+            isValid = validateField(document.getElementById('whatsapp'), document.getElementById('whatsappError'), /^\(\d{2}\) \d{5}-\d{4}$/, 'WhatsApp inválido.') && isValid;
+            isValid = validateField(document.getElementById('cpfCnpj'), document.getElementById('cpfCnpjError'), /^(\d{3}\.\d{3}\.\d{3}-\d{2}|\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2})$/, 'CPF/CNPJ inválido.') && isValid;
+
+            // Validate address data
+            isValid = validateField(document.getElementById('cep'), document.getElementById('cepError'), /^\d{5}-\d{3}$/, 'CEP inválido.') && isValid;
+            isValid = validateField(document.getElementById('endereco'), document.getElementById('enderecoError'), null, '') && isValid;
+            isValid = validateField(document.getElementById('numero'), document.getElementById('numeroError'), null, '') && isValid;
+            isValid = validateField(document.getElementById('bairro'), document.getElementById('bairroError'), null, '') && isValid;
+            isValid = validateField(document.getElementById('cidade'), document.getElementById('cidadeError'), null, '') && isValid;
+            isValid = validateField(document.getElementById('estado'), document.getElementById('estadoError'), /^[A-Z]{2}$/, 'Selecione um estado.') && isValid;
+
+            // Validate gift data if applicable
+            if (isGiftCheckbox.checked) {
+                isValid = validateField(document.getElementById('nomePresenteado'), document.getElementById('nomePresenteadoError'), null, '') && isValid;
+            }
+
+            // Validate payment data
+            if (selectedPaymentMethod === 'credit-card') {
+                isValid = validateField(document.getElementById('cardNumber'), document.getElementById('cardNumberError'), /^\d{4} \d{4} \d{4} \d{4}$/, 'Número do cartão inválido.') && isValid;
+                isValid = validateField(document.getElementById('cardName'), document.getElementById('cardNameError'), null, '') && isValid;
+                isValid = validateField(document.getElementById('cardExpiry'), document.getElementById('cardExpiryError'), /^(0[1-9]|1[0-2])\/\d{2}$/, 'Validade inválida (MM/AA).') && isValid;
+                isValid = validateField(document.getElementById('cardCvc'), document.getElementById('cardCvcError'), /^\d{3,4}$/, 'CVC inválido.') && isValid;
+            }
+
+            if (!isValid) {
+                hideLoading();
+                alert('Por favor, preencha todos os campos obrigatórios corretamente.');
                 return;
             }
 
-            showLoading();
-
-            const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-            const pedidoData = {
-                produto_id: currentProductId,<br/>
-                nome_comprador: nomeInput.value,<br/>
-                email_comprador: emailInput.value,<br/>
-                whatsapp_comprador: whatsappInput.value.replace(/\D/g, ''), // Save only digits<br/>
-                personalizacao: personalizacaoInput.value || null,<br/>
-                eh_presente: isGiftCheckbox.checked,<br/>
-                metodo_pagamento: selectedPaymentMethod,<br/>
-                valor_total: PRODUCT_PRICE,<br/>
-                status_pagamento: 'pendente', // Initial status
+            const formData = {
+                nomeCompleto: document.getElementById('nomeCompleto').value,<br/>
+                email: document.getElementById('email').value,<br/>
+                whatsapp: document.getElementById('whatsapp').value,<br/>
+                cpfCnpj: document.getElementById('cpfCnpj').value,<br/>
+                cep: document.getElementById('cep').value,<br/>
+                endereco: document.getElementById('endereco').value,<br/>
+                numero: document.getElementById('numero').value,<br/>
+                complemento: document.getElementById('complemento').value,<br/>
+                bairro: document.getElementById('bairro').value,<br/>
+                cidade: document.getElementById('cidade').value,<br/>
+                estado: document.getElementById('estado').value,<br/>
+                personalizacao: personalizacaoTextarea.value,<br/>
+                isGift: isGiftCheckbox.checked,<br/>
+                nomePresenteado: isGiftCheckbox.checked ? document.getElementById('nomePresenteado').value : null,<br/>
+                mensagemPresente: isGiftCheckbox.checked ? document.getElementById('mensagemPresente').value : null,<br/>
+                paymentMethod: selectedPaymentMethod,<br/>
+                totalAmount: parseFloat(document.getElementById('totalAmount').textContent.replace('R$', '').replace(',', '.').trim()),<br/>
+                installments: selectedPaymentMethod === 'credit-card' ? document.getElementById('installments').value : null,
             };
 
-            if (isGiftCheckbox.checked) {
-                pedidoData.nome_presenteador = nomePresenteadorInput.value;
-                pedidoData.nome_presenteado = nomePresenteadoInput.value;
-                pedidoData.data_presente = dataPresenteInput.value;
-                pedidoData.email_presenteado = emailPresenteadoInput.value;
-                // Override personalizacao with gift message if gift is selected
-                pedidoData.personalizacao = generateGiftMessage(
-                    nomePresenteadorInput.value,
-                    nomePresenteadoInput.value,
-                    dataPresenteInput.value
-                );
-            }
-
             try {
-                // 1. Insert order into Supabase
-                const { data: insertedPedido, error: insertError } = await supabase
-                    .from('pedidos')
-                    .insert([pedidoData])
+                // Insert order into Supabase
+                const { data: order, error: orderError } = await supabase
+                    .from('orders')
+                    .insert([formData])
                     .select();
 
-                if (insertError) {
-                    throw new Error('Erro ao salvar pedido: ' + insertError.message);
+                if (orderError) {
+                    throw new Error(orderError.message);
                 }
 
-                const pedidoId = insertedPedido[0].id;
+                const orderId = order[0].id;
 
-                // 2. Process payment via Edge Function
-                let paymentResponse;
                 if (selectedPaymentMethod === 'pix') {
-                    paymentResponse = await processPixPayment(pedidoId, pedidoData.email_comprador, PRODUCT_PRICE);
-                } else { // credit_card
-                    paymentResponse = await processCardPayment(pedidoId, pedidoData.email_comprador, PRODUCT_PRICE);
-                }
+                    // Call Edge Function for PIX payment
+                    const response = await fetch('/.netlify/functions/create-pix-payment', {
+                        method: 'POST',<br/>
+                        headers: {<br/>
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ orderId: orderId, amount: formData.totalAmount }),
+                    });
 
-                if (paymentResponse.success) {
-                    // 3. Update order status in Supabase (if needed, or webhook handles it)
-                    // For PIX, the redirect page will handle status update/polling
-                    // For Card, we can update here if the Edge Function returns final status
-                    if (selectedPaymentMethod === 'credit_card' && paymentResponse.status === 'approved') {
-                         await supabase
-                            .from('pedidos')
-                            .update({ status_pagamento: 'aprovado', id_transacao_mp: paymentResponse.paymentId })
-                            .eq('id', pedidoId);
-                        window.location.href = SUCCESS_REDIRECT_URL;
-                    } else if (selectedPaymentMethod === 'pix') {
-                        // Redirect to PIX page with payment details
-                        window.location.href = `${PIX_REDIRECT_URL}?paymentId=${paymentResponse.paymentId}&qrCode=${encodeURIComponent(paymentResponse.qrCode)}&qrCodeBase64=${encodeURIComponent(paymentResponse.qrCodeBase64)}&pixCode=${encodeURIComponent(paymentResponse.pixCode)}&pedidoId=${pedidoId}`;
+                    const pixData = await response.json();
+
+                    if (response.ok) {
+                        alert(`Pagamento PIX gerado! Copie e cole o código: ${pixData.qrCodeText}`);
+                        // Redirect to a success page or show QR code
+                        window.location.href = `/success.html?orderId=${orderId}&pixCode=${encodeURIComponent(pixData.qrCodeText)}`;
                     } else {
-                        // Card payment not approved immediately
-                        throw new Error(paymentResponse.message || 'Pagamento com cartão não aprovado.');
+                        throw new Error(pixData.error || 'Erro ao gerar pagamento PIX.');
                     }
-                } else {
-                    throw new Error(paymentResponse.message || 'Erro ao processar pagamento.');
+
+                } else if (selectedPaymentMethod === 'credit-card') {
+                    // Create a Stripe token
+                    const { token, error: stripeTokenError } = await stripe.createToken('card', {<br/>
+                        number: document.getElementById('cardNumber').value,<br/>
+                        exp_month: document.getElementById('cardExpiry').value.split('/')[0],<br/>
+                        exp_year: document.getElementById('cardExpiry').value.split('/')[1],<br/>
+                        cvc: document.getElementById('cardCvc').value,<br/>
+                        name: document.getElementById('cardName').value,
+                    });
+
+                    if (stripeTokenError) {
+                        throw new Error(stripeTokenError.message);
+                    }
+
+                    // Call Edge Function for Credit Card payment
+                    const response = await fetch('/.netlify/functions/create-credit-card-payment', {
+                        method: 'POST',<br/>
+                        headers: {<br/>
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({<br/>
+                            orderId: orderId,<br/>
+                            amount: formData.totalAmount,<br/>
+                            token: token.id,<br/>
+                            installments: formData.installments,
+                        }),
+                    });
+
+                    const cardData = await response.json();
+
+                    if (response.ok) {
+                        alert('Pagamento com cartão de crédito processado com sucesso!');
+                        window.location.href = `/success.html?orderId=${orderId}`;
+                    } else {
+                        throw new Error(cardData.error || 'Erro ao processar pagamento com cartão de crédito.');
+                    }
                 }
 
             } catch (error) {
-                console.error('Erro no fluxo de compra:', error);
-                paymentErrorMessage.textContent = error.message;
-                paymentErrorMessage.style.display = 'block';
-                // Update order status to 'falha' if payment failed
-                if (pedidoId) {
-                    await supabase
-                        .from('pedidos')
-                        .update({ status_pagamento: 'falha', mensagem_erro: error.message })
-                        .eq('id', pedidoId);
-                }
+                console.error('Erro no checkout:', error);<br/>
+                alert(`Erro ao finalizar compra: ${error.message}`);
             } finally {
                 hideLoading();
             }
         });
-
-        // --- Validation Function ---
-        function validateForm() {
-            let isValid = true;
-            const requiredFields = [
-                { element: nomeInput, message: 'Por favor, preencha seu nome completo.' },<br/>
-                { element: emailInput, message: 'Por favor, preencha um e-mail válido.' },<br/>
-                { element: whatsappInput, message: 'Por favor, preencha um número de WhatsApp válido (DDD + 9 dígitos).' }
-            ];
-
-            // Clear all previous errors
-            document.querySelectorAll('.form-group').forEach(group => {
-                group.classList.remove('has-error');
-                const errorDiv = group.querySelector('.error-message');
-                if (errorDiv) errorDiv.style.display = 'none';
-            });
-
-            // Validate main fields
-            requiredFields.forEach(field => {
-                if (!field.element.value.trim()) {
-                    showError(field.element, field.message);
-                    isValid = false;
-                } else {
-                    hideError(field.element);
-                }
-            });
-
-            if (emailInput.value.trim() && !isValidEmail(emailInput.value.trim())) {
-                showError(emailInput, 'Formato de e-mail inválido.');
-                isValid = false;
-            }
-
-            if (whatsappInput.value.replace(/\D/g, '').length < 11) {
-                showError(whatsappInput, 'WhatsApp deve ter 11 dígitos (DDD + 9 dígitos).');
-                isValid = false;
-            }
-
-            // Validate gift fields if enabled
-            if (isGiftCheckbox.checked) {
-                const giftFields = [
-                    { element: nomePresenteadorInput, message: 'Por favor, preencha o nome de quem presenteia.' },<br/>
-                    { element: nomePresenteadoInput, message: 'Por favor, preencha o nome do presenteado.' },<br/>
-                    { element: dataPresenteInput, message: 'Por favor, selecione a data do presente.' },<br/>
-                    { element: emailPresenteadoInput, message: 'Por favor, preencha o e-mail do presenteado.' }
-                ];
-                giftFields.forEach(field => {
-                    if (!field.element.value.trim()) {
-                        showError(field.element, field.message);
-                        isValid = false;
-                    } else {
-                        hideError(field.element);
-                    }
-                });
-                if (emailPresenteadoInput.value.trim() && !isValidEmail(emailPresenteadoInput.value.trim())) {
-                    showError(emailPresenteadoInput, 'Formato de e-mail do presenteado inválido.');
-                    isValid = false;
-                }
-            }
-
-            // Validate card fields if selected
-            if (document.querySelector('input[name="paymentMethod"]:checked').value === 'credit_card') {
-                const cardFields = [
-                    { element: cardNumberInput, message: 'Número do cartão é obrigatório.' },<br/>
-                    { element: cardNameInput, message: 'Nome no cartão é obrigatório.' },<br/>
-                    { element: cardExpiryInput, message: 'Validade do cartão é obrigatória (MM/AA).' },<br/>
-                    { element: cardCvvInput, message: 'CVV é obrigatório.' }
-                ];
-                cardFields.forEach(field => {
-                    if (!field.element.value.trim()) {
-                        showError(field.element, field.message);
-                        isValid = false;
-                    } else {
-                        hideError(field.element);
-                    }
-                });
-
-                if (cardNumberInput.value.replace(/\D/g, '').length < 16) {
-                    showError(cardNumberInput, 'Número do cartão inválido.');
-                    isValid = false;
-                }
-                if (!/^\d{2}\/\d{2}$/.test(cardExpiryInput.value)) {
-                    showError(cardExpiryInput, 'Formato de validade inválido (MM/AA).');
-                    isValid = false;
-                } else {
-                    const [month, year] = cardExpiryInput.value.split('/').map(Number);
-                    const currentYear = new Date().getFullYear() % 100; // Last two digits
-                    const currentMonth = new Date().getMonth() + 1; // 1-12
-                        showError(cardExpiryInput, 'Cartão expirado ou validade inválida.');
-                        isValid = false;
-                    }
-                }
-                if (cardCvvInput.value.replace(/\D/g, '').length < 3) {
-                    showError(cardCvvInput, 'CVV inválido.');
-                    isValid = false;
-                }
-            }
-
-            return isValid;
-        }
-
-        // --- Payment Processing Functions ---
-
-        async function processPixPayment(pedidoId, emailComprador, valor) {
-            try {
-                const response = await fetch(PIX_EDGE_FUNCTION_URL, {
-                    method: 'POST',<br/>
-                    headers: {<br/>
-                        'Content-Type': 'application/json',<br/>
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}` // Or a service role key if function requires it
-                    },
-                    body: JSON.stringify({<br/>
-                        pedidoId: pedidoId,<br/>
-                        email: emailComprador,<br/>
-                        valor: valor,<br/>
-                        description: 'Compra do livro Somos Todos Um'
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Erro ao criar pagamento PIX.');
-                }
-
-                return {
-                    success: true,<br/>
-                    paymentId: data.paymentId,<br/>
-                    qrCode: data.qrCode,<br/>
-                    qrCodeBase64: data.qrCodeBase64,<br/>
-                    pixCode: data.pixCode,<br/>
-                    message: 'Pagamento PIX criado com sucesso.'
-                };
-            } catch (error) {
-                console.error('Erro na Edge Function PIX:', error);<br/>
-                return { success: false, message: error.message };
-            }
-        }
-
-        async function processCardPayment(pedidoId, emailComprador, valor) {
-            try {
-                const response = await fetch(CARD_EDGE_FUNCTION_URL, {
-                    method: 'POST',<br/>
-                    headers: {<br/>
-                        'Content-Type': 'application/json',<br/>
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}` // Or a service role key
-                    },
-                    body: JSON.stringify({<br/>
-                        pedidoId: pedidoId,<br/>
-                        email: emailComprador,<br/>
-                        valor: valor,<br/>
-                        description: 'Compra do livro Somos Todos Um',<br/>
-                        cardNumber: cardNumberInput.value.replace(/\D/g, ''),<br/>
-                        cardName: cardNameInput.value,<br/>
-                        cardExpiry: cardExpiryInput.value,<br/>
-                        cardCvv: cardCvvInput.value,<br/>
-                        installments: parseInt(installmentsSelect.value.split('x')[0]),
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Erro ao processar pagamento com cartão.');
-                }
-
-                return {
-                    success: true,<br/>
-                    status: data.status, // e.g., 'approved', 'pending', 'rejected'<br/>
-                    paymentId: data.paymentId,<br/>
-                    message: data.message || 'Pagamento com cartão processado.'
-                };
-            } catch (error) {
-                console.error('Erro na Edge Function Cartão:', error);<br/>
-                return { success: false, message: error.message };
-            }
-        }
-
-        // Initial setup for payment method display
-        document.addEventListener('DOMContentLoaded', () => {
-            const initialMethod = document.querySelector('input[name="paymentMethod"]:checked');
-            if (initialMethod) {
-                document.getElementById(`method-${initialMethod.value}`).classList.add('selected');
-                if (initialMethod.value === 'pix') {
-                    pixDetails.style.display = 'block';
-                } else {
-                    cardDetails.style.display = 'block';
-                }
-            }
-        });
-
     </script>
 </body>
 </html>
