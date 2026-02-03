@@ -358,37 +358,33 @@ document.addEventListener('DOMContentLoaded', function() {
       submitBtn.disabled = true;
       
       try {
-        // Inicializar Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // Hash da senha (em produção, use bcrypt no backend)
-        // Por enquanto, vamos apenas criptografar com base64 (NÃO É SEGURO - use backend!)
+        // Hash da senha (simples - em produção use bcrypt no backend)
         const senhaHash = btoa(senha);
         
-        // Inserir no Supabase
-        const { data, error } = await supabase
-          .from('clientes')
-          .insert([
-            {
-              nome_completo: nome,
-              cpf: cpf,
-              data_nascimento: dataNascimento,
-              celular: celular,
-              email: email,
-              senha_hash: senhaHash,
-              cep: cep,
-              endereco_rua: rua,
-              endereco_numero: numero,
-              endereco_complemento: complemento,
-              endereco_bairro: bairro,
-              endereco_cidade: cidade,
-              endereco_estado: estado
-            }
-          ]);
+        // Dados para inserir
+        const clienteData = {
+          nome_completo: nome,
+          cpf: cpf,
+          data_nascimento: dataNascimento,
+          celular: celular,
+          email: email,
+          senha_hash: senhaHash,
+          cep: cep,
+          endereco_rua: rua,
+          endereco_numero: numero,
+          endereco_complemento: complemento || null,
+          endereco_bairro: bairro,
+          endereco_cidade: cidade,
+          endereco_estado: estado
+        };
         
-        if (error) {
-          throw error;
-        }
+        // Inserir no Supabase usando fetch direto
+        const result = await supabaseFetch('clientes', {
+          method: 'POST',
+          body: JSON.stringify(clienteData)
+        });
+        
+        console.log('✅ Cliente cadastrado:', result);
         
         // Sucesso!
         formMessage.textContent = '✅ Cadastro realizado com sucesso! Redirecionando para finalizar a compra...';
@@ -401,20 +397,22 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
           window.open('https://www.amway.com.br/pt/register/newcustomer?registerCode=3109505702', '_blank');
           closeModal();
+          
+          // Resetar botão
+          btnText.classList.remove('hidden');
+          btnLoading.classList.remove('active');
+          submitBtn.disabled = false;
+          formMessage.classList.add('hidden');
         }, 2000);
         
       } catch (error) {
-        console.error('Erro ao cadastrar:', error);
+        console.error('❌ Erro ao cadastrar:', error);
         
         // Mensagem de erro amigável
         let errorMessage = '❌ Erro ao realizar cadastro. ';
         
-        if (error.message.includes('duplicate')) {
-          if (error.message.includes('cpf')) {
-            errorMessage += 'Este CPF já está cadastrado.';
-          } else if (error.message.includes('email')) {
-            errorMessage += 'Este email já está cadastrado.';
-          }
+        if (error.message.includes('duplicate') || error.message.includes('unique')) {
+          errorMessage += 'CPF ou Email já cadastrado.';
         } else {
           errorMessage += 'Tente novamente em alguns instantes.';
         }
@@ -422,7 +420,6 @@ document.addEventListener('DOMContentLoaded', function() {
         formMessage.textContent = errorMessage;
         formMessage.className = 'form-message error';
         
-      } finally {
         // Remover loading
         btnText.classList.remove('hidden');
         btnLoading.classList.remove('active');
