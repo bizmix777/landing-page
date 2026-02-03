@@ -2,45 +2,86 @@
 // LANDING PAGE GLISTER - SCRIPT PRINCIPAL
 // ============================================
 // IMPORTANTE: Este script depende de supabase-config.js
-// Certifique-se de que ambos estão carregados no HTML
+// Certifique-se de que está carregado antes deste arquivo
 
 document.addEventListener('DOMContentLoaded', function() {
   
-  // Elementos do DOM
+  // ============================================
+  // ELEMENTOS DO DOM
+  // ============================================
+  
   const modal = document.getElementById('cadastroModal');
+  const modalOverlay = document.querySelector('.modal-overlay');
   const btnOpcao2 = document.getElementById('btn-opcao2');
-  const closeModal = document.querySelector('.close-modal');
+  const btnFecharModal = document.querySelector('.modal-close');
+  const btnCancelar = document.getElementById('btnCancelar');
   const form = document.getElementById('cadastroForm');
   const formMessage = document.getElementById('formMessage');
   const btnCep = document.getElementById('btnBuscarCep');
+  const btnSubmit = document.getElementById('btnSubmit');
+
+  // ============================================
+  // ABRIR E FECHAR MODAL
+  // ============================================
 
   // Abrir modal ao clicar na Opção 2
   if (btnOpcao2) {
     btnOpcao2.addEventListener('click', function(e) {
       e.preventDefault();
-      modal.style.display = 'flex';
+      abrirModal();
     });
   }
 
-  // Fechar modal
-  if (closeModal) {
-    closeModal.addEventListener('click', function() {
-      modal.style.display = 'none';
+  // Fechar modal - botão X
+  if (btnFecharModal) {
+    btnFecharModal.addEventListener('click', function() {
+      fecharModal();
     });
   }
 
-  // Fechar modal ao clicar fora
-  window.addEventListener('click', function(e) {
-    if (e.target === modal) {
-      modal.style.display = 'none';
+  // Fechar modal - botão Cancelar
+  if (btnCancelar) {
+    btnCancelar.addEventListener('click', function() {
+      fecharModal();
+    });
+  }
+
+  // Fechar modal - clique no overlay
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', function() {
+      fecharModal();
+    });
+  }
+
+  // Fechar modal - tecla ESC
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      fecharModal();
     }
   });
+
+  function abrirModal() {
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Impede scroll da página
+  }
+
+  function fecharModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = ''; // Restaura scroll
+    limparFormulario();
+  }
+
+  function limparFormulario() {
+    form.reset();
+    formMessage.textContent = '';
+    formMessage.className = 'form-message hidden';
+  }
 
   // ============================================
   // MÁSCARAS DE ENTRADA
   // ============================================
 
-  // Máscara CPF
+  // Máscara CPF: 000.000.000-00
   const cpfInput = document.getElementById('cpf');
   if (cpfInput) {
     cpfInput.addEventListener('input', function(e) {
@@ -54,20 +95,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Máscara Celular
+  // Máscara Celular: (00) 00000-0000
   const celularInput = document.getElementById('celular');
   if (celularInput) {
     celularInput.addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
       if (value.length <= 11) {
-        value = value.replace(/^(\d{2})(\d)/g, '$1 $2');
+        value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
         value = value.replace(/(\d{5})(\d)/, '$1-$2');
         e.target.value = value;
       }
     });
   }
 
-  // Máscara CEP
+  // Máscara CEP: 00000-000
   const cepInput = document.getElementById('cep');
   if (cepInput) {
     cepInput.addEventListener('input', function(e) {
@@ -79,8 +120,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // Estado em maiúsculas
+  const estadoInput = document.getElementById('estado');
+  if (estadoInput) {
+    estadoInput.addEventListener('input', function(e) {
+      e.target.value = e.target.value.toUpperCase();
+    });
+  }
+
   // ============================================
-  // BUSCAR CEP
+  // BUSCAR CEP VIA API VIACEP
   // ============================================
 
   if (btnCep) {
@@ -88,37 +137,43 @@ document.addEventListener('DOMContentLoaded', function() {
       const cep = cepInput.value.replace(/\D/g, '');
       
       if (cep.length !== 8) {
-        alert('CEP inválido! Digite 8 dígitos.');
+        mostrarMensagem('⚠️ CEP inválido! Digite 8 dígitos.', 'error');
         return;
       }
 
-      btnCep.textContent = 'Buscando...';
+      // Mostrar loading
       btnCep.disabled = true;
+      btnCep.querySelector('.btn-text').style.display = 'none';
+      btnCep.querySelector('.btn-loading').classList.add('active');
 
       try {
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
 
         if (data.erro) {
-          alert('CEP não encontrado!');
+          mostrarMensagem('⚠️ CEP não encontrado!', 'error');
           return;
         }
 
-        // Preencher campos
+        // Preencher campos automaticamente
         document.getElementById('rua').value = data.logradouro || '';
         document.getElementById('bairro').value = data.bairro || '';
         document.getElementById('cidade').value = data.localidade || '';
         document.getElementById('estado').value = data.uf || '';
         
-        // Focar no número
+        // Focar no campo número
         document.getElementById('numero').focus();
+        
+        mostrarMensagem('✅ Endereço encontrado!', 'success');
 
       } catch (error) {
         console.error('Erro ao buscar CEP:', error);
-        alert('Erro ao buscar CEP. Tente novamente.');
+        mostrarMensagem('❌ Erro ao buscar CEP. Tente novamente.', 'error');
       } finally {
-        btnCep.textContent = 'Buscar';
+        // Restaurar botão
         btnCep.disabled = false;
+        btnCep.querySelector('.btn-text').style.display = 'inline';
+        btnCep.querySelector('.btn-loading').classList.remove('active');
       }
     });
   }
@@ -133,9 +188,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Limpar mensagens anteriores
       formMessage.textContent = '';
-      formMessage.className = 'form-message';
+      formMessage.className = 'form-message hidden';
 
-      // Pegar valores do formulário
+      // Coletar dados do formulário
       const nome = document.getElementById('nome').value.trim();
       const cpf = document.getElementById('cpf').value.trim();
       const dataNascimento = document.getElementById('dataNascimento').value;
@@ -150,40 +205,46 @@ document.addEventListener('DOMContentLoaded', function() {
       const cidade = document.getElementById('cidade').value.trim();
       const estado = document.getElementById('estado').value.trim();
 
-      // Validações básicas
+      // ============================================
+      // VALIDAÇÕES
+      // ============================================
+
+      // Validar campos obrigatórios
       if (!nome || !cpf || !dataNascimento || !celular || !email || !senha) {
-        formMessage.textContent = '⚠️ Por favor, preencha todos os campos obrigatórios!';
-        formMessage.className = 'form-message error';
+        mostrarMensagem('⚠️ Por favor, preencha todos os campos obrigatórios!', 'error');
         return;
       }
 
       if (!cep || !rua || !numero || !bairro || !cidade || !estado) {
-        formMessage.textContent = '⚠️ Por favor, complete o endereço!';
-        formMessage.className = 'form-message error';
+        mostrarMensagem('⚠️ Por favor, complete o endereço!', 'error');
         return;
       }
 
       // Validar email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        formMessage.textContent = '⚠️ Email inválido!';
-        formMessage.className = 'form-message error';
+        mostrarMensagem('⚠️ Email inválido!', 'error');
         return;
       }
 
-      // Validar senha (mínimo 6 caracteres)
+      // Validar senha
       if (senha.length < 6) {
-        formMessage.textContent = '⚠️ A senha deve ter no mínimo 6 caracteres!';
-        formMessage.className = 'form-message error';
+        mostrarMensagem('⚠️ A senha deve ter no mínimo 6 caracteres!', 'error');
         return;
       }
+
+      // ============================================
+      // ENVIAR DADOS
+      // ============================================
 
       // Mostrar loading
-      formMessage.textContent = '⏳ Processando cadastro...';
-      formMessage.className = 'form-message';
+      mostrarMensagem('⏳ Processando seu cadastro...', '');
+      btnSubmit.disabled = true;
+      btnSubmit.querySelector('.btn-text').classList.add('hidden');
+      btnSubmit.querySelector('.btn-loading').classList.add('active');
 
       try {
-        // Inserir cliente no banco de dados
+        // 1. Inserir cliente no banco de dados
         const { data: result, error } = await supabase
           .from('clientes')
           .insert([{
@@ -209,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('✅ Cliente cadastrado:', result);
         
-        // Enviar email via Edge Function
+        // 2. Enviar email via Edge Function
         try {
           const emailResponse = await supabaseFunction('email-cadastro-cliente-amway', {
             nome: nome,
@@ -229,13 +290,15 @@ document.addEventListener('DOMContentLoaded', function() {
           
           console.log('✅ Email enviado:', emailResponse);
         } catch (emailError) {
-          console.error('⚠️ Erro ao enviar email:', emailError);
+          console.error('⚠️ Erro ao enviar email (não crítico):', emailError);
           // Não bloqueia o cadastro se o email falhar
         }
         
-        // Sucesso!
-        formMessage.textContent = '✅ Cadastro realizado com sucesso! Redirecionando para finalizar a compra...';
-        formMessage.className = 'form-message success';
+        // ============================================
+        // SUCESSO!
+        // ============================================
+        
+        mostrarMensagem('✅ Cadastro realizado com sucesso! Redirecionando...', 'success');
 
         // Limpar formulário
         form.reset();
@@ -248,18 +311,38 @@ document.addEventListener('DOMContentLoaded', function() {
       } catch (error) {
         console.error('❌ Erro no cadastro:', error);
         
-        // Mensagens de erro específicas
-        if (error.message.includes('duplicate')) {
-          formMessage.textContent = '⚠️ Este CPF ou email já está cadastrado!';
-        } else if (error.message.includes('network')) {
-          formMessage.textContent = '⚠️ Erro de conexão. Verifique sua internet.';
-        } else {
-          formMessage.textContent = '❌ Erro ao realizar cadastro. Tente novamente.';
-        }
+        // Restaurar botão
+        btnSubmit.disabled = false;
+        btnSubmit.querySelector('.btn-text').classList.remove('hidden');
+        btnSubmit.querySelector('.btn-loading').classList.remove('active');
         
-        formMessage.className = 'form-message error';
+        // Mensagens de erro específicas
+        if (error.message.includes('duplicate') || error.message.includes('unique')) {
+          mostrarMensagem('⚠️ Este CPF ou email já está cadastrado!', 'error');
+        } else if (error.message.includes('network')) {
+          mostrarMensagem('⚠️ Erro de conexão. Verifique sua internet.', 'error');
+        } else {
+          mostrarMensagem('❌ Erro ao realizar cadastro. Tente novamente.', 'error');
+        }
       }
     });
+  }
+
+  // ============================================
+  // FUNÇÃO AUXILIAR: MOSTRAR MENSAGEM
+  // ============================================
+
+  function mostrarMensagem(texto, tipo) {
+    formMessage.textContent = texto;
+    formMessage.className = 'form-message';
+    
+    if (tipo === 'success') {
+      formMessage.classList.add('success');
+    } else if (tipo === 'error') {
+      formMessage.classList.add('error');
+    }
+    
+    formMessage.classList.remove('hidden');
   }
 
   // ============================================
