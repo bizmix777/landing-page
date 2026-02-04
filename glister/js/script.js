@@ -28,8 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
   if (btnOpcao2) {
     btnOpcao2.addEventListener('click', function(e) {
       e.preventDefault();
+      console.log('✅ Botão clicado - Abrindo modal');
       abrirModal();
     });
+  } else {
+    console.error('❌ Botão #btn-opcao2 não encontrado!');
   }
 
   // Fechar modal - botão X
@@ -55,26 +58,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Fechar modal - tecla ESC
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && modal.classList.contains('active')) {
+    if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
       fecharModal();
     }
   });
 
   function abrirModal() {
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden'; // Impede scroll da página
+    if (modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // Impede scroll da página
+      console.log('✅ Modal aberto');
+    } else {
+      console.error('❌ Modal não encontrado!');
+    }
   }
 
   function fecharModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = ''; // Restaura scroll
-    limparFormulario();
+    if (modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = ''; // Restaura scroll
+      limparFormulario();
+      console.log('✅ Modal fechado');
+    }
   }
 
   function limparFormulario() {
-    form.reset();
-    formMessage.textContent = '';
-    formMessage.className = 'form-message hidden';
+    if (form) {
+      form.reset();
+    }
+    if (formMessage) {
+      formMessage.textContent = '';
+      formMessage.className = 'form-message hidden';
+    }
   }
 
   // ============================================
@@ -132,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // BUSCAR CEP VIA API VIACEP
   // ============================================
 
-  if (btnCep) {
+  if (btnCep && cepInput) {
     btnCep.addEventListener('click', async function() {
       const cep = cepInput.value.replace(/\D/g, '');
       
@@ -143,10 +158,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Mostrar loading
       btnCep.disabled = true;
-      btnCep.querySelector('.btn-text').style.display = 'none';
-      btnCep.querySelector('.btn-loading').classList.add('active');
+      const btnText = btnCep.querySelector('.btn-text');
+      const btnLoading = btnCep.querySelector('.btn-loading');
+      
+      if (btnText) btnText.style.display = 'none';
+      if (btnLoading) btnLoading.classList.add('active');
 
       try {
+        console.log('🔍 Buscando CEP:', cep);
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
 
@@ -156,24 +175,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Preencher campos automaticamente
-        document.getElementById('rua').value = data.logradouro || '';
-        document.getElementById('bairro').value = data.bairro || '';
-        document.getElementById('cidade').value = data.localidade || '';
-        document.getElementById('estado').value = data.uf || '';
+        const ruaInput = document.getElementById('rua');
+        const bairroInput = document.getElementById('bairro');
+        const cidadeInput = document.getElementById('cidade');
+        const estadoInputFill = document.getElementById('estado');
+        
+        if (ruaInput) ruaInput.value = data.logradouro || '';
+        if (bairroInput) bairroInput.value = data.bairro || '';
+        if (cidadeInput) cidadeInput.value = data.localidade || '';
+        if (estadoInputFill) estadoInputFill.value = data.uf || '';
         
         // Focar no campo número
-        document.getElementById('numero').focus();
+        const numeroInput = document.getElementById('numero');
+        if (numeroInput) numeroInput.focus();
         
         mostrarMensagem('✅ Endereço encontrado!', 'success');
+        console.log('✅ CEP encontrado:', data);
 
       } catch (error) {
-        console.error('Erro ao buscar CEP:', error);
+        console.error('❌ Erro ao buscar CEP:', error);
         mostrarMensagem('❌ Erro ao buscar CEP. Tente novamente.', 'error');
       } finally {
         // Restaurar botão
         btnCep.disabled = false;
-        btnCep.querySelector('.btn-text').style.display = 'inline';
-        btnCep.querySelector('.btn-loading').classList.remove('active');
+        if (btnText) btnText.style.display = 'inline';
+        if (btnLoading) btnLoading.classList.remove('active');
       }
     });
   }
@@ -186,24 +212,28 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
 
+      console.log('📝 Formulário submetido');
+
       // Limpar mensagens anteriores
-      formMessage.textContent = '';
-      formMessage.className = 'form-message hidden';
+      if (formMessage) {
+        formMessage.textContent = '';
+        formMessage.className = 'form-message hidden';
+      }
 
       // Coletar dados do formulário
-      const nome = document.getElementById('nome').value.trim();
-      const cpf = document.getElementById('cpf').value.trim();
-      const dataNascimento = document.getElementById('dataNascimento').value;
-      const celular = document.getElementById('celular').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const senha = document.getElementById('senha').value;
-      const cep = document.getElementById('cep').value.trim();
-      const rua = document.getElementById('rua').value.trim();
-      const numero = document.getElementById('numero').value.trim();
-      const complemento = document.getElementById('complemento').value.trim();
-      const bairro = document.getElementById('bairro').value.trim();
-      const cidade = document.getElementById('cidade').value.trim();
-      const estado = document.getElementById('estado').value.trim();
+      const nome = document.getElementById('nome')?.value.trim();
+      const cpf = document.getElementById('cpf')?.value.trim();
+      const dataNascimento = document.getElementById('dataNascimento')?.value;
+      const celular = document.getElementById('celular')?.value.trim();
+      const email = document.getElementById('email')?.value.trim();
+      const senha = document.getElementById('senha')?.value;
+      const cep = document.getElementById('cep')?.value.trim();
+      const rua = document.getElementById('rua')?.value.trim();
+      const numero = document.getElementById('numero')?.value.trim();
+      const complemento = document.getElementById('complemento')?.value.trim();
+      const bairro = document.getElementById('bairro')?.value.trim();
+      const cidade = document.getElementById('cidade')?.value.trim();
+      const estado = document.getElementById('estado')?.value.trim();
 
       // ============================================
       // VALIDAÇÕES
@@ -234,16 +264,31 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       // ============================================
+      // VERIFICAR SUPABASE
+      // ============================================
+
+      if (typeof supabase === 'undefined') {
+        console.error('❌ Supabase não está definido!');
+        mostrarMensagem('❌ Erro de configuração. Entre em contato com o suporte.', 'error');
+        return;
+      }
+
+      // ============================================
       // ENVIAR DADOS
       // ============================================
 
       // Mostrar loading
       mostrarMensagem('⏳ Processando seu cadastro...', '');
       btnSubmit.disabled = true;
-      btnSubmit.querySelector('.btn-text').classList.add('hidden');
-      btnSubmit.querySelector('.btn-loading').classList.add('active');
+      const submitText = btnSubmit.querySelector('.btn-text');
+      const submitLoading = btnSubmit.querySelector('.btn-loading');
+      
+      if (submitText) submitText.classList.add('hidden');
+      if (submitLoading) submitLoading.classList.add('active');
 
       try {
+        console.log('💾 Salvando no banco de dados...');
+        
         // 1. Inserir cliente no banco de dados
         const { data: result, error } = await supabase
           .from('clientes')
@@ -272,20 +317,24 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 2. Enviar email via Edge Function
         try {
-          const emailResponse = await supabaseFunction('email-cadastro-cliente-amway', {
-            nome: nome,
-            cpf: cpf,
-            data_nascimento: dataNascimento,
-            celular: celular,
-            email: email,
-            senha: senha,
-            cep: cep,
-            rua: rua,
-            numero: numero,
-            complemento: complemento,
-            bairro: bairro,
-            cidade: cidade,
-            estado: estado
+          console.log('📧 Enviando emails...');
+          
+          const emailResponse = await supabase.functions.invoke('email-cadastro-cliente-amway', {
+            body: {
+              nome: nome,
+              cpf: cpf,
+              data_nascimento: dataNascimento,
+              celular: celular,
+              email: email,
+              senha: senha,
+              cep: cep,
+              rua: rua,
+              numero: numero,
+              complemento: complemento,
+              bairro: bairro,
+              cidade: cidade,
+              estado: estado
+            }
           });
           
           console.log('✅ Email enviado:', emailResponse);
@@ -313,13 +362,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Restaurar botão
         btnSubmit.disabled = false;
-        btnSubmit.querySelector('.btn-text').classList.remove('hidden');
-        btnSubmit.querySelector('.btn-loading').classList.remove('active');
+        if (submitText) submitText.classList.remove('hidden');
+        if (submitLoading) submitLoading.classList.remove('active');
         
         // Mensagens de erro específicas
-        if (error.message.includes('duplicate') || error.message.includes('unique')) {
+        if (error.message && (error.message.includes('duplicate') || error.message.includes('unique'))) {
           mostrarMensagem('⚠️ Este CPF ou email já está cadastrado!', 'error');
-        } else if (error.message.includes('network')) {
+        } else if (error.message && error.message.includes('network')) {
           mostrarMensagem('⚠️ Erro de conexão. Verifique sua internet.', 'error');
         } else {
           mostrarMensagem('❌ Erro ao realizar cadastro. Tente novamente.', 'error');
@@ -333,6 +382,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // ============================================
 
   function mostrarMensagem(texto, tipo) {
+    if (!formMessage) return;
+    
     formMessage.textContent = texto;
     formMessage.className = 'form-message';
     
@@ -343,18 +394,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     formMessage.classList.remove('hidden');
+    
+    // Scroll para a mensagem
+    formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
   // ============================================
-  // OPÇÃO 1: REDIRECIONAMENTO DIRETO
+  // LOGS DE INICIALIZAÇÃO
   // ============================================
 
-  const btnOpcao1 = document.getElementById('btn-opcao1');
-  if (btnOpcao1) {
-    btnOpcao1.addEventListener('click', function(e) {
-      e.preventDefault();
-      window.location.href = 'https://www.amway.com.br/';
-    });
-  }
+  console.log('🚀 Script carregado com sucesso!');
+  console.log('✅ Modal encontrado:', modal ? 'SIM' : 'NÃO');
+  console.log('✅ Botão Opção 2 encontrado:', btnOpcao2 ? 'SIM' : 'NÃO');
+  console.log('✅ Formulário encontrado:', form ? 'SIM' : 'NÃO');
+  console.log('✅ Supabase configurado:', typeof supabase !== 'undefined' ? 'SIM' : 'NÃO');
 
 });
