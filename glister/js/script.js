@@ -1,8 +1,6 @@
 // ============================================
 // LANDING PAGE GLISTER - SCRIPT PRINCIPAL
 // ============================================
-// IMPORTANTE: Este script depende de supabase-config.js
-// Certifique-se de que está carregado antes deste arquivo
 
 document.addEventListener('DOMContentLoaded', function() {
   
@@ -24,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // ABRIR E FECHAR MODAL
   // ============================================
 
-  // Abrir modal ao clicar na Opção 2
   if (btnOpcao2) {
     btnOpcao2.addEventListener('click', function(e) {
       e.preventDefault();
@@ -35,28 +32,24 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error('❌ Botão #btn-opcao2 não encontrado!');
   }
 
-  // Fechar modal - botão X
   if (btnFecharModal) {
     btnFecharModal.addEventListener('click', function() {
       fecharModal();
     });
   }
 
-  // Fechar modal - botão Cancelar
   if (btnCancelar) {
     btnCancelar.addEventListener('click', function() {
       fecharModal();
     });
   }
 
-  // Fechar modal - clique no overlay
   if (modalOverlay) {
     modalOverlay.addEventListener('click', function() {
       fecharModal();
     });
   }
 
-  // Fechar modal - tecla ESC
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
       fecharModal();
@@ -66,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function abrirModal() {
     if (modal) {
       modal.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Impede scroll da página
+      document.body.style.overflow = 'hidden';
       console.log('✅ Modal aberto');
     } else {
       console.error('❌ Modal não encontrado!');
@@ -76,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function fecharModal() {
     if (modal) {
       modal.classList.remove('active');
-      document.body.style.overflow = ''; // Restaura scroll
+      document.body.style.overflow = '';
       limparFormulario();
       console.log('✅ Modal fechado');
     }
@@ -96,7 +89,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // MÁSCARAS DE ENTRADA
   // ============================================
 
-  // Máscara CPF: 000.000.000-00
   const cpfInput = document.getElementById('cpf');
   if (cpfInput) {
     cpfInput.addEventListener('input', function(e) {
@@ -110,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Máscara Celular: (00) 00000-0000
   const celularInput = document.getElementById('celular');
   if (celularInput) {
     celularInput.addEventListener('input', function(e) {
@@ -123,7 +114,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Máscara CEP: 00000-000
   const cepInput = document.getElementById('cep');
   if (cepInput) {
     cepInput.addEventListener('input', function(e) {
@@ -135,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Estado em maiúsculas
   const estadoInput = document.getElementById('estado');
   if (estadoInput) {
     estadoInput.addEventListener('input', function(e) {
@@ -156,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      // Mostrar loading
       btnCep.disabled = true;
       const btnText = btnCep.querySelector('.btn-text');
       const btnLoading = btnCep.querySelector('.btn-loading');
@@ -174,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
 
-        // Preencher campos automaticamente
         const ruaInput = document.getElementById('rua');
         const bairroInput = document.getElementById('bairro');
         const cidadeInput = document.getElementById('cidade');
@@ -185,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (cidadeInput) cidadeInput.value = data.localidade || '';
         if (estadoInputFill) estadoInputFill.value = data.uf || '';
         
-        // Focar no campo número
         const numeroInput = document.getElementById('numero');
         if (numeroInput) numeroInput.focus();
         
@@ -196,7 +182,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('❌ Erro ao buscar CEP:', error);
         mostrarMensagem('❌ Erro ao buscar CEP. Tente novamente.', 'error');
       } finally {
-        // Restaurar botão
         btnCep.disabled = false;
         if (btnText) btnText.style.display = 'inline';
         if (btnLoading) btnLoading.classList.remove('active');
@@ -214,13 +199,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
       console.log('📝 Formulário submetido');
 
-      // Limpar mensagens anteriores
       if (formMessage) {
         formMessage.textContent = '';
         formMessage.className = 'form-message hidden';
       }
 
-      // Coletar dados do formulário
       const nome = document.getElementById('nome')?.value.trim();
       const cpf = document.getElementById('cpf')?.value.trim();
       const dataNascimento = document.getElementById('dataNascimento')?.value;
@@ -235,11 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const cidade = document.getElementById('cidade')?.value.trim();
       const estado = document.getElementById('estado')?.value.trim();
 
-      // ============================================
-      // VALIDAÇÕES
-      // ============================================
-
-      // Validar campos obrigatórios
+      // Validações
       if (!nome || !cpf || !dataNascimento || !celular || !email || !senha) {
         mostrarMensagem('⚠️ Por favor, preencha todos os campos obrigatórios!', 'error');
         return;
@@ -250,22 +229,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      // Validar email
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         mostrarMensagem('⚠️ Email inválido!', 'error');
         return;
       }
 
-      // Validar senha
       if (senha.length < 6) {
         mostrarMensagem('⚠️ A senha deve ter no mínimo 6 caracteres!', 'error');
         return;
       }
-
-      // ============================================
-      // VERIFICAR SUPABASE
-      // ============================================
 
       if (typeof supabase === 'undefined') {
         console.error('❌ Supabase não está definido!');
@@ -273,11 +246,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      // ============================================
-      // ENVIAR DADOS
-      // ============================================
-
-      // Mostrar loading
       mostrarMensagem('⏳ Processando seu cadastro...', '');
       btnSubmit.disabled = true;
       const submitText = btnSubmit.querySelector('.btn-text');
@@ -289,23 +257,23 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         console.log('💾 Salvando no banco de dados...');
         
-        // 1. Inserir cliente no banco de dados
+        // CORREÇÃO: Usar os nomes CORRETOS das colunas
         const { data: result, error } = await supabase
           .from('clientes')
           .insert([{
-            nome: nome,
+            nome_completo: nome,
             cpf: cpf,
             data_nascimento: dataNascimento,
             celular: celular,
             email: email,
-            senha: senha,
+            senha_hash: senha,
             cep: cep,
-            rua: rua,
-            numero: numero,
-            complemento: complemento,
-            bairro: bairro,
-            cidade: cidade,
-            estado: estado
+            endereco_rua: rua,
+            endereco_numero: numero,
+            endereco_complemento: complemento || null,
+            endereco_bairro: bairro,
+            endereco_cidade: cidade,
+            endereco_estado: estado
           }])
           .select();
 
@@ -315,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('✅ Cliente cadastrado:', result);
         
-        // 2. Enviar email via Edge Function
+        // Enviar email
         try {
           console.log('📧 Enviando emails...');
           
@@ -340,19 +308,12 @@ document.addEventListener('DOMContentLoaded', function() {
           console.log('✅ Email enviado:', emailResponse);
         } catch (emailError) {
           console.error('⚠️ Erro ao enviar email (não crítico):', emailError);
-          // Não bloqueia o cadastro se o email falhar
         }
-        
-        // ============================================
-        // SUCESSO!
-        // ============================================
         
         mostrarMensagem('✅ Cadastro realizado com sucesso! Redirecionando...', 'success');
 
-        // Limpar formulário
         form.reset();
 
-        // Redirecionar após 3 segundos
         setTimeout(() => {
           window.location.href = 'https://www.amway.com.br/';
         }, 3000);
@@ -360,12 +321,10 @@ document.addEventListener('DOMContentLoaded', function() {
       } catch (error) {
         console.error('❌ Erro no cadastro:', error);
         
-        // Restaurar botão
         btnSubmit.disabled = false;
         if (submitText) submitText.classList.remove('hidden');
         if (submitLoading) submitLoading.classList.remove('active');
         
-        // Mensagens de erro específicas
         if (error.message && (error.message.includes('duplicate') || error.message.includes('unique'))) {
           mostrarMensagem('⚠️ Este CPF ou email já está cadastrado!', 'error');
         } else if (error.message && error.message.includes('network')) {
@@ -376,10 +335,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-
-  // ============================================
-  // FUNÇÃO AUXILIAR: MOSTRAR MENSAGEM
-  // ============================================
 
   function mostrarMensagem(texto, tipo) {
     if (!formMessage) return;
@@ -394,14 +349,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     formMessage.classList.remove('hidden');
-    
-    // Scroll para a mensagem
     formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
-
-  // ============================================
-  // LOGS DE INICIALIZAÇÃO
-  // ============================================
 
   console.log('🚀 Script carregado com sucesso!');
   console.log('✅ Modal encontrado:', modal ? 'SIM' : 'NÃO');
