@@ -20,16 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- 1️⃣ PRIMEIRO: Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- 2️⃣ SEGUNDO: Supabase Config -->
-  <script src="./js/supabase-config.js"></script>
-
-  <!-- 3️⃣ TERCEIRO: Script principal -->
-  <script src="./js/script.js"></script>
-  
+ 
   <!-- CSS -->
   <link rel="stylesheet" href="./css/style.css">
   
@@ -664,6 +655,19 @@
     </div>
   </div>
   <!-- FIM DO MODAL -->
-
+  
+  <!-- ====================================
+       SCRIPTS (ORDEM CRÍTICA - FINAL DO HTML)
+       ==================================== -->
+  
+  <!-- 1️⃣ PRIMEIRO: Supabase CDN (biblioteca oficial) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- 2️⃣ SEGUNDO: Configuração do Supabase -->
+  <script src="./js/supabase-config.js"></script>
+  
+  <!-- 3️⃣ TERCEIRO: Script principal da landing page -->
+  <script src="./js/script.js"></script>
+  
 </body>
 </html>
