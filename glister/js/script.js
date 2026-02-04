@@ -61,8 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
       modal.classList.add('active');
       document.body.style.overflow = 'hidden';
       console.log('✅ Modal aberto');
-    } else {
-      console.error('❌ Modal não encontrado!');
     }
   }
 
@@ -246,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
+      // Loading
       mostrarMensagem('⏳ Processando seu cadastro...', '');
       btnSubmit.disabled = true;
       const submitText = btnSubmit.querySelector('.btn-text');
@@ -257,7 +256,9 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         console.log('💾 Salvando no banco de dados...');
         
-        // CORREÇÃO: Usar os nomes CORRETOS das colunas
+        // ============================================
+        // ✅ NOMES DE COLUNAS CORRIGIDOS
+        // ============================================
         const { data: result, error } = await supabase
           .from('clientes')
           .insert([{
@@ -270,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
             cep: cep,
             endereco_rua: rua,
             endereco_numero: numero,
-            endereco_complemento: complemento || null,
+            endereco_complemento: complemento,
             endereco_bairro: bairro,
             endereco_cidade: cidade,
             endereco_estado: estado
