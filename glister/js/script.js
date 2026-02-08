@@ -452,6 +452,36 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
+  // ENVIAR EMAIL (FUNÇÃO AUXILIAR)
+  // ============================================
+
+  async function enviarEmail(tipo, dados) {
+    try {
+      console.log('📧 Enviando emails...');
+      
+      const response = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email-cadastro', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+        },
+        body: JSON.stringify({
+          tipo: tipo,
+          dados: dados
+        })
+      });
+
+      if (response.ok) {
+        console.log('✅ Emails enviados com sucesso!');
+      } else {
+        console.warn('⚠️ Erro ao enviar emails (não crítico)');
+      }
+    } catch (error) {
+      console.warn('⚠️ Erro ao enviar emails (não crítico):', error);
+    }
+  }
+
+  // ============================================
   // SUBMIT FORMULÁRIO - CLIENTES
   // ============================================
 
@@ -545,12 +575,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('✅ Cliente cadastrado:', result);
         
-        mostrarMensagemCliente('✅ Cadastro realizado com sucesso! Redirecionando...', 'success');
+        // Enviar emails
+        await enviarEmail('cliente', {
+          nome, cpf, dataNascimento, celular, email,
+          cep, rua, numero, complemento, bairro, cidade, estado
+        });
+        
+        mostrarMensagemCliente('✅ Cadastro realizado com sucesso! 🎉', 'success');
 
         formCliente.reset();
 
+        // Fechar modal após 3 segundos (SEM redirecionar)
         setTimeout(() => {
-          window.location.href = 'https://www.amway.com.br/';
+          fecharModalCliente();
         }, 3000);
 
       } catch (error) {
@@ -719,12 +756,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('✅ Empreendedor cadastrado:', result);
         
+        // Enviar emails
+        await enviarEmail('empreendedor', {
+          nome, cpf, dataNascimento, celular, email,
+          tipoKit, valorKit,
+          cep, estado, cidade, bairro, rua, numero, complemento,
+          patrocinador_nome: 'Henrique Gomes da Silva',
+          patrocinador_codigo: '3109505702'
+        });
+        
         mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso! Bem-vindo ao time Amway! 🎉', 'success');
 
         formEmpreendedor.reset();
 
+        // Fechar modal após 3 segundos (SEM redirecionar)
         setTimeout(() => {
-          window.location.href = 'https://www.amway.com.br/';
+          fecharModalEmpreendedor();
         }, 3000);
 
       } catch (error) {
