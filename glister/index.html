@@ -655,7 +655,218 @@
     </div>
   </div>
   <!-- FIM DO MODAL -->
-  
+    <!-- ====================================
+       MODAL DE CADASTRO EMPREENDEDOR (NOVO)
+       ==================================== -->
+  <div id="cadastroEmpreendedorModal" class="modal">
+    <div class="modal-overlay"></div>
+    
+    <div class="modal-content">
+      <!-- Botão Fechar -->
+      <button class="modal-close-empreendedor" aria-label="Fechar modal">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <!-- Cabeçalho do Modal -->
+      <div class="modal-header">
+        <span class="modal-badge">💼 SEJA UM EMPREENDEDOR AMWAY</span>
+        <h2 class="modal-title">Comece Seu Negócio Hoje!</h2>
+        <p class="modal-subtitle">Escolha seu kit e cadastre-se agora</p>
+      </div>
+
+      <!-- Formulário de Cadastro Empreendedor -->
+      <form id="cadastroEmpreendedorForm" class="cadastro-form">
+        
+        <!-- Seção: Dados Pessoais -->
+        <div class="form-section">
+          <h3 class="form-section-title">📋 Dados Pessoais</h3>
+          
+          <div class="form-group">
+            <label for="nomeEmp">Nome Completo *</label>
+            <input type="text" id="nomeEmp" name="nome" placeholder="Digite seu nome completo" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cpfEmp">CPF *</label>
+              <input type="text" id="cpfEmp" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+              <small class="form-hint">Verificaremos se o CPF é válido</small>
+            </div>
+            
+            <div class="form-group">
+              <label for="dataNascimentoEmp">Data de Nascimento *</label>
+              <input type="date" id="dataNascimentoEmp" name="dataNascimento" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="celularEmp">Celular (WhatsApp) *</label>
+            <input type="tel" id="celularEmp" name="celular" placeholder="+55 (00) 00000-0000" maxlength="20" required>
+            <small class="form-hint">Inclua DDI e DDD: +55 (11) 99999-9999</small>
+          </div>
+        </div>
+
+        <!-- Seção: Dados de Acesso -->
+        <div class="form-section">
+          <h3 class="form-section-title">🔐 Dados de Acesso</h3>
+          
+          <div class="form-group">
+            <label for="emailEmp">Email *</label>
+            <input type="email" id="emailEmp" name="email" placeholder="seu@email.com" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="senhaEmp">Senha *</label>
+            <input type="password" id="senhaEmp" name="senha" placeholder="Mínimo 6 caracteres" minlength="6" required>
+            <div class="password-requirements">
+              <small>A senha deve ter no mínimo 6 caracteres</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: Escolha do Kit -->
+        <div class="form-section">
+          <h3 class="form-section-title">🎁 Escolha Seu Kit Empreendedor</h3>
+          
+          <div class="kit-options">
+            <label class="kit-option">
+              <input type="radio" name="tipoKit" value="virtual" data-valor="32.00" required>
+              <div class="kit-card">
+                <div class="kit-header">
+                  <span class="kit-badge">💻 DIGITAL</span>
+                  <span class="kit-price">R$ 32,00</span>
+                </div>
+                <h4 class="kit-title">KIT EMPREENDEDOR VIRTUAL</h4>
+                <p class="kit-description">Ideal para começar online</p>
+              </div>
+            </label>
+            
+            <label class="kit-option">
+              <input type="radio" name="tipoKit" value="irresistivel" data-valor="220.00" required>
+              <div class="kit-card">
+                <div class="kit-header">
+                  <span class="kit-badge">🌟 PREMIUM</span>
+                  <span class="kit-price-old">R$ 440,00</span>
+                  <span class="kit-price">R$ 220,00</span>
+                </div>
+                <h4 class="kit-title">KIT EMPREENDEDOR IRRESISTÍVEL</h4>
+                <p class="kit-description">50% de desconto! Produtos inclusos</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Seção: Endereço -->
+        <div class="form-section">
+          <h3 class="form-section-title">📍 Endereço de Entrega</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cepEmp">CEP *</label>
+              <input type="text" id="cepEmp" name="cep" placeholder="00000-000" maxlength="9" required>
+            </div>
+            
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <button type="button" id="btnBuscarCepEmp" class="btn btn-secondary">
+                <span class="btn-text">🔍 Buscar CEP</span>
+                <span class="btn-loading">⏳ Buscando...</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="estadoEmp">Estado *</label>
+            <select id="estadoEmp" name="estado" required>
+              <option value="">Selecione o Estado</option>
+              <option value="AC">Acre</option>
+              <option value="AL">Alagoas</option>
+              <option value="AP">Amapá</option>
+              <option value="AM">Amazonas</option>
+              <option value="BA">Bahia</option>
+              <option value="CE">Ceará</option>
+              <option value="DF">Distrito Federal</option>
+              <option value="ES">Espírito Santo</option>
+              <option value="GO">Goiás</option>
+              <option value="MA">Maranhão</option>
+              <option value="MT">Mato Grosso</option>
+              <option value="MS">Mato Grosso do Sul</option>
+              <option value="MG">Minas Gerais</option>
+              <option value="PA">Pará</option>
+              <option value="PB">Paraíba</option>
+              <option value="PR">Paraná</option>
+              <option value="PE">Pernambuco</option>
+              <option value="PI">Piauí</option>
+              <option value="RJ">Rio de Janeiro</option>
+              <option value="RN">Rio Grande do Norte</option>
+              <option value="RS">Rio Grande do Sul</option>
+              <option value="RO">Rondônia</option>
+              <option value="RR">Roraima</option>
+              <option value="SC">Santa Catarina</option>
+              <option value="SP">São Paulo</option>
+              <option value="SE">Sergipe</option>
+              <option value="TO">Tocantins</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="cidadeEmp">Cidade *</label>
+            <input type="text" id="cidadeEmp" name="cidade" placeholder="Nome da cidade" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="bairroEmp">Bairro *</label>
+            <input type="text" id="bairroEmp" name="bairro" placeholder="Nome do bairro" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="ruaEmp">Nome da Rua *</label>
+            <input type="text" id="ruaEmp" name="rua" placeholder="Nome da rua/avenida" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="numeroEmp">Número *</label>
+              <input type="text" id="numeroEmp" name="numero" placeholder="123" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="complementoEmp">Complemento</label>
+              <input type="text" id="complementoEmp" name="complemento" placeholder="Apto, Bloco, etc.">
+            </div>
+          </div>
+        </div>
+
+        <!-- Seção: Patrocinador -->
+        <div class="form-section patrocinador-section">
+          <div class="patrocinador-info">
+            <h4 class="patrocinador-title">👤 Empresário Amway Patrocinador</h4>
+            <p class="patrocinador-nome"><strong>Henrique Gomes da Silva</strong></p>
+            <p class="patrocinador-codigo">Código: <strong>3109505702</strong></p>
+          </div>
+        </div>
+
+        <!-- Mensagem de Feedback -->
+        <div id="formMessageEmp" class="form-message hidden"></div>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-outline" id="btnCancelarEmp">
+            Cancelar
+          </button>
+          
+          <button type="submit" class="btn btn-primary" id="btnSubmitEmp">
+            <span class="btn-text">✅ Finalizar Cadastro</span>
+            <span class="btn-loading">⏳ Processando...</span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+  <!-- FIM DO MODAL EMPREENDEDOR -->
   <!-- ====================================
        SCRIPTS (ORDEM CRÍTICA - FINAL DO HTML)
        ==================================== -->
