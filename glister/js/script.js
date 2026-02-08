@@ -1,6 +1,6 @@
 // ============================================
 // LANDING PAGE GLISTER - SCRIPT PRINCIPAL
-// Inclui: Modal Clientes + Modal Empreendedores
+// Inclui: Modal Clientes + Modal Empreendedores + EMAILS
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -452,36 +452,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
-  // ENVIAR EMAIL (FUNÇÃO AUXILIAR)
-  // ============================================
-
-  async function enviarEmail(tipo, dados) {
-    try {
-      console.log('📧 Enviando emails...');
-      
-      const response = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/enviar-email-cadastro', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
-        },
-        body: JSON.stringify({
-          tipo: tipo,
-          dados: dados
-        })
-      });
-
-      if (response.ok) {
-        console.log('✅ Emails enviados com sucesso!');
-      } else {
-        console.warn('⚠️ Erro ao enviar emails (não crítico)');
-      }
-    } catch (error) {
-      console.warn('⚠️ Erro ao enviar emails (não crítico):', error);
-    }
-  }
-
-  // ============================================
   // SUBMIT FORMULÁRIO - CLIENTES
   // ============================================
 
@@ -575,11 +545,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('✅ Cliente cadastrado:', result);
         
-        // Enviar emails
-        await enviarEmail('cliente', {
-          nome, cpf, dataNascimento, celular, email,
-          cep, rua, numero, complemento, bairro, cidade, estado
-        });
+        // Enviar email via Edge Function
+        console.log('📧 Enviando emails...');
+        try {
+          const emailResponse = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/email-cadastro-cliente-amway', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+            },
+            body: JSON.stringify({
+              nome: nome,
+              cpf: cpf,
+              data_nascimento: dataNascimento,
+              celular: celular,
+              email: email,
+              senha: senha,
+              cep: cep,
+              rua: rua,
+              numero: numero,
+              complemento: complemento,
+              bairro: bairro,
+              cidade: cidade,
+              estado: estado
+            })
+          });
+          
+          if (emailResponse.ok) {
+            console.log('✅ Emails enviados com sucesso!');
+          } else {
+            console.warn('⚠️ Erro ao enviar emails (não bloqueante)');
+          }
+        } catch (emailError) {
+          console.warn('⚠️ Erro ao enviar emails:', emailError);
+        }
         
         mostrarMensagemCliente('✅ Cadastro realizado com sucesso! 🎉', 'success');
 
@@ -756,14 +755,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('✅ Empreendedor cadastrado:', result);
         
-        // Enviar emails
-        await enviarEmail('empreendedor', {
-          nome, cpf, dataNascimento, celular, email,
-          tipoKit, valorKit,
-          cep, estado, cidade, bairro, rua, numero, complemento,
-          patrocinador_nome: 'Henrique Gomes da Silva',
-          patrocinador_codigo: '3109505702'
-        });
+        // Enviar email via Edge Function
+        console.log('📧 Enviando emails...');
+        try {
+          const emailResponse = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/email-cadastro-empreendedor-amway', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM'
+            },
+            body: JSON.stringify({
+              nome: nome,
+              cpf: cpf,
+              data_nascimento: dataNascimento,
+              celular: celular,
+              email: email,
+              senha: senha,
+              tipo_kit: tipoKit,
+              valor_kit: valorKit,
+              cep: cep,
+              estado: estado,
+              cidade: cidade,
+              bairro: bairro,
+              rua: rua,
+              numero: numero,
+              complemento: complemento,
+              patrocinador_nome: 'Henrique Gomes da Silva',
+              patrocinador_codigo: '3109505702'
+            })
+          });
+          
+          if (emailResponse.ok) {
+            console.log('✅ Emails enviados com sucesso!');
+          } else {
+            console.warn('⚠️ Erro ao enviar emails (não bloqueante)');
+          }
+        } catch (emailError) {
+          console.warn('⚠️ Erro ao enviar emails:', emailError);
+        }
         
         mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso! Bem-vindo ao time Amway! 🎉', 'success');
 
@@ -832,7 +861,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // LOG INICIAL
   // ============================================
 
-  console.log('🚀 Script carregado com sucesso!');
+  console.log('🚀 Script carregado com sucesso! v3');
   console.log('✅ Modal CLIENTE encontrado:', modalCliente ? 'SIM' : 'NÃO');
   console.log('✅ Modal EMPREENDEDOR encontrado:', modalEmpreendedor ? 'SIM' : 'NÃO');
   console.log('✅ Botão Opção 1 encontrado:', btnOpcao1 ? 'SIM' : 'NÃO');
