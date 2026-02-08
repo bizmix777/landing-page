@@ -204,13 +204,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Validar CPF ao sair do campo
+    // Validar CPF ao sair do campo (SEM TRAVAR)
     cpfInputEmp.addEventListener('blur', function(e) {
       const cpf = e.target.value.replace(/\D/g, '');
       if (cpf.length === 11) {
         if (!validarCPF(cpf)) {
           mostrarMensagemEmpreendedor('⚠️ CPF inválido! Verifique os números digitados.', 'error');
-          e.target.focus();
+        } else {
+          // CPF válido - limpar mensagem de erro
+          if (formMessageEmpreendedor) {
+            formMessageEmpreendedor.textContent = '';
+            formMessageEmpreendedor.className = 'form-message hidden';
+          }
         }
       }
     });
@@ -242,6 +247,56 @@ document.addEventListener('DOMContentLoaded', function() {
       if (value.length <= 8) {
         value = value.replace(/(\d{5})(\d)/, '$1-$2');
         e.target.value = value;
+      }
+    });
+  }
+
+  // ============================================
+  // MÁSCARAS E NAVEGAÇÃO - DATA DE NASCIMENTO
+  // ============================================
+
+  const diaInputEmp = document.getElementById('diaEmp');
+  const mesInputEmp = document.getElementById('mesEmp');
+  const anoInputEmp = document.getElementById('anoEmp');
+
+  // Auto-avançar para o próximo campo
+  if (diaInputEmp && mesInputEmp) {
+    diaInputEmp.addEventListener('input', function(e) {
+      if (e.target.value.length === 2) {
+        mesInputEmp.focus();
+      }
+    });
+  }
+
+  if (mesInputEmp && anoInputEmp) {
+    mesInputEmp.addEventListener('input', function(e) {
+      if (e.target.value.length === 2) {
+        anoInputEmp.focus();
+      }
+    });
+  }
+
+  // Limitar dígitos
+  if (diaInputEmp) {
+    diaInputEmp.addEventListener('input', function(e) {
+      if (e.target.value.length > 2) {
+        e.target.value = e.target.value.slice(0, 2);
+      }
+    });
+  }
+
+  if (mesInputEmp) {
+    mesInputEmp.addEventListener('input', function(e) {
+      if (e.target.value.length > 2) {
+        e.target.value = e.target.value.slice(0, 2);
+      }
+    });
+  }
+
+  if (anoInputEmp) {
+    anoInputEmp.addEventListener('input', function(e) {
+      if (e.target.value.length > 4) {
+        e.target.value = e.target.value.slice(0, 4);
       }
     });
   }
@@ -533,7 +588,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
       const nome = document.getElementById('nomeEmp')?.value.trim();
       const cpf = document.getElementById('cpfEmp')?.value.trim();
-      const dataNascimento = document.getElementById('dataNascimentoEmp')?.value;
+      
+      // Capturar dia, mês e ano separados
+      const dia = document.getElementById('diaEmp')?.value;
+      const mes = document.getElementById('mesEmp')?.value;
+      const ano = document.getElementById('anoEmp')?.value;
+      
       const celular = document.getElementById('celularEmp')?.value.trim();
       const email = document.getElementById('emailEmp')?.value.trim();
       const senha = document.getElementById('senhaEmp')?.value;
@@ -552,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const complemento = document.getElementById('complementoEmp')?.value.trim();
 
       // Validações
-      if (!nome || !cpf || !dataNascimento || !celular || !email || !senha) {
+      if (!nome || !cpf || !dia || !mes || !ano || !celular || !email || !senha) {
         mostrarMensagemEmpreendedor('⚠️ Por favor, preencha todos os campos obrigatórios!', 'error');
         return;
       }
@@ -563,6 +623,31 @@ document.addEventListener('DOMContentLoaded', function() {
         mostrarMensagemEmpreendedor('⚠️ CPF inválido! Verifique os números digitados.', 'error');
         return;
       }
+
+      // Validar data de nascimento
+      const diaNum = parseInt(dia);
+      const mesNum = parseInt(mes);
+      const anoNum = parseInt(ano);
+
+      if (diaNum < 1 || diaNum > 31) {
+        mostrarMensagemEmpreendedor('⚠️ Dia inválido! Digite um valor entre 1 e 31.', 'error');
+        return;
+      }
+
+      if (mesNum < 1 || mesNum > 12) {
+        mostrarMensagemEmpreendedor('⚠️ Mês inválido! Digite um valor entre 1 e 12.', 'error');
+        return;
+      }
+
+      if (anoNum < 1900 || anoNum > 2010) {
+        mostrarMensagemEmpreendedor('⚠️ Ano inválido! Digite um ano entre 1900 e 2010.', 'error');
+        return;
+      }
+
+      // Montar data no formato YYYY-MM-DD (formato do banco)
+      const mesFormatado = mesNum.toString().padStart(2, '0');
+      const diaFormatado = diaNum.toString().padStart(2, '0');
+      const dataNascimento = `${anoNum}-${mesFormatado}-${diaFormatado}`;
 
       if (!tipoKit || !valorKit) {
         mostrarMensagemEmpreendedor('⚠️ Por favor, selecione um kit!', 'error');
@@ -603,6 +688,7 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         console.log('💾 Salvando EMPREENDEDOR no banco de dados...');
         console.log('📦 Kit selecionado:', tipoKit, '- Valor:', valorKit);
+        console.log('📅 Data de nascimento:', dataNascimento);
         
         const { data: result, error } = await supabase
           .from('empreendedores_amway')
