@@ -1484,5 +1484,108 @@ select:hover {
   }
 }
 /* ============================================
+   SEÇÃO DE PROBLEMAS - 2 COLUNAS RESPONSIVAS
+   ============================================ */
+
+.problems {
+  padding: var(--spacing-3xl) 0;
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+}
+
+.problems .section-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: var(--spacing-2xl);
+}
+
+/* Grid 2 colunas */
+.problems-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.problem-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.problem-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+.problem-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.problem-text {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Destaque para "E o pior?" */
+.problem-item--highlight {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 2px solid #ef4444;
+}
+
+.problem-item--highlight .problem-text {
+  color: #dc2626;
+  font-size: 1.1rem;
+}
+
+/* ============================================
+   RESPONSIVO - MOBILE (1 COLUNA)
+   ============================================ */
+
+@media (max-width: 768px) {
+  .problems-grid {
+    grid-template-columns: 1fr; /* 1 coluna no mobile */
+    gap: var(--spacing-md);
+  }
+  
+  .problems .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .problem-item {
+    padding: var(--spacing-md);
+  }
+  
+  .problem-icon {
+    font-size: 1.75rem;
+  }
+  
+  .problem-text {
+    font-size: 0.95rem;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .problems-grid {
+    gap: var(--spacing-md);
+  }
+  
+  .problem-text {
+    font-size: 0.95rem;
+  }
+}
+/* ============================================
    FIM DO CSS
    ============================================ */
