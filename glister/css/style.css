@@ -1237,7 +1237,177 @@ button {
     flex-direction: column;
   }
 }
+/* ============================================
+   MODAL EMPREENDEDOR - ESTILOS ADICIONAIS
+   ============================================ */
 
+/* Kit Options */
+.kit-options {
+  display: grid;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.kit-option {
+  cursor: pointer;
+  display: block;
+}
+
+.kit-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.kit-card {
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.kit-option input[type="radio"]:checked + .kit-card {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.kit-option:hover .kit-card {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.kit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.kit-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.kit-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.kit-price-old {
+  font-size: 0.9rem;
+  color: var(--color-gray-400);
+  text-decoration: line-through;
+  margin-right: var(--spacing-xs);
+}
+
+.kit-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: var(--spacing-xs);
+}
+
+.kit-description {
+  font-size: 0.9rem;
+  color: var(--color-gray-600);
+  margin: 0;
+}
+
+/* Patrocinador Section */
+.patrocinador-section {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+}
+
+.patrocinador-info {
+  text-align: center;
+}
+
+.patrocinador-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-sm);
+}
+
+.patrocinador-nome {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: var(--spacing-xs) 0;
+}
+
+.patrocinador-codigo {
+  font-size: 1rem;
+  color: var(--color-gray-600);
+  margin: var(--spacing-xs) 0;
+}
+
+/* Form Hint */
+.form-hint {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--color-gray-500);
+  font-style: italic;
+}
+
+/* Select Styling */
+select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: var(--font-primary);
+  color: var(--color-gray-900);
+  background-color: white;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 20px;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+select:hover {
+  border-color: var(--color-primary-dark);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .kit-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .kit-price {
+    font-size: 1.25rem;
+  }
+  
+  .patrocinador-nome {
+    font-size: 1.1rem;
+  }
+}
 /* ============================================
    FIM DO CSS
    ============================================ */
