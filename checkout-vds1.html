@@ -532,7 +532,7 @@
                     <div class="form-group">
                         <div class="personalization-options">
                             <label class="radio-option">
-                                <input type="radio" name="rodape" value="nome" checked>
+                                <input type="radio" name="rodape" value="nome">
                                 <div>
                                     <strong>Apenas o meu nome</strong>
                                     <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
@@ -551,8 +551,8 @@
                                 </div>
                             </label>
 
-                            <label class="radio-option">
-                                <input type="radio" name="rodape" value="padrao">
+                            <label class="radio-option selected">
+                                <input type="radio" name="rodape" value="padrao" checked>
                                 <div>
                                     <strong>Rodapé Padrão</strong>
                                     <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">
@@ -725,9 +725,6 @@
             });
         });
 
-        // Marcar primeira opção como selecionada visualmente
-        document.querySelector('input[name="rodape"]:checked').closest('.radio-option').classList.add('selected');
-
         // Presente - Mostra/Oculta campos
         document.getElementById('isPresente').addEventListener('change', function() {
             const giftDetails = document.getElementById('giftDetails');
@@ -809,8 +806,6 @@
 
                 console.log('✅ Compra registrada:', data);
                 alert('✅ Compra registrada com sucesso! Você receberá as instruções de pagamento por e-mail.');
-                
-                // Aqui você pode redirecionar para página de pagamento ou mostrar próximos passos
                 
             } catch (error) {
                 console.error('❌ Erro ao processar compra:', error);
