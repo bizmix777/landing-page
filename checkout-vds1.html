@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finalizar Compra - Somos Todos Um</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+    
+    <!-- Supabase Config Centralizado -->
+    <script src="/somos-todos-um/js/supabase-config.js"></script>
+    
     <style>
         /* =================================== VARIÁVEIS CSS =================================== */
         :root {
@@ -644,7 +648,7 @@
             <h2>Resumo do Pedido</h2>
             
             <div class="product-info">
-                <img src="/somos-todos-um/images/capa_checkout.jpg" alt="Capa do Livro - Somos Todos Um" class="product-image">
+                <img src="/somos-todos-um/images/capa-checkout.jpg" alt="Capa do Livro - Somos Todos Um" class="product-image">
                 <div class="product-details">
                     <h3>Livro: Somos Todos Um</h3>
                     <p>Edição Física Personalizada</p>
@@ -678,19 +682,6 @@
     </div>
 
     <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY3OTQ4NzEsImV4cCI6MjA1MjM3MDg3MX0.zLgPLnMnHbxJjrUZJbIvZNjOBMhRfVqhQYZR9fJdLzM';
-
-        // Carrega Supabase
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-        script.onload = () => {
-            window.meuSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('✅ Supabase carregado com sucesso!');
-        };
-        document.head.appendChild(script);
-
         // Máscaras de Input
         document.getElementById('whatsapp').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
@@ -801,24 +792,23 @@
                     valor_unitario: 29.90,
                     quantidade: 1,
                     status_pagamento: 'pendente',
-                    produto_id: 1
+                    produto_id: '1f19140d-d466-4d14-b64c-c6c2ae9c22df'
                 };
 
                 console.log('📤 Enviando dados:', formData);
 
-                const { data, error } = await window.meuSupabase
-                    .from('vendas')
-                    .insert([formData])
-                    .select();
-
-                if (error) throw error;
+                // Usa a função supabaseFetch do supabase-config.js
+                const data = await supabaseFetch('vendas', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
 
                 console.log('✅ Compra registrada:', data);
                 alert('✅ Compra registrada com sucesso! Você receberá as instruções de pagamento por e-mail.');
                 
             } catch (error) {
                 console.error('❌ Erro ao processar compra:', error);
-                alert('❌ Erro ao processar compra. Tente novamente.');
+                alert('❌ Erro ao processar compra: ' + error.message);
             } finally {
                 loadingOverlay.classList.remove('active');
             }
