@@ -583,6 +583,12 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="emailDestinatario">E-mail do Destinatário *</label>
+                            <input type="email" id="emailDestinatario" name="emailDestinatario">
+                            <small>Para envio de informações sobre o presente</small>
+                        </div>
+
+                        <div class="form-group">
                             <label for="rodapePersonalizado">Rodapé Personalizado para o Presente</label>
                             <textarea id="rodapePersonalizado" name="rodapePersonalizado" maxlength="150" placeholder="Digite a mensagem que deseja no rodapé do livro (máx. 150 caracteres)"></textarea>
                             <small>Exemplo: "Para Maria, com carinho. João - Janeiro/2026"</small>
@@ -789,6 +795,7 @@
                     texto_rodape: textoRodape,
                     is_presente: isPresente,
                     nome_destinatario: document.getElementById('nomeDestinatario').value || null,
+                    email_destinatario: document.getElementById('emailDestinatario').value || null,
                     forma_pagamento: document.querySelector('input[name="pagamento"]:checked').value,
                     valor_total: 29.90,
                     valor_unitario: 29.90,
