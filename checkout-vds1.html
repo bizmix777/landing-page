@@ -648,7 +648,7 @@
             <h2>Resumo do Pedido</h2>
             
             <div class="product-info">
-                <img src="/somos-todos-um/images/capa_checkout.jpg" alt="Capa do Livro - Somos Todos Um" class="product-image">
+                <img src="/somos-todos-um/images/capa-checkout.jpg" alt="Capa do Livro - Somos Todos Um" class="product-image">
                 <div class="product-details">
                     <h3>Livro: Somos Todos Um</h3>
                     <p>Edição Física Personalizada</p>
@@ -771,10 +771,14 @@
                     }
                 }
 
+                // Captura o WhatsApp
+                const whatsappValue = document.getElementById('whatsapp').value;
+
                 const formData = {
                     nome_comprador: document.getElementById('nome').value,
                     email_comprador: document.getElementById('email').value,
-                    whatsapp_comprador: document.getElementById('whatsapp').value,
+                    whatsapp_comprador: whatsappValue,
+                    telefone_comprador: whatsappValue, // ✅ ADICIONADO: Usa o mesmo valor do WhatsApp
                     cep_comprador: document.getElementById('cep').value || null,
                     endereco_comprador: document.getElementById('endereco').value || null,
                     numero_comprador: document.getElementById('numero').value || null,
