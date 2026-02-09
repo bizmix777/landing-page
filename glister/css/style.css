@@ -529,7 +529,7 @@ button {
 }
 
 /* ============================================
-   PRICING SECTION
+   PRICING SECTION (3 CARDS)
    ============================================ */
 
 .section-pricing {
@@ -538,7 +538,7 @@ button {
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--spacing-xl);
   margin-top: var(--spacing-2xl);
 }
@@ -908,7 +908,7 @@ button {
   background: var(--color-gray-500);
 }
 
-.modal-close,
+.modal-close-cliente,
 .modal-close-empreendedor {
   position: absolute;
   top: var(--spacing-lg);
@@ -926,13 +926,13 @@ button {
   z-index: 3;
 }
 
-.modal-close:hover,
+.modal-close-cliente:hover,
 .modal-close-empreendedor:hover {
   background: var(--color-gray-200);
   transform: rotate(90deg);
 }
 
-.modal-close svg,
+.modal-close-cliente svg,
 .modal-close-empreendedor svg {
   width: 20px;
   height: 20px;
@@ -1137,7 +1137,6 @@ button {
    MODAL EMPREENDEDOR - ESTILOS ADICIONAIS
    ============================================ */
 
-/* Kit Options */
 .kit-options {
   display: grid;
   gap: var(--spacing-md);
