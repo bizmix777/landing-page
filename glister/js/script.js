@@ -1,47 +1,53 @@
 // ============================================
 // LANDING PAGE GLISTER - SCRIPT PRINCIPAL
-// Inclui: Modal Clientes + Modal Empreendedores + EMAILS
+// 3 OPÇÕES: Compra Simples + Cliente VIP + Empreendedor
 // ============================================
 
 document.addEventListener('DOMContentLoaded', function() {
   
+  console.log('🚀 Script iniciado! v4');
+  
   // ============================================
-  // ELEMENTOS DO DOM - MODAL CLIENTES
+  // ELEMENTOS DO DOM - MODAL CLIENTE VIP
   // ============================================
   
-  const modalCliente = document.getElementById('cadastroModal');
+  const modalCliente = document.getElementById('cadastroModalCliente');
   const modalOverlayCliente = modalCliente?.querySelector('.modal-overlay');
-  const btnOpcao2 = document.getElementById('btn-opcao2');
-  const btnFecharModalCliente = modalCliente?.querySelector('.modal-close');
-  const btnCancelarCliente = document.getElementById('btnCancelar');
-  const formCliente = document.getElementById('cadastroForm');
-  const formMessageCliente = document.getElementById('formMessage');
-  const btnCepCliente = document.getElementById('btnBuscarCep');
-  const btnSubmitCliente = document.getElementById('btnSubmit');
+  const btnOpcaoCliente = document.getElementById('btn-opcao-cliente');
+  const btnFecharModalCliente = modalCliente?.querySelector('.modal-close-cliente');
+  const btnCancelarCliente = document.getElementById('btnCancelarCliente');
+  const formCliente = document.getElementById('cadastroFormCliente');
+  const formMessageCliente = document.getElementById('formMessageCliente');
+  const btnCepCliente = document.getElementById('btnBuscarCepCliente');
+  const btnSubmitCliente = document.getElementById('btnSubmitCliente');
 
   // ============================================
   // ELEMENTOS DO DOM - MODAL EMPREENDEDOR
   // ============================================
   
-  const modalEmpreendedor = document.getElementById('cadastroEmpreendedorModal');
+  const modalEmpreendedor = document.getElementById('cadastroModalEmpreendedor');
   const modalOverlayEmpreendedor = modalEmpreendedor?.querySelector('.modal-overlay');
-  const btnOpcao1 = document.getElementById('btn-opcao1');
+  const btnOpcaoEmpreendedor = document.getElementById('btn-opcao-empreendedor');
   const btnFecharModalEmpreendedor = modalEmpreendedor?.querySelector('.modal-close-empreendedor');
   const btnCancelarEmpreendedor = document.getElementById('btnCancelarEmp');
-  const formEmpreendedor = document.getElementById('cadastroEmpreendedorForm');
+  const formEmpreendedor = document.getElementById('cadastroFormEmpreendedor');
   const formMessageEmpreendedor = document.getElementById('formMessageEmp');
   const btnCepEmpreendedor = document.getElementById('btnBuscarCepEmp');
   const btnSubmitEmpreendedor = document.getElementById('btnSubmitEmp');
 
+  console.log('✅ Modal Cliente encontrado:', modalCliente ? 'SIM' : 'NÃO');
+  console.log('✅ Modal Empreendedor encontrado:', modalEmpreendedor ? 'SIM' : 'NÃO');
+  console.log('✅ Botão Cliente encontrado:', btnOpcaoCliente ? 'SIM' : 'NÃO');
+  console.log('✅ Botão Empreendedor encontrado:', btnOpcaoEmpreendedor ? 'SIM' : 'NÃO');
+
   // ============================================
-  // FUNÇÕES: ABRIR E FECHAR MODAIS
+  // FUNÇÕES: ABRIR E FECHAR MODAIS - CLIENTE
   // ============================================
 
-  // MODAL CLIENTES
-  if (btnOpcao2) {
-    btnOpcao2.addEventListener('click', function(e) {
+  if (btnOpcaoCliente) {
+    btnOpcaoCliente.addEventListener('click', function(e) {
       e.preventDefault();
-      console.log('✅ Botão CLIENTE clicado - Abrindo modal');
+      console.log('✅ Botão CLIENTE VIP clicado');
       abrirModalCliente();
     });
   }
@@ -83,11 +89,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // MODAL EMPREENDEDOR
-  if (btnOpcao1) {
-    btnOpcao1.addEventListener('click', function(e) {
+  // ============================================
+  // FUNÇÕES: ABRIR E FECHAR MODAIS - EMPREENDEDOR
+  // ============================================
+
+  if (btnOpcaoEmpreendedor) {
+    btnOpcaoEmpreendedor.addEventListener('click', function(e) {
       e.preventDefault();
-      console.log('✅ Botão EMPREENDEDOR clicado - Abrindo modal');
+      console.log('✅ Botão EMPREENDEDOR clicado');
       abrirModalEmpreendedor();
     });
   }
@@ -142,12 +151,12 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // ============================================
-  // MÁSCARAS DE ENTRADA - CLIENTES
+  // MÁSCARAS DE ENTRADA - CLIENTE
   // ============================================
 
-  const cpfInput = document.getElementById('cpf');
-  if (cpfInput) {
-    cpfInput.addEventListener('input', function(e) {
+  const cpfInputCliente = document.getElementById('cpfCliente');
+  if (cpfInputCliente) {
+    cpfInputCliente.addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
       if (value.length <= 11) {
         value = value.replace(/(\d{3})(\d)/, '$1.$2');
@@ -158,9 +167,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  const celularInput = document.getElementById('celular');
-  if (celularInput) {
-    celularInput.addEventListener('input', function(e) {
+  const celularInputCliente = document.getElementById('celularCliente');
+  if (celularInputCliente) {
+    celularInputCliente.addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
       if (value.length <= 11) {
         value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
@@ -170,9 +179,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  const cepInput = document.getElementById('cep');
-  if (cepInput) {
-    cepInput.addEventListener('input', function(e) {
+  const cepInputCliente = document.getElementById('cepCliente');
+  if (cepInputCliente) {
+    cepInputCliente.addEventListener('input', function(e) {
       let value = e.target.value.replace(/\D/g, '');
       if (value.length <= 8) {
         value = value.replace(/(\d{5})(\d)/, '$1-$2');
@@ -181,9 +190,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  const estadoInput = document.getElementById('estado');
-  if (estadoInput) {
-    estadoInput.addEventListener('input', function(e) {
+  const estadoInputCliente = document.getElementById('estadoCliente');
+  if (estadoInputCliente) {
+    estadoInputCliente.addEventListener('input', function(e) {
       e.target.value = e.target.value.toUpperCase();
     });
   }
@@ -209,10 +218,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const cpf = e.target.value.replace(/\D/g, '');
       if (cpf.length === 11) {
         if (!validarCPF(cpf)) {
-          mostrarMensagemEmpreendedor('⚠️ CPF inválido! Verifique os números digitados.', 'error');
+          mostrarMensagemEmpreendedor('⚠️ CPF inválido! Verifique os números.', 'error');
         } else {
-          // CPF válido - limpar mensagem de erro
-          if (formMessageEmpreendedor) {
+          if (formMessageEmpreendedor && formMessageEmpreendedor.classList.contains('error')) {
             formMessageEmpreendedor.textContent = '';
             formMessageEmpreendedor.className = 'form-message hidden';
           }
@@ -232,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       if (value.length <= 13) {
-        // Formato: +55 (11) 99999-9999
         value = value.replace(/^(\d{2})(\d{2})(\d)/, '+$1 ($2) $3');
         value = value.replace(/(\d{5})(\d)/, '$1-$2');
         e.target.value = value;
@@ -252,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
-  // MÁSCARAS E NAVEGAÇÃO - DATA DE NASCIMENTO
+  // MÁSCARAS E NAVEGAÇÃO - DATA DE NASCIMENTO (EMPREENDEDOR)
   // ============================================
 
   const diaInputEmp = document.getElementById('diaEmp');
@@ -338,12 +345,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
-  // BUSCAR CEP - CLIENTES
+  // BUSCAR CEP - CLIENTE
   // ============================================
 
-  if (btnCepCliente && cepInput) {
+  if (btnCepCliente && cepInputCliente) {
     btnCepCliente.addEventListener('click', async function() {
-      const cep = cepInput.value.replace(/\D/g, '');
+      const cep = cepInputCliente.value.replace(/\D/g, '');
       
       if (cep.length !== 8) {
         mostrarMensagemCliente('⚠️ CEP inválido! Digite 8 dígitos.', 'error');
@@ -358,7 +365,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (btnLoading) btnLoading.classList.add('active');
 
       try {
-        console.log('🔍 Buscando CEP:', cep);
+        console.log('🔍 Buscando CEP Cliente:', cep);
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
 
@@ -367,17 +374,17 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
 
-        const ruaInput = document.getElementById('rua');
-        const bairroInput = document.getElementById('bairro');
-        const cidadeInput = document.getElementById('cidade');
-        const estadoInputFill = document.getElementById('estado');
+        const ruaInput = document.getElementById('ruaCliente');
+        const bairroInput = document.getElementById('bairroCliente');
+        const cidadeInput = document.getElementById('cidadeCliente');
+        const estadoInput = document.getElementById('estadoCliente');
         
         if (ruaInput) ruaInput.value = data.logradouro || '';
         if (bairroInput) bairroInput.value = data.bairro || '';
         if (cidadeInput) cidadeInput.value = data.localidade || '';
-        if (estadoInputFill) estadoInputFill.value = data.uf || '';
+        if (estadoInput) estadoInput.value = data.uf || '';
         
-        const numeroInput = document.getElementById('numero');
+        const numeroInput = document.getElementById('numeroCliente');
         if (numeroInput) numeroInput.focus();
         
         mostrarMensagemCliente('✅ Endereço encontrado!', 'success');
@@ -415,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (btnLoading) btnLoading.classList.add('active');
 
       try {
-        console.log('🔍 Buscando CEP:', cep);
+        console.log('🔍 Buscando CEP Empreendedor:', cep);
         const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
         const data = await response.json();
 
@@ -424,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
 
-        const estadoSelect = document.getElementById('estadoEmp');
+        const estadoSelect = document.getElementById('estadoEmpEnd');
         const cidadeInput = document.getElementById('cidadeEmp');
         const bairroInput = document.getElementById('bairroEmp');
         const ruaInput = document.getElementById('ruaEmp');
@@ -452,42 +459,42 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
-  // SUBMIT FORMULÁRIO - CLIENTES
+  // SUBMIT FORMULÁRIO - CLIENTE VIP
   // ============================================
 
   if (formCliente) {
     formCliente.addEventListener('submit', async function(e) {
       e.preventDefault();
 
-      console.log('📝 Formulário CLIENTE submetido');
+      console.log('📝 Formulário CLIENTE VIP submetido');
 
       if (formMessageCliente) {
         formMessageCliente.textContent = '';
         formMessageCliente.className = 'form-message hidden';
       }
 
-      const nome = document.getElementById('nome')?.value.trim();
-      const cpf = document.getElementById('cpf')?.value.trim();
-      const dataNascimento = document.getElementById('dataNascimento')?.value;
-      const celular = document.getElementById('celular')?.value.trim();
-      const email = document.getElementById('email')?.value.trim();
-      const senha = document.getElementById('senha')?.value;
-      const cep = document.getElementById('cep')?.value.trim();
-      const rua = document.getElementById('rua')?.value.trim();
-      const numero = document.getElementById('numero')?.value.trim();
-      const complemento = document.getElementById('complemento')?.value.trim();
-      const bairro = document.getElementById('bairro')?.value.trim();
-      const cidade = document.getElementById('cidade')?.value.trim();
-      const estado = document.getElementById('estado')?.value.trim();
+      const nome = document.getElementById('nomeCliente')?.value.trim();
+      const cpf = document.getElementById('cpfCliente')?.value.trim();
+      const dataNascimento = document.getElementById('dataNascimentoCliente')?.value;
+      const celular = document.getElementById('celularCliente')?.value.trim();
+      const email = document.getElementById('emailCliente')?.value.trim();
+      const senha = document.getElementById('senhaCliente')?.value;
+      const cep = document.getElementById('cepCliente')?.value.trim();
+      const rua = document.getElementById('ruaCliente')?.value.trim();
+      const numero = document.getElementById('numeroCliente')?.value.trim();
+      const complemento = document.getElementById('complementoCliente')?.value.trim();
+      const bairro = document.getElementById('bairroCliente')?.value.trim();
+      const cidade = document.getElementById('cidadeCliente')?.value.trim();
+      const estado = document.getElementById('estadoCliente')?.value.trim();
 
       // Validações
       if (!nome || !cpf || !dataNascimento || !celular || !email || !senha) {
-        mostrarMensagemCliente('⚠️ Por favor, preencha todos os campos obrigatórios!', 'error');
+        mostrarMensagemCliente('⚠️ Preencha todos os campos obrigatórios!', 'error');
         return;
       }
 
       if (!cep || !rua || !numero || !bairro || !cidade || !estado) {
-        mostrarMensagemCliente('⚠️ Por favor, complete o endereço!', 'error');
+        mostrarMensagemCliente('⚠️ Complete o endereço!', 'error');
         return;
       }
 
@@ -498,18 +505,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       if (senha.length < 6) {
-        mostrarMensagemCliente('⚠️ A senha deve ter no mínimo 6 caracteres!', 'error');
+        mostrarMensagemCliente('⚠️ Senha deve ter no mínimo 6 caracteres!', 'error');
         return;
       }
 
       if (typeof supabase === 'undefined') {
-        console.error('❌ Supabase não está definido!');
-        mostrarMensagemCliente('❌ Erro de configuração. Entre em contato com o suporte.', 'error');
+        console.error('❌ Supabase não definido!');
+        mostrarMensagemCliente('❌ Erro de configuração.', 'error');
         return;
       }
 
       // Loading
-      mostrarMensagemCliente('⏳ Processando seu cadastro...', '');
+      mostrarMensagemCliente('⏳ Processando cadastro...', '');
       btnSubmitCliente.disabled = true;
       const submitText = btnSubmitCliente.querySelector('.btn-text');
       const submitLoading = btnSubmitCliente.querySelector('.btn-loading');
@@ -518,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (submitLoading) submitLoading.classList.add('active');
 
       try {
-        console.log('💾 Salvando CLIENTE no banco de dados...');
+        console.log('💾 Salvando CLIENTE no banco...');
         
         const { data: result, error } = await supabase
           .from('clientes')
@@ -539,13 +546,11 @@ document.addEventListener('DOMContentLoaded', function() {
           }])
           .select();
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
         console.log('✅ Cliente cadastrado:', result);
         
-        // Enviar email via Edge Function
+        // Enviar emails
         console.log('📧 Enviando emails...');
         try {
           const emailResponse = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/email-cadastro-cliente-amway', {
@@ -572,36 +577,32 @@ document.addEventListener('DOMContentLoaded', function() {
           });
           
           if (emailResponse.ok) {
-            console.log('✅ Emails enviados com sucesso!');
+            console.log('✅ Emails enviados!');
           } else {
-            console.warn('⚠️ Erro ao enviar emails (não bloqueante)');
+            console.warn('⚠️ Erro ao enviar emails');
           }
         } catch (emailError) {
-          console.warn('⚠️ Erro ao enviar emails:', emailError);
+          console.warn('⚠️ Erro emails:', emailError);
         }
         
         mostrarMensagemCliente('✅ Cadastro realizado com sucesso! 🎉', 'success');
-
         formCliente.reset();
 
-        // Fechar modal após 3 segundos (SEM redirecionar)
         setTimeout(() => {
           fecharModalCliente();
         }, 3000);
 
       } catch (error) {
-        console.error('❌ Erro no cadastro CLIENTE:', error);
+        console.error('❌ Erro cadastro CLIENTE:', error);
         
         btnSubmitCliente.disabled = false;
         if (submitText) submitText.classList.remove('hidden');
         if (submitLoading) submitLoading.classList.remove('active');
         
         if (error.message && (error.message.includes('duplicate') || error.message.includes('unique'))) {
-          mostrarMensagemCliente('⚠️ Este CPF ou email já está cadastrado!', 'error');
-        } else if (error.message && error.message.includes('network')) {
-          mostrarMensagemCliente('⚠️ Erro de conexão. Verifique sua internet.', 'error');
+          mostrarMensagemCliente('⚠️ CPF ou email já cadastrado!', 'error');
         } else {
-          mostrarMensagemCliente('❌ Erro ao realizar cadastro. Tente novamente.', 'error');
+          mostrarMensagemCliente('❌ Erro ao cadastrar. Tente novamente.', 'error');
         }
       }
     });
@@ -625,7 +626,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const nome = document.getElementById('nomeEmp')?.value.trim();
       const cpf = document.getElementById('cpfEmp')?.value.trim();
       
-      // Capturar dia, mês e ano separados
+      // Data em 3 campos
       const dia = document.getElementById('diaEmp')?.value;
       const mes = document.getElementById('mesEmp')?.value;
       const ano = document.getElementById('anoEmp')?.value;
@@ -640,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const valorKit = kitSelecionado?.dataset.valor;
       
       const cep = document.getElementById('cepEmp')?.value.trim();
-      const estado = document.getElementById('estadoEmp')?.value;
+      const estado = document.getElementById('estadoEmpEnd')?.value;
       const cidade = document.getElementById('cidadeEmp')?.value.trim();
       const bairro = document.getElementById('bairroEmp')?.value.trim();
       const rua = document.getElementById('ruaEmp')?.value.trim();
@@ -649,49 +650,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Validações
       if (!nome || !cpf || !dia || !mes || !ano || !celular || !email || !senha) {
-        mostrarMensagemEmpreendedor('⚠️ Por favor, preencha todos os campos obrigatórios!', 'error');
+        mostrarMensagemEmpreendedor('⚠️ Preencha todos os campos obrigatórios!', 'error');
         return;
       }
 
       // Validar CPF
       const cpfLimpo = cpf.replace(/\D/g, '');
       if (!validarCPF(cpfLimpo)) {
-        mostrarMensagemEmpreendedor('⚠️ CPF inválido! Verifique os números digitados.', 'error');
+        mostrarMensagemEmpreendedor('⚠️ CPF inválido!', 'error');
         return;
       }
 
-      // Validar data de nascimento
+      // Validar data
       const diaNum = parseInt(dia);
       const mesNum = parseInt(mes);
       const anoNum = parseInt(ano);
 
       if (diaNum < 1 || diaNum > 31) {
-        mostrarMensagemEmpreendedor('⚠️ Dia inválido! Digite um valor entre 1 e 31.', 'error');
+        mostrarMensagemEmpreendedor('⚠️ Dia inválido (1-31)!', 'error');
         return;
       }
 
       if (mesNum < 1 || mesNum > 12) {
-        mostrarMensagemEmpreendedor('⚠️ Mês inválido! Digite um valor entre 1 e 12.', 'error');
+        mostrarMensagemEmpreendedor('⚠️ Mês inválido (1-12)!', 'error');
         return;
       }
 
       if (anoNum < 1900 || anoNum > 2010) {
-        mostrarMensagemEmpreendedor('⚠️ Ano inválido! Digite um ano entre 1900 e 2010.', 'error');
+        mostrarMensagemEmpreendedor('⚠️ Ano inválido (1900-2010)!', 'error');
         return;
       }
 
-      // Montar data no formato YYYY-MM-DD (formato do banco)
+      // Montar data YYYY-MM-DD
       const mesFormatado = mesNum.toString().padStart(2, '0');
       const diaFormatado = diaNum.toString().padStart(2, '0');
       const dataNascimento = `${anoNum}-${mesFormatado}-${diaFormatado}`;
 
       if (!tipoKit || !valorKit) {
-        mostrarMensagemEmpreendedor('⚠️ Por favor, selecione um kit!', 'error');
+        mostrarMensagemEmpreendedor('⚠️ Selecione um kit!', 'error');
         return;
       }
 
       if (!cep || !estado || !cidade || !bairro || !rua || !numero) {
-        mostrarMensagemEmpreendedor('⚠️ Por favor, complete o endereço!', 'error');
+        mostrarMensagemEmpreendedor('⚠️ Complete o endereço!', 'error');
         return;
       }
 
@@ -702,18 +703,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       if (senha.length < 6) {
-        mostrarMensagemEmpreendedor('⚠️ A senha deve ter no mínimo 6 caracteres!', 'error');
+        mostrarMensagemEmpreendedor('⚠️ Senha mínimo 6 caracteres!', 'error');
         return;
       }
 
       if (typeof supabase === 'undefined') {
-        console.error('❌ Supabase não está definido!');
-        mostrarMensagemEmpreendedor('❌ Erro de configuração. Entre em contato com o suporte.', 'error');
+        console.error('❌ Supabase não definido!');
+        mostrarMensagemEmpreendedor('❌ Erro de configuração.', 'error');
         return;
       }
 
       // Loading
-      mostrarMensagemEmpreendedor('⏳ Processando seu cadastro...', '');
+      mostrarMensagemEmpreendedor('⏳ Processando cadastro...', '');
       btnSubmitEmpreendedor.disabled = true;
       const submitText = btnSubmitEmpreendedor.querySelector('.btn-text');
       const submitLoading = btnSubmitEmpreendedor.querySelector('.btn-loading');
@@ -722,9 +723,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (submitLoading) submitLoading.classList.add('active');
 
       try {
-        console.log('💾 Salvando EMPREENDEDOR no banco de dados...');
-        console.log('📦 Kit selecionado:', tipoKit, '- Valor:', valorKit);
-        console.log('📅 Data de nascimento:', dataNascimento);
+        console.log('💾 Salvando EMPREENDEDOR no banco...');
+        console.log('📦 Kit:', tipoKit, '- Valor:', valorKit);
+        console.log('📅 Data:', dataNascimento);
         
         const { data: result, error } = await supabase
           .from('empreendedores_amway')
@@ -749,13 +750,11 @@ document.addEventListener('DOMContentLoaded', function() {
           }])
           .select();
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
         console.log('✅ Empreendedor cadastrado:', result);
         
-        // Enviar email via Edge Function
+        // Enviar emails
         console.log('📧 Enviando emails...');
         try {
           const emailResponse = await fetch('https://zofxhfbjgvpbqjtlkbbk.supabase.co/functions/v1/email-cadastro-empreendedor-amway', {
@@ -786,36 +785,32 @@ document.addEventListener('DOMContentLoaded', function() {
           });
           
           if (emailResponse.ok) {
-            console.log('✅ Emails enviados com sucesso!');
+            console.log('✅ Emails enviados!');
           } else {
-            console.warn('⚠️ Erro ao enviar emails (não bloqueante)');
+            console.warn('⚠️ Erro ao enviar emails');
           }
         } catch (emailError) {
-          console.warn('⚠️ Erro ao enviar emails:', emailError);
+          console.warn('⚠️ Erro emails:', emailError);
         }
         
-        mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso! Bem-vindo ao time Amway! 🎉', 'success');
-
+        mostrarMensagemEmpreendedor('✅ Cadastro realizado! Bem-vindo ao time Amway! 🎉', 'success');
         formEmpreendedor.reset();
 
-        // Fechar modal após 3 segundos (SEM redirecionar)
         setTimeout(() => {
           fecharModalEmpreendedor();
         }, 3000);
 
       } catch (error) {
-        console.error('❌ Erro no cadastro EMPREENDEDOR:', error);
+        console.error('❌ Erro cadastro EMPREENDEDOR:', error);
         
         btnSubmitEmpreendedor.disabled = false;
         if (submitText) submitText.classList.remove('hidden');
         if (submitLoading) submitLoading.classList.remove('active');
         
         if (error.message && (error.message.includes('duplicate') || error.message.includes('unique'))) {
-          mostrarMensagemEmpreendedor('⚠️ Este CPF ou email já está cadastrado!', 'error');
-        } else if (error.message && error.message.includes('network')) {
-          mostrarMensagemEmpreendedor('⚠️ Erro de conexão. Verifique sua internet.', 'error');
+          mostrarMensagemEmpreendedor('⚠️ CPF ou email já cadastrado!', 'error');
         } else {
-          mostrarMensagemEmpreendedor('❌ Erro ao realizar cadastro. Tente novamente.', 'error');
+          mostrarMensagemEmpreendedor('❌ Erro ao cadastrar. Tente novamente.', 'error');
         }
       }
     });
@@ -858,14 +853,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
-  // LOG INICIAL
+  // LOG FINAL
   // ============================================
 
-  console.log('🚀 Script carregado com sucesso! v3');
-  console.log('✅ Modal CLIENTE encontrado:', modalCliente ? 'SIM' : 'NÃO');
-  console.log('✅ Modal EMPREENDEDOR encontrado:', modalEmpreendedor ? 'SIM' : 'NÃO');
-  console.log('✅ Botão Opção 1 encontrado:', btnOpcao1 ? 'SIM' : 'NÃO');
-  console.log('✅ Botão Opção 2 encontrado:', btnOpcao2 ? 'SIM' : 'NÃO');
-  console.log('✅ Supabase configurado:', typeof supabase !== 'undefined' ? 'SIM' : 'NÃO');
+  console.log('✅ Script carregado! v4');
+  console.log('✅ Supabase:', typeof supabase !== 'undefined' ? 'OK' : 'ERRO');
 
 });
