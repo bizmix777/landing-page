@@ -176,16 +176,19 @@
                     <!-- DETALHES C6 -->
                     <div class="payment-details active" id="detailsC6">
                         <p style="margin-bottom: 10px; font-weight: bold;">Escaneie o QR Code (C6 Bank):</p>
-                        <img src="/somos-todos-um/images/qrcode-c6.png" alt="QR Code PIX C6" class="pix-qrcode">
+                        
+                        <!-- ESTILO FORÇADO DIRETO NA TAG PARA GARANTIR QUE APAREÇA -->
+                        <img src="images/qrcode-c6.png" alt="QR Code PIX C6" class="pix-qrcode" style="width: 180px; height: 180px; display: block; margin: 0 auto 15px; border-radius: 10px; border: 4px solid #fff;">
                         
                         <p style="margin-bottom: 5px; font-size: 0.9rem;">Ou use o Pix Copia e Cola:</p>
                         
-                        <!-- Input escondido C6 -->
                         <input type="text" id="pixCopiaColaInput" value="https://cobranca.c6pix.com.br/01KHKDY3Q1MEJ0E5M427D13D40" style="position:absolute; opacity:0; z-index:-1;">
                         
-                        <button type="button" onclick="copiarPixC6()" class="btn-copy-pix" style="background: #D4AF37; color: #1A1A2E;">
+                        <button type="button" onclick="copiarPixC6()" class="btn-copy-pix" style="background: #D4AF37; color: #1A1A2E; width: 100%; padding: 12px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
                             <span id="btnTextC6">📑 Copiar Código PIX</span>
                         </button>
+                        
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">Após o pagamento, envie o comprovante no WhatsApp.</p>
                     </div>
 
                     <!-- DETALHES INFINITEPAY -->
