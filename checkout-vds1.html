@@ -257,27 +257,38 @@
                         </div>
                     </div>
 
-                    <!-- DETALHES PIX INFINITEPAY -->
-                    <div class="payment-details" id="detailsInfinite">
-                        <div class="pix-container">
-                            <p style="margin-bottom: 10px; font-weight: bold;">Pagar via InfinitePay:</p>
-                            
-                            <!-- IMAGEM INFINITEPAY -->
-                            <img src="/somos-todos-um/images/infinitypay-somos.png" alt="InfinitePay" class="pix-qrcode" style="border-color: #00D775;">
-                            
-                            <p style="margin-bottom: 15px; font-size: 0.9rem;">Clique no botão abaixo para abrir o pagamento seguro:</p>
-                            
-                            <!-- LINK INFINITEPAY -->
-                            <a href="https://link.infinitepay.io/bizmix/VC1D-7I8R99g9od-29,90" target="_blank" class="btn-infinite">
-                                <span>Pagar Agora</span>
-                                <span>➡️</span>
-                            </a>
-                            
-                            <p style="margin-top: 15px; font-size: 0.85rem; color: #666;">
-                                Você será redirecionado para o ambiente seguro da InfinitePay.
-                            </p>
-                        </div>
-                    </div>
+<!-- DETALHES PIX INFINITEPAY -->
+<div class="payment-details" id="detailsInfinite">
+    <div class="pix-container">
+        <p style="margin-bottom: 10px; font-weight: bold;">Pagar via InfinitePay:</p>
+        
+        <!-- IMAGEM INFINITEPAY -->
+        <img src="/somos-todos-um/images/infinitypay-stu.png" alt="InfinitePay" class="pix-qrcode" style="border-color: #00D775;">
+        
+        <!-- ÁREA DO PIX COPIA E COLA -->
+        <p style="margin-bottom: 10px; font-size: 0.9rem;">Copie o código Pix abaixo:</p>
+        
+        <!-- CÓDIGO GIGANTE -->
+        <input type="text" id="pixInfiniteInput" value="00020101021226780014BR.GOV.BCB.PIX01363a51033e-3e1e-4f97-9fa3-9470e2b9c9c80216Pagamento bizmix520400005303986540529.905802BR5923HENRIQUE GOMES DA SILVA6008ANAPOLIS62290525QRCCOYGZlUwoRypvKcyJfbscE630437B0" style="position:absolute; opacity:0; z-index:-1;">
+        
+        <!-- BOTÃO COPIAR -->
+        <button type="button" onclick="copiarPixInfinite()" class="btn-copy-pix" style="background: #00D775; color: #000; margin-bottom: 15px;">
+            <span id="btnTextInfinite">📑 Copiar Código PIX</span>
+        </button>
+        
+        <!-- LINK DE PAGAMENTO -->
+        <p style="margin-bottom: 10px; font-size: 0.9rem;">Ou pague pelo Link Seguro:</p>
+        
+        <a href="https://link.infinitepay.io/bizmix/VC1D-7I8R99g9od-29,90" target="_blank" class="btn-infinite">
+            <span>Ir para Link de Pagamento</span>
+            <span>➡️</span>
+        </a>
+        
+        <p style="margin-top: 15px; font-size: 0.85rem; color: #666;">
+            Você será redirecionado para o ambiente seguro da InfinitePay.
+        </p>
+    </div>
+</div>
 
                 </div>
 
