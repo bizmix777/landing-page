@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Somos Todos Um</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+    
+    <!-- Supabase Config Centralizado -->
+    <script src="/somos-todos-um/js/supabase-config.js"></script>
+    
+    <style>
+        /* =================================== VARIÁVEIS CSS =================================== */
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent: #f093fb;
+            --dark-bg: #1a1a2e;
+            --light-bg: #f8f9fa;
+            --white: #ffffff;
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --success: #28a745;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --transition: all 0.3s ease;
+        }
+
+        /* =================================== RESET E BASE =================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--light-bg);
+        }
+        h1, h2, h3 { font-weight: 700; line-height: 1.2; margin-bottom: var(--spacing-sm); }
+        img { max-width: 100%; height: auto; display: block; }
+
+        /* =================================== CONTAINER =================================== */
+        .checkout-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .checkout-form, .order-summary {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .form-section:last-child { border-bottom: none; }
+        .form-section h2 { color: var(--primary-color); font-size: 1.5rem; margin-bottom: 1.5rem; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* Personalização e Radio Buttons */
+        .radio-option, .gift-checkbox {
+            display: flex; align-items: center; padding: 1rem;
+            border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; margin-bottom: 1rem;
+        }
+        .radio-option:hover { border-color: var(--primary-color); }
+        .radio-option.selected { border-color: var(--primary-color); background: rgba(102, 126, 234, 0.1); }
+        .radio-option input, .gift-checkbox input { width: auto; margin-right: 1rem; }
+        .gift-details { display: none; margin-top: 1rem; padding: 1rem; background: var(--light-bg); border-radius: 8px; }
+        .gift-details.active { display: block; }
+
+        /* ================= PAGAMENTO (MODIFICADO) ================= */
+        .payment-methods { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .payment-option {
+            flex: 1; padding: 1rem; border: 2px solid #e2e8f0; border-radius: 8px;
+            text-align: center; cursor: pointer; transition: var(--transition);
+        }
+        .payment-option.active { border-color: var(--primary-color); background: rgba(102, 126, 234, 0.1); }
+        .payment-option input { display: none; }
+
+        .payment-details { display: none; padding: 1.5rem; background: var(--light-bg); border-radius: 8px; text-align: center; }
+        .payment-details.active { display: block; animation: fadeIn 0.5s; }
+
+        /* Estilo do PIX C6 */
+        .pix-container { text-align: center; }
+        .pix-qrcode { 
+            width: 180px; height: 180px; margin: 0 auto 15px; 
+            border: 4px solid #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-copy-pix {
+            background: #D4AF37; color: #1A1A2E; border: none; padding: 12px 24px;
+            border-radius: 50px; font-weight: bold; cursor: pointer; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 1rem; transition: transform 0.2s;
+        }
+        .btn-copy-pix:active { transform: scale(0.98); }
+
+        /* Estilo InfinitePay */
+        .btn-infinite {
+            display: inline-block; background: #00D775; color: #000; text-decoration: none;
+            padding: 15px 30px; border-radius: 50px; font-weight: bold; font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 215, 117, 0.3); transition: transform 0.2s;
+        }
+        .btn-infinite:hover { transform: translateY(-2px); }
+
+        /* Botão Finalizar */
+        .btn-submit {
+            width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--white); border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700;
+            cursor: pointer; margin-top: 2rem; transition: var(--transition);
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3); }
+
+        /* Resumo Lateral */
+        .order-summary { position: sticky; top: 2rem; height: fit-content; }
+        .product-image { width: 100%; border-radius: 8px; margin-bottom: 1rem; }
+        .order-item { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+        .order-item.total { font-size: 1.25rem; font-weight: 700; color: var(--primary-color); border-top: 2px solid #e2e8f0; padding-top: 1rem; }
+
+        /* Loading */
+        .loading-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; color: white;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.3); border-top-color: var(--white); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .checkout-container { grid-template-columns: 1fr; }
+            .order-summary { order: -1; position: static; }
+            .form-row, .payment-methods { grid-template-columns: 1fr; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Processando seu pedido...</p>
+    </div>
+
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <h1>Finalizar Compra</h1>
+            
+            <form id="checkoutForm">
+                <!-- Seus Dados -->
+                <div class="form-section">
+                    <h2>Seus Dados</h2>
+                    <div class="form-group">
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp">WhatsApp (com DDD) *</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000" required>
+                    </div>
+                </div>
+
+                <!-- Endereço -->
+                <div class="form-section">
+                    <h2>Endereço de Entrega</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label for="cep">CEP</label><input type="text" id="cep" name="cep"></div>
+                        <div class="form-group"><label for="cidade">Cidade</label><input type="text" id="cidade" name="cidade"></div>
+                    </div>
+                    <div class="form-group"><label for="endereco">Endereço e Número</label><input type="text" id="endereco" name="endereco"></div>
+                    <div class="form-group"><label for="bairro">Bairro</label><input type="text" id="bairro" name="bairro"></div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado"><option value="">Selecione</option><option value="SP">SP</option><option value="RJ">RJ</option><option value="MG">MG</option><option value="GO">GO</option><option value="DF">DF</option><option value="RS">RS</option><option value="PR">PR</option><option value="SC">SC</option><option value="BA">BA</option><option value="PE">PE</option><option value="CE">CE</option><!-- Adicione outros estados --></select>
+                    </div>
+                </div>
+
+                <!-- Personalização -->
+                <div class="form-section">
+                    <h2>Personalização do Rodapé</h2>
+                    <label class="radio-option selected"><input type="radio" name="rodape" value="padrao" checked> <strong>Padrão</strong></label>
+                    <label class="radio-option"><input type="radio" name="rodape" value="nome"> <strong>Apenas Nome</strong></label>
+                    <label class="radio-option"><input type="radio" name="rodape" value="nome_data"> <strong>Nome e Data</strong></label>
+                </div>
+
+                <!-- Presente -->
+                <div class="form-section">
+                    <label class="gift-checkbox"><input type="checkbox" id="isPresente"> <span>É para presente?</span></label>
+                    <div class="gift-details" id="giftDetails">
+                        <div class="form-group"><label>Nome Destinatário</label><input type="text" id="nomeDestinatario"></div>
+                        <div class="form-group"><label>Mensagem Rodapé</label><textarea id="rodapePersonalizado"></textarea></div>
+                    </div>
+                </div>
+
+                <!-- PAGAMENTO -->
+                <div class="form-section">
+                    <h2>Forma de Pagamento</h2>
+                    
+                    <div class="payment-methods">
+                        <label class="payment-option active" id="optPix">
+                            <input type="radio" name="pagamento" value="pix" checked>
+                            <strong>💳 Pix (C6 Bank)</strong>
+                        </label>
+
+                        <label class="payment-option" id="optCartao">
+                            <input type="radio" name="pagamento" value="cartao">
+                            <strong>💳 Cartão (InfinitePay)</strong>
+                        </label>
+                    </div>
+
+                    <!-- DETALHES PIX C6 -->
+                    <div class="payment-details active" id="pixDetails">
+                        <div class="pix-container">
+                            <p style="margin-bottom: 10px; font-weight: bold;">Escaneie o QR Code no app do seu banco:</p>
+                            
+                            <!-- ⚠️ COLOQUE SUA IMAGEM AQUI -->
+                            <img src="images/qrcode-c6.png" alt="QR Code PIX C6" class="pix-qrcode">
+                            
+                            <p style="margin-bottom: 10px; font-size: 0.9rem;">Ou use o Pix Copia e Cola:</p>
+                            
+                            <!-- ⚠️ COLOQUE O CÓDIGO GIGANTE AQUI NO VALUE -->
+                            <input type="text" id="pixCopiaColaInput" value="00020126580014br.gov.bcb.pix0136123e4567-e89b-12d3-a456-426614174000520400005303986540529.905802BR5913HENRIQUE6008BRASILIA62070503***6304ABCD" style="position:absolute; opacity:0; z-index:-1;">
+                            
+                            <button type="button" onclick="copiarPix()" class="btn-copy-pix">
+                                <span id="btnText">📑 Copiar Código PIX</span>
+                            </button>
+                            
+                            <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">Após o pagamento, envie o comprovante no WhatsApp.</p>
+                        </div>
+                    </div>
+
+                    <!-- DETALHES INFINITEPAY -->
+                    <div class="payment-details" id="cartaoDetails">
+                        <p style="margin-bottom: 15px;">Clique no botão abaixo para pagar com segurança via InfinitePay:</p>
+                        
+                        <!-- ⚠️ COLOQUE SEU LINK INFINITEPAY AQUI -->
+                        <a href="https://pay.infinitepay.io/SEU_LINK_AQUI" target="_blank" class="btn-infinite">
+                            Ir para Pagamento Seguro 🔒
+                        </a>
+                        
+                        <p style="margin-top: 15px; font-size: 0.85rem; color: #666;">
+                            Você será redirecionado para finalizar o pagamento.
+                        </p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Confirmar Pedido</button>
+            </form>
+        </div>
+
+        <!-- Resumo Lateral -->
+        <div class="order-summary">
+            <h2>Resumo</h2>
+            <div class="product-info">
+                <img src="/somos-todos-um/images/capa_checkout.jpg" alt="Capa" class="product-image">
+                <h3>Livro: Somos Todos Um</h3>
+                <p>Edição Digital + Bônus</p>
+            </div>
+            <div class="order-item total">
+                <span>Total:</span>
+                <span>R$ 29,90</span>
+            </div>
+            <p style="font-size: 0.8rem; text-align: center; color: #718096; margin-top: 1rem;">
+                🔒 Ambiente 100% Seguro
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // MÁSCARAS E CEP
+        document.getElementById('whatsapp').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+            if (v.length > 9) v = `${v.slice(0,10)}-${v.slice(10)}`;
+            e.target.value = v;
+        });
+
+        document.getElementById('cep').addEventListener('blur', async function() {
+            const cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                try {
+                    const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await req.json();
+                    if (!data.erro) {
+                        document.getElementById('endereco').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('estado').value = data.uf;
+                    }
+                } catch(e) {}
+            }
+        });
+
+        // INTERATIVIDADE UI
+        document.getElementById('isPresente').addEventListener('change', function() {
+            document.getElementById('giftDetails').classList.toggle('active', this.checked);
+        });
+
+        document.querySelectorAll('input[name="rodape"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+                this.closest('.radio-option').classList.add('selected');
+            });
+        });
+
+        // TROCA DE ABAS DE PAGAMENTO
+        document.querySelectorAll('input[name="pagamento"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('active'));
+                this.closest('.payment-option').classList.add('active');
+                
+                document.getElementById('pixDetails').classList.remove('active');
+                document.getElementById('cartaoDetails').classList.remove('active');
+                
+                if(this.value === 'pix') document.getElementById('pixDetails').classList.add('active');
+                else document.getElementById('cartaoDetails').classList.add('active');
+            });
+        });
+
+        // FUNÇÃO COPIAR PIX
+        function copiarPix() {
+            var copyText = document.getElementById("pixCopiaColaInput");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            
+            navigator.clipboard.writeText(copyText.value).then(function() {
+                var btn = document.querySelector('.btn-copy-pix');
+                var txt = document.getElementById('btnText');
+                var original = txt.innerText;
+                
+                btn.style.background = '#28A745';
+                btn.style.color = '#FFF';
+                txt.innerText = '✅ CÓDIGO COPIADO!';
+                if (navigator.vibrate) navigator.vibrate(50);
+                
+                setTimeout(() => {
+                    btn.style.background = '#D4AF37';
+                    btn.style.color = '#1A1A2E';
+                    txt.innerText = original;
+                }, 3000);
+            }, function() { alert("Copie manualmente o código."); });
+        }
+
+        // SUBMIT DO FORMULÁRIO
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const loading = document.querySelector('.loading-overlay');
+            loading.classList.add('active');
+
+            try {
+                // Prepara dados
+                let rodape = document.querySelector('input[name="rodape"]:checked').value;
+                const isPresente = document.getElementById('isPresente').checked;
+                let textoRodape = null;
+
+                if (isPresente && document.getElementById('rodapePersonalizado').value) {
+                    rodape = 'personalizado';
+                    textoRodape = document.getElementById('rodapePersonalizado').value;
+                }
+
+                const formData = {
+                    nome_comprador: document.getElementById('nome').value,
+                    email_comprador: document.getElementById('email').value,
+                    whatsapp_comprador: document.getElementById('whatsapp').value,
+                    cep_comprador: document.getElementById('cep').value,
+                    endereco_comprador: document.getElementById('endereco').value,
+                    cidade_comprador: document.getElementById('cidade').value,
+                    estado_comprador: document.getElementById('estado').value,
+                    preferencia_rodape: rodape,
+                    texto_rodape: textoRodape,
+                    is_presente: isPresente,
+                    nome_destinatario: document.getElementById('nomeDestinatario').value,
+                    forma_pagamento: document.querySelector('input[name="pagamento"]:checked').value,
+                    valor_total: 29.90,
+                    status_pagamento: 'pendente',
+                    produto_id: '1f19140d-d466-4d14-b64c-c6c2ae9c22df'
+                };
+
+                // Envia para Supabase
+                const data = await supabaseFetch('vendas', {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
+                });
+
+                // Sucesso! Redireciona ou Avisa
+                loading.classList.remove('active');
+                
+                if (formData.forma_pagamento === 'cartao') {
+                    // Se for cartão, clica no link do infinitepay automaticamente ou avisa
+                    const linkInfinite = document.querySelector('.btn-infinite').href;
+                    if(confirm("Pedido registrado! Vamos te levar para o pagamento seguro no InfinitePay agora.")) {
+                        window.location.href = linkInfinite;
+                    }
+                } else {
+                    // Se for PIX
+                    alert("Pedido Registrado! Por favor, realize o pagamento pelo QR Code abaixo.");
+                    document.getElementById('pixDetails').scrollIntoView({behavior: 'smooth'});
+                }
+
+            } catch (error) {
+                loading.classList.remove('active');
+                console.error(error);
+                alert('Erro ao registrar pedido. Tente novamente ou chame no WhatsApp.');
+            }
+        });
+    </script>
+</body>
+</html>
