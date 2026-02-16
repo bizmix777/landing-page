@@ -228,3 +228,44 @@ window.addEventListener('scroll', function() {
 console.log('%c🎉 Bem-vindo à Landing Page "Somos Todos Um"!', 'color: #D4AF37; font-size: 20px; font-weight: bold;');
 console.log('%cDesenvolvido com ❤️ por Henrique - BizMix', 'color: #2C5F7C; font-size: 14px;');
 console.log('%c📧 Contato: contato@bizmix.com.br', 'color: #666; font-size: 12px;');
+
+// ===================================
+// FUNÇÃO PIX INFINITEPAY (CHECKOUT)
+// ===================================
+
+function copiarPixInfinite() {
+    // Pega o input que tem o código gigante
+    var copyText = document.getElementById("pixInfiniteInput");
+    
+    // Se o elemento não existir na página (ex: estamos na home), para por aqui
+    if (!copyText) return;
+
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /* Para mobile */
+    
+    navigator.clipboard.writeText(copyText.value).then(function() {
+        // Sucesso
+        var btn = document.querySelector('#detailsInfinite .btn-copy-pix');
+        var txt = document.getElementById('btnTextInfinite');
+        
+        if(btn && txt) {
+            var originalText = txt.innerText;
+            
+            // Muda a cor para verde
+            btn.style.background = '#28A745';
+            btn.style.color = '#FFFFFF';
+            txt.innerText = '✅ CÓDIGO COPIADO!';
+            
+            if (navigator.vibrate) navigator.vibrate(50);
+            
+            // Volta ao normal depois de 3 segundos
+            setTimeout(() => {
+                btn.style.background = '#00D775'; // Volta para o verde da InfinitePay
+                btn.style.color = '#000000';
+                txt.innerText = originalText;
+            }, 3000);
+        }
+    }, function() {
+        alert("Não foi possível copiar automaticamente. Selecione o código manualmente.");
+    });
+}
