@@ -346,7 +346,11 @@
                     produto_id: '1f19140d-d466-4d14-b64c-c6c2ae9c22df'
                 };
 
-                const data = await supabaseFetch('vendas', { method: 'POST', body: JSON.stringify(formData) });
+                // modificado para a linha abaixo em 18.02.2026
+                // const data = await supabaseFetch('vendas', { method: 'POST', body: JSON.stringify(formData) });
+                // loading.classList.remove('active');
+
+                 const data = await supabaseFetch('vendas_livro_py', { method: 'POST', body: JSON.stringify(formData) });
                 loading.classList.remove('active');
                 
                 if (formaPagto === 'pix_infinite') {
