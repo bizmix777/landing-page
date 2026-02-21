@@ -351,7 +351,8 @@
                 // loading.classList.remove('active');
 
                  const data = await supabaseFetch('vendas', { method: 'POST', body: JSON.stringify(formData) });
-                loading.classList.remove('active');
+                 loading.classList.remove('active');
+                 console.log("DADO SALVO:", data);
                 
                 if (formaPagto === 'pix_infinite') {
                     if(confirm("Pedido registrado! Vamos abrir o pagamento InfinitePay.")) {
