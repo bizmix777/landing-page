@@ -724,49 +724,59 @@
             } catch (error) { console.error(error); document.getElementById('adminsLoading').innerHTML = '<p style="color: #c00;">Erro ao carregar admins</p>'; }
         }
 
-        // --- AQUI ESTÁ A MUDANÇA IMPORTANTE (VENDAS) ---
-        async function carregarVendas() {
+                async function carregarVendas() {
             try {
-                // MODIFICADO: Busca status_pagamento também se existir, e pega mais campos
+                // 1. Busca as vendas
                 const { data: vendas, error } = await supabase
                     .from('vendas')
                     .select(`
                         id,
-                        produto_nome,
-                        valor,
-                        status,
+                        valor_total,
                         status_pagamento, 
                         email_comprador,
                         created_at,
-                        usuarios (nome)
+                        parceiro_id
                     `)
                     .order('created_at', { ascending: false })
                     .limit(20);
 
                 if (error) throw error;
 
-                const tbody = document.getElementById('vendasTableBody');
+                // 2. Busca os nomes dos parceiros (Gambiarra rápida para evitar erro de Foreign Key)
+                // Se a FK não estiver configurada no banco, isso resolve no código.
+                const parceiroIds = [...new Set(vendas.map(v => v.parceiro_id).filter(Boolean))];
+                let parceirosMap = {};
                 
-                // ATENÇÃO: Adicionei o cabeçalho 'Ações' na tabela HTML lá em cima se não tiver!
-                // Mas aqui vou injetar o HTML da linha
+                if (parceiroIds.length > 0) {
+                    const { data: parceiros } = await supabase
+                        .from('usuarios')
+                        .select('id, nome')
+                        .in('id', parceiroIds);
+                    
+                    if (parceiros) {
+                        parceiros.forEach(p => parceirosMap[p.id] = p.nome);
+                    }
+                }
+
+                const tbody = document.getElementById('vendasTableBody');
                 tbody.innerHTML = '';
 
                 if (vendas && vendas.length > 0) {
                     vendas.forEach(venda => {
-                        // Verifica o status REAL (usa status_pagamento se tiver, senão usa status)
-                        const statusReal = venda.status_pagamento || venda.status;
-                        const isPendente = statusReal === 'pendente';
+                        const status = venda.status_pagamento || 'pendente';
+                        const isPendente = status === 'pendente';
+                        const nomeParceiro = parceirosMap[venda.parceiro_id] || 'Venda Direta';
 
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td>
-                                <div>#${venda.id}</div>
+                                <div title="${venda.id}">#${venda.id.slice(0,8)}...</div>
                                 <div style="font-size:11px; color:#666;">${venda.email_comprador || 'Sem e-mail'}</div>
                             </td>
-                            <td>${venda.produto_nome || 'Livro Somos Todos Um'}</td>
-                            <td>${venda.usuarios?.nome || 'Venda Direta'}</td>
-                            <td>${formatarMoeda(venda.valor)}</td>
-                            <td><span class="status-badge ${getStatusClass(statusReal)}">${getStatusText(statusReal)}</span></td>
+                            <td>Livro Somos Todos Um</td>
+                            <td>${nomeParceiro}</td>
+                            <td>${formatarMoeda(venda.valor_total)}</td>
+                            <td><span class="status-badge ${getStatusClass(status)}">${getStatusText(status)}</span></td>
                             <td>${formatarData(venda.created_at)}</td>
                             <td>
                                 ${isPendente ? 
@@ -793,7 +803,7 @@
                 document.getElementById('vendasLoading').innerHTML = '<p style="color: #c00;">Erro ao carregar vendas</p>';
             }
         }
-
+        
         // --- NOVA FUNÇÃO: APROVAR VENDA ---
         async function aprovarVenda(idVenda) {
             if(!confirm("Confirmar pagamento e enviar o livro para o cliente?")) return;
