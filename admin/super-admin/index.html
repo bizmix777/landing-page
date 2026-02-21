@@ -221,14 +221,9 @@
         </div>
     </div>
         <script>
-        // --- INICIALIZAÇÃO SEGURA DO SUPABASE ---
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        
-        // Garante que o cliente existe
-        const supabase = window.supabase || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // Verificar autenticação
+            
         async function verificarAuth() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) { window.location.href = '/admin/login.html'; return; }
