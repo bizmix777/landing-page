@@ -7,8 +7,7 @@
     
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- SUPABASE CONFIG-->
+    <!-- Configuração Universal -->
     <script src="/js/supabase-config.js"></script>
     
     <!-- Font Awesome -->
@@ -76,12 +75,14 @@
         .status-badge.aprovado { background: #d4edda; color: #155724; }
         .status-badge.pendente { background: #fff3cd; color: #856404; }
 
-        .action-buttons { display: flex; gap: 8px; }
+        .action-buttons { display: flex; gap: 8px; align-items: center; }
         .btn-action { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; color: white; }
         .btn-edit { background: #007bff; }
         .btn-edit:hover { background: #0056b3; }
         .btn-delete { background: #dc3545; }
         .btn-delete:hover { background: #c82333; }
+        .btn-approve { background: #28a745; color: white; }
+        .btn-approve:hover { background: #218838; }
 
         .loading { text-align: center; padding: 40px; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto; }
@@ -143,41 +144,19 @@
     <div class="main-content">
         <!-- Stats Cards -->
         <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon purple"><i class="fas fa-users"></i></div>
-                <div class="stat-info"><h3>Total de Usuários</h3><p id="totalUsuarios">0</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon blue"><i class="fas fa-user-tie"></i></div>
-                <div class="stat-info"><h3>Parceiros Ativos</h3><p id="parceirosAtivos">0</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green"><i class="fas fa-shopping-cart"></i></div>
-                <div class="stat-info"><h3>Vendas Total</h3><p id="totalVendas">0</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon orange"><i class="fas fa-dollar-sign"></i></div>
-                <div class="stat-info"><h3>Faturamento</h3><p id="faturamentoTotal">R$ 0,00</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon red"><i class="fas fa-church"></i></div>
-                <div class="stat-info"><h3>Igrejas Cadastradas</h3><p id="totalIgrejas">0</p></div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon teal"><i class="fas fa-percentage"></i></div>
-                <div class="stat-info"><h3>Comissões Pagas</h3><p id="comissoesPagas">R$ 0,00</p></div>
-            </div>
+            <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-users"></i></div><div class="stat-info"><h3>Total de Usuários</h3><p id="totalUsuarios">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-user-tie"></i></div><div class="stat-info"><h3>Parceiros Ativos</h3><p id="parceirosAtivos">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon green"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3>Vendas Total</h3><p id="totalVendas">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><h3>Faturamento</h3><p id="faturamentoTotal">R$ 0,00</p></div></div>
+            <div class="stat-card"><div class="stat-icon red"><i class="fas fa-church"></i></div><div class="stat-info"><h3>Igrejas Cadastradas</h3><p id="totalIgrejas">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-percentage"></i></div><div class="stat-info"><h3>Comissões Pagas</h3><p id="comissoesPagas">R$ 0,00</p></div></div>
         </div>
 
         <!-- Quick Actions -->
         <h2 style="margin-bottom: 20px; color: #333;">⚡ Ações Rápidas</h2>
         <div class="quick-actions">
-            <button class="quick-action-btn" onclick="window.location.href='/admin/gerenciar-parceiros.html'">
-                <i class="fas fa-user-plus"></i><span>Adicionar Parceiro</span>
-            </button>
-            <button class="quick-action-btn" onclick="window.location.href='/admin/dashboard-igrejas.html'">
-                <i class="fas fa-church"></i><span>Cadastrar Igreja</span>
-            </button>
+            <button class="quick-action-btn" onclick="window.location.href='/admin/gerenciar-parceiros.html'"><i class="fas fa-user-plus"></i><span>Adicionar Parceiro</span></button>
+            <button class="quick-action-btn" onclick="window.location.href='/admin/dashboard-igrejas.html'"><i class="fas fa-church"></i><span>Cadastrar Igreja</span></button>
             <button class="quick-action-btn"><i class="fas fa-box-open"></i><span>Novo Produto</span></button>
             <button class="quick-action-btn"><i class="fas fa-file-invoice-dollar"></i><span>Gerar Relatório</span></button>
             <button class="quick-action-btn"><i class="fas fa-cog"></i><span>Configurações</span></button>
@@ -190,20 +169,13 @@
             <div id="adminsLoading" class="loading"><div class="spinner"></div><p style="margin-top: 15px; color: #666;">Carregando administradores...</p></div>
             <table id="adminsTable" style="display: none;">
                 <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Tipo</th>
-                        <th>Status</th>
-                        <th>Último Acesso</th>
-                        <th>Ações</th>
-                    </tr>
+                    <tr><th>Nome</th><th>Email</th><th>Tipo</th><th>Status</th><th>Último Acesso</th><th>Ações</th></tr>
                 </thead>
                 <tbody id="adminsTableBody"></tbody>
             </table>
         </div>
 
-        <!-- Últimas Vendas (COM COLUNA DE AÇÕES NOVA) -->
+        <!-- Últimas Vendas -->
         <div class="table-container">
             <h2><i class="fas fa-shopping-cart"></i> Últimas Vendas</h2>
             <div id="vendasLoading" class="loading"><div class="spinner"></div><p style="margin-top: 15px; color: #666;">Carregando vendas...</p></div>
@@ -216,7 +188,7 @@
                         <th>Valor</th>
                         <th>Status</th>
                         <th>Data</th>
-                        <th>Ações</th> <!-- COLUNA NOVA -->
+                        <th>Ações</th> <!-- Coluna para os botões -->
                     </tr>
                 </thead>
                 <tbody id="vendasTableBody"></tbody>
@@ -224,9 +196,7 @@
         </div>
     </div>
         <script>
-
-        // Verificar autenticação
-            
+        // Verificar autenticação (usa o config externo)
         async function verificarAuth() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) { window.location.href = '/admin/login.html'; return; }
@@ -239,28 +209,19 @@
             carregarDashboard();
         }
 
-        // Logout
         async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
 
-        // Carregar dashboard
         async function carregarDashboard() {
-            try {
-                await carregarEstatisticas();
-                await carregarAdmins();
-                await carregarVendas();
-            } catch (error) { console.error('Erro:', error); }
+            try { await carregarEstatisticas(); await carregarAdmins(); await carregarVendas(); } catch (error) { console.error('Erro:', error); }
         }
 
-        // Estatísticas (Simplificado para evitar erro 400 se faltar coluna)
         async function carregarEstatisticas() {
             try {
                 const { count: totalUsuarios } = await supabase.from('usuarios').select('*', { count: 'exact', head: true });
                 document.getElementById('totalUsuarios').textContent = totalUsuarios || 0;
-                // Outras stats podem ser adicionadas aqui
             } catch (error) { console.error(error); }
         }
 
-        // Admins
         async function carregarAdmins() {
             try {
                 const { data: admins } = await supabase.from('usuarios').select('*').in('tipo', ['admin', 'super_admin']).limit(10);
@@ -277,7 +238,7 @@
             } catch (e) { console.error(e); }
         }
 
-        // --- VENDAS (CORRIGIDO) ---
+        // --- VENDAS (COM BOTÃO EXCLUIR) ---
         async function carregarVendas() {
             try {
                 const { data: vendas, error } = await supabase
@@ -312,10 +273,17 @@
                             <td><span class="status-badge ${getStatusClass(status)}">${getStatusText(status)}</span></td>
                             <td>${formatarData(venda.created_at)}</td>
                             <td>
-                                ${isPendente ? 
-                                    `<button onclick="aprovarVenda('${venda.id}')" class="btn-action" style="background:#28a745; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;"><i class="fas fa-check"></i> Liberar</button>` : 
-                                    '<span style="color:green;"><i class="fas fa-check-circle"></i> Enviado</span>'
-                                }
+                                <div class="action-buttons">
+                                    ${isPendente ? 
+                                        `<button onclick="aprovarVenda('${venda.id}')" class="btn-action btn-approve" title="Aprovar e Enviar">
+                                            <i class="fas fa-check"></i> Liberar
+                                        </button>` : 
+                                        '<span style="color:green; font-weight:bold; margin-right:5px;"><i class="fas fa-check-circle"></i></span>'
+                                    }
+                                    <button onclick="excluirVenda('${venda.id}')" class="btn-action btn-delete" title="Excluir Venda">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
                             </td>
                         `;
                         tbody.appendChild(tr);
@@ -326,15 +294,26 @@
             } catch (error) { console.error(error); document.getElementById('vendasLoading').innerHTML = '<p>Erro vendas</p>'; }
         }
 
-        // --- FUNÇÃO DE APROVAR (ÚNICA) ---
+        // --- APROVAR ---
         async function aprovarVenda(idVenda) {
             if(!confirm("Confirmar pagamento e enviar o livro?")) return;
             try {
                 const { error } = await supabase.from('vendas').update({ status_pagamento: 'pago' }).eq('id', idVenda);
                 if (error) throw error;
-                alert("✅ Pagamento confirmado! Livro enviado.");
+                alert("✅ Confirmado!");
                 carregarVendas();
             } catch (error) { console.error(error); alert("Erro ao aprovar."); }
+        }
+
+        // --- EXCLUIR ---
+        async function excluirVenda(idVenda) {
+            if(!confirm("⚠️ Tem certeza que deseja EXCLUIR esta venda?")) return;
+            try {
+                const { error } = await supabase.from('vendas').delete().eq('id', idVenda);
+                if (error) throw error;
+                // alert("🗑️ Excluído!"); // Opcional: tirei o alert pra ficar mais rápido
+                carregarVendas();
+            } catch (error) { console.error(error); alert("Erro ao excluir."); }
         }
 
         // Helpers
