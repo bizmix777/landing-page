@@ -856,6 +856,28 @@
 
         // Executar ao carregar
         verificarAuth();
+
+               // --- NOVA FUNÇÃO: APROVAR VENDA ---
+        async function aprovarVenda(idVenda) {
+            if(!confirm("Confirmar pagamento e enviar o livro para o cliente?")) return;
+
+            try {
+                // 1. Atualiza no Supabase para 'pago'
+                const { error } = await supabase
+                    .from('vendas')
+                    .update({ status_pagamento: 'pago', status: 'aprovado' }) 
+                    .eq('id', idVenda);
+
+                if (error) throw error;
+
+                alert("✅ Pagamento confirmado! O livro será enviado em instantes.");
+                carregarVendas(); // Recarrega a lista
+
+            } catch (error) {
+                console.error("Erro ao aprovar:", error);
+                alert("Erro ao aprovar venda. Tente novamente.");
+            }
+        }     
     </script>
     
 </body>
