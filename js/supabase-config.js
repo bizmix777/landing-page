@@ -1,61 +1,50 @@
 // ============================================
 // CONFIGURAÇÃO CENTRALIZADA DO SUPABASE
-// SEM BIBLIOTECA (modo fetch direto) ✅
+// Híbrido: REST API + SDK Oficial ✅
 // ============================================
 
 const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
 
-console.log('✅ Supabase config carregado (modo fetch direto):', SUPABASE_URL);
+console.log('✅ Configuração carregada:', SUPABASE_URL);
 
-// ============================================
-// FUNÇÕES AUXILIARES PARA FETCH DIRETO
-// ============================================
+// --- 1. Inicializa o SDK Oficial (Se a biblioteca estiver carregada) ---
+// Isso serve para o ADMIN e LOGIN
+if (typeof supabase !== 'undefined' && typeof supabase.createClient === 'function') {
+    console.log('🚀 Inicializando SDK do Supabase...');
+    // Sobrescreve a variável global com o cliente inicializado
+    window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
-// Função para fazer queries no Supabase via REST API
+// --- 2. Funções REST API (Para formulários leves) ---
 async function supabaseFetch(endpoint, options = {}) {
+    // ... (Mantenha sua função igualzinha como estava antes) ...
     const url = `${SUPABASE_URL}/rest/v1/${endpoint}`;
     
-    const defaultHeaders = {
+    const headers = {
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json',
         'Prefer': 'return=representation'
     };
     
-    const config = {
-        ...options,
-        headers: {
-            ...defaultHeaders,
-            ...options.headers
+    try {
+        const response = await fetch(url, {
+            method: options.method || 'GET',
+            headers: headers,
+            body: options.body || null
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `Erro HTTP: ${response.status}`);
         }
-    };
-    
-    const response = await fetch(url, config);
-    
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Erro na requisição');
+        
+        return await response.json();
+    } catch (error) {
+        console.error('❌ Erro no supabaseFetch:', error);
+        throw error;
     }
-    
-    return await response.json();
 }
 
-// Função para chamar Edge Functions
-async function supabaseFunction(functionName, body = {}) {
-    const url = `${SUPABASE_URL}/functions/v1/${functionName}`;
-    
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${SUPABASE_KEY}`
-        },
-        body: JSON.stringify(body)
-    });
-    
-    const result = await response.json();
-    return result;
-}
-
-console.log('✅ Funções auxiliares carregadas');
+// ... (Mantenha a função supabaseFunction igual) ...
