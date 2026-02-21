@@ -614,6 +614,7 @@
                         <th>Valor</th>
                         <th>Status</th>
                         <th>Data</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="vendasTableBody">
@@ -622,7 +623,7 @@
         </div>
     </div>
 
-    <script>
+        <script>
         // Verificar autenticação
         async function verificarAuth() {
             const { data: { session } } = await supabase.auth.getSession();
@@ -667,73 +668,40 @@
             }
         }
 
+        // ... (carregarEstatisticas e carregarAdmins ficam iguais, pode manter os seus) ...
+        // VOU REPETIR ELES AQUI PARA FACILITAR O COPY-PASTE SE QUISER:
+
         // Carregar estatísticas
         async function carregarEstatisticas() {
             try {
-                // Total de usuários
-                const { count: totalUsuarios } = await supabase
-                    .from('usuarios')
-                    .select('*', { count: 'exact', head: true });
-
+                const { count: totalUsuarios } = await supabase.from('usuarios').select('*', { count: 'exact', head: true });
                 document.getElementById('totalUsuarios').textContent = totalUsuarios || 0;
 
-                // Parceiros ativos
-                const { count: parceirosAtivos } = await supabase
-                    .from('usuarios')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('tipo', 'parceiro')
-                    .eq('status', 'ativo');
-
+                const { count: parceirosAtivos } = await supabase.from('usuarios').select('*', { count: 'exact', head: true }).eq('tipo', 'parceiro').eq('status', 'ativo');
                 document.getElementById('parceirosAtivos').textContent = parceirosAtivos || 0;
 
-                // Total de igrejas
-                const { count: totalIgrejas } = await supabase
-                    .from('igrejas')
-                    .select('*', { count: 'exact', head: true });
-
+                const { count: totalIgrejas } = await supabase.from('igrejas').select('*', { count: 'exact', head: true });
                 document.getElementById('totalIgrejas').textContent = totalIgrejas || 0;
 
-                // Vendas e faturamento
-                const { data: vendas } = await supabase
-                    .from('vendas')
-                    .select('valor')
-                    .eq('status', 'aprovado');
-
+                const { data: vendas } = await supabase.from('vendas').select('valor').eq('status', 'aprovado'); // Ou 'pago'
                 const totalVendas = vendas?.length || 0;
                 const faturamento = vendas?.reduce((sum, v) => sum + (v.valor || 0), 0) || 0;
-
                 document.getElementById('totalVendas').textContent = totalVendas;
                 document.getElementById('faturamentoTotal').textContent = formatarMoeda(faturamento);
 
-                // Comissões pagas
-                const { data: comissoes } = await supabase
-                    .from('comissoes')
-                    .select('valor')
-                    .eq('status', 'pago');
-
+                const { data: comissoes } = await supabase.from('comissoes').select('valor').eq('status', 'pago');
                 const totalComissoes = comissoes?.reduce((sum, c) => sum + (c.valor || 0), 0) || 0;
                 document.getElementById('comissoesPagas').textContent = formatarMoeda(totalComissoes);
-
-            } catch (error) {
-                console.error('Erro ao carregar estatísticas:', error);
-            }
+            } catch (error) { console.error(error); }
         }
 
-        // Carregar admins
+        // Carregar admins (Igual ao seu)
         async function carregarAdmins() {
             try {
-                const { data: admins, error } = await supabase
-                    .from('usuarios')
-                    .select('*')
-                    .in('tipo', ['admin', 'super_admin'])
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-
+                const { data: admins, error } = await supabase.from('usuarios').select('*').in('tipo', ['admin', 'super_admin']).order('created_at', { ascending: false }).limit(10);
                 if (error) throw error;
-
                 const tbody = document.getElementById('adminsTableBody');
                 tbody.innerHTML = '';
-
                 if (admins && admins.length > 0) {
                     admins.forEach(admin => {
                         const tr = document.createElement('tr');
@@ -743,34 +711,23 @@
                             <td><span class="status-badge ${admin.tipo === 'super_admin' ? 'aprovado' : 'pendente'}">${admin.tipo === 'super_admin' ? 'Super Admin' : 'Admin'}</span></td>
                             <td><span class="status-badge ${admin.status === 'ativo' ? 'ativo' : 'inativo'}">${admin.status === 'ativo' ? 'Ativo' : 'Inativo'}</span></td>
                             <td>${admin.last_sign_in_at ? formatarData(admin.last_sign_in_at) : 'Nunca'}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-action btn-edit" onclick="editarAdmin('${admin.id}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                </div>
-                            </td>
+                            <td><div class="action-buttons"><button class="btn-action btn-edit" onclick="editarAdmin('${admin.id}')"><i class="fas fa-edit"></i></button></div></td>
                         `;
                         tbody.appendChild(tr);
                     });
-
                     document.getElementById('adminsTable').style.display = 'table';
                 } else {
                     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Nenhum admin encontrado</td></tr>';
                     document.getElementById('adminsTable').style.display = 'table';
                 }
-
                 document.getElementById('adminsLoading').style.display = 'none';
-
-            } catch (error) {
-                console.error('Erro ao carregar admins:', error);
-                document.getElementById('adminsLoading').innerHTML = '<p style="color: #c00;">Erro ao carregar admins</p>';
-            }
+            } catch (error) { console.error(error); document.getElementById('adminsLoading').innerHTML = '<p style="color: #c00;">Erro ao carregar admins</p>'; }
         }
 
-        // Carregar vendas
+        // --- AQUI ESTÁ A MUDANÇA IMPORTANTE (VENDAS) ---
         async function carregarVendas() {
             try {
+                // MODIFICADO: Busca status_pagamento também se existir, e pega mais campos
                 const { data: vendas, error } = await supabase
                     .from('vendas')
                     .select(`
@@ -778,34 +735,54 @@
                         produto_nome,
                         valor,
                         status,
+                        status_pagamento, 
+                        email_comprador,
                         created_at,
                         usuarios (nome)
                     `)
                     .order('created_at', { ascending: false })
-                    .limit(10);
+                    .limit(20);
 
                 if (error) throw error;
 
                 const tbody = document.getElementById('vendasTableBody');
+                
+                // ATENÇÃO: Adicionei o cabeçalho 'Ações' na tabela HTML lá em cima se não tiver!
+                // Mas aqui vou injetar o HTML da linha
                 tbody.innerHTML = '';
 
                 if (vendas && vendas.length > 0) {
                     vendas.forEach(venda => {
+                        // Verifica o status REAL (usa status_pagamento se tiver, senão usa status)
+                        const statusReal = venda.status_pagamento || venda.status;
+                        const isPendente = statusReal === 'pendente';
+
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>#${venda.id.slice(0, 8)}</td>
-                            <td>${venda.produto_nome || 'N/A'}</td>
-                            <td>${venda.usuarios?.nome || 'N/A'}</td>
+                            <td>
+                                <div>#${venda.id}</div>
+                                <div style="font-size:11px; color:#666;">${venda.email_comprador || 'Sem e-mail'}</div>
+                            </td>
+                            <td>${venda.produto_nome || 'Livro Somos Todos Um'}</td>
+                            <td>${venda.usuarios?.nome || 'Venda Direta'}</td>
                             <td>${formatarMoeda(venda.valor)}</td>
-                            <td><span class="status-badge ${getStatusClass(venda.status)}">${getStatusText(venda.status)}</span></td>
+                            <td><span class="status-badge ${getStatusClass(statusReal)}">${getStatusText(statusReal)}</span></td>
                             <td>${formatarData(venda.created_at)}</td>
+                            <td>
+                                ${isPendente ? 
+                                    `<button onclick="aprovarVenda('${venda.id}')" class="btn-action" style="background:#28a745; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">
+                                        <i class="fas fa-check"></i> Liberar
+                                    </button>` : 
+                                    '<span style="color:green;"><i class="fas fa-check-circle"></i> Enviado</span>'
+                                }
+                            </td>
                         `;
                         tbody.appendChild(tr);
                     });
 
                     document.getElementById('vendasTable').style.display = 'table';
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Nenhuma venda encontrada</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">Nenhuma venda encontrada</td></tr>';
                     document.getElementById('vendasTable').style.display = 'table';
                 }
 
@@ -817,46 +794,50 @@
             }
         }
 
-        // Funções auxiliares
+        // --- NOVA FUNÇÃO: APROVAR VENDA ---
+        async function aprovarVenda(idVenda) {
+            if(!confirm("Confirmar pagamento e enviar o livro para o cliente?")) return;
+
+            try {
+                // 1. Atualiza no Supabase para 'pago'
+                // Isso vai disparar o Webhook -> Python -> Resend
+                const { error } = await supabase
+                    .from('vendas')
+                    .update({ status_pagamento: 'pago', status: 'aprovado' }) // Atualiza os dois pra garantir
+                    .eq('id', idVenda);
+
+                if (error) throw error;
+
+                alert("✅ Pagamento confirmado! O livro será enviado em instantes.");
+                carregarVendas(); // Recarrega a lista
+
+            } catch (error) {
+                console.error("Erro ao aprovar:", error);
+                alert("Erro ao aprovar venda. Tente novamente.");
+            }
+        }
+
+        // Funções auxiliares (iguais)
         function formatarMoeda(valor) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(valor || 0);
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor || 0);
         }
 
         function formatarData(data) {
-            return new Date(data).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+            return new Date(data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         }
 
         function getStatusClass(status) {
-            const statusMap = {
-                'aprovado': 'aprovado',
-                'approved': 'aprovado',
-                'pendente': 'pendente',
-                'pending': 'pendente',
-                'ativo': 'ativo',
-                'inativo': 'inativo'
-            };
-            return statusMap[status] || 'pendente';
+            if(!status) return 'pendente';
+            status = status.toLowerCase();
+            if(status === 'pago' || status === 'aprovado') return 'aprovado';
+            return 'pendente';
         }
 
         function getStatusText(status) {
-            const statusMap = {
-                'aprovado': 'Aprovado',
-                'approved': 'Aprovado',
-                'pendente': 'Pendente',
-                'pending': 'Pendente',
-                'ativo': 'Ativo',
-                'inativo': 'Inativo'
-            };
-            return statusMap[status] || status;
+            if(!status) return 'Pendente';
+            status = status.toLowerCase();
+            if(status === 'pago' || status === 'aprovado') return 'Pago ✅';
+            return 'Pendente ⏳';
         }
 
         function editarAdmin(id) {
@@ -866,5 +847,6 @@
         // Executar ao carregar
         verificarAuth();
     </script>
+    
 </body>
 </html>
