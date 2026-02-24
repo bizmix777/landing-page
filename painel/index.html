@@ -1,3 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionando...</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: sans-serif; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .loading-container { background: white; border-radius: 16px; padding: 60px 40px; text-align: center; max-width: 400px; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #2563eb; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        h1 { color: #2563eb; font-size: 24px; margin-bottom: 10px; }
+        p { color: #64748b; font-size: 14px; }
+    </style>
+</head>
 <body>
     <div class="loading-container">
         <div class="spinner"></div>
@@ -5,71 +24,79 @@
         <p>Aguarde enquanto carregamos seu painel</p>
     </div>
 
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Configuração Universal -->
-    <script src="/js/supabase-config.js"></script>
-    
     <script>
         console.log('🔄 Redirecionamento iniciado');
+        
+        // Garante que o supabase existe (via config central)
         const supabase = window.supabase;
+        if (!supabase) {
+            console.error("❌ Erro config");
+            window.location.href = '/painel-acesso/';
+        }
 
         async function verificarERedirecionar() {
             try {
-                // 1. Verifica Sessão
+                // 1. Verifica Sessão Ativa
                 const { data: { session } } = await supabase.auth.getSession();
                 
                 if (!session) {
+                    console.log('❌ Sem sessão -> Login');
                     window.location.href = '/painel-acesso/';
                     return;
                 }
 
                 const userId = session.user.id;
+                console.log('✅ Sessão OK. Buscando perfil...');
 
-                // 2. Tenta achar na tabela PARCEIROS (onde o cadastro salva!)
-                const { data: parceiro } = await supabase
+                // 2. Busca na tabela PARCEIROS (Onde o cadastro salva)
+                const { data: parceiro, error: erroParceiro } = await supabase
                     .from('parceiros')
                     .select('tipo_parceiro, is_admin, status')
                     .eq('auth_user_id', userId)
                     .single();
 
                 if (parceiro) {
-                    // Se for ADMIN
+                    // SE FOR ADMIN (Marcado na tabela parceiros)
                     if (parceiro.is_admin) {
+                        console.log('👑 Admin (Parceiro) -> Admin Panel');
                         window.location.href = '/admin/index.html';
                         return;
                     }
                     
-                    // Se for PARCEIRO / IGREJA / EMPRESA
-                    if (parceiro.status === 'ativo') {
+                    // SE FOR PARCEIRO NORMAL / IGREJA / EMPRESA
+                    if (parceiro.status === 'ativo' || parceiro.status === 'aprovado') {
+                        console.log('👤 Parceiro -> Dashboard');
                         window.location.href = '/somos-todos-um/parceiros/dashboard.html';
                         return;
                     } else {
-                        alert("Sua conta está pendente de aprovação.");
+                        alert("Sua conta está aguardando aprovação.");
                         await supabase.auth.signOut();
                         window.location.href = '/painel-acesso/';
                         return;
                     }
                 }
 
-                // 3. Se não achou em parceiros, tenta na tabela USUARIOS (Legado/Admins antigos)
+                // 3. Fallback: Busca na tabela USUARIOS (Admins antigos/legado)
                 const { data: usuario } = await supabase
                     .from('usuarios')
                     .select('tipo')
-                    .eq('email', session.user.email) // ou auth_user_id se tiver
+                    .eq('email', session.user.email)
                     .single();
 
                 if (usuario && (usuario.tipo === 'admin' || usuario.tipo === 'super_admin')) {
+                    console.log('👑 Admin (Usuario) -> Admin Panel');
                     window.location.href = '/admin/index.html';
                     return;
                 }
 
                 // Se não achou em lugar nenhum
-                alert("Perfil não encontrado.");
+                console.log('❌ Perfil não encontrado');
+                alert("Perfil não encontrado. Entre em contato com o suporte.");
+                await supabase.auth.signOut();
                 window.location.href = '/painel-acesso/';
 
             } catch (error) {
-                console.error('❌ Erro:', error);
+                console.error('❌ Erro Fatal:', error);
                 window.location.href = '/painel-acesso/';
             }
         }
