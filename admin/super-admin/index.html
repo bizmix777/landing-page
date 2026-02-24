@@ -331,36 +331,52 @@
             } catch (error) { console.error(error); alert("Erro ao excluir."); }
         }
 
-        // --- ENVIAR CORTESIA (NOVO) ---
+        // --- ENVIAR CORTESIA (COM VALIDAÇÃO RIGOROSA) ---
         async function enviarCortesia() {
-            const nome = prompt("Digite o NOME COMPLETO do destinatário:");
-            if (!nome) return;
+            // 1. Pede Nome
+            const nome = prompt("1/3 - Digite o NOME COMPLETO:");
+            if (!nome || nome.trim().length < 3) {
+                alert("❌ Cancelado: Nome inválido ou vazio.");
+                return;
+            }
 
-            const email = prompt("Digite o E-MAIL do destinatário:");
-            if (!email) return;
+            // 2. Pede Email
+            const email = prompt("2/3 - Digite o E-MAIL:");
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                alert("❌ Cancelado: E-mail inválido.");
+                return;
+            }
 
-            if (!confirm(`Confirmar envio de cortesia para:\n${nome}\n(${email})?`)) return;
+            // 3. Pede WhatsApp (Obrigatório agora)
+            const zap = prompt("3/3 - Digite o WHATSAPP (com DDD):");
+            if (!zap || zap.trim().length < 10) {
+                alert("❌ Cancelado: WhatsApp inválido ou vazio.");
+                return;
+            }
+
+            // Confirmação final
+            if (!confirm(`CONFIRMAR ENVIO?\n\n👤 Nome: ${nome}\n📧 Email: ${email}\n📱 Zap: ${zap}`)) return;
 
             try {
-                // Cria a venda JÁ COMO PAGO
                 const { error } = await supabase.from('vendas').insert({
                     nome_comprador: nome,
                     email_comprador: email,
-                    telefone_comprador: 'Cortesia Admin', // Valor padrão
+                    whatsapp_comprador: zap, // Agora salva o zap real
+                    telefone_comprador: zap, // Salva aqui também pra garantir
                     valor_total: 0.00,
                     status: 'aprovado',
-                    status_pagamento: 'pago', // O Python vai pegar isso e enviar!
+                    status_pagamento: 'pago',
                     forma_pagamento: 'cortesia'
                 });
 
                 if (error) throw error;
 
-                alert("✅ Cortesia enviada com sucesso! O sistema está gerando o e-mail.");
-                carregarVendas(); // Atualiza a lista
+                alert("✅ Cortesia enviada com sucesso! O livro chegará no e-mail.");
+                carregarVendas();
 
             } catch (error) {
                 console.error("Erro:", error);
-                alert("Erro ao enviar cortesia: " + error.message);
+                alert("Erro ao enviar: " + error.message);
             }
         }
         
