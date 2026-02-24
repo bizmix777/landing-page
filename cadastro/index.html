@@ -108,7 +108,7 @@
             </div>
         </div>
 
-                <!-- Formulário Igreja (CORRIGIDO) -->
+        <!-- Formulário Igreja (CORRIGIDO) -->
         <div class="form-container" id="form-igreja">
             <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
             
@@ -431,6 +431,9 @@
                     pix_tipo: dados.pix_tipo,
                     chave_pix: dados.pix_chave, // Nome correto da coluna
                     tipo_parceiro: 'igreja',
+                    // --- ADICIONEI ESTA LINHA ---
+                    codigo_parceiro: codigoIgreja,
+                    // ---------------------------
                     status: 'ativo' // AUTO-APROVADO
                 }]);
                 if(ie) throw ie;
