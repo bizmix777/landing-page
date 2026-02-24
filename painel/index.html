@@ -1,63 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecionando...</title>
-    <meta name="robots" content="noindex, nofollow">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .loading-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 60px 40px;
-            text-align: center;
-            max-width: 400px;
-        }
-        
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #2563eb;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        h1 {
-            color: #2563eb;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        
-        p {
-            color: #64748b;
-            font-size: 14px;
-        }
-    </style>
-</head>
 <body>
     <div class="loading-container">
         <div class="spinner"></div>
@@ -67,49 +7,74 @@
 
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Configuração Universal -->
+    <script src="/js/supabase-config.js"></script>
     
     <script>
-        console.log('🔄 Redirecionamento do painel iniciado');
+        console.log('🔄 Redirecionamento iniciado');
+        const supabase = window.supabase;
 
-        // Configuração do Supabase
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        
-        const { createClient } = supabase;
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        async function verificarERedirecionr() {
+        async function verificarERedirecionar() {
             try {
-                // Verificar se há sessão ativa
-                const { data: { session }, error } = await supabaseClient.auth.getSession();
-                
-                if (error) {
-                    console.error('❌ Erro ao verificar sessão:', error);
-                    // Se houver erro, redirecionar para login
-                    window.location.href = '/painel-acesso/';
-                    return;
-                }
+                // 1. Verifica Sessão
+                const { data: { session } } = await supabase.auth.getSession();
                 
                 if (!session) {
-                    console.log('❌ Nenhuma sessão ativa - redirecionando para login');
                     window.location.href = '/painel-acesso/';
                     return;
                 }
-                
-                console.log('✅ Sessão válida - redirecionando para dashboard de parceiros');
-                
-                // Redirecionar para dashboard de parceiros
-                window.location.href = '/somos-todos-um/parceiros/dashboard.html';
-                
+
+                const userId = session.user.id;
+
+                // 2. Tenta achar na tabela PARCEIROS (onde o cadastro salva!)
+                const { data: parceiro } = await supabase
+                    .from('parceiros')
+                    .select('tipo_parceiro, is_admin, status')
+                    .eq('auth_user_id', userId)
+                    .single();
+
+                if (parceiro) {
+                    // Se for ADMIN
+                    if (parceiro.is_admin) {
+                        window.location.href = '/admin/index.html';
+                        return;
+                    }
+                    
+                    // Se for PARCEIRO / IGREJA / EMPRESA
+                    if (parceiro.status === 'ativo') {
+                        window.location.href = '/somos-todos-um/parceiros/dashboard.html';
+                        return;
+                    } else {
+                        alert("Sua conta está pendente de aprovação.");
+                        await supabase.auth.signOut();
+                        window.location.href = '/painel-acesso/';
+                        return;
+                    }
+                }
+
+                // 3. Se não achou em parceiros, tenta na tabela USUARIOS (Legado/Admins antigos)
+                const { data: usuario } = await supabase
+                    .from('usuarios')
+                    .select('tipo')
+                    .eq('email', session.user.email) // ou auth_user_id se tiver
+                    .single();
+
+                if (usuario && (usuario.tipo === 'admin' || usuario.tipo === 'super_admin')) {
+                    window.location.href = '/admin/index.html';
+                    return;
+                }
+
+                // Se não achou em lugar nenhum
+                alert("Perfil não encontrado.");
+                window.location.href = '/painel-acesso/';
+
             } catch (error) {
-                console.error('❌ Erro na verificação:', error);
-                // Em caso de erro, redirecionar para login
+                console.error('❌ Erro:', error);
                 window.location.href = '/painel-acesso/';
             }
         }
 
-        // Executar verificação
-        verificarERedirecionr();
+        verificarERedirecionar();
     </script>
 </body>
 </html>
