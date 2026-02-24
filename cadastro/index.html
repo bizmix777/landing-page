@@ -108,52 +108,137 @@
             </div>
         </div>
 
-        <!-- Formulário Igreja -->
+                <!-- Formulário Igreja (CORRIGIDO) -->
         <div class="form-container" id="form-igreja">
             <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
-            <div class="form-header"><div class="icon">🙏</div><h2>Cadastro da sua Igreja</h2><p>Preencha os dados</p></div>
+            
+            <div class="form-header">
+                <div class="icon">🙏</div>
+                <h2>Cadastro da sua Igreja</h2>
+                <p>Preencha os dados da sua igreja</p>
+            </div>
+
             <div class="message" id="message-igreja"></div>
+
             <form id="formIgreja" onsubmit="submitCadastroIgreja(event)">
-                <div class="form-grid">
-                    <div class="form-group"><label>Nome da Igreja *</label><input type="text" id="igreja-nome" required></div>
-                    <div class="form-group"><label>CNPJ *</label><input type="text" id="igreja-cnpj" required placeholder="00.000.000/0000-00"></div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Responsável *</label><input type="text" id="igreja-responsavel" required></div>
-                    <div class="form-group"><label>Telefone *</label><input type="tel" id="igreja-telefone" required></div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Email *</label><input type="email" id="igreja-email" required></div>
-                    <div class="form-group"><label>Senha *</label><input type="password" id="igreja-senha" required minlength="6" oninput="checkPasswordStrength('igreja')"><div class="password-strength"><div class="password-strength-bar" id="igreja-strength-bar"></div></div></div>
-                </div>
                 
-                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
-                <h3 style="margin-bottom: 20px;">📍 Endereço</h3>
                 <div class="form-grid">
-                    <div class="form-group"><label>CEP *</label><input type="text" id="igreja-cep" required maxlength="9"><small id="igreja-cep-status"></small></div>
-                    <div class="form-group"><label>Cidade *</label><input type="text" id="igreja-cidade" readonly></div>
-                    <div class="form-group"><label>Estado *</label><input type="text" id="igreja-estado" readonly></div>
-                </div>
-                <!-- ENDEREÇO DETALHADO -->
-                <div class="form-grid">
-                    <div class="form-group"><label>Rua/Logradouro</label><input type="text" id="igreja-logradouro" readonly></div>
-                    <div class="form-group"><label>Bairro</label><input type="text" id="igreja-bairro" readonly></div>
-                </div>
-                <div class="form-grid">
-                    <div class="form-group"><label>Número *</label><input type="text" id="igreja-numero" required></div>
-                    <div class="form-group"><label>Complemento</label><input type="text" id="igreja-complemento"></div>
+                    <div class="form-group">
+                        <label>Nome da Igreja <span class="required">*</span></label>
+                        <input type="text" id="igreja-nome" required placeholder="Ex: Igreja Batista">
+                    </div>
+
+                    <div class="form-group">
+                        <label>CNPJ <span class="required">*</span></label>
+                        <input type="text" id="igreja-cnpj" required placeholder="00.000.000/0000-00">
+                        <small id="igreja-cnpj-status"></small>
+                    </div>
                 </div>
 
-                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
-                <h3 style="margin-bottom: 20px;">💰 Recebimento</h3>
                 <div class="form-grid">
-                    <div class="form-group"><label>Tipo Pix *</label><select id="igreja-pix-tipo" required><option value="cnpj">CNPJ</option><option value="email">Email</option><option value="telefone">Telefone</option><option value="aleatoria">Aleatória</option></select></div>
-                    <div class="form-group"><label>Chave Pix *</label><input type="text" id="igreja-pix-chave" required></div>
+                    <div class="form-group">
+                        <label>Responsável <span class="required">*</span></label>
+                        <input type="text" id="igreja-responsavel" required placeholder="Nome do pastor">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Telefone <span class="required">*</span></label>
+                        <input type="tel" id="igreja-telefone" required placeholder="(00) 00000-0000">
+                    </div>
                 </div>
-                <button type="submit" class="btn-submit" id="igreja-btn-submit">🙏 Cadastrar Igreja</button>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Email <span class="required">*</span></label>
+                        <input type="email" id="igreja-email" required placeholder="email@igreja.com">
+                        <small id="igreja-email-status"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Senha <span class="required">*</span></label>
+                        <input type="password" id="igreja-senha" required minlength="6" oninput="checkPasswordStrength('igreja')">
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="igreja-strength-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="margin: 30px 0; border: none; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px; color: #333;">📍 Endereço</h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>CEP <span class="required">*</span></label>
+                        <input type="text" id="igreja-cep" required maxlength="9">
+                        <small id="igreja-cep-status">Digite o CEP para buscar</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cidade <span class="required">*</span></label>
+                        <input type="text" id="igreja-cidade" required readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado <span class="required">*</span></label>
+                        <input type="text" id="igreja-estado" required readonly>
+                    </div>
+                </div>
+
+                <!-- AQUI ESTÁ A CORREÇÃO: CAMPOS SEPARADOS -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Rua / Logradouro</label>
+                        <input type="text" id="igreja-logradouro" required readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Bairro</label>
+                        <input type="text" id="igreja-bairro" required readonly>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Número <span class="required">*</span></label>
+                        <input type="text" id="igreja-numero" required placeholder="123">
+                    </div>
+                    <div class="form-group">
+                        <label>Complemento</label>
+                        <input type="text" id="igreja-complemento" placeholder="Apto, Sala...">
+                    </div>
+                </div>
+
+                <hr style="margin: 30px 0; border: none; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px; color: #333;">💰 Dados para Recebimento</h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Tipo de Chave PIX <span class="required">*</span></label>
+                        <select id="igreja-pix-tipo" required>
+                            <option value="">Selecione</option>
+                            <option value="cnpj">CNPJ</option>
+                            <option value="email">Email</option>
+                            <option value="telefone">Telefone</option>
+                            <option value="aleatoria">Chave Aleatória</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Chave PIX <span class="required">*</span></label>
+                        <input type="text" id="igreja-pix-chave" required placeholder="Digite sua chave PIX">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" id="igreja-btn-submit">
+                    🙏 Cadastrar Igreja
+                </button>
+
             </form>
-            <div class="link-group"><a href="/painel-acesso/">Já tem cadastro? Faça login</a></div>
+
+            <div class="link-group">
+                <a href="/painel-acesso/">Já tem cadastro? Faça login aqui</a>
+            </div>
         </div>
+        
                 <!-- Formulário Parceiro -->
         <div class="form-container" id="form-parceiro">
             <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
