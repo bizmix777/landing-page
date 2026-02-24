@@ -331,6 +331,39 @@
             } catch (error) { console.error(error); alert("Erro ao excluir."); }
         }
 
+        // --- ENVIAR CORTESIA (NOVO) ---
+        async function enviarCortesia() {
+            const nome = prompt("Digite o NOME COMPLETO do destinatário:");
+            if (!nome) return;
+
+            const email = prompt("Digite o E-MAIL do destinatário:");
+            if (!email) return;
+
+            if (!confirm(`Confirmar envio de cortesia para:\n${nome}\n(${email})?`)) return;
+
+            try {
+                // Cria a venda JÁ COMO PAGO
+                const { error } = await supabase.from('vendas').insert({
+                    nome_comprador: nome,
+                    email_comprador: email,
+                    telefone_comprador: 'Cortesia Admin', // Valor padrão
+                    valor_total: 0.00,
+                    status: 'aprovado',
+                    status_pagamento: 'pago', // O Python vai pegar isso e enviar!
+                    forma_pagamento: 'cortesia'
+                });
+
+                if (error) throw error;
+
+                alert("✅ Cortesia enviada com sucesso! O sistema está gerando o e-mail.");
+                carregarVendas(); // Atualiza a lista
+
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao enviar cortesia: " + error.message);
+            }
+        }
+        
         // Helpers
         function formatarMoeda(v) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0); }
         function formatarData(d) { return new Date(d).toLocaleDateString('pt-BR'); }
