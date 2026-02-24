@@ -7,401 +7,84 @@
     
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Configuração centralizada -->
+    <!-- Configuração Universal -->
     <script src="/js/supabase-config.js"></script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; min-height: 100vh; }
 
         /* Header */
-        .header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header h1 {
-            color: #667eea;
-            font-size: 24px;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .btn-logout {
-            padding: 10px 20px;
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-logout:hover {
-            background: #ee5a6f;
-        }
+        .header { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .header h1 { color: #667eea; font-size: 24px; }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        .btn-logout { padding: 10px 20px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s ease; }
+        .btn-logout:hover { background: #ee5a6f; }
 
         /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 80px;
-            width: 250px;
-            height: calc(100vh - 80px);
-            background: white;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            padding: 30px 20px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: #666;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: #f0f3ff;
-            color: #667eea;
-        }
-
-        .nav-item i {
-            font-size: 18px;
-            width: 24px;
-        }
+        .sidebar { position: fixed; left: 0; top: 80px; width: 250px; height: calc(100vh - 80px); background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.1); padding: 30px 20px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #666; text-decoration: none; border-radius: 8px; margin-bottom: 8px; transition: all 0.3s ease; }
+        .nav-item:hover, .nav-item.active { background: #f0f3ff; color: #667eea; }
+        .nav-item i { font-size: 18px; width: 24px; }
 
         /* Main Content */
-        .main-content {
-            margin-left: 250px;
-            padding: 40px;
-        }
+        .main-content { margin-left: 250px; padding: 40px; }
 
         /* Filters */
-        .filters {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-input {
-            flex: 1;
-            min-width: 200px;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .filter-input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .filter-select {
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .btn-filter {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-filter:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
+        .filters { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 30px; display: flex; gap: 15px; flex-wrap: wrap; }
+        .filter-input { flex: 1; min-width: 200px; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; transition: all 0.3s ease; }
+        .filter-input:focus { outline: none; border-color: #667eea; }
+        .filter-select { padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; cursor: pointer; }
+        .btn-filter { padding: 12px 24px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .btn-filter:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
 
         /* Table */
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 25px;
-            overflow-x: auto;
-        }
+        .table-container { background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 25px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8f9fa; }
+        th { padding: 15px; text-align: left; color: #666; font-weight: 600; font-size: 14px; }
+        td { padding: 15px; border-bottom: 1px solid #f0f0f0; color: #333; font-size: 14px; }
+        tbody tr:hover { background: #f8f9fa; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .status-badge.ativo { background: #d4edda; color: #155724; }
+        .status-badge.pendente { background: #fff3cd; color: #856404; }
+        .status-badge.inativo { background: #f8d7da; color: #721c24; }
 
-        thead {
-            background: #f8f9fa;
-        }
-
-        th {
-            padding: 15px;
-            text-align: left;
-            color: #666;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            color: #333;
-            font-size: 14px;
-        }
-
-        tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-block;
-        }
-
-        .status-badge.ativo {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-badge.pendente {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .status-badge.inativo {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-action {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.3s ease;
-            color: white;
-        }
-
-        .btn-approve {
-            background: #28a745;
-        }
-
-        .btn-approve:hover {
-            background: #218838;
-        }
-
-        .btn-reject {
-            background: #dc3545;
-        }
-
-        .btn-reject:hover {
-            background: #c82333;
-        }
-
-        .btn-edit {
-            background: #007bff;
-        }
-
-        .btn-edit:hover {
-            background: #0056b3;
-        }
-
-        .btn-view {
-            background: #6c757d;
-        }
-
-        .btn-view:hover {
-            background: #5a6268;
-        }
+        .action-buttons { display: flex; gap: 8px; }
+        .btn-action { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; color: white; }
+        .btn-approve { background: #28a745; } .btn-approve:hover { background: #218838; }
+        .btn-reject { background: #dc3545; } .btn-reject:hover { background: #c82333; }
+        .btn-edit { background: #007bff; } .btn-edit:hover { background: #0056b3; }
 
         /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h2 { color: #333; font-size: 22px; }
+        .btn-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #999; }
+        .btn-close:hover { color: #333; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: #333; font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+        .form-group input, .form-group select { width: 100%; padding: 12px 16px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+        .btn-save { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 16px; }
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
 
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            color: #333;
-            font-size: 22px;
-        }
-
-        .btn-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-
-        .btn-close:hover {
-            color: #333;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #333;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn-save {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .btn-save:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        .loading { text-align: center; padding: 40px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 0;
-                overflow: hidden;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px;
-            }
-
-            .header {
-                padding: 15px 20px;
-            }
-
-            .filters {
-                flex-direction: column;
-            }
-
-            .filter-input {
-                width: 100%;
-            }
+            .sidebar { width: 0; overflow: hidden; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .header { padding: 15px 20px; }
+            .filters { flex-direction: column; }
+            .filter-input { width: 100%; }
         }
     </style>
 </head>
@@ -410,42 +93,19 @@
     <div class="header">
         <h1>👥 Gerenciar Parceiros</h1>
         <div class="header-actions">
-            <button class="btn-logout" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> Sair
-            </button>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
     </div>
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="/admin/index.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            Dashboard
-        </a>
-        <a href="/admin/gerenciar-parceiros.html" class="nav-item active">
-            <i class="fas fa-users"></i>
-            Parceiros
-        </a>
-        <a href="/admin/dashboard-igrejas.html" class="nav-item">
-            <i class="fas fa-church"></i>
-            Igrejas
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-box"></i>
-            Produtos
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-shopping-cart"></i>
-            Vendas
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-dollar-sign"></i>
-            Comissões
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fas fa-cog"></i>
-            Configurações
-        </a>
+        <a href="/admin/index.html" class="nav-item"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="/admin/gerenciar-parceiros.html" class="nav-item active"><i class="fas fa-users"></i> Parceiros</a>
+        <a href="/admin/dashboard-igrejas.html" class="nav-item"><i class="fas fa-church"></i> Igrejas</a>
+        <a href="#" class="nav-item"><i class="fas fa-box"></i> Produtos</a>
+        <a href="#" class="nav-item"><i class="fas fa-shopping-cart"></i> Vendas</a>
+        <a href="#" class="nav-item"><i class="fas fa-dollar-sign"></i> Comissões</a>
+        <a href="#" class="nav-item"><i class="fas fa-cog"></i> Configurações</a>
     </div>
 
     <!-- Main Content -->
@@ -459,31 +119,25 @@
                 <option value="pendente">Pendente</option>
                 <option value="inativo">Inativo</option>
             </select>
-            <button class="btn-filter" onclick="aplicarFiltros()">
-                <i class="fas fa-search"></i> Filtrar
-            </button>
+            <button class="btn-filter" onclick="aplicarFiltros()"><i class="fas fa-search"></i> Filtrar</button>
         </div>
 
         <!-- Table -->
         <div class="table-container">
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <p style="margin-top: 15px; color: #666;">Carregando parceiros...</p>
-            </div>
-
+            <div id="loading" class="loading"><div class="spinner"></div><p style="margin-top: 15px; color: #666;">Carregando parceiros...</p></div>
             <table id="parceirosTable" style="display: none;">
                 <thead>
                     <tr>
                         <th>Nome</th>
                         <th>Email</th>
                         <th>Telefone</th>
+                        <th>Comissão</th>
                         <th>Status</th>
-                        <th>Data de Cadastro</th>
+                        <th>Data</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody id="parceirosTableBody">
-                </tbody>
+                <tbody id="parceirosTableBody"></tbody>
             </table>
         </div>
     </div>
@@ -497,105 +151,64 @@
             </div>
             <form id="editForm">
                 <input type="hidden" id="editId">
-                
+                <div class="form-group"><label>Nome</label><input type="text" id="editNome" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="editEmail" required></div>
+                <div class="form-group"><label>Telefone</label><input type="tel" id="editTelefone"></div>
                 <div class="form-group">
-                    <label for="editNome">Nome</label>
-                    <input type="text" id="editNome" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="editEmail">Email</label>
-                    <input type="email" id="editEmail" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="editTelefone">Telefone</label>
-                    <input type="tel" id="editTelefone">
-                </div>
-
-                <div class="form-group">
-                    <label for="editStatus">Status</label>
+                    <label>Status</label>
                     <select id="editStatus" required>
                         <option value="ativo">Ativo</option>
                         <option value="pendente">Pendente</option>
                         <option value="inativo">Inativo</option>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label for="editComissao">Taxa de Comissão (%)</label>
-                    <input type="number" id="editComissao" min="0" max="100" step="0.01">
-                </div>
-
-                <button type="submit" class="btn-save">
-                    💾 Salvar Alterações
-                </button>
+                <div class="form-group"><label>Taxa de Comissão (%)</label><input type="number" id="editComissao" min="0" max="100" step="0.01"></div>
+                <button type="submit" class="btn-save">💾 Salvar Alterações</button>
             </form>
         </div>
     </div>
-
-    <script>
+        <script>
+        // Inicialização Universal
+        const supabase = window.supabase;
         let parceiros = [];
 
         // Verificar autenticação
         async function verificarAuth() {
             const { data: { session } } = await supabase.auth.getSession();
-            
-            if (!session) {
-                window.location.href = '/admin/login.html';
-                return;
-            }
+            if (!session) { window.location.href = '/admin/login.html'; return; }
 
-            // Verificar se é admin
-            const { data: usuario } = await supabase
-                .from('usuarios')
-                .select('tipo')
-                .eq('email', session.user.email)
-                .single();
-
+            const { data: usuario } = await supabase.from('usuarios').select('tipo').eq('email', session.user.email).single();
             if (!usuario || (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin')) {
                 await supabase.auth.signOut();
                 window.location.href = '/admin/login.html';
                 return;
             }
-
-            // Carregar parceiros
             carregarParceiros();
         }
 
-        // Logout
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = '/admin/login.html';
-        }
+        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
 
-        // Carregar parceiros
+        // --- CARREGAR PARCEIROS (TABELA PARCEIROS) ---
         async function carregarParceiros() {
             try {
                 const { data, error } = await supabase
-                    .from('usuarios')
+                    .from('parceiros') // Usa a tabela correta
                     .select('*')
-                    .eq('tipo', 'parceiro')
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
-
                 parceiros = data || [];
                 exibirParceiros(parceiros);
-
             } catch (error) {
-                console.error('Erro ao carregar parceiros:', error);
+                console.error('Erro:', error);
                 document.getElementById('loading').innerHTML = '<p style="color: #c00;">Erro ao carregar parceiros</p>';
             }
         }
 
-        // Exibir parceiros na tabela
         function exibirParceiros(dados) {
-            const tbody = document.getElementById('parceirosTableBody');
-            tbody.innerHTML = '';
-
+            const tbody = document.getElementById('parceirosTableBody'); tbody.innerHTML = '';
             if (dados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #999;">Nenhum parceiro encontrado</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhum parceiro encontrado</td></tr>';
                 document.getElementById('parceirosTable').style.display = 'table';
                 document.getElementById('loading').style.display = 'none';
                 return;
@@ -603,174 +216,92 @@
 
             dados.forEach(parceiro => {
                 const tr = document.createElement('tr');
+                // Mapeamento correto das colunas
                 tr.innerHTML = `
-                    <td>${parceiro.nome || 'N/A'}</td>
+                    <td>${parceiro.nome_completo || 'N/A'}</td>
                     <td>${parceiro.email || 'N/A'}</td>
                     <td>${parceiro.telefone || 'N/A'}</td>
+                    <td>${parceiro.comissao_padrao || '0'}%</td>
                     <td><span class="status-badge ${parceiro.status}">${getStatusText(parceiro.status)}</span></td>
                     <td>${formatarData(parceiro.created_at)}</td>
                     <td>
                         <div class="action-buttons">
                             ${parceiro.status === 'pendente' ? `
-                                <button class="btn-action btn-approve" onclick="aprovarParceiro('${parceiro.id}')">
-                                    <i class="fas fa-check"></i> Aprovar
-                                </button>
-                                <button class="btn-action btn-reject" onclick="recusarParceiro('${parceiro.id}')">
-                                    <i class="fas fa-times"></i> Recusar
-                                </button>
+                                <button class="btn-action btn-approve" onclick="aprovarParceiro('${parceiro.id}')"><i class="fas fa-check"></i></button>
+                                <button class="btn-action btn-reject" onclick="recusarParceiro('${parceiro.id}')"><i class="fas fa-times"></i></button>
                             ` : ''}
-                            <button class="btn-action btn-edit" onclick="editarParceiro('${parceiro.id}')">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
+                            <button class="btn-action btn-edit" onclick="editarParceiro('${parceiro.id}')"><i class="fas fa-edit"></i></button>
                         </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
-
             document.getElementById('parceirosTable').style.display = 'table';
             document.getElementById('loading').style.display = 'none';
         }
 
-        // Aplicar filtros
-        function aplicarFiltros() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const statusFilter = document.getElementById('statusFilter').value;
-
-            let filtrados = parceiros;
-
-            // Filtro de busca
-            if (searchTerm) {
-                filtrados = filtrados.filter(p => 
-                    (p.nome && p.nome.toLowerCase().includes(searchTerm)) ||
-                    (p.email && p.email.toLowerCase().includes(searchTerm)) ||
-                    (p.telefone && p.telefone.includes(searchTerm))
-                );
-            }
-
-            // Filtro de status
-            if (statusFilter) {
-                filtrados = filtrados.filter(p => p.status === statusFilter);
-            }
-
-            exibirParceiros(filtrados);
-        }
-
-        // Aprovar parceiro
         async function aprovarParceiro(id) {
-            if (!confirm('Deseja aprovar este parceiro?')) return;
-
+            if (!confirm('Aprovar parceiro?')) return;
             try {
-                const { error } = await supabase
-                    .from('usuarios')
-                    .update({ status: 'ativo' })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                alert('Parceiro aprovado com sucesso!');
-                carregarParceiros();
-
-            } catch (error) {
-                console.error('Erro ao aprovar parceiro:', error);
-                alert('Erro ao aprovar parceiro');
-            }
+                await supabase.from('parceiros').update({ status: 'ativo' }).eq('id', id);
+                alert('Aprovado!'); carregarParceiros();
+            } catch (e) { console.error(e); alert('Erro'); }
         }
 
-        // Recusar parceiro
         async function recusarParceiro(id) {
-            if (!confirm('Deseja recusar este parceiro?')) return;
-
+            if (!confirm('Recusar parceiro?')) return;
             try {
-                const { error } = await supabase
-                    .from('usuarios')
-                    .update({ status: 'inativo' })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                alert('Parceiro recusado');
-                carregarParceiros();
-
-            } catch (error) {
-                console.error('Erro ao recusar parceiro:', error);
-                alert('Erro ao recusar parceiro');
-            }
+                await supabase.from('parceiros').update({ status: 'inativo' }).eq('id', id);
+                alert('Recusado'); carregarParceiros();
+            } catch (e) { console.error(e); alert('Erro'); }
         }
 
-        // Editar parceiro
         function editarParceiro(id) {
-            const parceiro = parceiros.find(p => p.id === id);
-            if (!parceiro) return;
-
-            document.getElementById('editId').value = parceiro.id;
-            document.getElementById('editNome').value = parceiro.nome || '';
-            document.getElementById('editEmail').value = parceiro.email || '';
-            document.getElementById('editTelefone').value = parceiro.telefone || '';
-            document.getElementById('editStatus').value = parceiro.status || 'pendente';
-            document.getElementById('editComissao').value = parceiro.taxa_comissao || 0;
-
+            const p = parceiros.find(x => x.id === id);
+            if (!p) return;
+            document.getElementById('editId').value = p.id;
+            document.getElementById('editNome').value = p.nome_completo || '';
+            document.getElementById('editEmail').value = p.email || '';
+            document.getElementById('editTelefone').value = p.telefone || '';
+            document.getElementById('editStatus').value = p.status || 'pendente';
+            document.getElementById('editComissao').value = p.comissao_padrao || 0;
             document.getElementById('editModal').classList.add('show');
         }
 
-        // Fechar modal
-        function fecharModal() {
-            document.getElementById('editModal').classList.remove('show');
-        }
+        function fecharModal() { document.getElementById('editModal').classList.remove('show'); }
 
-        // Salvar edição
         document.getElementById('editForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const id = document.getElementById('editId').value;
             const dados = {
-                nome: document.getElementById('editNome').value,
+                nome_completo: document.getElementById('editNome').value,
                 email: document.getElementById('editEmail').value,
                 telefone: document.getElementById('editTelefone').value,
                 status: document.getElementById('editStatus').value,
-                taxa_comissao: parseFloat(document.getElementById('editComissao').value) || 0
+                comissao_padrao: parseFloat(document.getElementById('editComissao').value) || 0
             };
-
             try {
-                const { error } = await supabase
-                    .from('usuarios')
-                    .update(dados)
-                    .eq('id', id);
-
+                const { error } = await supabase.from('parceiros').update(dados).eq('id', id);
                 if (error) throw error;
-
-                alert('Parceiro atualizado com sucesso!');
-                fecharModal();
-                carregarParceiros();
-
-            } catch (error) {
-                console.error('Erro ao atualizar parceiro:', error);
-                alert('Erro ao atualizar parceiro');
-            }
+                alert('Atualizado!'); fecharModal(); carregarParceiros();
+            } catch (e) { console.error(e); alert('Erro'); }
         });
 
-        // Funções auxiliares
-        function formatarData(data) {
-            return new Date(data).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
+        function aplicarFiltros() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('statusFilter').value;
+            const filtered = parceiros.filter(p => {
+                const matchSearch = (p.nome_completo?.toLowerCase().includes(term)) || (p.email?.toLowerCase().includes(term));
+                const matchStatus = !status || p.status === status;
+                return matchSearch && matchStatus;
             });
+            exibirParceiros(filtered);
         }
 
-        function getStatusText(status) {
-            const statusMap = {
-                'ativo': 'Ativo',
-                'pendente': 'Pendente',
-                'inativo': 'Inativo'
-            };
-            return statusMap[status] || status;
-        }
+        function formatarData(data) { return new Date(data).toLocaleDateString('pt-BR'); }
+        function getStatusText(s) { const map = {'ativo':'Ativo','pendente':'Pendente','inativo':'Inativo'}; return map[s] || s; }
 
-        // Executar ao carregar
         verificarAuth();
-
-        // Busca em tempo real
         document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
         document.getElementById('statusFilter').addEventListener('change', aplicarFiltros);
     </script>
