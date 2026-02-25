@@ -2552,5 +2552,22 @@ img {
             });
         });
     </script>
+    <script>
+    // Pega o código da URL (ex: ?ref=IGR...)
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+
+    // Se tiver código, adiciona em todos os botões de compra
+    if (ref) {
+        document.querySelectorAll('a').forEach(link => {
+            // Verifica se é um link para o checkout
+            if (link.href.includes('checkout-dvs1.html') || link.href.includes('checkout.html')) {
+                // Adiciona o ref no final
+                const separator = link.href.includes('?') ? '&' : '?';
+                link.href = link.href + separator + 'ref=' + ref;
+            }
+        });
+    }
+</script>
 </body>
 </html>
