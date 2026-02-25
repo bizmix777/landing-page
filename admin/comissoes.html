@@ -170,7 +170,7 @@
                     const parceiro = parceirosMap[venda.codigo_indicacao] || { nome_completo: 'Desconhecido', pix_chave: '-', comissao_padrao: 10 };
                     
                     const taxa = parceiro.comissao_padrao || 10;
-                    const valorComissao = (venda.valor_total * taxa) / 100;
+                    const valorComissao = venda.comissao_valor || ((venda.valor_total * taxa) / 100);
                     const jaPago = venda.comissao_paga === true;
 
                     if (jaPago) {
