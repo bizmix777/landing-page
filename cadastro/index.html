@@ -413,7 +413,7 @@
             try {
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
                 if(ae) throw ae;
-
+                const codigoIgreja = 'IGR' + Math.random().toString(36).substring(2, 8).toUpperCase();
                 const { error: ie } = await supabase.from('parceiros').insert([{
                     auth_user_id: auth.user.id,
                     nome_completo: dados.resp,
