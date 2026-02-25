@@ -177,6 +177,10 @@
 
             try {
                 // 1. Coleta dados
+                // CAPTURA A INDICAÇÃO DA URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const codigoIndicacao = urlParams.get('ref');
+                
                 const formData = {
                     nome_comprador: document.getElementById('nome').value,
                     email_comprador: document.getElementById('email').value,
@@ -186,6 +190,7 @@
                     endereco_comprador: document.getElementById('endereco').value,
                     cidade_comprador: document.getElementById('cidade').value,
                     estado_comprador: document.getElementById('estado').value,
+                    codigo_indicacao: codigoIndicacao, // <--- ADICIONEI ISSO
                     preferencia_rodape: 'padrao',
                     valor_total: 29.90,
                     status_pagamento: 'pendente',
