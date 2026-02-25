@@ -320,7 +320,7 @@
                 // 2. Consultar a tabela 'parceiros' para obter dados adicionais
                 const { data: parceiroData, error: parceiroError } = await supabase
                     .from('parceiros')
-                    .select('id, status, tipo_parceiro')
+                    .select()
                     .eq('auth_user_id', userId) // Assumindo que você tem uma coluna 'auth_user_id' linkando ao Supabase Auth
                     .single();
 
