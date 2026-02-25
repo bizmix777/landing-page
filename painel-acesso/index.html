@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Painel BizMix</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         /* Reset e Estilos Básicos */
         * {
@@ -219,14 +223,9 @@
 
     <script>
         // --- CONFIGURAÇÃO SUPABASE ---
-        // URL do seu projeto Supabase
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        // Chave pública (anon key) do seu projeto Supabase
-        // ATENÇÃO: Substitua 'SUA_CHAVE_ANON_AQUI' pela sua chave real.
-        // Esta chave é segura para ser usada no frontend.
-        const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_AQUI'; 
-        
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // --- INICIALIZAÇÃO SUPABASE ---
+                
+        const supabase = window.supabase;
 
         // --- ELEMENTOS DO DOM ---
         const loginForm = document.getElementById('loginForm');
