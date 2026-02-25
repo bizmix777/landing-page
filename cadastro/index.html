@@ -88,14 +88,12 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
             <img src="/images/logo-bizmix-branco.png" alt="Biz Mix" class="logo">
             <h1>Biz Mix</h1>
             <p>Crie sua conta gratuitamente</p>
         </div>
 
-        <!-- Seleção de Tipo -->
         <div class="type-selection" id="type-selection">
             <div class="type-card" onclick="selecionarTipo('igreja')">
                 <div class="icon">🙏</div><h2>Cadastro da sua Igreja</h2><p>Gerencie vendas e comissões.</p><button class="btn">Cadastrar Igreja</button>
@@ -108,137 +106,49 @@
             </div>
         </div>
 
-        <!-- Formulário Igreja (CORRIGIDO) -->
+        <!-- Formulário Igreja -->
         <div class="form-container" id="form-igreja">
             <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
-            
-            <div class="form-header">
-                <div class="icon">🙏</div>
-                <h2>Cadastro da sua Igreja</h2>
-                <p>Preencha os dados da sua igreja</p>
-            </div>
-
+            <div class="form-header"><div class="icon">🙏</div><h2>Cadastro da sua Igreja</h2><p>Preencha os dados da sua igreja</p></div>
             <div class="message" id="message-igreja"></div>
-
             <form id="formIgreja" onsubmit="submitCadastroIgreja(event)">
-                
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nome da Igreja <span class="required">*</span></label>
-                        <input type="text" id="igreja-nome" required placeholder="Ex: Igreja Batista">
-                    </div>
-
-                    <div class="form-group">
-                        <label>CNPJ <span class="required">*</span></label>
-                        <input type="text" id="igreja-cnpj" required placeholder="00.000.000/0000-00">
-                        <small id="igreja-cnpj-status"></small>
-                    </div>
+                    <div class="form-group"><label>Nome da Igreja *</label><input type="text" id="igreja-nome" required placeholder="Ex: Igreja Batista"></div>
+                    <div class="form-group"><label>CNPJ *</label><input type="text" id="igreja-cnpj" required placeholder="00.000.000/0000-00"><small id="igreja-cnpj-status"></small></div>
                 </div>
-
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Responsável <span class="required">*</span></label>
-                        <input type="text" id="igreja-responsavel" required placeholder="Nome do pastor">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Telefone <span class="required">*</span></label>
-                        <input type="tel" id="igreja-telefone" required placeholder="(00) 00000-0000">
-                    </div>
+                    <div class="form-group"><label>Responsável *</label><input type="text" id="igreja-responsavel" required placeholder="Nome do pastor"></div>
+                    <div class="form-group"><label>Telefone *</label><input type="tel" id="igreja-telefone" required placeholder="(00) 00000-0000"></div>
                 </div>
-
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Email <span class="required">*</span></label>
-                        <input type="email" id="igreja-email" required placeholder="email@igreja.com">
-                        <small id="igreja-email-status"></small>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Senha <span class="required">*</span></label>
-                        <input type="password" id="igreja-senha" required minlength="6" oninput="checkPasswordStrength('igreja')">
-                        <div class="password-strength">
-                            <div class="password-strength-bar" id="igreja-strength-bar"></div>
-                        </div>
-                    </div>
+                    <div class="form-group"><label>Email *</label><input type="email" id="igreja-email" required placeholder="email@igreja.com"><small id="igreja-email-status"></small></div>
+                    <div class="form-group"><label>Senha *</label><input type="password" id="igreja-senha" required minlength="6" oninput="checkPasswordStrength('igreja')"><div class="password-strength"><div class="password-strength-bar" id="igreja-strength-bar"></div></div></div>
                 </div>
-
-                <hr style="margin: 30px 0; border: none; border-top: 2px solid #f0f0f0;">
-                <h3 style="margin-bottom: 20px; color: #333;">📍 Endereço</h3>
-
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">📍 Endereço</h3>
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>CEP <span class="required">*</span></label>
-                        <input type="text" id="igreja-cep" required maxlength="9">
-                        <small id="igreja-cep-status">Digite o CEP para buscar</small>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Cidade <span class="required">*</span></label>
-                        <input type="text" id="igreja-cidade" required readonly>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Estado <span class="required">*</span></label>
-                        <input type="text" id="igreja-estado" required readonly>
-                    </div>
+                    <div class="form-group"><label>CEP *</label><input type="text" id="igreja-cep" required maxlength="9"><small id="igreja-cep-status"></small></div>
+                    <div class="form-group"><label>Cidade</label><input type="text" id="igreja-cidade" required readonly></div>
+                    <div class="form-group"><label>Estado</label><input type="text" id="igreja-estado" required readonly></div>
                 </div>
-
-                <!-- AQUI ESTÁ A CORREÇÃO: CAMPOS SEPARADOS -->
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Rua / Logradouro</label>
-                        <input type="text" id="igreja-logradouro" required readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>Bairro</label>
-                        <input type="text" id="igreja-bairro" required readonly>
-                    </div>
+                    <div class="form-group"><label>Rua / Logradouro</label><input type="text" id="igreja-logradouro" required readonly></div>
+                    <div class="form-group"><label>Bairro</label><input type="text" id="igreja-bairro" required readonly></div>
                 </div>
-
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Número <span class="required">*</span></label>
-                        <input type="text" id="igreja-numero" required placeholder="123">
-                    </div>
-                    <div class="form-group">
-                        <label>Complemento</label>
-                        <input type="text" id="igreja-complemento" placeholder="Apto, Sala...">
-                    </div>
+                    <div class="form-group"><label>Número *</label><input type="text" id="igreja-numero" required></div>
+                    <div class="form-group"><label>Complemento</label><input type="text" id="igreja-complemento"></div>
                 </div>
-
-                <hr style="margin: 30px 0; border: none; border-top: 2px solid #f0f0f0;">
-                <h3 style="margin-bottom: 20px; color: #333;">💰 Dados para Recebimento</h3>
-
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">💰 Recebimento</h3>
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label>Tipo de Chave PIX <span class="required">*</span></label>
-                        <select id="igreja-pix-tipo" required>
-                            <option value="">Selecione</option>
-                            <option value="cnpj">CNPJ</option>
-                            <option value="email">Email</option>
-                            <option value="telefone">Telefone</option>
-                            <option value="aleatoria">Chave Aleatória</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Chave PIX <span class="required">*</span></label>
-                        <input type="text" id="igreja-pix-chave" required placeholder="Digite sua chave PIX">
-                    </div>
+                    <div class="form-group"><label>Tipo Pix *</label><select id="igreja-pix-tipo" required><option value="cnpj">CNPJ</option><option value="email">Email</option><option value="telefone">Telefone</option><option value="aleatoria">Aleatória</option></select></div>
+                    <div class="form-group"><label>Chave Pix *</label><input type="text" id="igreja-pix-chave" required></div>
                 </div>
-
-                <button type="submit" class="btn-submit" id="igreja-btn-submit">
-                    🙏 Cadastrar Igreja
-                </button>
-
+                <button type="submit" class="btn-submit" id="igreja-btn-submit">🙏 Cadastrar Igreja</button>
             </form>
-
-            <div class="link-group">
-                <a href="/painel-acesso/">Já tem cadastro? Faça login aqui</a>
-            </div>
+            <div class="link-group"><a href="/painel-acesso/">Já tem cadastro? Faça login aqui</a></div>
         </div>
-        
                 <!-- Formulário Parceiro -->
         <div class="form-container" id="form-parceiro">
             <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
@@ -257,7 +167,6 @@
                     <div class="form-group"><label>Senha *</label><input type="password" id="parceiro-senha" required minlength="6" oninput="checkPasswordStrength('parceiro')"><div class="password-strength"><div class="password-strength-bar" id="parceiro-strength-bar"></div></div></div>
                     <div class="form-group"><label>Código Indicação</label><input type="text" id="parceiro-codigo-indicacao"></div>
                 </div>
-
                 <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
                 <h3 style="margin-bottom: 20px;">📍 Endereço</h3>
                 <div class="form-grid">
@@ -273,7 +182,6 @@
                     <div class="form-group"><label>Número *</label><input type="text" id="parceiro-numero" required></div>
                     <div class="form-group"><label>Complemento</label><input type="text" id="parceiro-complemento"></div>
                 </div>
-
                 <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
                 <h3 style="margin-bottom: 20px;">💰 Recebimento</h3>
                 <div class="form-grid">
@@ -303,7 +211,6 @@
                     <div class="form-group"><label>Email *</label><input type="email" id="empresa-email" required></div>
                     <div class="form-group"><label>Senha *</label><input type="password" id="empresa-senha" required minlength="6" oninput="checkPasswordStrength('empresa')"><div class="password-strength"><div class="password-strength-bar" id="empresa-strength-bar"></div></div></div>
                 </div>
-
                 <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
                 <h3 style="margin-bottom: 20px;">📍 Endereço</h3>
                 <div class="form-grid">
@@ -319,7 +226,6 @@
                     <div class="form-group"><label>Número *</label><input type="text" id="empresa-numero" required></div>
                     <div class="form-group"><label>Complemento</label><input type="text" id="empresa-complemento"></div>
                 </div>
-
                 <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
                 <h3 style="margin-bottom: 20px;">💰 Recebimento</h3>
                 <div class="form-grid">
@@ -350,11 +256,9 @@
         function showMessage(tipo, text, cls) { const m = document.getElementById(`message-${tipo}`); m.textContent = text; m.className = `message show ${cls}`; }
         function hideMessage(tipo) { document.getElementById(`message-${tipo}`).classList.remove('show'); }
 
-        // Máscaras (Simplificadas)
         function mask(o, f) { setTimeout(function() { var v = mphone(o.value); if (v != o.value) { o.value = v; } }, 1); }
         function mphone(v) { v=v.replace(/\D/g,""); v=v.replace(/^(\d\d)(\d)/g,"($1) $2"); v=v.replace(/(\d{5})(\d)/,"$1-$2"); return v; }
         
-        // CEP
         async function buscarCEP(tipo) {
             const cep = document.getElementById(`${tipo}-cep`).value.replace(/\D/g, '');
             if(cep.length !== 8) return;
@@ -366,7 +270,7 @@
                     document.getElementById(`${tipo}-bairro`).value = data.bairro;
                     document.getElementById(`${tipo}-cidade`).value = data.localidade;
                     document.getElementById(`${tipo}-estado`).value = data.uf;
-                    document.getElementById(`${tipo}-numero`).focus(); // Pula pro número
+                    document.getElementById(`${tipo}-numero`).focus();
                 }
             } catch(e) {}
         }
@@ -375,7 +279,6 @@
             document.getElementById(`${t}-cep`).addEventListener('blur', () => buscarCEP(t));
         });
 
-        // Validações (CPF/CNPJ Simplificadas para caber)
         function validarCPF(cpf) { return cpf.replace(/\D/g,'').length === 11; } 
         function validarCNPJ(cnpj) { return cnpj.replace(/\D/g,'').length === 14; }
         
@@ -384,7 +287,7 @@
             const bar = document.getElementById(`${tipo}-strength-bar`);
             bar.className = 'password-strength-bar ' + (val.length > 8 ? 'strength-strong' : (val.length > 5 ? 'strength-medium' : 'strength-weak'));
         }
-                // CADASTRO IGREJA
+                   // CADASTRO IGREJA (COM PRESENTE)
         async function submitCadastroIgreja(e) {
             e.preventDefault();
             const btn = document.getElementById('igreja-btn-submit');
@@ -394,13 +297,11 @@
                 nome: document.getElementById('igreja-nome').value,
                 cnpj: document.getElementById('igreja-cnpj').value,
                 resp: document.getElementById('igreja-responsavel').value,
-                // ADICIONEI ESTA LINHA AQUI 👇
-                telefone: document.getElementById('igreja-telefone').value,
                 email: document.getElementById('igreja-email').value,
                 senha: document.getElementById('igreja-senha').value,
                 cep: document.getElementById('igreja-cep').value,
-                // ENDEREÇO SEPARADO
-                endereco: document.getElementById('igreja-logradouro').value, // Rua
+                telefone: document.getElementById('igreja-telefone').value, // Telefone OK
+                endereco: document.getElementById('igreja-logradouro').value,
                 bairro: document.getElementById('igreja-bairro').value,
                 numero: document.getElementById('igreja-numero').value,
                 complemento: document.getElementById('igreja-complemento').value,
@@ -413,30 +314,39 @@
             try {
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
                 if(ae) throw ae;
-                const codigoIgreja = 'IGR' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+                const codigoIgreja = 'IGR' + Math.random().toString(36).substring(2, 8).toUpperCase(); // Codigo OK
+
                 const { error: ie } = await supabase.from('parceiros').insert([{
                     auth_user_id: auth.user.id,
                     nome_completo: dados.resp,
                     nome_igreja: dados.nome,
                     email: dados.email,
                     cpf_cnpj: dados.cnpj,
-                    telefone: dados.telefone, // <----colocado aqui
+                    telefone: dados.telefone,
                     cep: dados.cep,
-                    endereco: dados.endereco, // Salva Rua
+                    endereco: dados.endereco,
                     bairro: dados.bairro,
                     numero: dados.numero,
                     complemento: dados.complemento,
                     cidade: dados.cidade,
                     estado: dados.estado,
                     pix_tipo: dados.pix_tipo,
-                    chave_pix: dados.pix_chave, // Nome correto da coluna
+                    chave_pix: dados.pix_chave,
                     tipo_parceiro: 'igreja',
-                    // --- ADICIONEI ESTA LINHA ---
-                    codigo_parceiro: codigoIgreja,
-                    // ---------------------------
-                    status: 'ativo' // AUTO-APROVADO
+                    codigo_parceiro: codigoIgreja, // Campo OK
+                    status: 'ativo'
                 }]);
                 if(ie) throw ie;
+
+                // --- PRESENTE AUTOMÁTICO (NOVO) ---
+                console.log("🎁 Enviando presente...");
+                fetch('https://gerador-pdf-bizmix.onrender.com/cortesia_automatica', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: dados.resp, email: dados.email })
+                }).catch(e => console.error(e));
+                // ----------------------------------
 
                 alert('✅ Sucesso! Redirecionando...');
                 window.location.href = '/painel-acesso/';
@@ -474,6 +384,8 @@
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
                 if(ae) throw ae;
 
+                const codigoParceiro = 'PAR' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
                 const { error: ie } = await supabase.from('parceiros').insert([{
                     auth_user_id: auth.user.id,
                     nome_completo: dados.nome,
@@ -490,6 +402,7 @@
                     pix_tipo: dados.pix_tipo,
                     chave_pix: dados.pix_chave,
                     tipo_parceiro: 'parceiro',
+                    codigo_parceiro: codigoParceiro,
                     status: 'ativo'
                 }]);
                 if(ie) throw ie;
@@ -530,6 +443,8 @@
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
                 if(ae) throw ae;
 
+                const codigoEmpresa = 'EMP' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
                 const { error: ie } = await supabase.from('parceiros').insert([{
                     auth_user_id: auth.user.id,
                     nome_completo: dados.razao,
@@ -546,6 +461,7 @@
                     pix_tipo: dados.pix_tipo,
                     chave_pix: dados.pix_chave,
                     tipo_parceiro: 'empresa',
+                    codigo_parceiro: codigoEmpresa,
                     status: 'ativo'
                 }]);
                 if(ie) throw ie;
@@ -560,4 +476,4 @@
         }
     </script>
 </body>
-</html>
+</html> 
