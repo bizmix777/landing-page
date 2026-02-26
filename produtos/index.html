@@ -1,760 +1,310 @@
-<!DOCTYPE html><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-     <!-- Supabase SDK -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Configuração centralizada do Supabase -->
-    <script src="/js/supabase-config.js"></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nossos Produtos | BizMix</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico">
-         
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-        .header h1 {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 15px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-
-        .header p {
-            font-size: 20px;
-            opacity: 0.95;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .filters-section {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .filter-group label {
-            font-weight: 600;
-            color: #333;
-            font-size: 15px;
-        }
-
-        .filter-group select,
-        .filter-group input {
-            padding: 10px 15px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            font-size: 15px;
-            min-width: 200px;
-            transition: all 0.3s;
-        }
-
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .btn-filter {
-            padding: 12px 25px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-filter:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-        }
-
-        .btn-clear {
-            padding: 12px 25px;
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-clear:hover {
-            background: #f8f9fa;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .stats-info {
-            font-size: 16px;
-            color: #666;
-        }
-
-        .stats-info strong {
-            color: #667eea;
-            font-size: 20px;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 10px;
-        }
-
-        .view-btn {
-            padding: 10px 15px;
-            background: white;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 18px;
-        }
-
-        .view-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .view-btn:hover {
-            border-color: #667eea;
-        }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-
-        .products-grid.list-view {
-            grid-template-columns: 1fr;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.2);
-        }
-
-        .list-view .product-card {
-            flex-direction: row;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 280px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 80px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .list-view .product-image {
-            width: 250px;
-            height: auto;
-            flex-shrink: 0;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            padding: 8px 15px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .badge-digital {
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .badge-fisico {
-            color: #28a745;
-            border: 2px solid #28a745;
-        }
-
-        .badge-servico {
-            color: #fd7e14;
-            border: 2px solid #fd7e14;
-        }
-
-        .badge-livro {
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-
-        .product-promo-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 8px 15px;
-            background: #dc3545;
-            color: white;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .product-content {
-            padding: 25px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-category {
-            font-size: 13px;
-            color: #667eea;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            letter-spacing: 0.5px;
-        }
-
-        .product-name {
-            font-size: 22px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin-bottom: 12px;
-            line-height: 1.3;
-        }
-
-        .product-description {
-            font-size: 15px;
-            color: #666;
-            margin-bottom: 20px;
-            line-height: 1.6;
-            flex: 1;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .list-view .product-description {
-            -webkit-line-clamp: 2;
-        }
-
-        .product-price-section {
-            display: flex;
-            align-items: baseline;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .product-price-old {
-            font-size: 16px;
-            color: #999;
-            text-decoration: line-through;
-        }
-
-        .product-price {
-            font-size: 32px;
-            font-weight: 800;
-            color: #667eea;
-        }
-
-        .product-installments {
-            font-size: 13px;
-            color: #28a745;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .product-footer {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-buy {
-            flex: 1;
-            padding: 14px 20px;
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-decoration: none;
-        }
-
-        .btn-buy:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-        }
-
-        .loading-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 80px 20px;
-        }
-
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-        }
-
-        .empty-state-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
-        .empty-state h3 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            font-size: 16px;
-            color: #666;
-        }
-
-        .footer {
-            background: #2c3e50;
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-            margin-top: 60px;
-        }
-
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 32px;
-            }
-
-            .header p {
-                font-size: 16px;
-            }
-
-            .filters-section {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-group {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-group select,
-            .filter-group input {
-                min-width: 100%;
-            }
-
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .list-view .product-card {
-                flex-direction: column;
-            }
-
-            .list-view .product-image {
-                width: 100%;
-                height: 280px;
-            }
-
-            .stats-bar {
-                flex-direction: column;
-                gap: 15px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Glister Multi-Action: O único creme dental com Sistema SYLODENT™. Dentes 3 tons mais brancos em 21 dias sem sensibilidade. Sistema SYLODENT™ exclusivo da Amway. Frete grátis para todo Brasil.">
+  <meta name="keywords" content="glister, creme dental, clareamento dental, amway, dentes brancos, hálito fresco, sylodent">
+  <meta name="author" content="Amway Brasil">
+  
+  <meta property="og:title" content="Glister Multi-Action - Dentes 3 Tons Mais Brancos em 21 Dias">
+  <meta property="og:description" content="O único creme dental com Sistema SYLODENT™ que branqueia sem sensibilidade. 50+ anos de confiança global.">
+  <meta property="og:image" content="./images/glister-product.png">
+  <meta property="og:url" content="https://bizmix.com.br/glister">
+  <meta property="og:type" content="website">
+  
+  <title>Glister Multi-Action | Creme Dental Clareador Amway - Dentes Brancos em 21 Dias</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    
-    <div class="header">
-        <h1>🛍️ Nossos Produtos</h1>
-        <p>Encontre os melhores produtos digitais e físicos para você</p>
-    </div>
 
-    <div class="container">
+  <header class="navbar">
+    <div class="container navbar-container">
+      <div class="logo">
+        <h2>Glister<span style="color: var(--color-primary); font-size: 0.5em; vertical-align: top;">™</span></h2>
+      </div>
+      <a href="#comprar" class="btn btn-primary btn-small">Comprar Agora</a>
+    </div>
+  </header>
+
+  <section class="hero section">
+    <div class="container hero-content">
+      <div class="hero-text fade-in">
+        <div class="trust-badge-top">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>Garantia Amway de 30 Dias</span>
+        </div>
         
-        <div class="filters-section">
-            <div class="filter-group">
-                <label for="filterCategoria">📁 Categoria:</label>
-                <select id="filterCategoria">
-                    <option value="">Todas as categorias</option>
-                    <option value="geral">Geral</option>
-                    <option value="livros">Livros</option>
-                    <option value="cursos">Cursos</option>
-                    <option value="ebooks">E-books</option>
-                </select>
-            </div>
+        <h1 class="hero-title">Dentes 3 Tons Mais Brancos em 21 Dias Sem Sensibilidade, Dentista ou Tratamentos Caros</h1>
+        
+        <p class="hero-subtitle">Descubra o creme dental americano usado por mais de 5 milhões de famílias no mundo - agora disponível no Brasil com entrega garantida.</p>
+        
+        <ul class="hero-benefits">
+          <li>
+            <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Hálito fresco por 12+ horas
+          </li>
+          <li>
+            <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Zero sensibilidade (ao contrário dos concorrentes)
+          </li>
+          <li>
+            <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            Rende até 198 escovações (6 meses de uso)
+          </li>
+        </ul>
 
-            <div class="filter-group">
-                <label for="filterTipo">📦 Tipo:</label>
-                <select id="filterTipo">
-                    <option value="">Todos os tipos</option>
-                    <option value="digital">Digital</option>
-                    <option value="fisico">Físico</option>
-                    <option value="servico">Serviço</option>
-                    <option value="livro">Livro</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label for="filterBusca">🔍 Buscar:</label>
-                <input type="text" id="filterBusca" placeholder="Digite o nome do produto...">
-            </div>
-
-            <button class="btn-filter" onclick="aplicarFiltros()">
-                <i class="fas fa-filter"></i> Filtrar
-            </button>
-
-            <button class="btn-clear" onclick="limparFiltros()">
-                <i class="fas fa-times"></i> Limpar
-            </button>
+        <div class="hero-cta">
+          <a href="#comprar" class="btn btn-primary btn-xlarge pulse">
+            QUERO DENTES MAIS BRANCOS AGORA
+          </a>
+          <p class="hero-security">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Pagamento 100% Seguro | Frete Grátis Brasil
+          </p>
         </div>
 
-        <div class="stats-bar">
-            <div class="stats-info">
-                <span id="totalProdutos">Carregando...</span>
-            </div>
-
-            <div class="view-toggle">
-                <button class="view-btn active" onclick="changeView('grid')" title="Visualização em grade">
-                    <i class="fas fa-th"></i>
-                </button>
-                <button class="view-btn" onclick="changeView('list')" title="Visualização em lista">
-                    <i class="fas fa-list"></i>
-                </button>
-            </div>
+        <div class="trust-badges mt-lg">
+          <div class="badge-item">✅ Certificação Kosher</div>
+          <div class="badge-item">✅ 50+ Anos de Confiança</div>
+          <div class="badge-item">✅ Avaliação 4.8/5 (EUA)</div>
         </div>
-
-        <div class="products-grid" id="productsGrid">
-            <div class="loading-section" style="grid-column: 1/-1;">
-                <div class="spinner"></div>
-                <p>Carregando produtos...</p>
-            </div>
-        </div>
-
+      </div>
+      
+      <div class="hero-image fade-in">
+        <img src="https://via.placeholder.com/500x600?text=Produto+Glister" alt="Creme Dental Glister 200g Amway" class="img-responsive drop-shadow">
+      </div>
     </div>
+  </section>
 
-    <div class="footer">
-        <p>© 2026 BizMix - Todos os direitos reservados</p>
-        <p style="margin-top: 10px;">
-            <a href="/">Início</a> | 
-            <a href="/produtos/">Produtos</a> | 
-            <a href="/contato.html">Contato</a>
-        </p>
+  <section id="comprar" class="section bg-light">
+    <div class="container">
+      <div class="section-header text-center fade-in">
+        <h2 class="section-title">Escolha a Melhor Opção Para Você</h2>
+        <p class="section-subtitle">Estoque limitado para o Brasil com Frete Grátis exclusivo.</p>
+      </div>
+
+      <div class="pricing-grid mt-xl">
+        
+        <div class="pricing-card fade-in">
+          <h3 class="pricing-title">Compra Simples</h3>
+          <p class="pricing-desc">Apenas o produto, direto para sua casa.</p>
+          <div class="pricing-price">
+            <span class="currency">R$</span>
+            <span class="amount">65</span>
+            <span class="cents">,90</span>
+          </div>
+          <div class="pricing-features">
+            <div class="pricing-feature">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>1x Glister Multi-Action 200g</span>
+            </div>
+            <div class="pricing-feature">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Frete Normal (Calculado no site)</span>
+            </div>
+            <div class="pricing-feature">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Garantia de 30 dias ou dinheiro de volta</span>
+            </div>
+          </div>
+          <div class="pricing-cta">
+            <a href="https://www.amway.com.br/pt/loja/bizmix" class="btn btn-outline btn-block btn-large" target="_blank" rel="noopener noreferrer">
+              COMPRAR AGORA
+            </a>
+            <p class="pricing-note">Redirecionamento para o site oficial Amway</p>
+          </div>
+        </div>
+
+        <div class="pricing-card pricing-card-popular fade-in">
+          <div class="popular-badge">MAIS POPULAR - 30% OFF</div>
+          <h3 class="pricing-title text-primary">Cliente VIP</h3>
+          <p class="pricing-desc">Desconto máximo para clientes recorrentes.</p>
+          <div class="pricing-price text-primary">
+            <span class="currency">R$</span>
+            <span class="amount">46</span>
+            <span class="cents">,13</span>
+          </div>
+          <div class="pricing-features">
+             <div class="pricing-feature">
+              <svg class="feature-icon text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span><strong>Desconto de 30%</strong> permanente</span>
+            </div>
+            <div class="pricing-feature">
+              <svg class="feature-icon text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Glister 200g de <s>R$ 65,90</s> por <strong>R$ 46,13</strong></span>
+            </div>
+            <div class="pricing-feature">
+              <svg class="feature-icon text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Frete GRÁTIS em compras acima de R$ 199</span>
+            </div>
+          </div>
+          <div class="pricing-cta">
+            <button id="openClientModalBtn" class="btn btn-primary btn-block btn-large pulse">
+              QUERO 30% DE DESCONTO
+            </button>
+            <p class="pricing-note">Cadastro Rápido. Sem mensalidade.</p>
+          </div>
+        </div>
+
+        <div class="pricing-card fade-in">
+          <h3 class="pricing-title">Seja um Empreendedor</h3>
+          <p class="pricing-desc">Para quem quer lucrar revendendo.</p>
+          <div class="pricing-price">
+            <span class="currency">R$</span>
+            <span class="amount">32</span>
+            <span class="cents">,00</span>
+            <span class="period">/kit virtual</span>
+          </div>
+          <div class="pricing-features">
+            <div class="pricing-feature">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Compre no atacado (30% OFF) e revenda</span>
+            </div>
+             <div class="pricing-feature">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Construa sua própria rede de vendas</span>
+            </div>
+            <div class="pricing-feature">
+              <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>Bônus em dinheiro e viagens por metas</span>
+            </div>
+          </div>
+          <div class="pricing-cta">
+            <button id="openEmpreendedorModalBtn" class="btn btn-outline btn-block btn-large">
+              QUERO EMPREENDER
+            </button>
+            <p class="pricing-note">Trabalhe de casa. Suporte completo.</p>
+          </div>
+        </div>
+
+      </div>
     </div>
+  </section>
 
-    <script>
+  <div class="modal-overlay" id="clientModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Cadastro Cliente VIP</h3>
+          <p class="modal-subtitle">Preencha os dados abaixo para liberar seus 30% de desconto permanentes.</p>
+        </div>
+        <button class="modal-close" id="closeModal">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
 
-        let todosProdutos = [];
-        let produtosFiltrados = [];
-        let viewMode = 'grid';
+      <div class="modal-body">
+        <form id="clientForm" class="cadastro-form">
+          <div class="form-section">
+            <h4 class="form-section-title">1. Dados Pessoais</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nome" class="form-label">Nome Completo *</label>
+                <input type="text" id="nome" name="nome" class="form-control" required placeholder="Digite seu nome completo">
+              </div>
+            </div>
+            <div class="form-row two-cols">
+              <div class="form-group">
+                <label for="cpf" class="form-label">CPF *</label>
+                <input type="text" id="cpf" name="cpf" class="form-control" required placeholder="000.000.000-00">
+              </div>
+              <div class="form-group">
+                <label for="dataNascimento" class="form-label">Data de Nascimento *</label>
+                <input type="date" id="dataNascimento" name="dataNascimento" class="form-control" required>
+              </div>
+            </div>
+          </div>
 
-        function formatCurrency(value) {
-            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
+          <div class="form-section">
+            <h4 class="form-section-title">2. Contato e Acesso</h4>
+            <div class="form-row two-cols">
+              <div class="form-group">
+                <label for="celular" class="form-label">Celular (WhatsApp) *</label>
+                <input type="tel" id="celular" name="celular" class="form-control" required placeholder="(00) 00000-0000">
+              </div>
+              <div class="form-group">
+                <label for="email" class="form-label">E-mail *</label>
+                <input type="email" id="email" name="email" class="form-control" required placeholder="seu@email.com">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="senha" class="form-label">Crie uma Senha * <span class="help-text">(Mínimo 8 caracteres, 1 letra e 1 número)</span></label>
+                <input type="password" id="senha" name="senha" class="form-control" required placeholder="Crie sua senha de acesso">
+              </div>
+            </div>
+          </div>
 
-        function getProductTypeIcon(tipo) {
-            const icons = {
-                'digital': '📱',
-                'fisico': '📦',
-                'servico': '⚙️',
-                'livro': '📚'
-            };
-            return icons[tipo] || '📦';
-        }
+          <div class="form-section">
+            <h4 class="form-section-title">3. Endereço de Entrega</h4>
+            <div class="form-row two-cols-cep">
+              <div class="form-group">
+                <label for="cep" class="form-label">CEP *</label>
+                <input type="text" id="cep" name="cep" class="form-control" required placeholder="00000-000">
+              </div>
+              <div class="form-group align-bottom">
+                <button type="button" id="btnBuscarCep" class="btn btn-outline btn-block">Buscar CEP</button>
+              </div>
+            </div>
+            
+            <div class="form-row two-cols-address">
+              <div class="form-group address-rua">
+                <label for="rua" class="form-label">Rua / Avenida *</label>
+                <input type="text" id="rua" name="rua" class="form-control" required placeholder="Ex: Av. Paulista">
+              </div>
+              <div class="form-group address-numero">
+                <label for="numero" class="form-label">Número *</label>
+                <input type="text" id="numero" name="numero" class="form-control" required placeholder="1000">
+              </div>
+            </div>
 
-        function getProductTypeBadgeClass(tipo) {
-            return `badge-${tipo}`;
-        }
+            <div class="form-row two-cols">
+              <div class="form-group">
+                <label for="complemento" class="form-label">Complemento (Opcional)</label>
+                <input type="text" id="complemento" name="complemento" class="form-control" placeholder="Apto, Bloco, Casa...">
+              </div>
+              <div class="form-group">
+                <label for="bairro" class="form-label">Bairro *</label>
+                <input type="text" id="bairro" name="bairro" class="form-control" required>
+              </div>
+            </div>
 
-        async function carregarProdutos() {
-            try {
-                console.log('🔍 Buscando produtos...');
-                
-                const { data: produtos, error } = await supabase
-                    .from('produtos')
-                    .select('*')
-                    .eq('ativo', true)
-                    .eq('status', 'ativo')
-                    .order('criado_em', { ascending: false });
+            <div class="form-row two-cols">
+              <div class="form-group">
+                <label for="cidade" class="form-label">Cidade *</label>
+                <input type="text" id="cidade" name="cidade" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label for="estado" class="form-label">Estado (UF) *</label>
+                <input type="text" id="estado" name="estado" class="form-control" required maxlength="2" placeholder="Ex: SP">
+              </div>
+            </div>
+          </div>
 
-                if (error) {
-                    console.error('❌ Erro ao buscar produtos:', error);
-                    throw error;
-                }
+          <div id="formMessage" class="form-message hidden"></div>
 
-                console.log('✅ Produtos encontrados:', produtos);
+          <div class="form-actions">
+            <button type="submit" id="btnSubmitClient" class="btn btn-primary btn-xlarge">
+              <span class="btn-text">FINALIZAR CADASTRO E GARANTIR 30% OFF</span>
+              <span class="btn-loading">
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="spinner"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Processando...
+              </span>
+            </button>
+            <p class="privacy-note">Seus dados estão 100% seguros e protegidos.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
-                todosProdutos = produtos || [];
-                produtosFiltrados = todosProdutos;
-
-                renderizarProdutos(produtosFiltrados);
-                atualizarStats(produtosFiltrados.length);
-
-            } catch (error) {
-                console.error('❌ Erro ao carregar produtos:', error);
-                mostrarErro('Erro ao carregar produtos. Tente novamente.');
-            }
-        }
-
-        function renderizarProdutos(produtos) {
-            const grid = document.getElementById('productsGrid');
-
-            if (produtos.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <div class="empty-state-icon">📭</div>
-                        <h3>Nenhum produto encontrado</h3>
-                        <p>Tente ajustar os filtros ou volte mais tarde</p>
-                    </div>
-                `;
-                return;
-            }
-
-            grid.innerHTML = produtos.map(produto => criarCardProduto(produto)).join('');
-        }
-
-        function criarCardProduto(produto) {
-            const precoFinal = produto.preco_promocional || produto.preco;
-            const temDesconto = produto.preco_promocional && produto.preco_promocional < produto.preco;
-            const percentualDesconto = temDesconto 
-                ? Math.round(((produto.preco - produto.preco_promocional) / produto.preco) * 100)
-                : 0;
-
-            return `
-                <div class="product-card">
-                    <div class="product-image">
-                        ${produto.imagem_url 
-                            ? `<img src="${produto.imagem_url}" alt="${produto.nome}">` 
-                            : `<span>${getProductTypeIcon(produto.tipo)}</span>`
-                        }
-                        <div class="product-badge ${getProductTypeBadgeClass(produto.tipo)}">
-                            ${getProductTypeIcon(produto.tipo)} ${produto.tipo.toUpperCase()}
-                        </div>
-                        ${temDesconto ? `
-                            <div class="product-promo-badge">
-                                -${percentualDesconto}% OFF
-                            </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="product-content">
-                        <div class="product-category">${produto.categoria || 'Geral'}</div>
-                        <h3 class="product-name">${produto.nome}</h3>
-                        <p class="product-description">${produto.descricao || 'Produto sem descrição'}</p>
-                        
-                        <div class="product-price-section">
-                            ${temDesconto ? `
-                                <span class="product-price-old">${formatCurrency(produto.preco)}</span>
-                            ` : ''}
-                            <span class="product-price">${formatCurrency(precoFinal)}</span>
-                        </div>
-                        
-                        <div class="product-installments">
-                            🎫 ou 12x de ${formatCurrency(precoFinal / 12)}
-                        </div>
-                        
-                        <div class="product-footer">
-                            <a href="/checkout.html?produto=${produto.id}" class="btn-buy">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span>Comprar Agora</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function aplicarFiltros() {
-            const categoria = document.getElementById('filterCategoria').value.toLowerCase();
-            const tipo = document.getElementById('filterTipo').value.toLowerCase();
-            const busca = document.getElementById('filterBusca').value.toLowerCase();
-
-            produtosFiltrados = todosProdutos.filter(produto => {
-                const matchCategoria = !categoria || produto.categoria?.toLowerCase() === categoria;
-                const matchTipo = !tipo || produto.tipo?.toLowerCase() === tipo;
-                const matchBusca = !busca || 
-                    produto.nome.toLowerCase().includes(busca) ||
-                    produto.descricao?.toLowerCase().includes(busca);
-
-                return matchCategoria && matchTipo && matchBusca;
-            });
-
-            renderizarProdutos(produtosFiltrados);
-            atualizarStats(produtosFiltrados.length);
-        }
-
-        function limparFiltros() {
-            document.getElementById('filterCategoria').value = '';
-            document.getElementById('filterTipo').value = '';
-            document.getElementById('filterBusca').value = '';
-
-            produtosFiltrados = todosProdutos;
-            renderizarProdutos(produtosFiltrados);
-            atualizarStats(produtosFiltrados.length);
-        }
-
-        document.getElementById('filterBusca').addEventListener('input', () => {
-            aplicarFiltros();
-        });
-
-        function changeView(mode) {
-            viewMode = mode;
-            const grid = document.getElementById('productsGrid');
-            const buttons = document.querySelectorAll('.view-btn');
-
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            if (mode === 'list') {
-                grid.classList.add('list-view');
-            } else {
-                grid.classList.remove('list-view');
-            }
-        }
-
-        function atualizarStats(total) {
-            const statsEl = document.getElementById('totalProdutos');
-            statsEl.innerHTML = `
-                Mostrando <strong>${total}</strong> ${total === 1 ? 'produto' : 'produtos'}
-            `;
-        }
-
-        function mostrarErro(mensagem) {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = `
-                <div class="empty-state" style="grid-column: 1/-1;">
-                    <div class="empty-state-icon">⚠️</div>
-                    <h3>Ops! Algo deu errado</h3>
-                    <p>${mensagem}</p>
-                    <button onclick="carregarProdutos()" style="margin-top: 20px; padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
-                        Tentar Novamente
-                    </button>
-                </div>
-            `;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('✅ Página carregada, iniciando...');
-            carregarProdutos();
-        });
-
-        console.log('✅ Página de produtos inicializada!');
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/app.js"></script>
 </body>
 </html>
