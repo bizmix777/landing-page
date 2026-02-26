@@ -1481,6 +1481,55 @@ select:hover {
     gap: 8px;
   }
 }
+
+/* ============================================
+   CORREÇÃO DE EMERGÊNCIA - ÍCONES E MODAIS
+   ============================================ */
+
+/* 1. Trava todos os SVGs para não ficarem gigantes */
+svg {
+    width: 24px !important;
+    height: 24px !important;
+    max-width: 24px;
+    max-height: 24px;
+}
+
+/* 2. Exceção para o Logotipo e Imagens do Produto (caso usem SVG) */
+.logo svg, .hero-image svg, .footer-logo svg {
+    width: auto !important;
+    height: auto !important;
+    max-width: 150px; /* Ajuste conforme o tamanho do seu logo */
+}
+
+/* 3. Garante que os Modais não abram sozinhos (Tela Preta) */
+.modal {
+    display: none !important;
+}
+
+.modal.active, .modal.show {
+    display: flex !important;
+}
+
+/* 4. Estilo para a rodinha de "Processando" nos botões */
+.btn-loading {
+    display: inline-block;
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none !important;
+}
+
 /* Correção Universal para Ícones Gigantes */
 svg {
     width: 24px !important;
