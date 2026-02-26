@@ -1,0 +1,24 @@
+# ===================================
+# REDIRECIONAMENTOS (CORREÇÕES 301)
+# ===================================
+
+# 1. Matar o Super Admin antigo (Manda pro Admin Novo)
+/admin/super-admin/*    /admin/index.html    301
+/admin/super-admin      /admin/index.html    301
+
+# 2. Centralizar Login (Manda pro Painel Acesso)
+/admin/login.html       /painel-acesso/      301
+/admin/login            /painel-acesso/      301
+/login                  /painel-acesso/      301
+
+# 3. Atalhos Limpos
+/admin                  /admin/              301
+/painel                 /painel/             301
+
+# ===================================
+# REGRAS DE SPA (Mantenha só o necessário)
+# ===================================
+
+# Se a página não existir, manda pra Home (ou 404)
+# (Isso evita erros feios, mas se quiser ver erro 404 real, mude 200 para 404)
+/*                      /index.html          200
