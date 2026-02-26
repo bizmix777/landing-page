@@ -1346,7 +1346,7 @@
       </div>
     </div>
   </footer>
-  <div class="modal" id="cadastroModalCliente">
+<div class="modal" id="cadastroModalCliente">
     <div class="modal-overlay"></div>
     <div class="modal-content">
       <div class="modal-header">
@@ -1354,15 +1354,43 @@
         <button class="modal-close-cliente modal-close">X</button>
       </div>
       <div class="modal-body">
-        <form id="cadastroFormCliente">
-          <input type="text" id="nomeCliente" placeholder="Nome Completo" class="form-control" required>
-          <input type="text" id="cpfCliente" placeholder="CPF" class="form-control" required>
-          <input type="email" id="emailCliente" placeholder="E-mail" class="form-control" required>
-          <input type="tel" id="celularCliente" placeholder="WhatsApp" class="form-control" required>
-          <input type="text" id="cepCliente" placeholder="CEP" class="form-control" required>
-          <button type="button" id="btnBuscarCepCliente" class="btn btn-outline">Buscar CEP</button>
+        <form id="cadastroFormCliente" class="cadastro-form">
+          <div class="form-group"><label>Nome Completo *</label><input type="text" id="nomeCliente" class="form-control" required></div>
+          
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;"><label>CPF *</label><input type="text" id="cpfCliente" class="form-control" required placeholder="000.000.000-00"></div>
+            <div class="form-group" style="flex: 1;"><label>Nascimento *</label><input type="date" id="dataNascimentoCliente" class="form-control" required></div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;"><label>WhatsApp *</label><input type="tel" id="celularCliente" class="form-control" required placeholder="(00) 00000-0000"></div>
+            <div class="form-group" style="flex: 1;"><label>E-mail *</label><input type="email" id="emailCliente" class="form-control" required></div>
+          </div>
+
+          <div class="form-group"><label>Crie uma Senha *</label><input type="password" id="senhaCliente" class="form-control" required minlength="6"></div>
+
+          <hr style="margin: 15px 0; border: 0; border-top: 1px dashed #ddd;">
+          
+          <div style="display: flex; gap: 10px; align-items: flex-end;">
+            <div class="form-group" style="flex: 1;"><label>CEP *</label><input type="text" id="cepCliente" class="form-control" required></div>
+            <div class="form-group"><button type="button" id="btnBuscarCepCliente" class="btn btn-outline" style="padding: 10px;">Buscar CEP</button></div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 3;"><label>Rua *</label><input type="text" id="ruaCliente" class="form-control" required></div>
+            <div class="form-group" style="flex: 1;"><label>Nº *</label><input type="text" id="numeroCliente" class="form-control" required></div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;"><label>Bairro *</label><input type="text" id="bairroCliente" class="form-control" required></div>
+            <div class="form-group" style="flex: 1;"><label>Cidade *</label><input type="text" id="cidadeCliente" class="form-control" required></div>
+            <div class="form-group" style="width: 60px;"><label>UF *</label><input type="text" id="estadoCliente" class="form-control" required maxlength="2"></div>
+          </div>
+
           <div id="formMessageCliente" class="form-message hidden"></div>
-          <button type="submit" id="btnSubmitCliente" class="btn btn-primary btn-block">FINALIZAR</button>
+          <button type="submit" id="btnSubmitCliente" class="btn btn-primary btn-block" style="margin-top: 15px;">
+             <span class="btn-text">FINALIZAR E COMPRAR COM DESCONTO</span>
+          </button>
         </form>
       </div>
     </div>
