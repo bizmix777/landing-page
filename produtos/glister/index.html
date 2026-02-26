@@ -1403,14 +1403,44 @@
         <h3 class="modal-title">Cadastro Empreendedor</h3>
         <button class="modal-close-empreendedor modal-close">X</button>
       </div>
+<div class="modal" id="cadastroModalEmpreendedor">
+    <div class="modal-overlay"></div>
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Cadastro Empreendedor</h3>
+        <button class="modal-close-empreendedor modal-close">X</button>
+      </div>
       <div class="modal-body">
-        <form id="cadastroFormEmpreendedor">
-          <input type="text" id="nomeEmp" placeholder="Nome Completo" class="form-control" required>
-          <input type="text" id="cpfEmp" placeholder="CPF" class="form-control" required>
-          <input type="email" id="emailEmp" placeholder="E-mail" class="form-control" required>
-          <input type="tel" id="celularEmp" placeholder="WhatsApp" class="form-control" required>
+        <form id="cadastroFormEmpreendedor" class="cadastro-form">
+          <div class="form-group"><label>Nome Completo *</label><input type="text" id="nomeEmp" class="form-control" required></div>
+          
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;"><label>CPF *</label><input type="text" id="cpfEmp" class="form-control" required placeholder="000.000.000-00"></div>
+            <div class="form-group" style="flex: 1;"><label>Nasc. (Dia/Mês/Ano) *</label>
+              <div style="display:flex; gap:5px;">
+                <input type="number" id="diaEmp" placeholder="DD" class="form-control" style="width:65px;" required min="1" max="31">
+                <input type="number" id="mesEmp" placeholder="MM" class="form-control" style="width:65px;" required min="1" max="12">
+                <input type="number" id="anoEmp" placeholder="AAAA" class="form-control" style="width:90px;" required min="1920" max="2008">
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <div class="form-group" style="flex: 1;"><label>WhatsApp *</label><input type="tel" id="celularEmp" class="form-control" required placeholder="(00) 00000-0000"></div>
+            <div class="form-group" style="flex: 1;"><label>E-mail *</label><input type="email" id="emailEmp" class="form-control" required></div>
+          </div>
+
+          <div class="form-group"><label>Crie uma Senha *</label><input type="password" id="senhaEmp" class="form-control" required minlength="6"></div>
+
+          <div style="display: flex; gap: 10px; align-items: flex-end;">
+            <div class="form-group" style="flex: 1;"><label>CEP *</label><input type="text" id="cepEmp" class="form-control" required></div>
+            <div class="form-group"><button type="button" id="btnBuscarCepEmp" class="btn btn-outline" style="padding: 10px;">Buscar CEP</button></div>
+          </div>
+
           <div id="formMessageEmpreendedor" class="form-message hidden"></div>
-          <button type="submit" id="btnSubmitEmpreendedor" class="btn btn-primary btn-block">FINALIZAR</button>
+          <button type="submit" id="btnSubmitEmpreendedor" class="btn btn-primary btn-block" style="margin-top: 15px;">
+            <span class="btn-text">FINALIZAR CADASTRO DE EMPREENDEDOR</span>
+          </button>
         </form>
       </div>
     </div>
