@@ -764,6 +764,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="#" data-section="products">
+                            <i class="fas fa-box-open" style="margin-right: 10px;"></i>
+                            Vitrine de Produtos
+                        </a>
+                    </li>
+                    <li>
                         <a href="#" data-section="affiliate">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -947,9 +953,26 @@
                         <p>Acompanhe acima quantas pessoas clicaram no seu link e a taxa de conversão em vendas!</p>
                     </div>
                 </div>
-
             </section>
+            
+            <!-- Products Section (VITRINE) -->
+            <section id="products" class="dashboard-section">
+                <div class="section-card">
+                    <h2>📦 Produtos para Divulgar</h2>
+                    <p style="margin-bottom: 20px; color: #666;">
+                        Escolha um produto, copie seu link exclusivo e comece a vender!
+                    </p>
+                    
+                    <div id="productsLoading" style="text-align: center; padding: 40px;">
+                        <div class="spinner"></div> Carregando vitrine...
+                    </div>
 
+                    <div id="productsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                        <!-- Os produtos vão aparecer aqui via JS -->
+                    </div>
+                </div>
+            </section>
+            
             <!-- Sales Section -->
             <section id="sales" class="dashboard-section">
                 <div class="section-card">
@@ -2147,6 +2170,64 @@
 
         // Initialize
         checkLogin();
+
+                // Carregar Vitrine de Produtos
+        async function loadProductsShowcase() {
+            try {
+                const grid = document.getElementById('productsGrid');
+                const loading = document.getElementById('productsLoading');
+                
+                // Busca produtos ativos
+                const { data: produtos, error } = await supabase
+                    .from('produtos')
+                    .select('*')
+                    .eq('ativo', true)
+                    .eq('status', 'ativo'); // Ajuste conforme seu banco
+
+                if (error) throw error;
+
+                loading.style.display = 'none';
+                grid.innerHTML = '';
+
+                if (!produtos || produtos.length === 0) {
+                    grid.innerHTML = '<p>Nenhum produto disponível.</p>';
+                    return;
+                }
+
+                produtos.forEach(prod => {
+                    // Gera o link com o código do parceiro
+                    const linkAfiliado = `https://bizmix.com.br/checkout.html?produto=${prod.id}&ref=${currentPartner.codigo_parceiro}`;
+                    
+                    const card = document.createElement('div');
+                    card.style.cssText = "border: 1px solid #eee; border-radius: 10px; overflow: hidden; transition: transform 0.3s;";
+                    card.onmouseover = () => card.style.transform = "translateY(-5px)";
+                    card.onmouseout = () => card.style.transform = "translateY(0)";
+
+                    card.innerHTML = `
+                        <div style="height: 150px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            <img src="${prod.imagem_url || 'https://via.placeholder.com/300x150?text=Produto'}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="padding: 20px;">
+                            <h3 style="font-size: 18px; margin-bottom: 10px;">${prod.nome}</h3>
+                            <p style="color: #667eea; font-weight: bold; font-size: 20px;">R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
+                            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Comissão: <strong>${currentPartner.comissao_padrao || 10}%</strong></p>
+                            
+                            <div style="background: #f0f3ff; padding: 10px; border-radius: 5px; font-size: 12px; margin-bottom: 15px; word-break: break-all;">
+                                ${linkAfiliado}
+                            </div>
+                            
+                            <button onclick="navigator.clipboard.writeText('${linkAfiliado}'); alert('Link copiado!')" style="width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                                📋 Copiar Link
+                            </button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar vitrine:', error);
+            }
+        }
     </script>
 
 </body>
