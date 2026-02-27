@@ -3,104 +3,165 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Glister Multi-Action | Dentes Brancos em 21 Dias</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Glister Multi-Action: Dentes 3 tons mais brancos em 21 dias sem sensibilidade.">
+  <title>Glister Multi-Action | Creme Dental Clareador Amway</title>
   <link rel="stylesheet" href="./css/style.css">
   <style>
-    :root { --primary: #00A0DC; --primary-dark: #0081B3; }
-    .btn-primary, .btn-block { 
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
-      color: #FFFFFF !important; /* Letras Brancas */
-      border: none !important;
+    /* Garantindo que as letras dos botões azuis/verdes sejam BRANCAS */
+    .btn-success, .btn-primary, .btn-submit, #btnSubmitEmp, #btnSubmitVip {
+      color: #FFFFFF !important;
       font-weight: bold;
-      cursor: pointer;
-      padding: 12px;
-      border-radius: 8px;
     }
-    .text-primary { color: var(--primary); font-weight: 800; }
-    .form-group { margin-bottom: 15px; text-align: left; }
-    .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-    .modal-content { max-height: 90vh; overflow-y: auto; padding: 25px; }
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+    .modal.active { display: flex; }
+    .modal-content { background: white; padding: 20px; border-radius: 10px; width: 95%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
 
   <header class="navbar">
     <div class="container navbar-container">
-      <img src="/images/logo-bizmix-preto.png" alt="BizMix" style="height: 40px;">
-      <a href="#comprar" class="btn-primary" style="padding: 10px 20px; text-decoration: none;">Comprar Agora</a>
+      <div class="logo">
+        <img src="/images/logo-bizmix-preto.png" alt="BizMix" style="height: 40px;">
+      </div>
+      <a href="#comprar" class="btn btn-primary">Comprar Agora</a>
     </div>
   </header>
 
-  <main>
-    <section class="hero" style="padding: 60px 20px; text-align: center;">
-      <h1>Dentes <span class="text-primary">3 Tons Mais Brancos</span></h1>
-      <p>Tecnologia SYLODENT™: Branqueamento sem sensibilidade.</p>
-      <a href="#comprar" class="btn-primary" style="padding: 15px 30px; text-decoration: none; display: inline-block; margin-top: 20px;">Quero Meu Glister</a>
-    </section>
-
-    <section id="comprar" style="padding: 60px 0; background: #f4f4f4; text-align: center;">
-      <div class="container" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
-        <div style="background: white; padding: 30px; border-radius: 15px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-          <h3>Cliente VIP</h3>
-          <p>Descontos exclusivos.</p>
-          <button id="btn-opcao-cliente" class="btn-primary btn-block">QUERO SER CLIENTE VIP</button>
-        </div>
-        <div style="background: var(--primary); color: white; padding: 30px; border-radius: 15px; width: 300px;">
-          <h3 style="color: white;">Empreendedor</h3>
-          <p>Revenda e lucre.</p>
-          <button id="btn-opcao-empreendedor" style="background: white; color: var(--primary); border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer;">QUERO SER EMPREENDEDOR</button>
-        </div>
+  <section id="comprar" class="pricing">
+    <div class="container" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; padding: 50px 0;">
+      <div class="price-card" style="border: 1px solid #ddd; padding: 30px; border-radius: 15px; text-align: center; width: 300px;">
+        <h3>Cliente VIP</h3>
+        <button id="btn-opcao-vip" class="btn btn-primary" style="width: 100%;">QUERO SER CLIENTE VIP</button>
       </div>
-    </section>
-  </main>
+      <div class="price-card featured" style="background: #00A0DC; color: white; padding: 30px; border-radius: 15px; text-align: center; width: 300px;">
+        <h3 style="color: white;">Empreendedor</h3>
+        <button id="btn-opcao-empreendedor" class="btn btn-success" style="width: 100%; background: #28a745; border: none;">QUERO SER EMPREENDEDOR</button>
+      </div>
+    </div>
+  </section>
 
-  <div class="modal" id="cadastroModalCliente">
+  <div id="modalVip" class="modal">
     <div class="modal-content">
-      <button class="modal-close-cliente" style="float: right;">X</button>
+      <span id="closeVip" style="position: absolute; right: 20px; cursor: pointer; font-size: 24px;">&times;</span>
       <h3>Cadastro Cliente VIP</h3>
-      <form id="cadastroFormCliente">
-        <div class="form-group"><label>Nome Completo</label><input type="text" id="nomeCliente" class="form-control" required></div>
-        <div class="form-group"><label>CPF</label><input type="text" id="cpfCliente" class="form-control" required></div>
-        <div class="form-group"><label>WhatsApp</label><input type="tel" id="celularCliente" class="form-control" required></div>
-        <div class="form-group"><label>E-mail</label><input type="email" id="emailCliente" class="form-control" required></div>
-        <div class="form-group"><label>CEP</label><input type="text" id="cepCliente" class="form-control" required></div>
-        <div class="form-group"><label>Rua</label><input type="text" id="ruaCliente" class="form-control"></div>
-        <div id="formMessageCliente" class="form-message hidden"></div>
-        <button type="submit" id="btnSubmitCliente" class="btn-primary btn-block">FINALIZAR E ENVIAR</button>
+      <form id="formVip">
+        <input type="text" id="nomeVip" placeholder="Nome Completo" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="cpfVip" placeholder="CPF" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="date" id="nascVip" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="tel" id="telVip" placeholder="WhatsApp" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="email" id="emailVip" placeholder="E-mail" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="cepVip" placeholder="CEP" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="ruaVip" placeholder="Rua e Número" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">FINALIZAR E ENVIAR E-MAIL</button>
       </form>
     </div>
   </div>
 
-  <div class="modal" id="cadastroModalEmpreendedor">
+  <div id="modalEmp" class="modal">
     <div class="modal-content">
-      <button class="modal-close-empreendedor" style="float: right;">X</button>
-      <h3>Cadastro Empreendedor Amway</h3>
-      <form id="cadastroFormEmpreendedor">
-        <div class="form-group"><label>Nome Completo</label><input type="text" id="nomeEmp" class="form-control" required></div>
-        <div class="form-group"><label>CPF</label><input type="text" id="cpfEmp" class="form-control" required></div>
-        <div style="display: flex; gap: 5px;" class="form-group">
-          <input type="text" id="diaEmp" placeholder="DD" maxlength="2" style="width: 50px;" class="form-control">
-          <input type="text" id="mesEmp" placeholder="MM" maxlength="2" style="width: 50px;" class="form-control">
-          <input type="text" id="anoEmp" placeholder="AAAA" maxlength="4" style="width: 80px;" class="form-control">
-        </div>
-        <div class="form-group"><label>E-mail</label><input type="email" id="emailEmp" class="form-control" required></div>
-        <div class="form-group"><label>WhatsApp</label><input type="tel" id="celularEmp" class="form-control" required></div>
-        <div class="form-group">
-            <label>Kit Inicial</label>
-            <select id="tipoKitEmp" class="form-control">
-                <option value="virtual">Kit Virtual - R$ 197,00</option>
-                <option value="irresistivel">Kit Irresistível</option>
-            </select>
-        </div>
-        <div class="form-group"><label>CEP</label><input type="text" id="cepEmp" class="form-control" required></div>
-        <div class="form-group"><label>Rua e Nº</label><input type="text" id="ruaEmp" class="form-control" placeholder="Rua, número e bairro"></div>
-        <div id="formMessageEmpreendedor" class="form-message hidden"></div>
-        <button type="submit" id="btnSubmitEmpreendedor" class="btn-primary btn-block">FINALIZAR E ENVIAR</button>
+      <span id="closeEmp" style="position: absolute; right: 20px; cursor: pointer; font-size: 24px;">&times;</span>
+      <h3>Cadastro Empreendedor</h3>
+      <form id="formEmp">
+        <input type="text" id="nomeEmp" placeholder="Nome Completo" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="cpfEmp" placeholder="CPF" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="date" id="nascEmp" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="tel" id="telEmp" placeholder="WhatsApp" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="email" id="emailEmp" placeholder="E-mail" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        
+        <select id="kitEmp" class="form-control" style="margin-bottom:10px; width: 100%;">
+          <option value="virtual">Kit Virtual - R$ 197,00</option>
+          <option value="irresistivel">Kit Irresistível</option>
+        </select>
+
+        <input type="text" id="cepEmp" placeholder="CEP" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="ruaEmp" placeholder="Rua" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="numEmp" placeholder="Número" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="bairroEmp" placeholder="Bairro" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="cidadeEmp" placeholder="Cidade" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        <input type="text" id="estadoEmp" placeholder="Estado (UF)" class="form-control" style="margin-bottom:10px; width: 100%;" required>
+        
+        <button type="submit" class="btn btn-success" style="width: 100%;">FINALIZAR E ENVIAR E-MAIL</button>
       </form>
     </div>
   </div>
 
-  <script src="./js/script.js"></script>
+  <script>
+    // CONTROLE DOS MODAIS
+    const btnVip = document.getElementById('btn-opcao-vip');
+    const btnEmp = document.getElementById('btn-opcao-empreendedor');
+    const modalVip = document.getElementById('modalVip');
+    const modalEmp = document.getElementById('modalEmp');
+
+    btnVip.onclick = () => modalVip.classList.add('active');
+    btnEmp.onclick = () => modalEmp.classList.add('active');
+    document.getElementById('closeVip').onclick = () => modalVip.classList.remove('active');
+    document.getElementById('closeEmp').onclick = () => modalEmp.classList.remove('active');
+
+    // ENVIO CLIENTE VIP
+    document.getElementById('formVip').onsubmit = function(e) {
+      e.preventDefault();
+      const dados = {
+        nome: document.getElementById('nomeVip').value,
+        cpf: document.getElementById('cpfVip').value,
+        nasc: document.getElementById('nascVip').value,
+        tel: document.getElementById('telVip').value,
+        email: document.getElementById('emailVip').value,
+        cep: document.getElementById('cepVip').value,
+        endereco: document.getElementById('ruaVip').value
+      };
+      
+      const assunto = encodeURIComponent(`Novo Cliente VIP: ${dados.nome}`);
+      const corpo = encodeURIComponent(
+        `DADOS CLIENTE VIP:\n\n` +
+        `Nome: ${dados.nome}\n` +
+        `CPF: ${dados.cpf}\n` +
+        `Nascimento: ${dados.nasc}\n` +
+        `WhatsApp: ${dados.tel}\n` +
+        `E-mail: ${dados.email}\n` +
+        `CEP: ${dados.cep}\n` +
+        `Endereço: ${dados.endereco}\n`
+      );
+      window.location.href = `mailto:contato_glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
+    };
+
+    // ENVIO EMPREENDEDOR
+    document.getElementById('formEmp').onsubmit = function(e) {
+      e.preventDefault();
+      const dados = {
+        nome: document.getElementById('nomeEmp').value,
+        cpf: document.getElementById('cpfEmp').value,
+        nasc: document.getElementById('nascEmp').value,
+        tel: document.getElementById('telEmp').value,
+        email: document.getElementById('emailEmp').value,
+        kit: document.getElementById('kitEmp').value,
+        cep: document.getElementById('cepEmp').value,
+        rua: document.getElementById('ruaEmp').value,
+        num: document.getElementById('numEmp').value,
+        bairro: document.getElementById('bairroEmp').value,
+        cidade: document.getElementById('cidadeEmp').value,
+        estado: document.getElementById('estadoEmp').value
+      };
+
+      const assunto = encodeURIComponent(`Novo Empreendedor: ${dados.nome}`);
+      const corpo = encodeURIComponent(
+        `DADOS EMPREENDEDOR:\n\n` +
+        `Nome: ${dados.nome}\n` +
+        `CPF: ${dados.cpf}\n` +
+        `Nascimento: ${dados.nasc}\n` +
+        `WhatsApp: ${dados.tel}\n` +
+        `E-mail: ${dados.email}\n` +
+        `Kit: ${dados.kit}\n` +
+        `CEP: ${dados.cep}\n` +
+        `Endereço: ${dados.rua}, Nº ${dados.num}\n` +
+        `Bairro: ${dados.bairro}\n` +
+        `Cidade: ${dados.cidade} - ${dados.estado}\n\n` +
+        `Patrocinador: Henrique Gomes da Silva (3109505702)`
+      );
+      window.location.href = `mailto:contato_glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
+    };
+  </script>
+
 </body>
 </html>
