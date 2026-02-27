@@ -1,171 +1,55 @@
-// ============================================
-// LANDING PAGE GLISTER - SCRIPT PRINCIPAL v6
-// Versão: Envio via E-mail (mailto)
-// ============================================
-
 document.addEventListener('DOMContentLoaded', function() {
-  
-  console.log('🚀 Script iniciado! v6');
-  
-  // ELEMENTOS - MODAL CLIENTE VIP
-  const modalCliente = document.getElementById('cadastroModalCliente');
-  const btnOpcaoCliente = document.getElementById('btn-opcao-cliente');
-  const btnFecharModalCliente = modalCliente?.querySelector('.modal-close-cliente');
-  const formCliente = document.getElementById('cadastroFormCliente');
-  const formMessageCliente = document.getElementById('formMessageCliente');
+    const modalCliente = document.getElementById('cadastroModalCliente');
+    const modalEmpreendedor = document.getElementById('cadastroModalEmpreendedor');
 
-  // ELEMENTOS - MODAL EMPREENDEDOR
-  const modalEmpreendedor = document.getElementById('cadastroModalEmpreendedor');
-  const btnOpcaoEmpreendedor = document.getElementById('btn-opcao-empreendedor');
-  const btnFecharModalEmpreendedor = modalEmpreendedor?.querySelector('.modal-close-empreendedor');
-  const formEmpreendedor = document.getElementById('cadastroFormEmpreendedor');
-  const formMessageEmpreendedor = document.getElementById('formMessageEmpreendedor');
-  const btnCepEmpreendedor = document.getElementById('btnBuscarCepEmp');
+    // Botões de Abrir
+    document.getElementById('btn-opcao-cliente')?.addEventListener('click', () => modalCliente.style.display = 'flex');
+    document.getElementById('btn-opcao-empreendedor')?.addEventListener('click', () => modalEmpreendedor.style.display = 'flex');
 
-  // ============================================
-  // CONTROLE DOS MODAIS (ABRIR/FECHAR)
-  // ============================================
-  if (btnOpcaoCliente) btnOpcaoCliente.addEventListener('click', () => modalCliente.classList.add('active'));
-  if (btnFecharModalCliente) btnFecharModalCliente.addEventListener('click', () => modalCliente.classList.remove('active'));
+    // Botões de Fechar
+    document.querySelector('.modal-close-cliente')?.addEventListener('click', () => modalCliente.style.display = 'none');
+    document.querySelector('.modal-close-empreendedor')?.addEventListener('click', () => modalEmpreendedor.style.display = 'none');
 
-  if (btnOpcaoEmpreendedor) btnOpcaoEmpreendedor.addEventListener('click', () => modalEmpreendedor.classList.add('active'));
-  if (btnFecharModalEmpreendedor) btnFecharModalEmpreendedor.addEventListener('click', () => modalEmpreendedor.classList.remove('active'));
+    // FORMULÁRIO CLIENTE VIP
+    const formCliente = document.getElementById('cadastroFormCliente');
+    if (formCliente) {
+        formCliente.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nomeCliente').value;
+            const cpf = document.getElementById('cpfCliente').value;
+            const zap = document.getElementById('celularCliente').value;
+            const email = document.getElementById('emailCliente').value;
+            const endereco = document.getElementById('ruaCliente').value;
 
-  // ============================================
-  // BUSCA DE CEP (VIA CEP API)
-  // ============================================
-  async function buscarCEP(cep, campos) {
-    const cleanCep = cep.replace(/\D/g, '');
-    if (cleanCep.length !== 8) return;
+            const assunto = encodeURIComponent(`Novo Cliente VIP: ${nome}`);
+            const corpo = encodeURIComponent(
+                `DADOS DO CLIENTE VIP:\n\nNome: ${nome}\nCPF: ${cpf}\nWhatsApp: ${zap}\nE-mail: ${email}\nEndereço: ${endereco}`
+            );
 
-    try {
-      const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
-      const data = await response.json();
-      if (!data.erro) {
-        if (campos.rua) campos.rua.value = data.logradouro;
-        if (campos.bairro) campos.bairro.value = data.bairro;
-        if (campos.cidade) campos.cidade.value = data.localidade;
-        if (campos.estado) campos.estado.value = data.uf;
-      }
-    } catch (error) {
-      console.error('Erro ao buscar CEP:', error);
+            window.location.href = `mailto:contato+glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
+        });
     }
-  }
 
-  if (btnCepEmpreendedor) {
-    btnCepEmpreendedor.addEventListener('click', () => {
-      const campos = {
-        rua: document.getElementById('ruaEmp'),
-        bairro: document.getElementById('bairroEmp'),
-        cidade: document.getElementById('cidadeEmp'),
-        estado: document.getElementById('estadoEmp')
-      };
-      buscarCEP(document.getElementById('cepEmp').value, campos);
-    });
-  }
+    // FORMULÁRIO EMPREENDEDOR
+    const formEmpreendedor = document.getElementById('cadastroFormEmpreendedor');
+    if (formEmpreendedor) {
+        formEmpreendedor.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = document.getElementById('nomeEmp').value;
+            const cpf = document.getElementById('cpfEmp').value;
+            const dataNasc = `${document.getElementById('diaEmp').value}/${document.getElementById('mesEmp').value}/${document.getElementById('anoEmp').value}`;
+            const email = document.getElementById('emailEmp').value;
+            const zap = document.getElementById('celularEmp').value;
+            const kit = document.getElementById('tipoKitEmp').value;
+            const endereco = document.getElementById('ruaEmp').value;
+            const cep = document.getElementById('cepEmp').value;
 
-  // ============================================
-  // ENVIO DO FORMULÁRIO EMPREENDEDOR (E-MAIL)
-  // ============================================
-  if (formEmpreendedor) {
-    formEmpreendedor.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const btnSubmit = document.getElementById('btnSubmitEmpreendedor');
-      btnSubmit.disabled = true;
-      btnSubmit.textContent = 'PREPARANDO E-MAIL...';
+            const assunto = encodeURIComponent(`Novo Empreendedor: ${nome}`);
+            const corpo = encodeURIComponent(
+                `DADOS DO EMPREENDEDOR:\n\nNome: ${nome}\nCPF: ${cpf}\nData Nasc: ${dataNasc}\nWhatsApp: ${zap}\nE-mail: ${email}\nKit: ${kit}\nEndereço: ${endereco}\nCEP: ${cep}\n\nPatrocinador: Henrique Gomes da Silva`
+            );
 
-      try {
-        const nome = document.getElementById('nomeEmp')?.value || "Não informado";
-        const cpf = document.getElementById('cpfEmp')?.value || "Não informado";
-        const email = document.getElementById('emailEmp')?.value || "Não informado";
-        const zap = document.getElementById('celularEmp')?.value || "Não informado";
-        const kit = document.getElementById('tipoKitEmp')?.value || "Não informado";
-        const cep = document.getElementById('cepEmp')?.value || "Não informado";
-        const endereco = `${document.getElementById('ruaEmp')?.value || ''}, ${document.getElementById('numeroEmp')?.value || ''} - ${document.getElementById('bairroEmp')?.value || ''}`;
-
-        const assunto = encodeURIComponent(`Novo Empreendedor Amway: ${nome}`);
-        const corpo = encodeURIComponent(
-          `SOLICITAÇÃO DE CADASTRO DE EMPREENDEDOR:\n\n` +
-          `Nome Completo: ${nome}\n` +
-          `CPF: ${cpf}\n` +
-          `WhatsApp: ${zap}\n` +
-          `E-mail: ${email}\n` +
-          `Kit Escolhido: ${kit}\n` +
-          `Endereço: ${endereco}\n` +
-          `CEP: ${cep}\n\n` +
-          `-----------------------------------\n` +
-          `Patrocinador: Henrique Gomes da Silva (3109505702)`
-        );
-
-        window.location.href = `mailto:contato+glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
-        mostrarMensagemEmpreendedor('✅ E-mail pronto! Clique em ENVIAR na janela que abriu.', 'success');
-        
-        setTimeout(() => {
-          modalEmpreendedor.classList.remove('active');
-          btnSubmit.disabled = false;
-          btnSubmit.textContent = 'FINALIZAR CADASTRO';
-        }, 4000);
-
-      } catch (error) {
-        mostrarMensagemEmpreendedor('❌ Erro ao processar dados.', 'error');
-        btnSubmit.disabled = false;
-      }
-    });
-  }
-
-  // ============================================
-  // ENVIO DO FORMULÁRIO CLIENTE VIP (E-MAIL)
-  // ============================================
-  if (formCliente) {
-    formCliente.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const btnSubmit = document.getElementById('btnSubmitCliente');
-      btnSubmit.disabled = true;
-      btnSubmit.textContent = 'PREPARANDO E-MAIL...';
-
-      try {
-        const nome = document.getElementById('nomeCliente')?.value || "Não informado";
-        const zap = document.getElementById('celularCliente')?.value || "Não informado";
-
-        const assunto = encodeURIComponent(`Novo Cliente VIP: ${nome}`);
-        const corpo = encodeURIComponent(
-          `SOLICITAÇÃO DE CLIENTE VIP:\n\n` +
-          `Nome: ${nome}\n` +
-          `WhatsApp: ${zap}\n\n` +
-          `-----------------------------------\n` +
-          `Deseja comprar Glister com desconto.`
-        );
-
-        window.location.href = `mailto:contato+glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
-        mostrarMensagemCliente('✅ E-mail pronto! Clique em ENVIAR.', 'success');
-        
-        setTimeout(() => {
-          modalCliente.classList.remove('active');
-          btnSubmit.disabled = false;
-          btnSubmit.textContent = 'FINALIZAR CADASTRO';
-        }, 4000);
-
-      } catch (error) {
-        btnSubmit.disabled = false;
-      }
-    });
-  }
-
-  // ============================================
-  // FUNÇÕES AUXILIARES DE MENSAGEM
-  // ============================================
-  function mostrarMensagemEmpreendedor(texto, tipo) {
-    if (!formMessageEmpreendedor) return;
-    formMessageEmpreendedor.textContent = texto;
-    formMessageEmpreendedor.className = `form-message ${tipo}`;
-    formMessageEmpreendedor.classList.remove('hidden');
-  }
-
-  function mostrarMensagemCliente(texto, tipo) {
-    if (!formMessageCliente) return;
-    formMessageCliente.textContent = texto;
-    formMessageCliente.className = `form-message ${tipo}`;
-    formMessageCliente.classList.remove('hidden');
-  }
-
+            window.location.href = `mailto:contato+glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
+        });
+    }
 });
