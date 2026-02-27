@@ -1,58 +1,85 @@
+// ============================================
+// SCRIPT GLISTER v7 - À PROVA DE ERROS
+// ============================================
+
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Script v6 (E-mail Segura) ativo');
+  console.log('🚀 Script v7 Iniciado!');
 
-  // Selecionar os formulários
-  const formVip = document.getElementById('cadastroFormCliente');
+  // 1. MAPEAMENTO DE ELEMENTOS (IDs ORIGINAIS DO SEU HTML)
+  const modalVip = document.getElementById('cadastroModalCliente');
+  const modalEmp = document.getElementById('cadastroModalEmpreendedor');
+  
+  // Botões de Abrir
+  const btnAbrirVip = document.getElementById('btn-opcao-cliente');
+  const btnAbrirEmp = document.getElementById('btn-opcao-empreendedor');
+
+  // Botões de Fechar e Cancelar
+  const botoesFechar = document.querySelectorAll('.modal-close-cliente, .modal-close-empreendedor, .modal-overlay, #btnCancelarCliente, #btnCancelarEmp');
+
+  // ============================================
+  // CONTROLE DOS MODAIS (OS CLIQUES)
+  // ============================================
+  
+  // Abrir Cliente VIP
+  btnAbrirVip?.addEventListener('click', function(e) {
+    e.preventDefault();
+    modalVip?.classList.add('active');
+  });
+
+  // Abrir Empreendedor
+  btnAbrirEmp?.addEventListener('click', function(e) {
+    e.preventDefault();
+    modalEmp?.classList.add('active');
+  });
+
+  // Fechar qualquer modal
+  botoesFechar.forEach(botao => {
+    botao.addEventListener('click', () => {
+      modalVip?.classList.remove('active');
+      modalEmp?.classList.remove('active');
+    });
+  });
+
+  // ============================================
+  // LOGICA DE ENVIO (EMPREENDEDOR)
+  // ============================================
   const formEmp = document.getElementById('cadastroFormEmpreendedor');
+  formEmp?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Pegamos os valores com "|| ''" para não dar erro se o campo não existir
+    const nome = document.getElementById('nomeEmp')?.value || "Não informado";
+    const cpf = document.getElementById('cpfEmp')?.value || "Não informado";
+    const zap = document.getElementById('celularEmp')?.value || "Não informado";
+    const email = document.getElementById('emailEmp')?.value || "Não informado";
+    
+    // Monta o link de e-mail
+    const assunto = encodeURIComponent(`Novo Empreendedor: ${nome}`);
+    const corpo = encodeURIComponent(
+      `DADOS DO NOVO EMPREENDEDOR:\n\n` +
+      `Nome: ${nome}\n` +
+      `CPF: ${cpf}\n` +
+      `WhatsApp: ${zap}\n` +
+      `E-mail: ${email}\n\n` +
+      `Patrocinador: Henrique Gomes da Silva (3109505702)`
+    );
 
-  // --- ENVIO DO EMPREENDEDOR ---
-  if (formEmp) {
-    formEmp.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      try {
-        // O "?" garante que se o campo não existir, o erro de F12 NÃO acontece
-        const nome = document.getElementById('nomeEmp')?.value || "Não informado";
-        const cpf = document.getElementById('cpfEmp')?.value || "Não informado";
-        const rg = document.getElementById('rgEmp')?.value || "Pendente";
-        const pis = document.getElementById('pisEmp')?.value || "Pendente";
-        const kit = document.querySelector('input[name="tipoKit"]:checked')?.value || "Não selecionado";
-        
-        // Endereço (tenta ler vários IDs possíveis para não falhar)
-        const rua = document.getElementById('ruaEmp')?.value || document.getElementById('ruaCliente')?.value || "Ver no formulário";
-        const num = document.getElementById('numeroEmp')?.value || document.getElementById('numeroCliente')?.value || "S/N";
+    window.location.href = `mailto:contato_glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
+  });
 
-        const assunto = encodeURIComponent(`Novo Empreendedor: ${nome}`);
-        const corpo = encodeURIComponent(
-          `DADOS PARA CADASTRO AMWAY:\n\n` +
-          `NOME: ${nome}\n` +
-          `CPF: ${cpf}\n` +
-          `RG: ${rg}\n` +
-          `PIS: ${pis}\n` +
-          `KIT: ${kit.toUpperCase()}\n\n` +
-          `ENDEREÇO: ${rua}, Nº ${num}\n\n` +
-          `PATROCINADOR: Henrique Gomes da Silva (3109505702)`
-        );
+  // ============================================
+  // LOGICA DE ENVIO (CLIENTE VIP)
+  // ============================================
+  const formVip = document.getElementById('cadastroFormCliente');
+  formVip?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const nome = document.getElementById('nomeCliente')?.value || "Cliente";
+    const zap = document.getElementById('celularCliente')?.value || "Não informado";
 
-        window.location.href = `mailto:contato_glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
-        
-      } catch (err) {
-        console.error("Erro ao montar e-mail:", err);
-      }
-    });
-  }
+    const assunto = encodeURIComponent(`Novo Cliente VIP: ${nome}`);
+    const corpo = encodeURIComponent(`Solicitação Cliente VIP:\n\nNome: ${nome}\nWhatsApp: ${zap}`);
 
-  // --- ENVIO DO CLIENTE VIP ---
-  if (formVip) {
-    formVip.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const nome = document.getElementById('nomeCliente')?.value || "Cliente";
-      const zap = document.getElementById('celularCliente')?.value || "Não informado";
-      
-      const assunto = encodeURIComponent(`Novo Cliente VIP: ${nome}`);
-      const corpo = encodeURIComponent(`Solicitação de Cliente VIP:\n\nNome: ${nome}\nWhatsApp: ${zap}`);
-      
-      window.location.href = `mailto:contato_glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
-    });
-  }
+    window.location.href = `mailto:contato_glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
+  });
 });
