@@ -11,6 +11,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="./css/style.css">
+  <style>
+    /* Ajustes de Cores Chamativas baseados no seu CSS */
+    :root {
+      --primary-glister: #00A0DC;
+      --primary-dark: #0081B3;
+    }
+    .text-primary { color: var(--primary-glister); font-weight: 800; }
+    .btn-primary { 
+      background: linear-gradient(135deg, var(--primary-glister) 0%, var(--primary-dark) 100%) !important;
+      border: none !important;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,160,220,0.4); }
+    .testimonial-card {
+      background: white; padding: 25px; border-radius: 15px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-bottom: 4px solid var(--primary-glister);
+    }
+  </style>
 </head>
 <body>
 
@@ -20,7 +38,7 @@
         <img src="/images/logo-bizmix-preto.png" alt="BizMix" style="height: 40px; width: auto;">
       </div>
       <nav style="display: flex; gap: 20px; align-items: center;">
-        <a href="/produtos/" style="text-decoration: none; color: #333; font-weight: 500; font-size: 0.9em;">← Ver todos os produtos</a>
+        <a href="/produtos/" style="text-decoration: none; color: #333; font-weight: 500; font-size: 0.9em;">← Ver todos</a>
         <a href="#comprar" class="btn btn-primary btn-small">Comprar Agora</a>
       </nav>
     </div>
@@ -30,16 +48,43 @@
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-content">
-          <span class="badge">Tecnologia SYLODENT™ Exclusiva</span>
-          <h1>Dentes <span class="text-primary">3 Tons Mais Brancos</span> em 21 Dias</h1>
-          <p>O único creme dental que branqueia sem sensibilidade, remove manchas de café e fumo, e fortalece o esmalte com remineralização comprovada.</p>
+          <span class="badge" style="background: #e6f7ff; color: #0081B3;">Tecnologia SYLODENT™ Exclusiva</span>
+          <h1>Dê ao seu sorriso o <span class="text-primary">Brilho das Estrelas</span></h1>
+          <p>O Glister Multi-Action não apenas limpa; ele restaura o esmalte, combate a placa e devolve o branco natural dos seus dentes em 21 dias.</p>
           <div class="hero-actions">
             <a href="#comprar" class="btn btn-primary btn-large">Garantir Meu Glister</a>
-            <a href="#beneficios" class="btn btn-outline btn-large">Ver Benefícios</a>
           </div>
         </div>
         <div class="hero-image">
-          <img src="/images/glister-product.png" alt="Creme Dental Glister Amway">
+          <img src="/images/glister-product.png" alt="Creme Dental Glister">
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials" style="padding: 60px 0; background: #f9fafb;">
+      <div class="container">
+        <h2 style="text-align: center; margin-bottom: 40px;">Quem usa, <span class="text-primary">recomenda</span></h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          <div class="testimonial-card">
+            <p>"Sempre usei cremes dentais caros, mas o Glister realmente clareou meus dentes sem aquela sensibilidade horrível!"</p>
+            <strong style="display:block; margin-top:15px; color: #0081B3;">— João S.</strong>
+          </div>
+          <div class="testimonial-card">
+            <p>"Tomo muito café e minhas manchas sumiram em menos de 3 semanas. Não troco por nada!"</p>
+            <strong style="display:block; margin-top:15px; color: #0081B3;">— Mariana L.</strong>
+          </div>
+          <div class="testimonial-card">
+            <p>"A sensação de limpeza dura o dia todo. O hálito fica fresco por muito mais tempo que os comuns."</p>
+            <strong style="display:block; margin-top:15px; color: #0081B3;">— Ricardo M.</strong>
+          </div>
+          <div class="testimonial-card">
+            <p>"Sofria com gengiva sangrando e o Glister ajudou demais na saúde da minha boca. Super recomendo!"</p>
+            <strong style="display:block; margin-top:15px; color: #0081B3;">— Fernanda O.</strong>
+          </div>
+          <div class="testimonial-card">
+            <p>"Rende muito! Uma gotinha do tamanho de uma ervilha é suficiente. Economia e qualidade juntas."</p>
+            <strong style="display:block; margin-top:15px; color: #0081B3;">— Carlos T.</strong>
+          </div>
         </div>
       </div>
     </section>
@@ -47,36 +92,21 @@
     <section id="comprar" class="pricing" style="padding: 80px 0; background: #fff;">
       <div class="container">
         <div style="text-align: center; margin-bottom: 50px;">
-          <h2 style="font-size: 2.5rem; margin-bottom: 15px;">Como você deseja comprar?</h2>
-          <p style="color: #666; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            Produtos premium <img src="/images/logo-amway.png" alt="Amway" style="height: 20px; width: auto;"> para o seu dia a dia.
-          </p>
+          <h2 style="font-size: 2rem;">Como você deseja comprar?</h2>
         </div>
 
         <div class="pricing-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-          
-          <div class="price-card" style="border: 2px solid #eee; padding: 40px; border-radius: 20px; text-align: center;">
-            <h3 style="font-size: 1.8rem; margin-bottom: 20px;">Cliente VIP</h3>
-            <p style="margin-bottom: 25px;">Compre com <strong>desconto exclusivo</strong> e receba em casa com nota fiscal.</p>
-            <ul style="text-align: left; margin-bottom: 30px; list-style: none; padding: 0;">
-              <li style="margin-bottom: 10px;">✅ Desconto em toda linha</li>
-              <li style="margin-bottom: 10px;">✅ Garantia de Satisfação</li>
-              <li style="margin-bottom: 10px;">✅ Atendimento Personalizado</li>
-            </ul>
-            <button id="btn-opcao-cliente" class="btn btn-primary btn-block">QUERO SER CLIENTE VIP</button>
+          <div class="price-card" style="border: 1px solid #eee; padding: 40px; border-radius: 20px; text-align: center;">
+            <h3>Cliente VIP</h3>
+            <p>Compre com desconto e receba em casa.</p>
+            <button id="btn-opcao-cliente" class="btn btn-primary btn-block" style="margin-top: 20px;">QUERO SER CLIENTE VIP</button>
           </div>
 
-          <div class="price-card featured" style="background: var(--color-primary); color: white; padding: 40px; border-radius: 20px; text-align: center; transform: scale(1.05);">
-            <h3 style="font-size: 1.8rem; margin-bottom: 20px; color: white;">Empreendedor</h3>
-            <p style="margin-bottom: 25px;">Revenda Glister e construa seu próprio negócio com lucro de até 43%.</p>
-            <ul style="text-align: left; margin-bottom: 30px; list-style: none; padding: 0;">
-              <li style="margin-bottom: 10px;">✅ Lucro imediato na revenda</li>
-              <li style="margin-bottom: 10px;">✅ Bônus por produtividade</li>
-              <li style="margin-bottom: 10px;">✅ Treinamento Gratuito (INA)</li>
-            </ul>
-            <button id="btn-opcao-empreendedor" class="btn btn-white btn-block" style="background: white; color: var(--color-primary);">QUERO SER EMPREENDEDOR</button>
+          <div class="price-card featured" style="background: #00A0DC; color: white; padding: 40px; border-radius: 20px; text-align: center;">
+            <h3 style="color: white;">Empreendedor</h3>
+            <p>Revenda e lucre com a linha Glister.</p>
+            <button id="btn-opcao-empreendedor" class="btn btn-block" style="background: white; color: #00A0DC; margin-top: 20px; font-weight: bold;">QUERO SER EMPREENDEDOR</button>
           </div>
-
         </div>
       </div>
     </section>
@@ -92,7 +122,7 @@
       <div class="modal-body">
         <form id="cadastroFormCliente" class="cadastro-form">
           <div class="form-group"><label>Nome Completo *</label><input type="text" id="nomeCliente" class="form-control" required></div>
-          <div class="form-group"><label>WhatsApp *</label><input type="tel" id="celularCliente" class="form-control" required placeholder="(00) 00000-0000"></div>
+          <div class="form-group"><label>WhatsApp *</label><input type="tel" id="celularCliente" class="form-control" required></div>
           <div class="form-group"><label>E-mail *</label><input type="email" id="emailCliente" class="form-control" required></div>
           <div class="form-group"><label>CEP *</label><input type="text" id="cepCliente" class="form-control" required></div>
           <div id="formMessageCliente" class="form-message hidden"></div>
@@ -114,12 +144,12 @@
           <div class="form-group"><label>Nome Completo *</label><input type="text" id="nomeEmp" class="form-control" required></div>
           
           <div style="display: flex; gap: 10px;">
-            <div class="form-group" style="flex: 1;"><label>CPF *</label><input type="text" id="cpfEmp" class="form-control" required placeholder="000.000.000-00"></div>
-            <div class="form-group" style="flex: 1;"><label>Data de Nasc. *</label>
+            <div class="form-group" style="flex: 1;"><label>CPF *</label><input type="text" id="cpfEmp" class="form-control" required></div>
+            <div class="form-group" style="flex: 1;"><label>Data Nasc. *</label>
               <div style="display: flex; gap: 5px;">
-                <input type="text" id="diaEmp" placeholder="DD" maxlength="2" style="width: 40px;" class="form-control" required>
-                <input type="text" id="mesEmp" placeholder="MM" maxlength="2" style="width: 40px;" class="form-control" required>
-                <input type="text" id="anoEmp" placeholder="AAAA" maxlength="4" style="width: 60px;" class="form-control" required>
+                <input type="text" id="diaEmp" placeholder="DD" maxlength="2" style="width: 35px;" class="form-control" required>
+                <input type="text" id="mesEmp" placeholder="MM" maxlength="2" style="width: 35px;" class="form-control" required>
+                <input type="text" id="anoEmp" placeholder="AAAA" maxlength="4" style="width: 55px;" class="form-control" required>
               </div>
             </div>
           </div>
@@ -130,7 +160,7 @@
           </div>
 
           <div class="form-group">
-            <label>Escolha seu Kit Inicial *</label>
+            <label>Kit Inicial *</label>
             <select id="tipoKitEmp" class="form-control" required>
               <option value="virtual">Kit Virtual - R$ 197,00</option>
               <option value="irresistivel">Kit Irresistível</option>
@@ -150,7 +180,7 @@
           <div style="display: flex; gap: 10px;">
             <div class="form-group" style="flex: 1;"><label>Bairro *</label><input type="text" id="bairroEmp" class="form-control" required></div>
             <div class="form-group" style="flex: 1;"><label>Cidade *</label><input type="text" id="cidadeEmp" class="form-control" required></div>
-            <div class="form-group" style="width: 60px;"><label>UF *</label><input type="text" id="estadoEmp" class="form-control" required maxlength="2"></div>
+            <div class="form-group" style="width: 50px;"><label>UF *</label><input type="text" id="estadoEmp" class="form-control" required maxlength="2"></div>
           </div>
 
           <div id="formMessageEmpreendedor" class="form-message hidden"></div>
@@ -160,11 +190,10 @@
     </div>
   </div>
 
-  <footer style="text-align: center; padding: 40px 0; color: #999; font-size: 0.8em; background: #f9f9f9;">
+  <footer style="text-align: center; padding: 40px 0; color: #999; font-size: 0.8em;">
     <p>&copy; 2026 BizMix Amway - Todos os direitos reservados.</p>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./js/script.js"></script>
 </body>
 </html>
