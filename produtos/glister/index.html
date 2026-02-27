@@ -740,14 +740,48 @@
             <input type="text" id="nomeEmp" name="nome" placeholder="João da Silva Santos" required>
           </div>
           
-          <div class="form-row">
+        <div class="form-row">
             <div class="form-group">
-              <label for="cpfEmp">CPF *</label>
-              <input type="text" id="cpfEmp" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
-              <small class="form-hint">Verificaremos se o CPF é válido</small>
+                <label for="cpfEmp">CPF *</label>
+                <input type="text" id="cpfEmp" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                <small class="form-hint">Verificaremos se o CPF é válido</small>
             </div>
+        </div>
+        <div class="form-row">
+             <div class="form-group">
+                <label for="rgEmp">RG *</label>
+                <input type="text" id="rgEmp" name="rg" placeholder="00.000.000-0" required>
+             </div>
+             <div class="form-group">
+                 <label for="orgaoEmp">Órgão Emissor *</label>
+                 <input type="text" id="orgaoEmp" name="orgao" placeholder="SSP/SP" required>
+             </div>
+         </div>
 
-            <div class="form-row">
+<div class="form-group">
+  <label for="pisEmp">PIS/NIT *</label>
+  <input type="text" id="pisEmp" name="pis" placeholder="000.00000.00-0" required>
+</div>
+
+<div class="form-section">
+  <h3 class="form-section-title"><span>🏦</span> Dados Bancários (Para Bônus)</h3>
+  <div class="form-group">
+    <label for="bancoEmp">Banco</label>
+    <input type="text" id="bancoEmp" name="banco" placeholder="Ex: Itaú, Bradesco, Nubank...">
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="agenciaEmp">Agência</label>
+      <input type="text" id="agenciaEmp" name="agencia" placeholder="0000">
+    </div>
+    <div class="form-group">
+      <label for="contaEmp">Conta com Dígito</label>
+      <input type="text" id="contaEmp" name="conta" placeholder="00000-0">
+    </div>
+  </div>
+</div>
+  
+  <div class="form-row">
   <div class="form-group">
     <label for="rgEmp">RG *</label>
     <input type="text" id="rgEmp" name="rg" placeholder="00.000.000-0" required>
