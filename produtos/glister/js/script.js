@@ -118,27 +118,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
       console.log('Dados sendo enviados:', formData); // Verifique isso no F12!
 
-      try {
+try {
+        console.log('Tentando enviar para o Supabase...', formData);
+        
         const { error } = await supabase
           .from('empreendedores_amway')
           .insert([formData]);
 
         if (error) {
-          console.error('Erro do Supabase:', error);
+          console.error('Erro retornado pelo Supabase:', error);
           throw error;
         }
 
-        // SUCESSO: Agora sim fechamos o modal e limpamos o formulário
+        // SUCESSO
+        console.log('✅ Cadastro salvo com sucesso no banco!');
         mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso!', 'success');
         formEmpreendedor.reset();
         
+        // Só fecha o modal se der sucesso após 3 segundos
         setTimeout(() => {
           modalEmpreendedor.classList.remove('active');
-        }, 2000);
+        }, 3000);
 
       } catch (error) {
-        mostrarMensagemEmpreendedor('❌ Erro: ' + error.message, 'error');
-      }
+        console.error('ERRO DETALHADO NO CONSOLE:', error);
+        mostrarMensagemEmpreendedor('❌ Erro: ' + (error.message || 'Erro de conexão'), 'error');
       } finally {
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'FINALIZAR CADASTRO';
