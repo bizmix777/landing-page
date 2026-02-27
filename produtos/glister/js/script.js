@@ -76,76 +76,106 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
-  // ENVIO DO FORMULÁRIO EMPREENDEDOR (SUPABASE)
+  // ENVIO DO FORMULÁRIO CLIENTE VIP (E-MAIL)
+  // ============================================
+  if (formCliente) {
+    formCliente.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const btnSubmit = document.getElementById('btnSubmitCliente');
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'PREPARANDO E-MAIL...';
+
+      try {
+        const nome = document.getElementById('nomeCliente')?.value || "Não informado";
+        const email = document.getElementById('emailCliente')?.value || "Não informado";
+        const whatsapp = document.getElementById('celularCliente')?.value || "Não informado";
+        const cep = document.getElementById('cepCliente')?.value || "Não informado";
+
+        const assunto = encodeURIComponent(`Novo Cliente VIP: ${nome}`);
+        const corpo = encodeURIComponent(
+          `SOLICITAÇÃO DE CADASTRO CLIENTE VIP:\n\n` +
+          `Nome: ${nome}\n` +
+          `E-mail: ${email}\n` +
+          `WhatsApp: ${whatsapp}\n` +
+          `CEP: ${cep}\n\n` +
+          `-----------------------------------\n` +
+          `Interesse: Compra com desconto Glister`
+        );
+
+        // Abre o e-mail pronto
+        window.location.href = `mailto:contato+glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
+
+        mostrarMensagemCliente('✅ E-mail pronto! Clique em ENVIAR na sua caixa de e-mail.', 'success');
+        
+        setTimeout(() => {
+          modalCliente.classList.remove('active');
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = 'FINALIZAR CADASTRO';
+        }, 5000);
+
+      } catch (error) {
+        mostrarMensagemCliente('❌ Erro ao preparar e-mail.', 'error');
+        btnSubmit.disabled = false;
+      }
+    });
+  }
+  
+  // ============================================
+  // ENVIO DO FORMULÁRIO EMPREENDEDOR (E-MAIL)
   // ============================================
 
   if (formEmpreendedor) {
-    formEmpreendedor.addEventListener('submit', async function(e) {
+    formEmpreendedor.addEventListener('submit', function(e) {
       e.preventDefault();
       
       const btnSubmit = document.getElementById('btnSubmitEmpreendedor');
       btnSubmit.disabled = true;
-      btnSubmit.textContent = 'PROCESSANDO...';
+      btnSubmit.textContent = 'PREPARANDO E-MAIL...';
 
-      // Formata a data de nascimento: AAAA-MM-DD
-      const dia = document.getElementById('diaEmp').value.padStart(2, '0');
-      const mes = document.getElementById('mesEmp').value.padStart(2, '0');
-      const ano = document.getElementById('anoEmp').value;
-      const dataNasc = `${ano}-${mes}-${dia}`;
+      try {
+        // Coleta os dados (usando IDs que existem no seu HTML)
+        const nome = document.getElementById('nomeEmp')?.value || "Não informado";
+        const cpf = document.getElementById('cpfEmp')?.value || "Não informado";
+        const email = document.getElementById('emailEmp')?.value || "Não informado";
+        const whatsapp = document.getElementById('celularEmp')?.value || "Não informado";
+        const kit = document.getElementById('tipoKitEmp')?.value || "Não informado";
+        const cep = document.getElementById('cepEmp')?.value || "Não informado";
+        const rua = document.getElementById('ruaEmp')?.value || "";
+        const num = document.getElementById('numeroEmp')?.value || "";
 
-      // DENTRO DO formEmpreendedor.addEventListener('submit'...
+        // Monta o corpo do e-mail
+        const assunto = encodeURIComponent(`Novo Cadastro Empreendedor: ${nome}`);
+        const corpo = encodeURIComponent(
+          `DADOS DO NOVO EMPREENDEDOR:\n\n` +
+          `Nome: ${nome}\n` +
+          `CPF: ${cpf}\n` +
+          `E-mail: ${email}\n` +
+          `WhatsApp: ${whatsapp}\n` +
+          `Kit Escolhido: ${kit}\n` +
+          `Endereço: ${rua}, ${num} - CEP: ${cep}\n\n` +
+          `-----------------------------------\n` +
+          `Enviado via Landing Page BizMix`
+        );
 
-      const formData = {
-        nome_completo: document.getElementById('nomeEmp').value,
-        cpf: document.getElementById('cpfEmp').value,
-        data_nascimento: dataNasc,
-        celular: document.getElementById('celularEmp').value,
-        email: document.getElementById('emailEmp').value,
-        senha_hash: document.getElementById('senhaEmp').value,
-        tipo_kit: document.getElementById('tipoKitEmp').value,
-        valor_kit: document.getElementById('tipoKitEmp').value === 'virtual' ? 197.00 : 499.00,
-        cep: document.getElementById('cepEmp').value,
-        endereco_rua: document.getElementById('ruaEmp').value,
-        endereco_numero: document.getElementById('numeroEmp').value,
-        endereco_bairro: document.getElementById('bairroEmp').value,
-        endereco_cidade: document.getElementById('cidadeEmp').value,
-        endereco_estado: document.getElementById('estadoEmp').value,
-        // Garante que se o ID for complementoEmp ou emp_complemento, ele funcione:
-        endereco_complemento: document.getElementById('complementoEmp')?.value || document.getElementById('emp_complemento')?.value || '',
-        patrocinador_nome: 'Henrique Gomes da Silva',
-        patrocinador_codigo: '3109505702'
-      };
-
-      console.log('Dados sendo enviados:', formData); // Verifique isso no F12!
-
-try {
-        console.log('Tentando enviar para o Supabase...', formData);
+        // Dispara o e-mail para o seu contato
+        const mailtoLink = `mailto:contato+glister@bizmix.com.br?subject=${assunto}&body=${corpo}`;
         
-        const { error } = await supabase
-          .from('empreendedores_amway')
-          .insert([formData]);
+        window.location.href = mailtoLink;
 
-        if (error) {
-          console.error('Erro retornado pelo Supabase:', error);
-          throw error;
-        }
-
-        // SUCESSO
-        console.log('✅ Cadastro salvo com sucesso no banco!');
-        mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso!', 'success');
-        formEmpreendedor.reset();
+        mostrarMensagemEmpreendedor('✅ E-mail preparado! Por favor, clique em ENVIAR na sua caixa de e-mail.', 'success');
         
-        // Só fecha o modal se der sucesso após 3 segundos
         setTimeout(() => {
           modalEmpreendedor.classList.remove('active');
-        }, 3000);
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = 'FINALIZAR CADASTRO';
+        }, 5000);
 
       } catch (error) {
-        console.error('ERRO DETALHADO NO CONSOLE:', error);
-        mostrarMensagemEmpreendedor('❌ Erro: ' + (error.message || 'Erro de conexão'), 'error');
-      } finally {
+        console.error('Erro ao preparar e-mail:', error);
+        mostrarMensagemEmpreendedor('❌ Erro ao processar. Verifique os campos.', 'error');
         btnSubmit.disabled = false;
-        btnSubmit.textContent = 'FINALIZAR CADASTRO';
+        btnSubmit.textContent = 'TENTAR NOVAMENTE';
       }
     });
   }
