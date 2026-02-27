@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Portal do Parceiro - Gerencie suas vendas e comissões.">
-    <title>Portal do Parceiro - Biz Mix</title>
+    <title>Portal do Empreendedor da Amway + Biz Mix</title>
     <link rel="icon" href="https://bizmix.com.br/favicon.ico" type="image/x-icon">
     <style>
         /* Reset e Base */
@@ -1323,10 +1323,14 @@
             if (storedPartner) {
                 console.log('✅ Parceiro encontrado no localStorage');
                 currentPartner = JSON.parse(storedPartner);
-                if (currentPartner.tipo_parceiro !== 'parceiro' && currentPartner.tipo_parceiro !== 'empresa') {
-                    showAlert('Tipo de conta inválido para este portal. Faça login no portal de igrejas.', 'error');
-                    localStorage.clear();
-                    return;
+                
+                // --- VERIFICAÇÃO AMWAY ---
+                if (currentPartner.tipo_parceiro !== 'amway') {
+                   showAlert('Acesso exclusivo para Empreendedores Amway.', 'error');
+                   localStorage.clear();
+                   // Não precisa signOut aqui pq não tem sessão, só localStorage
+                   setTimeout(() => window.location.href = '/painel-acesso/', 2000);
+                   return;
                 }
                 await showDashboard();
                 return;
@@ -1435,8 +1439,8 @@
 
                 if (error) throw new Error('Parceiro não encontrado no sistema.');
 
-                if (parceiro.tipo_parceiro === 'igreja') {
-                    throw new Error('Este login pertence a uma igreja. Use o portal de igrejas.');
+                if (parceiro.tipo_parceiro !== 'amway') {
+                    throw new Error('Acesso restrito para Empreendedores Amway.');
                 }
 
                 if (parceiro.status !== 'ativo') {
