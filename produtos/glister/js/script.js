@@ -93,13 +93,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const ano = document.getElementById('anoEmp').value;
       const dataNasc = `${ano}-${mes}-${dia}`;
 
+      // DENTRO DO formEmpreendedor.addEventListener('submit'...
+
       const formData = {
         nome_completo: document.getElementById('nomeEmp').value,
         cpf: document.getElementById('cpfEmp').value,
         data_nascimento: dataNasc,
         celular: document.getElementById('celularEmp').value,
         email: document.getElementById('emailEmp').value,
-        senha_hash: document.getElementById('senhaEmp').value, // Em produção, use hash
+        senha_hash: document.getElementById('senhaEmp').value,
         tipo_kit: document.getElementById('tipoKitEmp').value,
         valor_kit: document.getElementById('tipoKitEmp').value === 'virtual' ? 197.00 : 499.00,
         cep: document.getElementById('cepEmp').value,
@@ -108,25 +110,35 @@ document.addEventListener('DOMContentLoaded', function() {
         endereco_bairro: document.getElementById('bairroEmp').value,
         endereco_cidade: document.getElementById('cidadeEmp').value,
         endereco_estado: document.getElementById('estadoEmp').value,
-        endereco_complemento: document.getElementById('complementoEmp')?.value || '',
+        // Garante que se o ID for complementoEmp ou emp_complemento, ele funcione:
+        endereco_complemento: document.getElementById('complementoEmp')?.value || document.getElementById('emp_complemento')?.value || '',
         patrocinador_nome: 'Henrique Gomes da Silva',
         patrocinador_codigo: '3109505702'
       };
+
+      console.log('Dados sendo enviados:', formData); // Verifique isso no F12!
 
       try {
         const { error } = await supabase
           .from('empreendedores_amway')
           .insert([formData]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Erro do Supabase:', error);
+          throw error;
+        }
 
-        mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso! Verifique seu e-mail.', 'success');
+        // SUCESSO: Agora sim fechamos o modal e limpamos o formulário
+        mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso!', 'success');
         formEmpreendedor.reset();
-        setTimeout(() => modalEmpreendedor.classList.remove('active'), 3000);
+        
+        setTimeout(() => {
+          modalEmpreendedor.classList.remove('active');
+        }, 2000);
 
       } catch (error) {
-        console.error('Erro:', error);
-        mostrarMensagemEmpreendedor('❌ Erro: ' + (error.message || 'Tente novamente.'), 'error');
+        mostrarMensagemEmpreendedor('❌ Erro: ' + error.message, 'error');
+      }
       } finally {
         btnSubmit.disabled = false;
         btnSubmit.textContent = 'FINALIZAR CADASTRO';
