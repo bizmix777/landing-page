@@ -1544,6 +1544,39 @@ img svg, .hero-image svg, .logo svg {
     height: auto !important;
     max-width: none;
 }
+
+/* Correção para o Modal ficar centralizado e com rolagem */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none; /* JS ativa com flex */
+    justify-content: center;
+    align-items: center; /* Centraliza verticalmente */
+    z-index: 10000;
+}
+
+.modal-content {
+    background: #fff;
+    width: 95%;
+    max-width: 800px; /* Largura máxima boa para desktop */
+    max-height: 90vh; /* Altura máxima de 90% da tela */
+    overflow-y: auto; /* IMPORTANTE: Cria barra de rolagem DENTRO da janela se for muito grande */
+    border-radius: 12px;
+    padding: 20px;
+    margin: auto;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+/* Ajuste para inputs de data lado a lado */
+.date-inputs {
+    display: flex;
+    gap: 10px;
+}
+
 /* ============================================
    FIM DO CSS
    ============================================ */
