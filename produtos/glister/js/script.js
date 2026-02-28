@@ -1,261 +1,137 @@
-// ============================================
-// SCRIPT GLISTER v7 - À PROVA DE ERROS
-// ============================================
-
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('🚀 Script v7 Iniciado!');
+    console.log("Sistema Glister Iniciado 🚀");
 
-  // 1. MAPEAMENTO DE ELEMENTOS (IDs ORIGINAIS DO SEU HTML)
-  const modalVip = document.getElementById('cadastroModalCliente');
-  const modalEmp = document.getElementById('cadastroModalEmpreendedor');
-  
-  // Botões de Abrir
-  const btnAbrirVip = document.getElementById('btn-opcao-cliente');
-  const btnAbrirEmp = document.getElementById('btn-opcao-empreendedor');
+    // ======================================================
+    // 1. CONFIGURAÇÃO DO SUPABASE
+    // ======================================================
+    const sb = typeof supabase !== 'undefined' ? supabase : null;
+    if (!sb) console.error("ERRO: Supabase não encontrado!");
 
-  // Botões de Fechar e Cancelar
-  const botoesFechar = document.querySelectorAll('.modal-close-cliente, .modal-close-empreendedor, .modal-overlay, #btnCancelarCliente, #btnCancelarEmp');
+    // ======================================================
+    // 2. FUNÇÕES VISUAIS (MODAIS)
+    // ======================================================
+    
+    // Função para abrir modal
+    function abrirModal(idModal) {
+        const modal = document.getElementById(idModal);
+        if (modal) {
+            modal.classList.add('active'); // Ou a classe que seu CSS usa para mostrar
+            modal.style.display = 'flex'; // Garante que aparece
+        }
+    }
 
-  // ============================================
-  // CONTROLE DOS MODAIS (OS CLIQUES)
-  // ============================================
-  
-  // Abrir Cliente VIP
-  btnAbrirVip?.addEventListener('click', function(e) {
-    e.preventDefault();
-    modalVip?.classList.add('active');
-  });
+    // Função para fechar modal
+    function fecharModal(idModal) {
+        const modal = document.getElementById(idModal);
+        if (modal) {
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+        }
+    }
 
-  // Abrir Empreendedor
-  btnAbrirEmp?.addEventListener('click', function(e) {
-    e.preventDefault();
-    modalEmp?.classList.add('active');
-  });
-
-  // Fechar qualquer modal
-  botoesFechar.forEach(botao => {
-    botao.addEventListener('click', () => {
-      modalVip?.classList.remove('active');
-      modalEmp?.classList.remove('active');
+    // Configura os botões de fechar (X)
+    document.querySelectorAll('.modal-close-cliente').forEach(btn => {
+        btn.addEventListener('click', () => fecharModal('cadastroModalCliente'));
     });
-  });
+    document.querySelectorAll('.modal-close-empreendedor').forEach(btn => {
+        btn.addEventListener('click', () => fecharModal('cadastroModalEmpreendedor'));
+    });
 
-  // ============================================
-  // LOGICA DE ENVIO (EMPREENDEDOR)
-  // ============================================
-const formEmpreendedor = document.getElementById('cadastroFormEmpreendedor');
-
-  formEmpreendedor?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Mostra que está processando (opcional, se tiver o span no seu botão)
-    const btnText = this.querySelector('.btn-text');
-    const btnLoading = this.querySelector('.btn-loading');
-    if(btnText) btnText.classList.add('hidden');
-    if(btnLoading) btnLoading.classList.remove('hidden');
-
-    try {
-      // 1. CAPTURA DOS DADOS (Conforme seu novo HTML e Tabelas)
-      const formData = {
-        nome_completo: document.getElementById('nomeEmp').value,
-        cpf: document.getElementById('cpfEmp').value,
-        rg_numero: document.getElementById('rgEmp').value,
-        rg_orgao: document.getElementById('orgaoEmp').value,
-        pis_nit: document.getElementById('pisEmp').value,
-        // Formata a data AAAA-MM-DD
-        data_nascimento: `${document.getElementById('anoEmp').value}-${document.getElementById('mesEmp').value}-${document.getElementById('diaEmp').value}`,
-        email: document.getElementById('emailEmp').value,
-        celular: document.getElementById('celularEmp').value,
-        tipo_kit: document.querySelector('input[name="tipoKit"]:checked')?.value || 'virtual',
-        banco_nome: document.getElementById('bancoEmp').value,
-        banco_agencia: document.getElementById('agenciaEmp').value,
-        banco_conta: document.getElementById('contaEmp').value,
-        cep: document.getElementById('cepEmp').value,
-        endereco_rua: document.getElementById('ruaEmp').value,
-        endereco_numero: document.getElementById('numeroEmp').value,
-        endereco_bairro: document.getElementById('bairroEmp').value,
-        endereco_cidade: document.getElementById('cidadeEmp').value,
-        endereco_estado: document.getElementById('estadoEmp').value,
-        patrocinador_codigo: '3109505702'
-      };
-
-      // 2. ENVIO PARA O SUPABASE
-      const { data, error } = await _supabase
-        .from('empreendedores_amway')
-        .insert([formData]);
-
-      if (error) throw error;
-
-      // 3. SUCESSO
-      mostrarMensagemEmpreendedor('✅ Cadastro realizado com sucesso!', 'success');
-      this.reset();
-      setTimeout(() => modalEmpreendedor.classList.remove('active'), 3000);
-
-    } catch (error) {
-      console.error('Erro:', error);
-      mostrarMensagemEmpreendedor('❌ Erro ao salvar: ' + (error.message || 'Verifique sua conexão'), 'error');
-    } finally {
-      if(btnText) btnText.classList.remove('hidden');
-      if(btnLoading) btnLoading.classList.add('hidden');
-    }
-  });
-
-  // ============================================
-  // LOGICA DE ENVIO (CLIENTE VIP) - SUPABASE
-  // ============================================
-  const formCliente = document.getElementById('cadastroFormCliente');
-  const modalVip = document.getElementById('cadastroModalCliente');
-
-  formCliente?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    // Feedback visual de carregamento
-    const btnText = this.querySelector('.btn-text');
-    const btnLoading = this.querySelector('.btn-loading');
-    if(btnText) btnText.classList.add('hidden');
-    if(btnLoading) btnLoading.classList.remove('hidden');
-
-    try {
-      // 1. CAPTURA DOS DADOS DO CLIENTE VIP
-      const formData = {
-        nome_completo: document.getElementById('nomeCliente').value,
-        cpf: document.getElementById('cpfCliente').value,
-        data_nascimento: document.getElementById('dataNascimentoCliente').value, // Formato date do HTML já é AAAA-MM-DD
-        genero: document.getElementById('generoCliente')?.value || 'Não informado',
-        email: document.getElementById('emailCliente').value,
-        celular: document.getElementById('celularCliente').value,
-        senha_acesso: document.getElementById('senhaCliente').value, // Amway ID
-        cep: document.getElementById('cepCliente').value,
-        endereco_rua: document.getElementById('ruaCliente').value,
-        endereco_numero: document.getElementById('numeroCliente').value,
-        endereco_complemento: document.getElementById('complementoCliente')?.value || '',
-        endereco_bairro: document.getElementById('bairroCliente').value,
-        endereco_cidade: document.getElementById('cidadeCliente').value,
-        endereco_estado: document.getElementById('estadoCliente').value,
-        patrocinador_info: 'Henrique Gomes da Silva (3109505702)'
-      };
-
-      // 2. ENVIO PARA O SUPABASE (Tabela: clientes_amway)
-      const { data, error } = await _supabase
-        .from('clientes_amway')
-        .insert([formData]);
-
-      if (error) throw error;
-
-      // 3. SUCESSO
-      mostrarMensagemCliente('✅ Cadastro VIP realizado com sucesso!', 'success');
-      this.reset();
-      
-      // Fecha o modal após 3 segundos
-      setTimeout(() => {
-        modalVip?.classList.remove('active');
-      }, 3000);
-
-    } catch (error) {
-      console.error('Erro no cadastro VIP:', error);
-      mostrarMensagemCliente('❌ Erro ao salvar: ' + (error.message || 'Verifique os dados'), 'error');
-    } finally {
-      if(btnText) btnText.classList.remove('hidden');
-      if(btnLoading) btnLoading.classList.add('hidden');
-    }
-  });
-  
-// ============================================
-// FUNÇÕES DE MENSAGENS (AUXILIARES)
-// ============================================
-
-function mostrarMensagemCliente(texto, tipo) {
-    const el = document.getElementById('formMessageCliente');
-    if (!el) return;
-    el.textContent = texto;
-    el.className = `form-message ${tipo}`; // usa 'success' ou 'error'
-    el.classList.remove('hidden');
-}
-
-function mostrarMensagemEmpreendedor(texto, tipo) {
-    const el = document.getElementById('formMessageEmp');
-    if (!el) return;
-    el.textContent = texto;
-    el.className = `form-message ${tipo}`;
-    el.classList.remove('hidden');
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // Verifica se o Supabase carregou
-    if (typeof supabase === 'undefined') {
-        console.error("ERRO CRÍTICO: O cliente do Supabase não foi encontrado.");
-        return;
-    } else {
-        console.log("Supabase conectado e pronto para receber leads! 🚀");
+    // Fechar ao clicar fora (Overlay)
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay') || event.target.classList.contains('modal')) {
+            event.target.style.display = "none";
+        }
     }
 
-    // --- LÓGICA 1: CADASTRO DE CLIENTE VIP ---
+    // ======================================================
+    // 3. MÁSCARAS (CPF e TELEFONE)
+    // ======================================================
+    function aplicarMascara(input, tipo) {
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, "");
+            
+            if (tipo === 'cpf') {
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            } else if (tipo === 'tel') {
+                value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+                value = value.replace(/(\d)(\d{4})$/, "$1-$2");
+            }
+            e.target.value = value;
+        });
+    }
+
+    // Procura os campos para aplicar máscara
+    const inputCpfEmp = document.getElementById('cpfEmp');
+    if (inputCpfEmp) aplicarMascara(inputCpfEmp, 'cpf');
+
+    const inputsTel = document.querySelectorAll('input[type="tel"], input[name="whatsapp"], input[name="celular"]');
+    inputsTel.forEach(input => aplicarMascara(input, 'tel'));
+
+
+    // ======================================================
+    // 4. ENVIO DE FORMULÁRIOS (SUPABASE)
+    // ======================================================
+
+    // --- CLIENTE VIP ---
     const formVip = document.getElementById('form-vip');
-    
     if (formVip) {
-        formVip.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Impede a página de recarregar
-            
-            // Captura os dados do formulário
+        formVip.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!sb) return alert("Erro de conexão com o banco de dados.");
+
             const formData = new FormData(formVip);
-            
-            // Mapeia para as colunas exatas da tabela 'clientes_amway'
-            const dadosParaEnviar = {
-                nome_completo: formData.get('nome') || formData.get('name'),
+            const dados = {
+                nome_completo: formData.get('nome'),
                 email: formData.get('email'),
-                celular: formData.get('whatsapp') || formData.get('telefone') || formData.get('celular'),
-                // Captura a data/hora atual
+                celular: formData.get('whatsapp') || formData.get('telefone'),
                 created_at: new Date().toISOString()
             };
 
-            // Envia para o Supabase
-            const { data, error } = await supabase
-                .from('clientes_amway')
-                .insert([dadosParaEnviar]);
+            const { error } = await sb.from('clientes_amway').insert([dados]);
 
             if (error) {
-                console.error('Erro no envio VIP:', error);
-                alert('Erro ao cadastrar. Tente novamente.');
+                alert('Erro: ' + error.message);
             } else {
-                console.log('Sucesso VIP:', data);
-                alert('Parabéns! Você agora é um Cliente VIP. 🛍️');
+                alert('Cadastro VIP realizado com sucesso! 🎉');
                 formVip.reset();
+                fecharModal('cadastroModalCliente');
             }
         });
     }
 
-    // --- LÓGICA 2: CADASTRO DE EMPREENDEDOR ---
-    const formEmpreend = document.getElementById('form-empreendedor');
-    
-    if (formEmpreend) {
-        formEmpreend.addEventListener('submit', async function(e) {
+    // --- EMPREENDEDOR ---
+    const formEmp = document.getElementById('form-empreendedor');
+    if (formEmp) {
+        formEmp.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!sb) return alert("Erro de conexão com o banco de dados.");
 
-            const formData = new FormData(formEmpreend);
-
-            // Mapeia para as colunas exatas da tabela 'empreendedores_amway'
-            const dadosParaEnviar = {
-                nome_completo: formData.get('nome') || formData.get('name'),
+            const formData = new FormData(formEmp);
+            
+            // Mapeando os campos do HTML para o Banco
+            const dados = {
+                nome_completo: formData.get('nome'), // name="nome" no HTML
+                cpf: formData.get('cpf'),           // name="cpf" no HTML
                 email: formData.get('email'),
                 celular: formData.get('whatsapp') || formData.get('telefone') || formData.get('celular'),
-                // Campos opcionais (se existirem no form, ele pega, senão fica vazio)
                 endereco_cidade: formData.get('cidade'),
                 endereco_estado: formData.get('estado'),
                 created_at: new Date().toISOString()
             };
 
-            const { data, error } = await supabase
-                .from('empreendedores_amway')
-                .insert([dadosParaEnviar]);
+            // OBS: RG e ORGAO não estão sendo enviados pois não existem na tabela do banco.
+
+            const { error } = await sb.from('empreendedores_amway').insert([dados]);
 
             if (error) {
-                console.error('Erro no envio Empreendedor:', error);
-                alert('Erro ao enviar solicitação. Tente novamente.');
+                alert('Erro ao enviar: ' + error.message);
             } else {
-                console.log('Sucesso Empreendedor:', data);
-                alert('Solicitação enviada! Vamos construir esse negócio juntos. 🚀');
-                formEmpreend.reset();
+                alert('Solicitação enviada! Entraremos em contato. 🚀');
+                formEmp.reset();
+                fecharModal('cadastroModalEmpreendedor');
             }
         });
     }
