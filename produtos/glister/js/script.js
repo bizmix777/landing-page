@@ -275,3 +275,85 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+
+    // ======================================================
+    // 6. ENVIO EMPREENDEDOR (ATUALIZADO COM TUDO! 💼)
+    // ======================================================
+    const formEmp = document.getElementById('form-empreendedor');
+    if (formEmp) {
+        formEmp.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validação CPF Básico
+            const cpfVal = document.getElementById('cpfEmp').value.replace(/\D/g, '');
+            if(cpfVal.length !== 11) { alert("CPF inválido"); return; }
+
+            const btnSubmit = document.getElementById('btnSubmitEmp');
+            const txtOriginal = btnSubmit ? btnSubmit.innerHTML : 'Finalizar';
+            if(btnSubmit) btnSubmit.innerHTML = '⏳ Processando...';
+
+            const formData = new FormData(formEmp);
+
+            // 1. Data de Nascimento
+            const dia = formData.get('dia');
+            const mes = formData.get('mes');
+            const ano = formData.get('ano');
+            const dataFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+
+            // 2. Kit Escolhido
+            const kitSelecionado = document.querySelector('input[name="tipoKit"]:checked');
+            const valorKit = kitSelecionado ? kitSelecionado.getAttribute('data-valor') : '0';
+
+            // 3. Montar Objeto COMPLETO
+            const dados = {
+                // Pessoais
+                nome_completo: formData.get('nome'),
+                cpf: formData.get('cpf'),
+                rg: formData.get('rg'),                 // <--- NOVO
+                orgao_emissor: formData.get('orgao'),   // <--- NOVO
+                pis: formData.get('pis'),               // <--- NOVO
+                data_nascimento: dataFormatada,
+                celular: formData.get('celular'),
+                email: formData.get('email'),
+                senha_hash: formData.get('senha'),
+                
+                // Financeiro
+                banco: formData.get('banco'),           // <--- NOVO
+                agencia: formData.get('agencia'),       // <--- NOVO
+                conta_bancaria: formData.get('conta'),  // <--- NOVO
+                tipo_conta: formData.get('tipoConta'),  // <--- NOVO
+                
+                // Kit
+                tipo_kit: formData.get('tipoKit'),
+                valor_kit: valorKit,
+
+                // Endereço
+                cep: formData.get('cep'),
+                endereco_estado: formData.get('estado'),
+                endereco_cidade: formData.get('cidade'),
+                endereco_bairro: formData.get('bairro'),
+                endereco_rua: formData.get('rua'),
+                endereco_numero: formData.get('numero'),
+                endereco_complemento: formData.get('complemento'),
+
+                // Patrocinador
+                patrocinador_nome: "Henrique Gomes da Silva",
+                patrocinador_codigo: "3109505702",
+
+                created_at: new Date().toISOString()
+            };
+
+            const { error } = await sb.from('empreendedores_amway').insert([dados]);
+
+            if (error) {
+                console.error(error);
+                alert('Erro ao cadastrar: ' + error.message);
+                if(btnSubmit) btnSubmit.innerHTML = txtOriginal;
+            } else {
+                alert('🚀 Sucesso! Cadastro de Empreendedor Enviado!');
+                formEmp.reset();
+                fecharModal('cadastroModalEmpreendedor');
+                if(btnSubmit) btnSubmit.innerHTML = txtOriginal;
+            }
+        });
+    }
