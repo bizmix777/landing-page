@@ -4,43 +4,74 @@ document.addEventListener('DOMContentLoaded', function() {
     // ======================================================
     // 1. CONFIGURAÇÃO DO SUPABASE
     // ======================================================
-    const sb = typeof supabase !== 'undefined' ? supabase : null;
-    if (!sb) console.error("ERRO: Supabase não encontrado!");
+    // Tenta pegar o cliente global ou cria um novo se necessário
+    const sb = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+    
+    if (!sb) {
+        console.error("ERRO CRÍTICO: Supabase não carregado! Verifique o supabase-config.js");
+    } else {
+        console.log("Supabase conectado e pronto.");
+    }
 
     // ======================================================
-    // 2. FUNÇÕES VISUAIS (MODAIS)
+    // 2. FUNÇÕES VISUAIS (ABRIR E FECHAR MODAIS)
     // ======================================================
     
-    // Função para abrir modal
+    // Função genérica para abrir
     function abrirModal(idModal) {
         const modal = document.getElementById(idModal);
         if (modal) {
-            modal.classList.add('active'); // Ou a classe que seu CSS usa para mostrar
-            modal.style.display = 'flex'; // Garante que aparece
+            modal.style.display = 'flex'; // Torna visível
+            // Adiciona classe para animação (se houver CSS)
+            setTimeout(() => modal.classList.add('active'), 10);
+        } else {
+            console.error("Modal não encontrado: " + idModal);
         }
     }
 
-    // Função para fechar modal
+    // Função genérica para fechar
     function fecharModal(idModal) {
         const modal = document.getElementById(idModal);
         if (modal) {
             modal.classList.remove('active');
-            modal.style.display = 'none';
+            setTimeout(() => modal.style.display = 'none', 300); // Espera animação
         }
     }
 
-    // Configura os botões de fechar (X)
+    // --- CONECTANDO OS BOTÕES (AQUI ESTAVA O ERRO ANTES!) ---
+    
+    // Botão: Quero 30% de Desconto (Cliente VIP)
+    const btnCliente = document.getElementById('btn-opcao-cliente');
+    if (btnCliente) {
+        btnCliente.addEventListener('click', function(e) {
+            e.preventDefault();
+            abrirModal('cadastroModalCliente');
+        });
+    }
+
+    // Botão: Quero Ganhar Dinheiro (Empreendedor)
+    const btnEmpreendedor = document.getElementById('btn-opcao-empreendedor');
+    if (btnEmpreendedor) {
+        btnEmpreendedor.addEventListener('click', function(e) {
+            e.preventDefault();
+            abrirModal('cadastroModalEmpreendedor');
+        });
+    }
+
+    // --- BOTÕES DE FECHAR (X) ---
     document.querySelectorAll('.modal-close-cliente').forEach(btn => {
         btn.addEventListener('click', () => fecharModal('cadastroModalCliente'));
     });
+    
     document.querySelectorAll('.modal-close-empreendedor').forEach(btn => {
         btn.addEventListener('click', () => fecharModal('cadastroModalEmpreendedor'));
     });
 
-    // Fechar ao clicar fora (Overlay)
+    // Fechar clicando fora (no fundo escuro)
     window.onclick = function(event) {
         if (event.target.classList.contains('modal-overlay') || event.target.classList.contains('modal')) {
             event.target.style.display = "none";
+            event.target.classList.remove('active');
         }
     }
 
@@ -63,24 +94,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Procura os campos para aplicar máscara
+    // Aplica máscaras se os campos existirem
     const inputCpfEmp = document.getElementById('cpfEmp');
     if (inputCpfEmp) aplicarMascara(inputCpfEmp, 'cpf');
 
-    const inputsTel = document.querySelectorAll('input[type="tel"], input[name="whatsapp"], input[name="celular"]');
+    // Pega todos os campos de telefone/whatsapp
+    const inputsTel = document.querySelectorAll('input[name="whatsapp"], input[name="celular"], input[name="telefone"]');
     inputsTel.forEach(input => aplicarMascara(input, 'tel'));
 
 
     // ======================================================
-    // 4. ENVIO DE FORMULÁRIOS (SUPABASE)
+    // 4. ENVIO DE DADOS (SUPABASE)
     // ======================================================
 
-    // --- CLIENTE VIP ---
+    // --- FORMULÁRIO CLIENTE VIP ---
     const formVip = document.getElementById('form-vip');
     if (formVip) {
         formVip.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!sb) return alert("Erro de conexão com o banco de dados.");
+            
+            if (!sb) return alert("Erro de conexão. Recarregue a página.");
+
+            const btnSubmit = formVip.querySelector('button[type="submit"]');
+            if(btnSubmit) btnSubmit.textContent = "Enviando...";
 
             const formData = new FormData(formVip);
             const dados = {
@@ -94,44 +130,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (error) {
                 alert('Erro: ' + error.message);
+                if(btnSubmit) btnSubmit.textContent = "Tentar Novamente";
             } else {
-                alert('Cadastro VIP realizado com sucesso! 🎉');
+                alert('Parabéns! Cadastro VIP realizado com sucesso! 🎉');
                 formVip.reset();
                 fecharModal('cadastroModalCliente');
+                if(btnSubmit) btnSubmit.textContent = "Cadastrar";
             }
         });
     }
 
-    // --- EMPREENDEDOR ---
+    // --- FORMULÁRIO EMPREENDEDOR ---
     const formEmp = document.getElementById('form-empreendedor');
     if (formEmp) {
         formEmp.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!sb) return alert("Erro de conexão com o banco de dados.");
+
+            if (!sb) return alert("Erro de conexão. Recarregue a página.");
+
+            const btnSubmit = formEmp.querySelector('button[type="submit"]');
+            if(btnSubmit) btnSubmit.textContent = "Enviando...";
 
             const formData = new FormData(formEmp);
-            
-            // Mapeando os campos do HTML para o Banco
             const dados = {
-                nome_completo: formData.get('nome'), // name="nome" no HTML
-                cpf: formData.get('cpf'),           // name="cpf" no HTML
+                nome_completo: formData.get('nome'),
                 email: formData.get('email'),
-                celular: formData.get('whatsapp') || formData.get('telefone') || formData.get('celular'),
-                endereco_cidade: formData.get('cidade'),
+                cpf: formData.get('cpf'), // Agora pega o CPF
+                celular: formData.get('whatsapp') || formData.get('telefone'),
+                // Campos opcionais de endereço
+                endereco_cidade: formData.get('cidade'), 
                 endereco_estado: formData.get('estado'),
                 created_at: new Date().toISOString()
             };
 
-            // OBS: RG e ORGAO não estão sendo enviados pois não existem na tabela do banco.
-
             const { error } = await sb.from('empreendedores_amway').insert([dados]);
 
             if (error) {
-                alert('Erro ao enviar: ' + error.message);
+                alert('Erro: ' + error.message);
+                if(btnSubmit) btnSubmit.textContent = "Tentar Novamente";
             } else {
-                alert('Solicitação enviada! Entraremos em contato. 🚀');
+                alert('Solicitação enviada! Vamos construir esse negócio juntos. 🚀');
                 formEmp.reset();
                 fecharModal('cadastroModalEmpreendedor');
+                if(btnSubmit) btnSubmit.textContent = "Enviar Solicitação";
             }
         });
     }
