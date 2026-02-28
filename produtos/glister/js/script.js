@@ -179,3 +179,84 @@ function mostrarMensagemEmpreendedor(texto, tipo) {
     el.className = `form-message ${tipo}`;
     el.classList.remove('hidden');
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Verifica se o Supabase carregou
+    if (typeof supabase === 'undefined') {
+        console.error("ERRO CRÍTICO: O cliente do Supabase não foi encontrado.");
+        return;
+    } else {
+        console.log("Supabase conectado e pronto para receber leads! 🚀");
+    }
+
+    // --- LÓGICA 1: CADASTRO DE CLIENTE VIP ---
+    const formVip = document.getElementById('form-vip');
+    
+    if (formVip) {
+        formVip.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Impede a página de recarregar
+            
+            // Captura os dados do formulário
+            const formData = new FormData(formVip);
+            
+            // Mapeia para as colunas exatas da tabela 'clientes_amway'
+            const dadosParaEnviar = {
+                nome_completo: formData.get('nome') || formData.get('name'),
+                email: formData.get('email'),
+                celular: formData.get('whatsapp') || formData.get('telefone') || formData.get('celular'),
+                // Captura a data/hora atual
+                created_at: new Date().toISOString()
+            };
+
+            // Envia para o Supabase
+            const { data, error } = await supabase
+                .from('clientes_amway')
+                .insert([dadosParaEnviar]);
+
+            if (error) {
+                console.error('Erro no envio VIP:', error);
+                alert('Erro ao cadastrar. Tente novamente.');
+            } else {
+                console.log('Sucesso VIP:', data);
+                alert('Parabéns! Você agora é um Cliente VIP. 🛍️');
+                formVip.reset();
+            }
+        });
+    }
+
+    // --- LÓGICA 2: CADASTRO DE EMPREENDEDOR ---
+    const formEmpreend = document.getElementById('form-empreendedor');
+    
+    if (formEmpreend) {
+        formEmpreend.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(formEmpreend);
+
+            // Mapeia para as colunas exatas da tabela 'empreendedores_amway'
+            const dadosParaEnviar = {
+                nome_completo: formData.get('nome') || formData.get('name'),
+                email: formData.get('email'),
+                celular: formData.get('whatsapp') || formData.get('telefone') || formData.get('celular'),
+                // Campos opcionais (se existirem no form, ele pega, senão fica vazio)
+                endereco_cidade: formData.get('cidade'),
+                endereco_estado: formData.get('estado'),
+                created_at: new Date().toISOString()
+            };
+
+            const { data, error } = await supabase
+                .from('empreendedores_amway')
+                .insert([dadosParaEnviar]);
+
+            if (error) {
+                console.error('Erro no envio Empreendedor:', error);
+                alert('Erro ao enviar solicitação. Tente novamente.');
+            } else {
+                console.log('Sucesso Empreendedor:', data);
+                alert('Solicitação enviada! Vamos construir esse negócio juntos. 🚀');
+                formEmpreend.reset();
+            }
+        });
+    }
+});
