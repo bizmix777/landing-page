@@ -707,9 +707,9 @@
     </div>
   </div>
 
-  <!-- =======================================================
-       MODAL CADASTRO - EMPREENDEDOR (CORRIGIDO em 28.02.2026)
-       ======================================================= -->
+    <!-- ====================================
+       MODAL CADASTRO - EMPREENDEDOR (REORGANIZADO + PAGAMENTO)
+       ==================================== -->
   <div id="cadastroModalEmpreendedor" class="modal">
     <div class="modal-overlay"></div>
     <div class="modal-content">
@@ -726,6 +726,9 @@
       
       <form id="form-empreendedor" class="cadastro-form">
         
+        <!-- CAMPO OCULTO DO KIT (Para o banco saber qual é, sem o usuário escolher) -->
+        <input type="hidden" name="tipoKit" value="Virtual">
+
         <!-- 1. DADOS PESSOAIS -->
         <div class="form-section">
           <h3 class="form-section-title"><span>👤</span> Dados Pessoais</h3>
@@ -783,54 +786,7 @@
           </div>
         </div>
 
-        <!-- 2. DADOS BANCÁRIOS -->
-        <div class="form-section">
-           <h3 class="form-section-title"><span>🏦</span> Dados Bancários (Para Receber Bônus)</h3>
-           <div class="form-group">
-              <label>Nome do Banco</label>
-              <input type="text" name="banco" placeholder="Ex: Nubank, Itaú, Bradesco">
-           </div>
-           <div class="form-row">
-              <div class="form-group">
-                 <label>Agência</label>
-                 <input type="text" name="agencia" placeholder="0000">
-              </div>
-              <div class="form-group">
-                 <label>Conta com Dígito</label>
-                 <input type="text" name="conta" placeholder="00000-0">
-              </div>
-           </div>
-           <div class="form-group">
-              <label>Tipo de Conta</label>
-              <select name="tipoConta" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
-                 <option value="Corrente">Conta Corrente</option>
-                 <option value="Poupanca">Conta Poupança</option>
-              </select>
-           </div>
-        </div>
-
-        <!-- 3. ESCOLHA DO KIT -->
-        <div class="form-section">
-           <h3 class="form-section-title"><span>📦</span> Escolha seu Kit de Início</h3>
-           
-           <div class="kit-option" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center;">
-              <input type="radio" id="kitVirtual" name="tipoKit" value="Virtual" data-valor="29.90" checked style="margin-right: 10px;">
-              <div>
-                 <label for="kitVirtual" style="font-weight: bold; display: block;">Kit Empreendedor Digital</label>
-                 <small style="color: #666;">Acesso a plataforma + Loja Virtual (R$ 29,90)</small>
-              </div>
-           </div>
-
-           <div class="kit-option" style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; display: flex; align-items: center;">
-              <input type="radio" id="kitFisico" name="tipoKit" value="Fisico" data-valor="189.90" style="margin-right: 10px;">
-              <div>
-                 <label for="kitFisico" style="font-weight: bold; display: block;">Kit Produtos Físicos</label>
-                 <small style="color: #666;">Produtos Glister + Materiais (R$ 189,90)</small>
-              </div>
-           </div>
-        </div>
-
-        <!-- 4. ENDEREÇO -->
+        <!-- 2. ENDEREÇO (Agora vem antes do Banco) -->
         <div class="form-section">
            <h3 class="form-section-title"><span>📍</span> Endereço de Entrega</h3>
            
@@ -889,14 +845,58 @@
            </div>
         </div>
 
+        <!-- 3. DADOS BANCÁRIOS (Agora por último) -->
+        <div class="form-section">
+           <h3 class="form-section-title"><span>🏦</span> Dados Bancários (Para Receber Bônus)</h3>
+           <div class="form-group">
+              <label>Nome do Banco</label>
+              <input type="text" name="banco" placeholder="Ex: Nubank, Itaú, Bradesco">
+           </div>
+           <div class="form-row">
+              <div class="form-group">
+                 <label>Agência</label>
+                 <input type="text" name="agencia" placeholder="0000">
+              </div>
+              <div class="form-group">
+                 <label>Conta com Dígito</label>
+                 <input type="text" name="conta" placeholder="00000-0">
+              </div>
+           </div>
+           <div class="form-group">
+              <label>Tipo de Conta</label>
+              <select name="tipoConta" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                 <option value="Corrente">Conta Corrente</option>
+                 <option value="Poupanca">Conta Poupança</option>
+              </select>
+           </div>
+        </div>
+
+        <!-- 4. ÁREA DE PAGAMENTO (MERCADO PAGO) -->
+        <div class="form-section" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 15px; border-radius: 8px;">
+            <h3 class="form-section-title" style="color: #0284c7;"><span>💳</span> Pagamento Seguro</h3>
+            <p style="margin-bottom: 15px; font-size: 0.9em;">
+                Para finalizar sua adesão, realize o pagamento da taxa de cadastro.
+            </p>
+            
+            <!-- AQUI VAI ENTRAR O SEU CÓDIGO DO MERCADO PAGO -->
+            <div id="area-pagamento-mp">
+                <!-- Cole o botão ou script do Mercado Pago aqui depois -->
+                <div style="text-align:center; padding: 20px; border: 2px dashed #ccc;">
+                   [LOCAL DO BOTÃO MERCADO PAGO]
+                </div>
+            </div>
+        </div>
+
         <!-- MENSAGEM -->
         <div id="formMessageEmp" class="form-message hidden"></div>
         
         <!-- BOTÕES -->
         <div class="form-actions" style="margin-top: 20px; text-align: center;">
           <button type="button" id="btnCancelarEmp" class="btn btn-outline" style="margin-right: 10px;">Cancelar</button>
+          
+          <!-- Botão agora diz "Finalizar" e só deve liberar após pagamento (veremos isso na lógica) -->
           <button type="submit" id="btnSubmitEmp" class="btn btn-success" style="width: 100%; max-width: 300px; padding: 15px; font-size: 1.1em;">
-            🚀 FINALIZAR CADASTRO
+            🚀 FINALIZAR E ENVIAR
           </button>
         </div>
         
