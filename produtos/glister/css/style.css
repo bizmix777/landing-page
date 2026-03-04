@@ -1576,7 +1576,41 @@ img svg, .hero-image svg, .logo svg {
     display: flex;
     gap: 10px;
 }
+/* Estilos do Pix Automático */
+#pixDynamicContainer {
+    text-align: center;
+    background: #f0fdf4;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #28a745;
+    margin-top: 20px;
+    display: none; /* Começa invisível */
+}
 
+.pix-qrcode {
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: 0 auto 15px;
+    border-radius: 10px;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-copy-pix {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #009ee3;
+    color: white;
+    font-size: 1rem;
+    transition: transform 0.2s;
+}
+
+.btn-copy-pix:active { transform: scale(0.98); }
 /* ============================================
    FIM DO CSS
    ============================================ */
