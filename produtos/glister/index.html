@@ -871,38 +871,39 @@
            </div>
         </div>
 
-        <!-- 4. ÁREA DE PAGAMENTO (MERCADO PAGO) -->
+        <!-- 4. ÁREA DE PAGAMENTO (MERCADO PAGO) 04.03.2026 -->
         <div class="form-section" style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 15px; border-radius: 8px;">
-            <h3 class="form-section-title" style="color: #0284c7;"><span>💳</span> Pagamento Seguro</h3>
-            <p style="margin-bottom: 15px; font-size: 0.9em;">
-                Para finalizar sua adesão, realize o pagamento da taxa de cadastro.
-            </p>
+            <h3 class="form-section-title" style="color: #0284c7;"><span>💳</span> Pagamento da Adesão</h3>
             
-            <!-- AQUI VAI ENTRAR O SEU CÓDIGO DO MERCADO PAGO -->
-            <div id="area-pagamento-mp">
-                <!-- Cole o botão ou script do Mercado Pago aqui depois -->
-                <div style="text-align:center; padding: 20px; border: 2px dashed #ccc;">
-                   [LOCAL DO BOTÃO MERCADO PAGO]
-                </div>
+            <!-- Texto inicial -->
+            <div id="intro-pagamento">
+                <p style="margin-bottom: 15px; font-size: 0.9em;">
+                    Ao clicar em finalizar, será gerado um <strong>Pix de R$ 29,90</strong> referente ao Kit Digital.
+                    <br>Seu acesso será liberado imediatamente após o pagamento.
+                </p>
+            </div>
+            
+            <!-- ÁREA DO PIX (Invisível até gerar) -->
+            <div id="pixDynamicContainer">
+                <h3 style="color:#28a745; margin-bottom:10px;">✅ Pedido Criado!</h3>
+                <p style="margin-bottom: 15px;">Escaneie o QR Code abaixo para pagar:</p>
+                
+                <!-- Imagem do QR Code que vem do Render -->
+                <img id="imgQrCode" src="" alt="QR Code Pix" class="pix-qrcode">
+                
+                <!-- Código Copia e Cola (Invisível) -->
+                <input type="text" id="pixCopiaColaInput" style="position:absolute; opacity:0;">
+                
+                <!-- Botão Copiar -->
+                <button type="button" id="btnCopiarPix" class="btn-copy-pix">
+                    <span id="btnTextPix">📋 Copiar Código PIX</span>
+                </button>
+                
+                <p style="font-size:0.9rem; color:#555; margin-top:10px;">
+                    Assim que pagar, verifique seu e-mail!
+                </p>
             </div>
         </div>
-
-        <!-- MENSAGEM -->
-        <div id="formMessageEmp" class="form-message hidden"></div>
-        
-        <!-- BOTÕES -->
-        <div class="form-actions" style="margin-top: 20px; text-align: center;">
-          <button type="button" id="btnCancelarEmp" class="btn btn-outline" style="margin-right: 10px;">Cancelar</button>
-          
-          <!-- Botão agora diz "Finalizar" e só deve liberar após pagamento (veremos isso na lógica) -->
-          <button type="submit" id="btnSubmitEmp" class="btn btn-success" style="width: 100%; max-width: 300px; padding: 15px; font-size: 1.1em;">
-            🚀 FINALIZAR E ENVIAR
-          </button>
-        </div>
-        
-      </form>
-    </div>
-  </div>
 
   <!-- ====================================
        SCRIPTS
