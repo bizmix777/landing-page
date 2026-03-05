@@ -76,7 +76,7 @@ img { max-width: 100%; height: auto; }
   border: 2px solid var(--primary-color);
 }
 /* ======================================================
-   PARTE 3: GRID DE DORES (CORRIGIDO)
+   PARTE 3: GRID DE DORES (CORRIGIDO: ÍCONES + AZUL)
    ====================================================== */
 .pain-section {
   padding: 60px 20px;
@@ -92,6 +92,7 @@ img { max-width: 100%; height: auto; }
   align-items: stretch; /* ESTICA AS CAIXAS NA MESMA ALTURA */
 }
 
+/* --- ESTILO DAS CAIXAS --- */
 .pain-card, 
 .agitation-box {
   background: #fff;
@@ -103,14 +104,45 @@ img { max-width: 100%; height: auto; }
   flex-direction: column;
   justify-content: flex-start;
   
-  /* Borda Colorida (Igual ao Botão) */
-  border-left: 5px solid var(--accent-color); 
+  /* LINHA AZUL (IGUAL AO EMPREENDEDOR) */
+  border-left: 6px solid #009ee3; /* Azul Cyan */
+  
+  /* Garante que não tenha borda vermelha em volta */
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
 }
 
-/* Destaque para a Agitação */
+/* --- CORREÇÃO DOS ÍCONES GIGANTES --- */
+.pain-icon {
+  width: 60px;  /* Tamanho fixo da caixa do ícone */
+  height: 60px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: #e1f5fe; /* Fundo azulzinho claro no ícone */
+  color: #009ee3; /* Cor do desenho do ícone */
+}
+
+/* Força o SVG a respeitar o tamanho */
+.pain-icon svg {
+  width: 35px;
+  height: 35px;
+}
+
+/* --- AJUSTE ESPECÍFICO PARA A CAIXA "E O PIOR?" --- */
 .agitation-box {
-  background-color: #f0fdf4; /* Fundo levemente esverdeado */
-  border: 2px solid var(--accent-color); /* Borda total se quiser destaque */
+  /* Removemos a borda vermelha total que existia antes */
+  /* Mantemos o fundo levemente diferente para destacar, se quiser */
+  background-color: #f9fcff; 
+}
+
+.agitation-title {
+  color: #d32f2f; /* Título em vermelho para manter o alerta */
+  font-size: 1.5rem;
+  margin-bottom: 15px;
 }
 
 /* Responsivo (Celular vira 1 coluna) */
