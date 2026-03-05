@@ -76,8 +76,9 @@ img { max-width: 100%; height: auto; }
   border: 2px solid var(--primary-color);
 }
 /* ======================================================
-   PARTE 3: GRID DE DORES (CORRIGIDO: ÍCONES + AZUL)
+   PARTE 3: GRID DE DORES + CORREÇÃO ÍCONES (NUCLEAR)
    ====================================================== */
+
 .pain-section {
   padding: 60px 20px;
   background-color: #fff;
@@ -85,67 +86,60 @@ img { max-width: 100%; height: auto; }
 
 .pain-grid-container {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 Colunas Iguais */
+  grid-template-columns: repeat(2, 1fr); /* 2 Colunas */
   gap: 30px;
   max-width: 1100px;
   margin: 0 auto;
-  align-items: stretch; /* ESTICA AS CAIXAS NA MESMA ALTURA */
+  align-items: stretch; /* Alturas iguais */
 }
 
-/* --- ESTILO DAS CAIXAS --- */
+/* --- ESTILO DAS CAIXAS (TODAS COM BORDA AZUL) --- */
 .pain-card, 
 .agitation-box {
   background: #fff;
   padding: 30px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  height: 100%; /* Ocupa altura total */
+  height: 100%; 
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   
-  /* LINHA AZUL (IGUAL AO EMPREENDEDOR) */
-  border-left: 6px solid #009ee3; /* Azul Cyan */
+  /* LINHA AZUL DO EMPREENDEDOR EM TODAS */
+  border-left: 6px solid #009ee3 !important; 
   
-  /* Garante que não tenha borda vermelha em volta */
-  border-top: none;
-  border-right: none;
+  /* Remove outras bordas */
+  border-top: none; 
+  border-right: none; 
   border-bottom: none;
 }
 
-/* --- CORREÇÃO DOS ÍCONES GIGANTES --- */
+/* --- O ESMAGADOR DE ÍCONES GIGANTES --- */
+/* Isso pega qualquer SVG dentro dos cards e força ficar pequeno */
+.pain-card svg,
+.pain-icon svg,
+.agitation-box svg {
+    width: 40px !important;  /* FORÇA BRUTA: Largura fixa */
+    height: 40px !important; /* FORÇA BRUTA: Altura fixa */
+    min-width: 40px !important;
+    max-width: 40px !important;
+    color: #009ee3; /* Cor do ícone azul */
+    margin-bottom: 0;
+}
+
+/* Container da bolinha do ícone (opcional, para ficar bonito) */
 .pain-icon {
-  width: 60px;  /* Tamanho fixo da caixa do ícone */
-  height: 60px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background-color: #e1f5fe; /* Fundo azulzinho claro no ícone */
-  color: #009ee3; /* Cor do desenho do ícone */
+    width: 60px !important;
+    height: 60px !important;
+    background-color: #e1f5fe; /* Azul bem clarinho no fundo */
+    border-radius: 50%; /* Bolinha redonda */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
-/* Força o SVG a respeitar o tamanho */
-.pain-icon svg {
-  width: 35px;
-  height: 35px;
-}
-
-/* --- AJUSTE ESPECÍFICO PARA A CAIXA "E O PIOR?" --- */
-.agitation-box {
-  /* Removemos a borda vermelha total que existia antes */
-  /* Mantemos o fundo levemente diferente para destacar, se quiser */
-  background-color: #f9fcff; 
-}
-
-.agitation-title {
-  color: #d32f2f; /* Título em vermelho para manter o alerta */
-  font-size: 1.5rem;
-  margin-bottom: 15px;
-}
-
-/* Responsivo (Celular vira 1 coluna) */
+/* Responsivo */
 @media (max-width: 768px) {
   .pain-grid-container {
     grid-template-columns: 1fr;
