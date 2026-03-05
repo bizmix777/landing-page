@@ -76,7 +76,7 @@ img { max-width: 100%; height: auto; }
   border: 2px solid var(--primary-color);
 }
 /* ======================================================
-   PARTE 3: GRID DE DORES + CORREÇÃO ÍCONES (NUCLEAR)
+   PARTE 3: GRID DE DORES (SEM ÍCONES)
    ====================================================== */
 
 .pain-section {
@@ -114,28 +114,20 @@ img { max-width: 100%; height: auto; }
   border-bottom: none;
 }
 
-/* --- O ESMAGADOR DE ÍCONES GIGANTES --- */
-/* Isso pega qualquer SVG dentro dos cards e força ficar pequeno */
+/* --- O ANIQUILADOR DE ÍCONES (ESCONDE TUDO) --- */
+/* Isso pega qualquer ícone SVG e ESCONDE */
+.pain-icon, 
 .pain-card svg,
 .pain-icon svg,
 .agitation-box svg {
-    width: 40px !important;  /* FORÇA BRUTA: Largura fixa */
-    height: 40px !important; /* FORÇA BRUTA: Altura fixa */
-    min-width: 40px !important;
-    max-width: 40px !important;
-    color: #009ee3; /* Cor do ícone azul */
-    margin-bottom: 0;
+    display: none !important; /* SOME COM TUDO! */
 }
 
-/* Container da bolinha do ícone (opcional, para ficar bonito) */
-.pain-icon {
-    width: 60px !important;
-    height: 60px !important;
-    background-color: #e1f5fe; /* Azul bem clarinho no fundo */
-    border-radius: 50%; /* Bolinha redonda */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* --- AJUSTE DE TÍTULOS --- */
+/* Como tiramos os ícones, vamos dar uma margem no topo */
+.pain-card h3,
+.agitation-box h3 {
+    margin-top: 10px;
     margin-bottom: 20px;
 }
 
