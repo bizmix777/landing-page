@@ -1623,31 +1623,33 @@ img svg, .hero-image svg, .logo svg {
     margin: 0 auto; /* Centraliza na tela */
 }
 
-/* CAIXAS DE DOR: Arrumar o conteúdo interno */
-.pain-card {
-    background: #fff; /* ou sua cor de fundo */
-    padding: 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    
-    /* Garante alinhamento interno */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 100%; /* Força ocupar altura total do grid */
+/* FORÇA O GRID A ALINHAR AS ALTURAS */
+.pain-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 colunas iguais */
+    gap: 30px;
+    align-items: stretch; /* O segredo: Estica os filhos */
 }
 
-/* CAIXA DE AGITAÇÃO: Segue o mesmo padrão */
+/* CAIXA DA ESQUERDA (Dor #5) */
+.pain-card {
+    height: 100%; /* Ocupa toda a altura disponível */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distribui o conteúdo */
+    /* Se tiver margem sobrando, remova: */
+    margin-bottom: 0; 
+}
+
+/* CAIXA DA DIREITA (Agitação) */
 .agitation-box {
-    background: #fff4f4; /* Cor de alerta leve (exemplo) */
-    padding: 25px;
-    border-radius: 10px;
-    border: 2px solid #ffcccc;
-    
+    height: 100%; /* Força altura total igual ao vizinho */
     display: flex;
     flex-direction: column;
     justify-content: center; /* Centraliza o texto verticalmente */
-    height: 100%;
+    /* Ajuste visual para parecer igual */
+    box-sizing: border-box; 
+    /* Se ela tiver cor de fundo diferente, garanta que preencha tudo */
 }
 
 /* RESPONSIVIDADE: No celular, volta a ser uma embaixo da outra */
