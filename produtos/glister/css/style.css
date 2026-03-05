@@ -430,23 +430,6 @@ button {
   background: var(--color-gray-50);
 }
 
-.pain-card {
-  background: var(--color-white);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-md);
-  display: flex;
-  gap: var(--spacing-lg);
-  transition: var(--transition-base);
-  border-left: 4px solid var(--color-danger);
-  margin-bottom: var(--spacing-lg);
-}
-
-.pain-card:hover {
-  transform: translateX(8px);
-  box-shadow: var(--shadow-xl);
-}
-
 .pain-icon {
   flex-shrink: 0;
   width: 60px;
@@ -1373,11 +1356,6 @@ select:hover {
     align-items: stretch;
   }
   
-  .pain-card {
-    flex-direction: column;
-    text-align: center;
-  }
-  
   .pain-icon {
     margin: 0 auto var(--spacing-md);
   }
@@ -1612,52 +1590,57 @@ img svg, .hero-image svg, .logo svg {
 
 .btn-copy-pix:active { transform: scale(0.98); }
 
-/* CONTAINER PAI: Define o Grid */
+/* ======================================================
+   CORREÇÃO DO GRID DE DORES (LADO A LADO + ALTURA IGUAL)
+   ====================================================== */
+
+/* 1. O PAI (Container) */
 .pain-grid-container {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Cria 2 colunas de tamanho igual */
-    gap: 30px; /* Espaço entre as caixas */
-    align-items: stretch; /* ESTE COMANDO FAZ ELAS TEREM A MESMA ALTURA */
+    grid-template-columns: 1fr 1fr; /* Cria 2 colunas de tamanho IGUAL */
+    gap: 25px; /* Espaço entre as caixas */
+    align-items: stretch; /* ESTICA as caixas para terem a mesma altura */
     width: 100%;
     max-width: 1200px;
-    margin: 0 auto; /* Centraliza na tela */
+    margin: 0 auto;
 }
 
-/* FORÇA O GRID A ALINHAR AS ALTURAS */
-.pain-grid-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 colunas iguais */
-    gap: 30px;
-    align-items: stretch; /* O segredo: Estica os filhos */
-}
-
-/* CAIXA DA ESQUERDA (Dor #5) */
-.pain-card {
-    height: 100%; /* Ocupa toda a altura disponível */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Distribui o conteúdo */
-    /* Se tiver margem sobrando, remova: */
-    margin-bottom: 0; 
-}
-
-/* CAIXA DA DIREITA (Agitação) */
+/* 2. AS CAIXAS (Filhos) */
+.pain-card, 
 .agitation-box {
-    height: 100%; /* Força altura total igual ao vizinho */
+    /* Força ocupar 100% da altura da linha do grid */
+    height: 100%; 
     display: flex;
     flex-direction: column;
-    justify-content: center; /* Centraliza o texto verticalmente */
-    /* Ajuste visual para parecer igual */
-    box-sizing: border-box; 
-    /* Se ela tiver cor de fundo diferente, garanta que preencha tudo */
+    justify-content: space-between; /* Espalha o conteúdo */
+    
+    /* Visual */
+    background: #fff;
+    padding: 25px;
+    border-radius: 15px; /* Bordas arredondadas */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    
+    /* A BORDA COLORIDA (Lado Esquerdo) */
+    /* TROQUE A COR ABAIXO PELA COR DO SEU BOTÃO */
+    border-left: 5px solid #28a745;  /* <--- COLOQUE A COR AQUI (Ex: #00ff00) */
 }
 
-/* RESPONSIVIDADE: No celular, volta a ser uma embaixo da outra */
+/* 3. A CAIXA DE AGITAÇÃO (Específico) */
+.agitation-box {
+    /* Se você quiser que a borda seja em volta de tudo na agitação, use: */
+    /* border: 2px solid #28a745; */
+    
+    /* Se quiser manter igual aos outros (só na esquerda): */
+    background-color: #f9f9f9; /* Um fundo levemente diferente para destacar */
+}
+
+/* 4. RESPONSIVIDADE (Celular) */
 @media (max-width: 768px) {
     .pain-grid-container {
-        grid-template-columns: 1fr; /* 1 Coluna só */
+        grid-template-columns: 1fr; /* Uma coluna só no celular */
     }
 }
+
 /* ============================================
    FIM DO CSS
    ============================================ */
