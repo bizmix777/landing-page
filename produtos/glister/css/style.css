@@ -1611,6 +1611,51 @@ img svg, .hero-image svg, .logo svg {
 }
 
 .btn-copy-pix:active { transform: scale(0.98); }
+
+/* CONTAINER PAI: Define o Grid */
+.pain-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Cria 2 colunas de tamanho igual */
+    gap: 30px; /* Espaço entre as caixas */
+    align-items: stretch; /* ESTE COMANDO FAZ ELAS TEREM A MESMA ALTURA */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto; /* Centraliza na tela */
+}
+
+/* CAIXAS DE DOR: Arrumar o conteúdo interno */
+.pain-card {
+    background: #fff; /* ou sua cor de fundo */
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    
+    /* Garante alinhamento interno */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%; /* Força ocupar altura total do grid */
+}
+
+/* CAIXA DE AGITAÇÃO: Segue o mesmo padrão */
+.agitation-box {
+    background: #fff4f4; /* Cor de alerta leve (exemplo) */
+    padding: 25px;
+    border-radius: 10px;
+    border: 2px solid #ffcccc;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza o texto verticalmente */
+    height: 100%;
+}
+
+/* RESPONSIVIDADE: No celular, volta a ser uma embaixo da outra */
+@media (max-width: 768px) {
+    .pain-grid-container {
+        grid-template-columns: 1fr; /* 1 Coluna só */
+    }
+}
 /* ============================================
    FIM DO CSS
    ============================================ */
