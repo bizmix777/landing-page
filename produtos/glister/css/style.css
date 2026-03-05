@@ -264,3 +264,26 @@ footer a { color: var(--accent-color); }
   .form-row { flex-direction: column; gap: 10px; }
   .pain-grid-container { grid-template-columns: 1fr; }
 }
+
+/* ======================================================
+   SOLUÇÃO FINAL PARA ÍCONES GIGANTES (.feature-icon)
+   ====================================================== */
+
+/* 1. ESCONDER TODOS OS ÍCONES DAS DORES */
+.pain-card .feature-icon, 
+.agitation-box .feature-icon {
+    display: none !important; /* Some com eles da tela */
+    width: 0 !important;      /* Garante tamanho zero */
+    height: 0 !important;     /* Garante tamanho zero */
+}
+
+/* 2. ARREDONDAR E AZULAR AS CAIXAS (Relembrando) */
+.pain-card, 
+.agitation-box {
+    border-left: 6px solid #009ee3 !important; /* Azul Empreendedor */
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
