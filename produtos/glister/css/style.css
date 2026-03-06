@@ -342,7 +342,7 @@ footer a { color: var(--accent-color); }
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    justify-content: center !important;
     gap: 40px;
     max-width: 1100px;
     margin: 0 auto;
@@ -351,8 +351,8 @@ footer a { color: var(--accent-color); }
 
 .hero-content {
     flex: 1;
-    text-align: left !important;
-    align-items: flex-start !important;
+    text-align: center !important;
+    align-items: center !important;
 }
 
 .hero-image {
