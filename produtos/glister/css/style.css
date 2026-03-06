@@ -237,11 +237,14 @@ input, select {
    PARTE 6: RODAPÉ E EXTRAS
    ====================================================== */
 footer {
-  background-color: #222;
+  background: linear-gradient(135deg, #0277bd, #009ee3);
   color: #fff;
   padding: 40px 20px;
   text-align: center;
 }
+
+Só isso! O degradê azul vai ficar idêntico ao Hero. Como ficou?
+
 
 footer a { color: var(--accent-color); }
 
