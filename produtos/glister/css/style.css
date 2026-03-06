@@ -359,6 +359,7 @@ footer a { color: var(--accent-color); }
     flex: 1;
     display: flex;
     justify-content: center;
+    margin-top: 30px;
 }
 
 .hero-image img {
