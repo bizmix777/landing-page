@@ -37,23 +37,16 @@ img { max-width: 100%; height: auto; }
 /* ======================================================
    PARTE 2: HERO E BOTÕES (CTA)
    ====================================================== */
-/* .hero {
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-  color: var(--white);
-  padding: 80px 20px;
-  text-align: center;
-} */
-
 .hero {
-    /* Troca o verde pelo Azul do Empreendedor (#009ee3) */
     background: linear-gradient(135deg, #0277bd, #009ee3) !important;
-    color: #fff;
+    background-color: #009ee3 !important; /* Fallback se degradê falhar */
+    color: #fff !important;
 }
 
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+/* Garante que o texto dentro fique branco */
+.hero h1, .hero p {
+    color: #fff !important;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
 }
 
 .btn-cta {
