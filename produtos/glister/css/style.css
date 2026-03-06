@@ -374,3 +374,34 @@ svg.feature-icon {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(0, 176, 255, 0.6) !important;
 }
+/* ======================================================
+   AJUSTE FINAL DE ALTURA: HERO MAIOR (+20%)
+   ====================================================== */
+
+/* 1. AUMENTAR A ALTURA DO TOPO */
+.hero {
+    /* Padding original era 80px 20px. Aumentei para 120px 20px */
+    padding: 120px 20px !important;
+    
+    /* Centraliza tudo (já estava aqui, mas garante) */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Garante fundo azul */
+    background: linear-gradient(135deg, #0277bd, #009ee3) !important;
+}
+
+/* 2. BOTÃO: GARANTIR QUE FIQUE EMBAIXO DO TEXTO */
+.hero-content {
+    margin-bottom: 30px; /* Mais espaço depois do texto */
+}
+
+#btn-hero-vip {
+    margin-top: 15px;    /* Espaço extra antes do botão */
+    
+    /* Cor Azul Claro (Se você já trocou antes, ok) */
+    background: #00b0ff !important;
+    box-shadow: 0 5px 20px rgba(0, 176, 255, 0.5) !important;
+}
