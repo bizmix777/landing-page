@@ -334,3 +334,53 @@ footer a { color: var(--accent-color); }
     background: #00b0ff !important;
     box-shadow: 0 5px 20px rgba(0, 176, 255, 0.5) !important;
 }
+/* ======================================================
+   HERO: LAYOUT COM FOTO
+   ====================================================== */
+
+.hero .container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: left !important;
+}
+
+.hero-content {
+    flex: 1;
+    text-align: left !important;
+    align-items: flex-start !important;
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    object-fit: cover;
+}
+
+/* CELULAR: foto vai para baixo do texto */
+@media (max-width: 768px) {
+    .hero .container {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    .hero-content {
+        text-align: center !important;
+        align-items: center !important;
+    }
+    .hero-image img {
+        max-width: 280px;
+    }
+}
