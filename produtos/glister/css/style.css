@@ -287,3 +287,54 @@ footer a { color: var(--accent-color); }
     background: #fff;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
+/* ======================================================
+   CORREÇÃO FINAL: ÍCONES + GRID + BORDA AZUL
+   ====================================================== */
+
+/* 1. O ESMAGADOR DE ÍCONES GIGANTES 🔨 */
+.pain-card svg, 
+.feature-icon,
+svg.feature-icon {
+    width: 50px !important;       /* Força largura pequena */
+    height: 50px !important;      /* Força altura pequena */
+    min-width: 50px !important;   /* Impede de sumir */
+    max-width: 50px !important;   /* Impede de crescer */
+    color: #009ee3 !important;    /* Cor Azul do Empreendedor */
+    margin-bottom: 20px !important;
+    display: block !important;
+}
+
+/* 2. GRID (LADO A LADO) */
+.pain-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 Colunas */
+    gap: 30px;
+    align-items: stretch; /* Mesma altura */
+}
+
+/* 3. CARTÕES (BORDA AZUL) */
+.pain-card, 
+.agitation-box {
+    border-left: 6px solid #009ee3 !important; /* Borda Azul */
+    border-top: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    height: 100%;
+}
+
+/* Ajuste da caixa de Agitação */
+.agitation-box {
+    background-color: #f8fbff !important; /* Fundo levemente azulado */
+}
+
+/* Celular (1 Coluna) */
+@media (max-width: 768px) {
+    .pain-grid-container {
+        grid-template-columns: 1fr;
+    }
+}
