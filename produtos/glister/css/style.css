@@ -388,3 +388,6 @@ footer a { color: var(--accent-color); }
         max-width: 280px;
     }
 }
+.offer-section h2 {
+    margin-bottom: 10px;
+}
