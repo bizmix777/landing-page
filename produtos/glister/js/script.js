@@ -82,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 data_nascimento: fd.get('dataNascimento'),
                 celular: fd.get('celular'),
                 email: fd.get('email'),
+                // ⚠️ ATENÇÃO SEGURANÇA: senha em texto puro - implemente hash no backend
                 senha_hash: fd.get('senha'),
                 cep: fd.get('cep'),
                 endereco_rua: fd.get('rua'),
@@ -134,6 +135,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 data_nascimento: dtNasc,
                 celular: fd.get('celular'),
                 email: fd.get('email'),
+                // ⚠️ ATENÇÃO SEGURANÇA: senha está sendo salva como texto puro!
+                // Para produção, implemente hash no backend (ex: bcrypt no servidor Node/Python)
+                // NUNCA faça hash no frontend pois é inseguro (o hash ficaria exposto)
                 senha_hash: fd.get('senha'),
                 
                 banco: fd.get('banco'),
