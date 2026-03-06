@@ -37,11 +37,17 @@ img { max-width: 100%; height: auto; }
 /* ======================================================
    PARTE 2: HERO E BOTÕES (CTA)
    ====================================================== */
-.hero {
+/* .hero {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: var(--white);
   padding: 80px 20px;
   text-align: center;
+} */
+
+.hero {
+    /* Troca o verde pelo Azul do Empreendedor (#009ee3) */
+    background: linear-gradient(135deg, #0277bd, #009ee3) !important;
+    color: #fff;
 }
 
 .hero h1 {
