@@ -394,3 +394,20 @@ footer a { color: var(--accent-color); }
 .offer-section {
     padding: 30px 20px;
 }
+/* ======================================================
+   BENEFÍCIOS: GRID 2 COLUNAS + RESPONSIVO
+   ====================================================== */
+.benefit-card {
+  text-align: center;
+  padding: 20px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border-left: 4px solid #009ee3;
+}
+
+@media (max-width: 768px) {
+  div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
