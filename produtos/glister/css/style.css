@@ -337,3 +337,40 @@ svg.feature-icon {
         grid-template-columns: 1fr;
     }
 }
+/* ======================================================
+   AJUSTE FINAL: CENTRALIZAR TOPO + BOTÃO AZUL CLARO
+   ====================================================== */
+
+/* 1. CENTRALIZAR TUDO NO HERO */
+.hero, 
+.hero .container, 
+.hero-content {
+    text-align: center !important;       /* Centraliza texto */
+    display: flex !important;            /* Garante flexbox */
+    flex-direction: column !important;   /* Empilha um embaixo do outro */
+    align-items: center !important;      /* Centraliza os itens no meio */
+    justify-content: center !important;
+}
+
+/* 2. BOTÃO: DE VERDE PARA AZUL CLARO (CELESTE) */
+#btn-hero-vip {
+    /* Cor de fundo: Azul Claro Vibrante */
+    background-color: #00b0ff !important; 
+    background: linear-gradient(to right, #00b0ff, #40c4ff) !important;
+    
+    /* Texto branco */
+    color: #ffffff !important;
+    
+    /* Sombra azulada em vez de verde */
+    box-shadow: 0 4px 15px rgba(0, 176, 255, 0.4) !important;
+    
+    /* Remove bordas antigas */
+    border: none !important;
+}
+
+/* Efeito ao passar o mouse (fica quase branco/ciano) */
+#btn-hero-vip:hover {
+    background: #40c4ff !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 176, 255, 0.6) !important;
+}
