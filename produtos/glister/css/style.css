@@ -391,3 +391,6 @@ footer a { color: var(--accent-color); }
 .offer-section h2 {
     margin-bottom: 10px;
 }
+.offer-section {
+    padding: 30px 20px;
+}
