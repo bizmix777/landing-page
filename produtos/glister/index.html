@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <!-- Configuração Supabase -->
+  <!-- CDN Supabase (OBRIGATÓRIO antes do config) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
 
   <style>
@@ -135,7 +137,7 @@
             <p>Menta refrescante concentrada que garante hálito puro por muito mais tempo.</p>
          </div>
          <div class="benefit-card">
-            <h3> Economia Real</h3>
+            <h3>💰 Economia Real</h3>
             <p>Rende 3x mais que pastas comuns. Uma ervilha na escova é suficiente.</p>
          </div>
       </div>
@@ -166,7 +168,7 @@
              <p>Ganhe dinheiro revendendo + Renda Extra.</p>
              <div class="price" style="font-size:2rem; font-weight:bold; margin:15px 0;">R$ 29,90 <small style="font-size:1rem; font-weight:normal;">(Kit Início)</small></div>
              <button id="btn-opcao-empreendedor" class="btn-cta" style="width:100%; padding:15px; border-radius:30px; background:#009ee3; color:#fff; border:none; font-weight:bold; cursor:pointer;">
-               QUERO SER EPREENDEDOR
+               QUERO SER EMPREENDEDOR
              </button>
           </div>
 
@@ -346,7 +348,7 @@
             <div id="pixDynamicContainer" style="display:none; text-align:center; padding:15px; background:#fff; border-radius:8px; border:2px solid #28a745;">
                 <h3 style="color:#28a745; margin-bottom:10px;">✅ Pedido Criado!</h3>
                 <img id="imgQrCode" src="" alt="QR Code Pix" style="width:200px; height:200px; display:block; margin:0 auto 15px;">
-                <input type="text" id="pixCopiaColaInput" style="position:absolute; opacity:0;">
+                <input type="text" id="pixCopiaColaInput" style="position:absolute; opacity:0;" aria-hidden="true" tabindex="-1" readonly>
                 <button type="button" id="btnCopiarPix" style="width:100%; padding:12px; background:#009ee3; color:white; border:none; border-radius:50px; font-weight:bold; cursor:pointer;">
                     <span id="btnTextPix">📋 Copiar Código PIX</span>
                 </button>
