@@ -6,8 +6,9 @@
     <title>Finalizar Compra - BizMix</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
 
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase CDN + Config Centralizado -->
+         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+         <script src="/js/supabase-config.js"></script>
 
     <style>
         :root {
@@ -403,10 +404,11 @@
 // ============================================================
 // CONFIGURAÇÃO — altere apenas estas variáveis quando necessário
 // ============================================================
-const SUPABASE_URL  = 'COLE_SUA_URL_SUPABASE_AQUI';
-const SUPABASE_KEY  = 'COLE_SUA_CHAVE_SUPABASE_AQUI';
-const TABELA        = 'NOME_DA_SUA_TABELA_AQUI'; // ex: 'vendas_glister'
-const RENDER_URL    = 'https://gerador-pdf-bizmix.onrender.com/gerar_pix';
+const TABELA     = 'NOME_DA_SUA_TABELA_AQUI'; // ex: 'vendas_glister'
+const RENDER_URL = 'https://gerador-pdf-bizmix.onrender.com/gerar_pix';
+
+// Usa o cliente já criado pelo supabase-config.js
+const sb = window.supabase;
 
 // Dados dos planos — altere preços aqui se a Amway mudar
 const PLANOS = {
@@ -422,9 +424,6 @@ const PLANOS = {
     }
 };
 // ============================================================
-
-// Inicializa Supabase
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // Lê parâmetros da URL
 const params  = new URLSearchParams(window.location.search);
