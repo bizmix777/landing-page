@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - BizMix</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --azul:     #009ee3;
+            --azul-esc: #0277bd;
+            --verde:    #2e7d32;
+            --bg:       #f0f9ff;
+            --white:    #ffffff;
+            --texto:    #2d3748;
+            --borda:    #e2e8f0;
+            --radius:   12px;
+            --shadow:   0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--texto);
+            line-height: 1.6;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: linear-gradient(135deg, var(--azul-esc), var(--azul));
+            color: #fff;
+            text-align: center;
+            padding: 18px 20px;
+        }
+        header h1 { font-size: 1.4rem; }
+        header p  { font-size: 0.9rem; opacity: 0.85; margin-top: 4px; }
+
+        /* ── LAYOUT ── */
+        .page {
+            max-width: 980px;
+            margin: 30px auto;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+        }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            font-size: 1.05rem;
+            color: var(--azul-esc);
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 10px;
+            margin-bottom: 18px;
+        }
+
+        /* ── FORMULÁRIO ── */
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--borda);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--azul);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* ── RESUMO DO PEDIDO ── */
+        .resumo-plano {
+            background: linear-gradient(135deg, var(--azul-esc), var(--azul));
+            color: #fff;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .resumo-plano .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+        .resumo-plano .preco {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 8px 0 4px;
+        }
+        .resumo-plano .descricao {
+            font-size: 0.85rem;
+            opacity: 0.85;
+        }
+
+        .resumo-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--borda);
+            font-size: 0.9rem;
+        }
+        .resumo-item:last-child { border-bottom: none; }
+        .resumo-total {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--azul-esc);
+        }
+
+        /* ── BOTÃO PRINCIPAL ── */
+        #btnSubmit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--azul-esc), var(--azul));
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 20px rgba(0,158,227,0.4);
+            margin-top: 10px;
+        }
+        #btnSubmit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,158,227,0.5);
+        }
+        #btnSubmit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        /* ── PIX ── */
+        #pixContainer {
+            display: none;
+            text-align: center;
+            background: #f0fff4;
+            border: 2px solid var(--verde);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 16px;
+        }
+        #pixContainer h3 { color: var(--verde); margin-bottom: 10px; }
+        #imgQrCode {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: block;
+            margin: 0 auto 16px;
+        }
+        #pixCopiaColaInput { position: absolute; opacity: 0; }
+        #btnCopiarPix {
+            width: 100%;
+            padding: 13px;
+            background: var(--azul);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #btnCopiarPix:hover { background: var(--azul-esc); }
+
+        /* ── LOADING ── */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            gap: 16px;
+        }
+        .loading-overlay.active { display: flex; }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── SEGURANÇA ── */
+        .seguranca {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 12px;
+        }
+
+        /* ── RESPONSIVO ── */
+        @media (max-width: 768px) {
+            .page { grid-template-columns: 1fr; }
+            .resumo { order: -1; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+    <div class="spinner"></div>
+    <p id="loadingText">Processando...</p>
+</div>
+
+<header>
+    <h1>🛒 Finalizar Compra</h1>
+    <p>Preencha seus dados e gere o PIX para concluir</p>
+</header>
+
+<div class="page">
+
+    <!-- ── COLUNA ESQUERDA: FORMULÁRIO ── -->
+    <div class="formulario">
+
+        <!-- Dados Pessoais -->
+        <div class="card">
+            <h2>👤 Seus Dados</h2>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label>Nome Completo *</label>
+                    <input type="text" id="nome" required placeholder="Seu nome completo">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>E-mail *</label>
+                        <input type="email" id="email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>WhatsApp *</label>
+                        <input type="tel" id="whatsapp" placeholder="(00) 00000-0000" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Endereço -->
+        <div class="card">
+            <h2>📍 Endereço de Entrega</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>CEP *</label>
+                    <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                </div>
+                <div class="form-group" style="display:flex; align-items:flex-end;">
+                    <button type="button" id="btnCep" style="padding:10px 14px; background:var(--azul); color:#fff; border:none; border-radius:8px; cursor:pointer; width:100%;">🔍 Buscar</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Rua *</label>
+                <input type="text" id="rua" placeholder="Nome da rua">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Número *</label>
+                    <input type="text" id="numero" placeholder="Nº">
+                </div>
+                <div class="form-group">
+                    <label>Complemento</label>
+                    <input type="text" id="complemento" placeholder="Apto, sala...">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Bairro *</label>
+                    <input type="text" id="bairro" placeholder="Bairro">
+                </div>
+                <div class="form-group">
+                    <label>Cidade *</label>
+                    <input type="text" id="cidade" placeholder="Cidade">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Estado *</label>
+                <select id="estado">
+                    <option value="">Selecione...</option>
+                    <option value="AC">Acre</option><option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option><option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option><option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option><option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option><option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option><option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option><option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option><option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option><option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option><option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Pagamento -->
+        <div class="card">
+            <h2>💳 Pagamento via PIX</h2>
+            <p style="color:#555; font-size:0.9rem; margin-bottom:16px;">Clique no botão abaixo para gerar seu QR Code PIX. O pagamento é instantâneo e seguro.</p>
+
+            <!-- PIX aparece aqui -->
+            <div id="pixContainer">
+                <h3>✅ PIX Gerado com Sucesso!</h3>
+                <p style="color:#555; font-size:0.9rem; margin-bottom:14px;">Escaneie o QR Code ou copie o código abaixo:</p>
+                <img id="imgQrCode" src="" alt="QR Code PIX">
+                <input type="text" id="pixCopiaColaInput" aria-hidden="true" tabindex="-1" readonly>
+                <button type="button" id="btnCopiarPix">
+                    <span id="btnTextPix">📋 Copiar Código PIX</span>
+                </button>
+                <p style="font-size:0.8rem; color:#777; margin-top:12px;">Após o pagamento, entraremos em contato pelo WhatsApp informado.</p>
+            </div>
+
+            <button type="submit" form="checkoutForm" id="btnSubmit">
+                🔒 Gerar PIX de Pagamento
+            </button>
+
+            <div class="seguranca">
+                🔒 Pagamento 100% seguro via Mercado Pago
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ── COLUNA DIREITA: RESUMO ── -->
+    <div class="resumo">
+        <div class="card">
+            <h2>📋 Resumo do Pedido</h2>
+
+            <!-- Plano (preenchido pelo JS) -->
+            <div class="resumo-plano">
+                <div class="badge" id="resumoBadge">Carregando...</div>
+                <div class="preco" id="resumoPreco">R$ --</div>
+                <div class="descricao" id="resumoDescricao"></div>
+            </div>
+
+            <div class="resumo-item">
+                <span>Produto</span>
+                <span id="resumoProduto">--</span>
+            </div>
+            <div class="resumo-item">
+                <span>Plano</span>
+                <span id="resumoPlano">--</span>
+            </div>
+            <div class="resumo-item">
+                <span>Pagamento</span>
+                <span>PIX</span>
+            </div>
+            <div class="resumo-total">
+                <span>Total</span>
+                <span id="resumoTotal">R$ --</span>
+            </div>
+        </div>
+
+        <!-- Garantia -->
+        <div class="card" style="text-align:center;">
+            <div style="font-size:2rem;">🛡️</div>
+            <h3 style="color:var(--verde); margin:8px 0 4px; font-size:1rem;">Garantia de Satisfação</h3>
+            <p style="font-size:0.85rem; color:#555;">Se não ficar satisfeito, <strong>devolvemos seu dinheiro</strong>. Sem burocracia.</p>
+        </div>
+    </div>
+
+</div><!-- fim .page -->
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO — altere apenas estas variáveis quando necessário
+// ============================================================
+const SUPABASE_URL  = 'COLE_SUA_URL_SUPABASE_AQUI';
+const SUPABASE_KEY  = 'COLE_SUA_CHAVE_SUPABASE_AQUI';
+const TABELA        = 'NOME_DA_SUA_TABELA_AQUI'; // ex: 'vendas_glister'
+const RENDER_URL    = 'https://gerador-pdf-bizmix.onrender.com/gerar_pix';
+
+// Dados dos planos — altere preços aqui se a Amway mudar
+const PLANOS = {
+    vip: {
+        badge:     'Cliente VIP',
+        descricao: 'Compra com 25% de desconto para uso próprio',
+        produto:   'Glister'
+    },
+    empreendedor: {
+        badge:     'Empreendedor Amway',
+        descricao: 'Revenda + Renda Extra (Kit Início)',
+        produto:   'Glister'
+    }
+};
+// ============================================================
+
+// Inicializa Supabase
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Lê parâmetros da URL
+const params  = new URLSearchParams(window.location.search);
+const plano   = params.get('plano') || 'vip';
+const valor   = parseFloat(params.get('valor')) || 0;
+const produto = params.get('produto') || 'Glister';
+
+// Preenche resumo
+const info = PLANOS[plano] || PLANOS['vip'];
+const precoFormatado = `R$ ${valor.toFixed(2).replace('.', ',')}`;
+
+document.getElementById('resumoBadge').textContent    = info.badge;
+document.getElementById('resumoPreco').textContent    = precoFormatado;
+document.getElementById('resumoDescricao').textContent = info.descricao;
+document.getElementById('resumoProduto').textContent  = produto;
+document.getElementById('resumoPlano').textContent    = info.badge;
+document.getElementById('resumoTotal').textContent    = precoFormatado;
+document.title = `Finalizar Compra — ${info.badge}`;
+
+// Máscara WhatsApp
+document.getElementById('whatsapp').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length > 2)  v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    if (v.length > 10) v = `${v.slice(0,10)}-${v.slice(10)}`;
+    e.target.value = v;
+});
+
+// Máscara CEP
+document.getElementById('cep').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+    if (v.length > 5) v = `${v.slice(0,5)}-${v.slice(5)}`;
+    e.target.value = v;
+});
+
+// Busca CEP
+async function buscarCep() {
+    const cep = document.getElementById('cep').value.replace(/\D/g, '');
+    if (cep.length !== 8) return;
+    try {
+        const res  = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await res.json();
+        if (!data.erro) {
+            document.getElementById('rua').value    = data.logradouro;
+            document.getElementById('bairro').value = data.bairro;
+            document.getElementById('cidade').value = data.localidade;
+            document.getElementById('estado').value = data.uf;
+            document.getElementById('numero').focus();
+        }
+    } catch(e) {}
+}
+document.getElementById('btnCep').addEventListener('click', buscarCep);
+document.getElementById('cep').addEventListener('blur', buscarCep);
+
+// Copiar PIX
+document.getElementById('btnCopiarPix').addEventListener('click', function() {
+    const input = document.getElementById('pixCopiaColaInput');
+    input.select();
+    navigator.clipboard.writeText(input.value).then(() => {
+        const txt = document.getElementById('btnTextPix');
+        const btn = document.getElementById('btnCopiarPix');
+        txt.textContent = '✅ COPIADO!';
+        btn.style.background = '#28a745';
+        setTimeout(() => {
+            txt.textContent = '📋 Copiar Código PIX';
+            btn.style.background = 'var(--azul)';
+        }, 3000);
+    });
+});
+
+// Submit
+document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const loading = document.getElementById('loading');
+    const loadingText = document.getElementById('loadingText');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    loading.classList.add('active');
+    loadingText.textContent = 'Registrando pedido...';
+    btnSubmit.disabled = true;
+
+    try {
+        // 1. Salva no Supabase
+        const dadosVenda = {
+            nome_comprador:    document.getElementById('nome').value,
+            email_comprador:   document.getElementById('email').value,
+            whatsapp_comprador: document.getElementById('whatsapp').value,
+            cep_comprador:     document.getElementById('cep').value,
+            rua_comprador:     document.getElementById('rua').value,
+            numero_comprador:  document.getElementById('numero').value,
+            complemento_comprador: document.getElementById('complemento').value,
+            bairro_comprador:  document.getElementById('bairro').value,
+            cidade_comprador:  document.getElementById('cidade').value,
+            estado_comprador:  document.getElementById('estado').value,
+            plano:             plano,
+            produto:           produto,
+            valor_total:       valor,
+            status_pagamento:  'pendente',
+            created_at:        new Date().toISOString()
+        };
+
+        const { error } = await sb.from(TABELA).insert([dadosVenda]);
+        if (error) throw new Error(error.message);
+
+        // 2. Gera PIX no Render
+        loadingText.textContent = 'Gerando PIX com Mercado Pago...';
+
+        const response = await fetch(RENDER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: document.getElementById('email').value,
+                nome:  document.getElementById('nome').value,
+                valor: valor
+            })
+        });
+
+        const pixData = await response.json();
+        if (!response.ok) throw new Error(pixData.erro || 'Erro ao gerar PIX');
+
+        // 3. Exibe QR Code
+        loading.classList.remove('active');
+        btnSubmit.style.display = 'none';
+
+        document.getElementById('imgQrCode').src = `data:image/jpeg;base64,${pixData.qr_base64}`;
+        document.getElementById('pixCopiaColaInput').value = pixData.qr_code;
+
+        const pix = document.getElementById('pixContainer');
+        pix.style.display = 'block';
+        pix.scrollIntoView({ behavior: 'smooth' });
+
+    } catch (err) {
+        loading.classList.remove('active');
+        btnSubmit.disabled = false;
+        console.error(err);
+        alert('Erro: ' + err.message);
+    }
+});
+</script>
+</body>
+</html>
