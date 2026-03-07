@@ -313,7 +313,7 @@ footer a { color: var(--accent-color); }
 /* 1. AUMENTAR A ALTURA DO TOPO */
 .hero {
     /* Padding original era 80px 20px. Aumentei para 120px 20px */
-    padding: 120px 20px !important;
+    padding: 60px 20px !important;
     
     /* Centraliza tudo (já estava aqui, mas garante) */
     display: flex !important;
