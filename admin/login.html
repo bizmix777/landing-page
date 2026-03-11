@@ -281,11 +281,8 @@
                 }
 
                 // Redirecionar baseado no tipo
-                if (usuario.tipo === 'super_admin') {
-                    window.location.href = '/admin/super-admin/index.html';
-                } else {
-                    window.location.href = '/admin/index.html';
-                }
+                window.location.href = '/admin/index.html'; // ✅ Tanto admin quanto super_admin vão para o mesmo lugar
+
 
             } catch (error) {
                 console.error('Erro no login:', error);
