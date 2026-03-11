@@ -6,19 +6,19 @@
 /admin/super-admin/*    /admin/index.html    301
 /admin/super-admin      /admin/index.html    301
 
-# 2. Centralizar Login (Manda pro Painel Acesso)
-/admin/login.html       /painel-acesso/      301
-/admin/login            /painel-acesso/      301
-/login                  /painel-acesso/      301
+# 2. Login Admin vai para o login CORRETO (não para painel aberto!)
+/admin/login            /admin/login.html    301
 
-# 3. Atalhos Limpos
-/admin                  /admin/              301
-/painel                 /painel/             301
+# 3. Login de Parceiros
+/login                  /login/index.html    301
+
+# 4. Atalho /admin vai para o LOGIN (não para o painel direto!)
+/admin                  /admin/login.html    301
+
+# 5. Atalho /painel vai para o login de parceiros
+/painel                 /login/index.html    301
 
 # ===================================
-# REGRAS DE SPA (Mantenha só o necessário)
+# REGRAS DE SPA
 # ===================================
-
-# Se a página não existir, manda pra Home (ou 404)
-# (Isso evita erros feios, mas se quiser ver erro 404 real, mude 200 para 404)
 /*                      /index.html          200
