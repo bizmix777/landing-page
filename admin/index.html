@@ -199,17 +199,18 @@
     </div>
         <script>
         // Verificar autenticação (usa o config externo)
-        async function verificarAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) { window.location.href = '/admin/login.html'; return; }
+        // Verificar autenticação (usa o config externo)
+async function verificarAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = '/admin/login.html'; return; }
 
-            const { data: usuario } = await supabase.from('usuarios').select('tipo, nome').eq('email', session.user.email).single();
-            if (!usuario || usuario.tipo !== 'super_admin') { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; return; }
+    const { data: usuario } = await supabase.from('usuarios').select('tipo, nome').eq('email', session.user.email).single();
+    if (!usuario || usuario.tipo !== 'super_admin') { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; return; }
 
-            document.getElementById('userName').textContent = usuario.nome || 'Super Admin';
-            document.getElementById('userAvatar').textContent = (usuario.nome || 'S').charAt(0).toUpperCase();
-            carregarDashboard();
-        }
+    document.getElementById('userName').textContent = usuario.nome || 'Super Admin';
+    document.getElementById('userAvatar').textContent = (usuario.nome || 'S').charAt(0).toUpperCase();
+    carregarDashboard();
+}
 
         async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
 
