@@ -198,9 +198,8 @@
         </div>
     </div>
         <script>
-        // Verificar autenticação (usa o config externo)
-        // Verificar autenticação (usa o config externo)
-async function  {
+// Verificar autenticação (usa o config externo)
+    async function verificarAuth()  {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
