@@ -391,7 +391,13 @@
         function getStatusText(s) { return (s === 'pago' || s === 'aprovado') ? 'Pago ✅' : 'Pendente ⏳'; }
 
         // Start
-        verificarAuth();
+console.log('🔐 Chamando verificarAuth...');
+verificarAuth().then(() => {
+    console.log('✅ verificarAuth finalizado!');
+}).catch((err) => {
+    console.error('❌ Erro na verificarAuth:', err);
+});
+
     </script>
 </body>
 </html>
