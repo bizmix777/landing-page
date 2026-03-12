@@ -200,7 +200,7 @@
         <script>
         // Verificar autenticação (usa o config externo)
         // Verificar autenticação (usa o config externo)
-async function verificarAuth() {
+async function  {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -407,11 +407,7 @@ async function verificarAuth() {
 
         // Start
 console.log('🔐 Chamando verificarAuth...');
-verificarAuth().then(() => {
-    console.log('✅ verificarAuth finalizado!');
-}).catch((err) => {
-    console.error('❌ Erro na verificarAuth:', err);
-});
+verificarAuth();
 
     </script>
 </body>
