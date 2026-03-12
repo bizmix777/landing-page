@@ -201,41 +201,30 @@
         // Verificar autenticação (usa o config externo)
         // Verificar autenticação (usa o config externo)
 async function verificarAuth() {
-    console.log('1️⃣ Buscando sessão...');
     const { data: { session } } = await supabase.auth.getSession();
-    console.log('2️⃣ Sessão:', session);
 
     if (!session) {
-        console.log('❌ Sem sessão, redirecionando para login...');
         window.location.href = '/admin/login.html';
         return;
     }
 
-    console.log('3️⃣ Buscando usuário no banco...');
     const { data: usuario, error } = await supabase
         .from('usuarios')
         .select('tipo, nome')
         .eq('email', session.user.email)
         .single();
 
-    console.log('4️⃣ Usuário:', usuario);
-    console.log('4️⃣ Erro:', error);
-
     if (!usuario || (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin')) {
-        console.log('❌ Não é admin, deslogando...');
         await supabase.auth.signOut();
         window.location.href = '/admin/login.html';
         return;
     }
 
-    console.log('✅ É admin! Mostrando página...');
     document.body.style.display = 'block';
-
     document.getElementById('userName').textContent = usuario.nome || 'Admin';
     document.getElementById('userAvatar').textContent = (usuario.nome || 'A').charAt(0).toUpperCase();
     carregarDashboard();
 }
-
 
         async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
 
