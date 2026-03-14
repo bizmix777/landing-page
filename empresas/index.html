@@ -934,7 +934,7 @@
             document.getElementById('linkUnicoEmpresa').value = linkUnico;
             document.getElementById('affiliateLink').value = linkUnico;
 
-            carregarVendas(empresa.codigo_parceiro);
+            carregarVendas(empresa.id);
             carregarProdutos(empresa.codigo_parceiro);
             preencherDadosEmpresa(empresa);
         }
@@ -946,69 +946,70 @@
         });
 
         // ==================== CARREGAR VENDAS ====================
-        async function carregarVendas(codigo) {
-            try {
-                const { data: vendas } = await supabase
-                    .from('vendas')
-                    .select('*')
-                    .eq('codigo_parceiro', codigo)
-                    .order('created_at', { ascending: false });
+        async function carregarVendas(empresaId) {
+    try {
+        const { data: vendas } = await supabase
+            .from('vendas')
+            .select('*')
+            .eq('parceiro_id', empresaId)  // ✅ usa id ao invés de codigo
+            .order('created_at', { ascending: false });
 
-                if (!vendas || vendas.length === 0) {
-                    document.getElementById('salesTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;">Nenhuma venda ainda.</td></tr>';
-                    document.getElementById('allSalesTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;">Nenhuma venda ainda.</td></tr>';
-                    return;
-                }
-
-                let totalVendas = 0, totalValor = 0, totalComissao = 0, pendente = 0;
-                let rowsRecentes = '', rowsTodas = '';
-
-                vendas.forEach((v, i) => {
-                    const data = new Date(v.created_at).toLocaleDateString('pt-BR');
-                    const comissao = (v.valor_total * 0.10).toFixed(2);
-                    const statusBadge = v.status_pagamento === 'pago'
-                        ? '<span class="badge badge-success">Pago</span>'
-                        : v.status_pagamento === 'pendente'
-                        ? '<span class="badge badge-warning">Pendente</span>'
-                        : '<span class="badge badge-danger">Cancelado</span>';
-
-                    totalVendas++;
-                    totalValor += v.valor_total;
-                    totalComissao += parseFloat(comissao);
-                    if (v.status_pagamento === 'pendente') pendente += parseFloat(comissao);
-
-                    if (i < 5) {
-                        rowsRecentes += `<tr>
-                            <td>${data}</td>
-                            <td>${v.nome_comprador || '-'}</td>
-                            <td>R$ ${v.valor_total.toFixed(2)}</td>
-                            <td>R$ ${comissao}</td>
-                            <td>${statusBadge}</td>
-                        </tr>`;
-                    }
-
-                    rowsTodas += `<tr>
-                        <td>${data}</td>
-                        <td>${v.nome_comprador || '-'}</td>
-                        <td>${v.email_comprador || '-'}</td>
-                        <td>R$ ${v.valor_total.toFixed(2)}</td>
-                        <td>R$ ${comissao}</td>
-                        <td>${statusBadge}</td>
-                    </tr>`;
-                });
-
-                document.getElementById('totalSales').textContent = totalVendas;
-                document.getElementById('totalValue').textContent = `R$ ${totalValor.toFixed(2)}`;
-                document.getElementById('totalCommission').textContent = `R$ ${totalComissao.toFixed(2)}`;
-                document.getElementById('pendingCommission').textContent = `R$ ${pendente.toFixed(2)}`;
-                document.getElementById('availableBalance').textContent = `R$ ${(totalComissao - pendente).toFixed(2)}`;
-                document.getElementById('salesTableBody').innerHTML = rowsRecentes;
-                document.getElementById('allSalesTableBody').innerHTML = rowsTodas;
-
-            } catch (err) {
-                console.error('Erro ao carregar vendas:', err);
-            }
+        if (!vendas || vendas.length === 0) {
+            document.getElementById('salesTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;">Nenhuma venda ainda.</td></tr>';
+            document.getElementById('allSalesTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;">Nenhuma venda ainda.</td></tr>';
+            return;
         }
+
+        let totalVendas = 0, totalValor = 0, totalComissao = 0, pendente = 0;
+        let rowsRecentes = '', rowsTodas = '';
+
+        vendas.forEach((v, i) => {
+            const data = new Date(v.created_at).toLocaleDateString('pt-BR');
+            const comissao = v.comissao_valor ? parseFloat(v.comissao_valor) : (v.valor_total * 0.10);
+            const statusBadge = v.status_pagamento === 'pago'
+                ? '<span class="badge badge-success">Pago</span>'
+                : v.status_pagamento === 'pendente'
+                ? '<span class="badge badge-warning">Pendente</span>'
+                : '<span class="badge badge-danger">Cancelado</span>';
+
+            totalVendas++;
+            totalValor += parseFloat(v.valor_total);
+            totalComissao += comissao;
+            if (v.status_pagamento === 'pendente') pendente += comissao;
+
+            if (i < 5) {
+                rowsRecentes += `<tr>
+                    <td>${data}</td>
+                    <td>${v.nome_comprador || '-'}</td>
+                    <td>R$ ${parseFloat(v.valor_total).toFixed(2)}</td>
+                    <td>R$ ${comissao.toFixed(2)}</td>
+                    <td>${statusBadge}</td>
+                </tr>`;
+            }
+
+            rowsTodas += `<tr>
+                <td>${data}</td>
+                <td>${v.nome_comprador || '-'}</td>
+                <td>${v.email_comprador || '-'}</td>
+                <td>R$ ${parseFloat(v.valor_total).toFixed(2)}</td>
+                <td>R$ ${comissao.toFixed(2)}</td>
+                <td>${statusBadge}</td>
+            </tr>`;
+        });
+
+        document.getElementById('totalSales').textContent = totalVendas;
+        document.getElementById('totalValue').textContent = `R$ ${totalValor.toFixed(2)}`;
+        document.getElementById('totalCommission').textContent = `R$ ${totalComissao.toFixed(2)}`;
+        document.getElementById('pendingCommission').textContent = `R$ ${pendente.toFixed(2)}`;
+        document.getElementById('availableBalance').textContent = `R$ ${(totalComissao - pendente).toFixed(2)}`;
+        document.getElementById('salesTableBody').innerHTML = rowsRecentes || '<tr><td colspan="5" style="text-align:center;padding:30px;">Nenhuma venda ainda.</td></tr>';
+        document.getElementById('allSalesTableBody').innerHTML = rowsTodas;
+
+    } catch (err) {
+        console.error('Erro ao carregar vendas:', err);
+    }
+}
+
 
         // ==================== CARREGAR PRODUTOS ====================
         async function carregarProdutos(codigo) {
