@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Parceiro</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body class="bg-light">
+
+    <div class="container">
+        <div class="mt-4">
+            <h2 class="text-center">Cadastro de Parceiro</h2>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" style="color: #000;">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#" style="color: #000;">Cadastro</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Parceiro</li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="mb-3">
+            <div class="card">
+                <div class="card-body">
+
+                    <!-- TABULAS DE CADASTRO -->
+                    <form id="parceiro-form" onsubmit="event.preventDefault(); submitCadastroEmpresa(event)">
+                        <div class="mb-3">
+                            <label for="empresa-razao" class="col-form-label">Nome da Empresa:</label>
+                            <input type="text" id="empresa-razao" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-cnpj" class="col-form-label">CNPJ:</label>
+                            <input type="text" id="empresa-cnpj" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-email" class="col-form-label">Email:</label>
+                            <input type="email" id="empresa-email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-senha" class="col-form-label">Senha:</label>
+                            <input type="password" id="empresa-senha" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-cep" class="col-form-label">CEP:</label>
+                            <input type="text" id="empresa-cep" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-logradouro" class="col-form-label">Endereço:</label>
+                            <input type="text" id="empresa-logradouro" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-bairro" class="col-form-label">Bairro:</label>
+                            <input type="text" id="empresa-bairro" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-numero" class="col-form-label">Número:</label>
+                            <input type="number" id="empresa-numero" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-complemento" class="col-form-label">Complemento:</label>
+                            <input type="text" id="empresa-complemento" class="form-control" placeholder="Opcional">
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa-telefone" class="col-form-label">Telefone:</label>
+                            <input type="tel" id="empresa-telefone" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="empresa-termo" name="termo" required>
+                                <label for="empresa-termo" class="form-check-label">Concordo com os termos e condições</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Enviar</button>
+                        </div>
+                    </form>
+
+                    <form id="igreja-form" onsubmit="event.preventDefault(); submitCadastroIgreja(event)">
+                        <div class="mb-3">
+                            <label for="igreja-nome" class="col-form-label">Nome:</label>
+                            <input type="text" id="igreja-nome" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="igreja-email" class="col-form-label">Email:</label>
+                            <input type="email" id="igreja-email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="igreja-telefone" class="col-form-label">Telefone:</label>
+                            <input type="tel" id="igreja-telefone" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success">Enviar</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body ngn-app="myApp">
+
+<script>
+    // JavaScript aqui
+    function submitCadastroEmpresa(event) {
+        event.preventDefault();
+        console.log("Formulário Empresa enviado!");
+    }
+
+    function submitCadastroIgreja(event) {
+        event.preventDefault();
+        console.log("Formulário Igreja enviado!");
+    }
+</script>
+
+</body>
+</html>
