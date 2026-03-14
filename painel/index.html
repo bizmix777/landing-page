@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecionando...</title>
-    
-    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Configuração Universal -->
     <script src="/js/supabase-config.js"></script>
-
     <style>
         body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
         .box { background: white; padding: 40px; border-radius: 10px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -30,7 +26,6 @@
     </div>
 
     <script>
-        // Função para mostrar mensagens na tela
         function log(msg, isError = false) {
             console.log(msg);
             document.getElementById('status').textContent = msg;
@@ -43,9 +38,8 @@
             }
         }
 
-        // Verificação Inicial
         if (typeof supabase === 'undefined') {
-            log("Erro Crítico: Supabase não carregou. Verifique o console.", true);
+            log("Erro Crítico: Supabase não carregou.", true);
         } else {
             verificarCredenciais();
         }
@@ -54,10 +48,11 @@
             try {
                 log("Verificando sessão ativa...");
                 const { data: { session }, error } = await supabase.auth.getSession();
-                
+
                 if (error) throw error;
+
                 if (!session) {
-                    log("Nenhuma sessão encontrada. Redirecionando...", true);
+                    log("Nenhuma sessão encontrada. Redirecionando...");
                     window.location.href = '/painel-acesso/';
                     return;
                 }
@@ -65,70 +60,44 @@
                 log("Usuário autenticado. Buscando perfil...");
                 const userId = session.user.id;
 
-                // 1. Busca na tabela PARCEIROS (Padrão novo)
                 const { data: parceiro, error: errParceiro } = await supabase
                     .from('parceiros')
                     .select('tipo_parceiro, is_admin, status')
                     .eq('auth_user_id', userId)
                     .single();
 
-                if (parceiro) {
-                    log(`Perfil encontrado: ${parceiro.tipo_parceiro}`);
-                    
-                    // ADMIN
-                    if (parceiro.is_admin) {
-                        window.location.href = '/admin/index.html';
-                        return;
-                    }
-                    
-                    // STATUS
-                    if (parceiro.status !== 'ativo' && parceiro.status !== 'aprovado') {
-                        log("Sua conta está pendente de aprovação.", true);
-                        await supabase.auth.signOut();
-                        return;
-                    }
+                if (errParceiro) throw errParceiro;
 
-// ROTEAMENTO ATUALIZADO ✅
-if (parceiro.is_admin) {
-    window.location.href = '/admin/index.html';
-    return;
-}
+                if (!parceiro) {
+                    log("Perfil não encontrado no banco de dados.", true);
+                    return;
+                }
 
-if (parceiro.status !== 'ativo' && parceiro.status !== 'aprovado') {
-    log("Sua conta está pendente de aprovação.", true);
-    await supabase.auth.signOut();
-    return;
-}
+                log("Perfil encontrado: " + parceiro.tipo_parceiro);
 
-if (parceiro.tipo_parceiro === 'igreja') {
-    window.location.href = '/igrejas/index.html';
-} else if (parceiro.tipo_parceiro === 'empresa') {
-    window.location.href = '/empresas/index.html'; // ✅ NOVO
-} else if (parceiro.tipo_parceiro === 'parceiro') {
-    window.location.href = '/parceiros/index.html';
-} else {
-    log("Tipo de perfil não reconhecido: " + parceiro.tipo_parceiro, true);
-}
-
-
-                // 2. Busca na tabela USUARIOS (Legado/Admins antigos)
-                log("Verificando usuários antigos...");
-                const { data: usuario } = await supabase
-                    .from('usuarios')
-                    .select('tipo')
-                    .eq('email', session.user.email)
-                    .single();
-
-                if (usuario && (usuario.tipo === 'admin' || usuario.tipo === 'super_admin')) {
-                    log("Admin encontrado. Redirecionando...");
+                if (parceiro.is_admin) {
                     window.location.href = '/admin/index.html';
                     return;
                 }
 
-                log("Perfil não encontrado no banco de dados.", true);
+                if (parceiro.status !== 'ativo' && parceiro.status !== 'aprovado') {
+                    log("Sua conta está pendente de aprovação.", true);
+                    await supabase.auth.signOut();
+                    return;
+                }
+
+                if (parceiro.tipo_parceiro === 'igreja') {
+                    window.location.href = '/igrejas/index.html';
+                } else if (parceiro.tipo_parceiro === 'empresa') {
+                    window.location.href = '/empresas/index.html';
+                } else if (parceiro.tipo_parceiro === 'parceiro') {
+                    window.location.href = '/parceiros/index.html';
+                } else {
+                    log("Tipo de perfil não reconhecido: " + parceiro.tipo_parceiro, true);
+                }
 
             } catch (err) {
-                log(`Erro Técnico: ${err.message}`, true);
+                log("Erro Técnico: " + err.message, true);
             }
         }
     </script>
