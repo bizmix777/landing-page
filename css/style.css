@@ -19,3 +19,20 @@ svg {
     height: 40px !important;
     max-width: none;
 }
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 28px; }
+    .header p { font-size: 14px; }
+    .header { margin-bottom: 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-container { padding: 30px 20px; }
+    .type-selection { grid-template-columns: 1fr; gap: 15px; }
+    
+    /* 👇 ESSAS LINHAS RESOLVEM O PROBLEMA */
+    body { padding: 20px 15px; }
+    .type-card { padding: 20px 15px; }
+    .type-card .icon { font-size: 36px; margin-bottom: 8px; }
+    .type-card h2 { font-size: 16px; margin-bottom: 6px; }
+    .type-card p { font-size: 12px; margin-bottom: 8px; }
+    .type-card .btn { padding: 8px 20px; font-size: 14px; }
+}
