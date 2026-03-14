@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Parceiro</title>
+    <title>Cadastro de Parceiros</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
@@ -12,12 +12,12 @@
 
     <div class="container">
         <div class="mt-4">
-            <h2 class="text-center">Cadastro de Parceiro</h2>
+            <h2 class="text-center">Cadastro de Parceiros</h2>
             <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#" style="color: #000;">Home</a></li>
                     <li class="breadcrumb-item"><a href="#" style="color: #000;">Cadastro</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Parceiro</li>
+                    <li class="breadcrumb-item active" aria-current="page">Parceiros</li>
                 </ul>
             </nav>
         </div>
@@ -26,8 +26,8 @@
             <div class="card">
                 <div class="card-body">
 
-                    <!-- TABULAS DE CADASTRO -->
-                    <form id="parceiro-form" onsubmit="event.preventDefault(); submitCadastroEmpresa(event)">
+                    <!-- FORMULÁRIO DE EMPRESA -->
+                    <form id="empresa-form" onsubmit="event.preventDefault(); submitCadastroEmpresa(event)">
                         <div class="mb-3">
                             <label for="empresa-razao" class="col-form-label">Nome da Empresa:</label>
                             <input type="text" id="empresa-razao" class="form-control" required>
@@ -79,6 +79,26 @@
                         </div>
                     </form>
 
+                    <!-- FORMULÁRIO DE PARCEIRO -->
+                    <form id="parceiro-form" onsubmit="event.preventDefault(); submitCadastroParceiro(event)">
+                        <div class="mb-3">
+                            <label for="parceiro-nome" class="col-form-label">Nome:</label>
+                            <input type="text" id="parceiro-nome" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="parceiro-email" class="col-form-label">Email:</label>
+                            <input type="email" id="parceiro-email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="parceiro-telefone" class="col-form-label">Telefone:</label>
+                            <input type="tel" id="parceiro-telefone" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-success">Enviar</button>
+                        </div>
+                    </form>
+
+                    <!-- FORMULÁRIO DE IGREJA -->
                     <form id="igreja-form" onsubmit="event.preventDefault(); submitCadastroIgreja(event)">
                         <div class="mb-3">
                             <label for="igreja-nome" class="col-form-label">Nome:</label>
@@ -98,9 +118,9 @@
                     </form>
 
                 </div>
-            </div>
-        </div>
-    </div>
+            </div >
+        </div >
+    </div >
 </body ngn-app="myApp">
 
 <script>
@@ -108,6 +128,11 @@
     function submitCadastroEmpresa(event) {
         event.preventDefault();
         console.log("Formulário Empresa enviado!");
+    }
+
+    function submitCadastroParceiro(event) {
+        event.preventDefault();
+        console.log("Formulário Parceiro enviado!");
     }
 
     function submitCadastroIgreja(event) {
