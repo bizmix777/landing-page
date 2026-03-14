@@ -417,63 +417,70 @@
         }
 
         // CADASTRO EMPRESA
-        async function submitCadastroEmpresa(e) {
-            e.preventDefault();
-            const btn = document.getElementById('empresa-btn-submit');
-            btn.disabled = true; btn.textContent = '⏳ ...';
-            
-            const dados = {
-                razao: document.getElementById('empresa-razao').value,
-                cnpj: document.getElementById('empresa-cnpj').value,
-                email: document.getElementById('empresa-email').value,
-                senha: document.getElementById('empresa-senha').value,
-                cep: document.getElementById('empresa-cep').value,
-                endereco: document.getElementById('empresa-logradouro').value,
-                bairro: document.getElementById('empresa-bairro').value,
-                numero: document.getElementById('empresa-numero').value,
-                complemento: document.getElementById('empresa-complemento').value,
-                cidade: document.getElementById('empresa-cidade').value,
-                estado: document.getElementById('empresa-estado').value,
-                pix_tipo: document.getElementById('empresa-pix-tipo').value,
-                pix_chave: document.getElementById('empresa-pix-chave').value,
-                telefone: document.getElementById('empresa-telefone').value
-            };
+async function submitCadastroEmpresa(e) {
+    e.preventDefault();
+    const btn = document.getElementById('empresa-btn-submit');
+    btn.disabled = true; btn.textContent = '⏳ ...';
+    
+    const dados = {
+        razao: document.getElementById('empresa-razao').value,
+        responsavel: document.getElementById('empresa-responsavel').value, // ✅ ADICIONADO
+        cnpj: document.getElementById('empresa-cnpj').value,
+        email: document.getElementById('empresa-email').value,
+        senha: document.getElementById('empresa-senha').value,
+        cep: document.getElementById('empresa-cep').value,
+        endereco: document.getElementById('empresa-logradouro').value,
+        bairro: document.getElementById('empresa-bairro').value,
+        numero: document.getElementById('empresa-numero').value,
+        complemento: document.getElementById('empresa-complemento').value,
+        cidade: document.getElementById('empresa-cidade').value,
+        estado: document.getElementById('empresa-estado').value,
+        pix_tipo: document.getElementById('empresa-pix-tipo').value,
+        pix_chave: document.getElementById('empresa-pix-chave').value,
+        telefone: document.getElementById('empresa-telefone').value
+    };
 
-            try {
-                const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
-                if(ae) throw ae;
+    try {
+        const { data: auth, error: ae } = await supabase.auth.signUp({ 
+            email: dados.email, 
+            password: dados.senha 
+        });
+        if(ae) throw ae;
 
-                const codigoEmpresa = 'EMP' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        const codigoEmpresa = 'EMP' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-                const { error: ie } = await supabase.from('parceiros').insert([{
-                    auth_user_id: auth.user.id,
-                    nome_completo: dados.razao,
-                    email: dados.email,
-                    cpf_cnpj: dados.cnpj,
-                    telefone: dados.telefone,
-                    cep: dados.cep,
-                    endereco: dados.endereco,
-                    bairro: dados.bairro,
-                    numero: dados.numero,
-                    complemento: dados.complemento,
-                    cidade: dados.cidade,
-                    estado: dados.estado,
-                    pix_tipo: dados.pix_tipo,
-                    chave_pix: dados.pix_chave,
-                    tipo_parceiro: 'empresa',
-                    codigo_parceiro: codigoEmpresa,
-                    status: 'ativo'
-                }]);
-                if(ie) throw ie;
+        const { error: ie } = await supabase.from('parceiros').insert([{
+            auth_user_id: auth.user.id,
+            nome_completo: dados.responsavel,  // ✅ responsável no nome_completo
+            nome_empresa: dados.razao,          // ✅ razão social separada
+            email: dados.email,
+            cpf_cnpj: dados.cnpj,
+            telefone: dados.telefone,
+            cep: dados.cep,
+            endereco: dados.endereco,
+            bairro: dados.bairro,
+            numero: dados.numero,
+            complemento: dados.complemento,
+            cidade: dados.cidade,
+            estado: dados.estado,
+            pix_tipo: dados.pix_tipo,
+            chave_pix: dados.pix_chave,
+            tipo_parceiro: 'empresa',           // ✅ correto
+            codigo_parceiro: codigoEmpresa,
+            status: 'ativo'
+        }]);
+        if(ie) throw ie;
 
-                alert('✅ Sucesso! Redirecionando...');
-                window.location.href = '/painel-acesso/';
-            } catch(err) {
-                console.error(err);
-                alert('Erro: ' + err.message);
-                btn.disabled = false; btn.textContent = 'Tentar Novamente';
-            }
-        }
+        alert('✅ Sucesso! Redirecionando...');
+        window.location.href = '/painel-acesso/';
+    } catch(err) {
+        console.error(err);
+        alert('Erro: ' + err.message);
+        btn.disabled = false; 
+        btn.textContent = '💼 Cadastrar Empresa';
+    }
+}
+
     </script>
 </body>
 </html> 
