@@ -88,17 +88,28 @@
                         return;
                     }
 
-                    // ROTEAMENTO
-                    if (parceiro.tipo_parceiro === 'igreja') {
-                        window.location.href = '/igrejas/index.html';
-                    } else if (parceiro.tipo_parceiro === 'amway') {
-                        window.location.href = '/empre_amway/index.html';
-                    } else {
-                        // Parceiro ou Empresa
-                        window.location.href = '/parceiros/index.html';
-                    }
-                    return;
-                }
+// ROTEAMENTO ATUALIZADO ✅
+if (parceiro.is_admin) {
+    window.location.href = '/admin/index.html';
+    return;
+}
+
+if (parceiro.status !== 'ativo' && parceiro.status !== 'aprovado') {
+    log("Sua conta está pendente de aprovação.", true);
+    await supabase.auth.signOut();
+    return;
+}
+
+if (parceiro.tipo_parceiro === 'igreja') {
+    window.location.href = '/igrejas/index.html';
+} else if (parceiro.tipo_parceiro === 'empresa') {
+    window.location.href = '/empresas/index.html'; // ✅ NOVO
+} else if (parceiro.tipo_parceiro === 'parceiro') {
+    window.location.href = '/parceiros/index.html';
+} else {
+    log("Tipo de perfil não reconhecido: " + parceiro.tipo_parceiro, true);
+}
+
 
                 // 2. Busca na tabela USUARIOS (Legado/Admins antigos)
                 log("Verificando usuários antigos...");
