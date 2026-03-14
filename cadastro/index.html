@@ -418,6 +418,7 @@
 
         // CADASTRO EMPRESA
 // CADASTRO EMPRESA
+// CADASTRO EMPRESA
 async function submitCadastroEmpresa(e) {
     e.preventDefault();
     const btn = document.getElementById('empresa-btn-submit');
@@ -425,7 +426,7 @@ async function submitCadastroEmpresa(e) {
     
     const dados = {
         razao: document.getElementById('empresa-razao').value,
-        responsavel: document.getElementById('empresa-responsavel').value,
+        responsavel: document.getElementById('empresa-responsavel').value, // ✅ ADICIONADO
         cnpj: document.getElementById('empresa-cnpj').value,
         email: document.getElementById('empresa-email').value,
         senha: document.getElementById('empresa-senha').value,
@@ -466,7 +467,7 @@ async function submitCadastroEmpresa(e) {
             estado: dados.estado,
             pix_tipo: dados.pix_tipo,
             chave_pix: dados.pix_chave,
-            tipo_parceiro: 'empresa',
+            tipo_parceiro: 'empresa',           // ✅ correto
             codigo_parceiro: codigoEmpresa,
             status: 'ativo'
         }]);
