@@ -270,10 +270,10 @@
             hideMessage();
 
             try {
-                // Enviar email de recuperação
-                const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: 'https://bizmix.com.br/redefinir-senha'
-                });
+               // Enviar email de recuperação
+               const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+               redirectTo: `${window.location.origin}/admin/redefinir-senha.html`
+               });
 
                 if (error) {
                     console.error('❌ Erro ao enviar email:', error);
