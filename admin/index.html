@@ -16,7 +16,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; min-height: 100vh; }
-        body { display: none ; }
 
         /* Header */
         .header {
@@ -179,7 +178,7 @@
 
         <!-- Últimas Vendas -->
         <div class="table-container">
-            <h2><i class="fas fa-shopping-cart"></i> Últimas Vendas e Cortesias</h2>
+            <h2><i class="fas fa-shopping-cart"></i> Últimas Vendas</h2>
             <div id="vendasLoading" class="loading"><div class="spinner"></div><p style="margin-top: 15px; color: #666;">Carregando vendas...</p></div>
             <table id="vendasTable" style="display: none;">
                 <thead>
@@ -198,34 +197,20 @@
         </div>
     </div>
         <script>
-// Verificar autenticação (usa o config externo)
-    async function verificarAuth()  {
-    const { data: { session } } = await supabase.auth.getSession();
+        // Verificar autenticação (usa o config externo)
+        async function verificarAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/admin/login.html'; return; }
 
-    if (!session) {
-        window.location.href = '/admin/index.html';
-        return;
-    }
+            const { data: usuario } = await supabase.from('usuarios').select('tipo, nome').eq('email', session.user.email).single();
+            if (!usuario || usuario.tipo !== 'super_admin') { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; return; }
 
-    const { data: usuario, error } = await supabase
-        .from('usuarios')
-        .select('tipo, nome')
-        .eq('email', session.user.email)
-        .single();
+            document.getElementById('userName').textContent = usuario.nome || 'Super Admin';
+            document.getElementById('userAvatar').textContent = (usuario.nome || 'S').charAt(0).toUpperCase();
+            carregarDashboard();
+        }
 
-    if (!usuario || (usuario.tipo !== 'admin')) {
-        await supabase.auth.signOut();
-        window.location.href = '/admin/index.html';
-        return;
-    }
-
-    document.body.style.display = 'block';
-    document.getElementById('userName').textContent = usuario.nome || 'Admin';
-    document.getElementById('userAvatar').textContent = (usuario.nome || 'A').charAt(0).toUpperCase();
-    carregarDashboard();
-}
-
-        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/index.html'; }
+        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
 
         async function carregarDashboard() {
             try { await carregarEstatisticas(); await carregarAdmins(); await carregarVendas(); } catch (error) { console.error('Erro:', error); }
@@ -397,16 +382,12 @@
         
         // Helpers
         function formatarMoeda(v) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0); }
-        function formatarData(d) { 
-        return new Date(d).toLocaleDateString('pt-BR') + ' ' + new Date(d).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }); 
-        }
-
+        function formatarData(d) { return new Date(d).toLocaleDateString('pt-BR'); }
         function getStatusClass(s) { return (s === 'pago' || s === 'aprovado') ? 'aprovado' : 'pendente'; }
         function getStatusText(s) { return (s === 'pago' || s === 'aprovado') ? 'Pago ✅' : 'Pendente ⏳'; }
 
         // Start
         verificarAuth();
-
     </script>
 </body>
 </html>
