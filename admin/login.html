@@ -238,8 +238,8 @@
                     .eq('email', session.user.email)
                     .single();
 
-                if (usuario && (usuario.tipo === 'admin')) {
-                    window.location.href = '/admin/login.html';
+                if (usuario && (usuario.tipo === 'admin' || usuario.tipo === 'super_admin')) {
+                    window.location.href = '/admin/index.html';
                 }
             }
         }
@@ -280,8 +280,12 @@
                     throw new Error('Acesso negado. Você não tem permissão de administrador.');
                 }
 
-                // Direcionar baseado no tipo
-                   window.location.href = '/admin/login.html';
+                // Redirecionar baseado no tipo
+                if (usuario.tipo === 'super_admin') {
+                    window.location.href = '/admin/super-admin/index.html';
+                } else {
+                    window.location.href = '/admin/index.html';
+                }
 
             } catch (error) {
                 console.error('Erro no login:', error);
