@@ -3,305 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - BizMix</title>
-    
-    <!-- Supabase SDK -->
+    <title>Login - Painel Administrativo</title>
+    <link rel="stylesheet" href="/css/login.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Configuração centralizada -->
     <script src="/js/supabase-config.js"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .login-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 450px;
-            width: 100%;
-            padding: 40px;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            color: #667eea;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .logo p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #333;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-login:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c00;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .error-message.show {
-            display: block;
-            animation: shake 0.5s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .forgot-password {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .forgot-password a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 500px) {
-            .login-container {
-                padding: 30px 20px;
-            }
-
-            .logo h1 {
-                font-size: 28px;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="logo">
-            <h1>🔐 Admin</h1>
-            <p>Painel de Administração</p>
-        </div>
-
-        <div class="error-message" id="errorMessage"></div>
-
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+        <div class="login-box">
+            <div class="logo">
+                <img src="/imagens/logo.png" alt="Logo">
+            </div>
+            
+            <h1>Painel Administrativo</h1>
+            
+            <div id="errorMessage" class="error-message"></div>
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
             </div>
 
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        autocomplete="email"
+                    >
+                </div>
 
-            <button type="submit" class="btn-login" id="btnLogin">
-                Entrar
-            </button>
-        </form>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
 
-        <div class="forgot-password">
-            <a href="#" id="forgotPasswordLink">Esqueci minha senha</a>
-        </div>
+                <div class="forgot-password">
+                    <a href="#" id="forgotPasswordLink">Esqueci minha senha</a>
+                </div>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p style="margin-top: 15px; color: #666;">Autenticando...</p>
+                <button type="submit" id="btnLogin" class="btn-login">
+                    Entrar
+                </button>
+            </form>
         </div>
     </div>
 
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const btnLogin = document.getElementById('btnLogin');
-        const errorMessage = document.getElementById('errorMessage');
-        const loading = document.getElementById('loading');
-
-        // Verificar se já está logado
-        async function verificarSessao() {
-            const { data: { session } } = await supabase.auth.getSession();
+        // Aguardar o DOM carregar completamente
+        document.addEventListener('DOMContentLoaded', function() {
             
-            if (session) {
-                // Verificar se é admin
-                const { data: usuario } = await supabase
-                    .from('usuarios')
-                    .select('tipo')
-                    .eq('email', session.user.email)
-                    .single();
+            const loginForm = document.getElementById('loginForm');
+            const btnLogin = document.getElementById('btnLogin');
+            const errorMessage = document.getElementById('errorMessage');
+            const loading = document.getElementById('loading');
 
-                if (usuario && (usuario.tipo === 'admin' || usuario.tipo === 'super_admin')) {
+            // Login
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                // Desabilitar botão e mostrar loading
+                btnLogin.disabled = true;
+                btnLogin.textContent = 'Entrando...';
+                errorMessage.classList.remove('show');
+                loading.style.display = 'block';
+
+                try {
+                    // Fazer login
+                    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                        email,
+                        password
+                    });
+
+                    if (authError) throw authError;
+
+                    // Verificar se é admin
+                    const { data: usuario, error: userError } = await supabase
+                        .from('usuarios')
+                        .select('tipo')
+                        .eq('email', email)
+                        .single();
+
+                    if (userError) throw new Error('Usuário não encontrado');
+
+                    if (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin') {
+                        await supabase.auth.signOut();
+                        throw new Error('Acesso negado. Você não tem permissão de administrador.');
+                    }
+
+                    // Redirecionar baseado no tipo
                     window.location.href = '/admin/index.html';
+
+                } catch (error) {
+                    console.error('Erro no login:', error);
+                    errorMessage.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
+                    errorMessage.classList.add('show');
+                    btnLogin.disabled = false;
+                    btnLogin.textContent = 'Entrar';
+                    loading.style.display = 'none';
                 }
-            }
-        }
+            });
 
-        // Login
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            // Recuperar senha - Redirecionar para página dedicada
+            document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = '/admin/esqueci-senha.html';
+            });
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Desabilitar botão e mostrar loading
-            btnLogin.disabled = true;
-            btnLogin.textContent = 'Entrando...';
-            errorMessage.classList.remove('show');
-            loading.style.display = 'block';
-
-            try {
-                // Fazer login
-                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-                if (authError) throw authError;
-
-                // Verificar se é admin
-                const { data: usuario, error: userError } = await supabase
-                    .from('usuarios')
-                    .select('tipo')
-                    .eq('email', email)
-                    .single();
-
-                if (userError) throw new Error('Usuário não encontrado');
-
-                if (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin') {
-                    await supabase.auth.signOut();
-                    throw new Error('Acesso negado. Você não tem permissão de administrador.');
-                }
-
-                // Redirecionar baseado no tipo
-                window.location.href = '/admin/index.html'; // ✅ Tanto admin quanto super_admin vão para o mesmo lugar
-
-
-            } catch (error) {
-                console.error('Erro no login:', error);
-                errorMessage.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
-                errorMessage.classList.add('show');
-                btnLogin.disabled = false;
-                btnLogin.textContent = 'Entrar';
-                loading.style.display = 'none';
-            }
-        });
-
-// Recuperar senha - Redirecionar para página dedicada
-document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
-    e.preventDefault();
-    window.location.href = '/admin/esqueci-senha.html';
-});
-
-        // Verificar sessão ao carregar
-        verificarSessao();
+        }); // Fim do DOMContentLoaded
     </script>
 </body>
 </html>
