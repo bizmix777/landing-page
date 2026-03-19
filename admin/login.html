@@ -239,7 +239,7 @@
                     .single();
 
                 if (usuario && (usuario.tipo === 'admin')) {
-                    window.location.href = '/admin/index.html';
+                    window.location.href = '/admin/login.html';
                 }
             }
         }
@@ -281,7 +281,7 @@
                 }
 
                 // Direcionar baseado no tipo
-                   window.location.href = '/admin/index.html';
+                   window.location.href = '/admin/login.html';
 
             } catch (error) {
                 console.error('Erro no login:', error);
