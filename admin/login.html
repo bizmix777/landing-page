@@ -294,30 +294,11 @@
             }
         });
 
-        // Recuperar senha
-        document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            
-            if (!email) {
-                alert('Por favor, digite seu email no campo acima.');
-                return;
-            }
-
-            try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: `${window.location.origin}/redefinir-senha.html`
-                });
-
-                if (error) throw error;
-
-                alert('Enviamos um link de recuperação para seu email!');
-            } catch (error) {
-                console.error('Erro ao recuperar senha:', error);
-                alert('Erro ao enviar email de recuperação. Tente novamente.');
-            }
-        });
+// Recuperar senha - Redirecionar para página dedicada
+document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.href = '/admin/esqueci-senha.html';
+});
 
         // Verificar sessão ao carregar
         verificarSessao();
