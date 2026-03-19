@@ -203,7 +203,7 @@
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-        window.location.href = '/admin/login.html';
+        window.location.href = '/admin/index.html';
         return;
     }
 
@@ -213,9 +213,9 @@
         .eq('email', session.user.email)
         .single();
 
-    if (!usuario || (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin')) {
+    if (!usuario || (usuario.tipo !== 'admin')) {
         await supabase.auth.signOut();
-        window.location.href = '/admin/login.html';
+        window.location.href = '/admin/index.html';
         return;
     }
 
@@ -225,7 +225,7 @@
     carregarDashboard();
 }
 
-        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
+        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/index.html'; }
 
         async function carregarDashboard() {
             try { await carregarEstatisticas(); await carregarAdmins(); await carregarVendas(); } catch (error) { console.error('Erro:', error); }
