@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+    <title>Encurtador de URL</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        form { margin: 20px; }
+        input { display: block; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Encurtar uma URL</h1>
+    <form id="shortener-form">
+        <input type="text" id="url" placeholder="Cole sua URL aqui" required>
+        <input type="text" id="short-name" placeholder="Nome curto desejado" required>
+        <input type="submit" value="Encurtar">
+    </form>
+    <p id="result"></p>
+
+    <script>
+        const form = document.getElementById('shortener-form');
+        const result = document.getElementById('result');
+
+        form.onsubmit = function(e) {
+            e.preventDefault();
+            const url = document.getElementById('url').value;
+            const shortName = document.getElementById('short-name').value;
+
+            if (localStorage.getItem(shortName)) {
+                result.textContent = "Esse nome curto já está em uso. Tente outro.";
+            } else {
+                localStorage.setItem(shortName, url);
+                const shortUrl = window.location.href + shortName;
+                result.textContent = "Short URL: " + shortUrl;
+            }
+        };
+    </script>
+</body>
+</html>
