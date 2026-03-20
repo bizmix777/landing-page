@@ -31,7 +31,7 @@
             } else {
                 localStorage.setItem(shortName, url);
                 const shortUrl = window.location.href + shortName;
-                result.textContent = "Short URL: " + shortUrl;
+                result.innerHTML = 'Short URL: <a href="' + shortUrl + '">' + shortUrl + '</a>';
             }
         };
     </script>
