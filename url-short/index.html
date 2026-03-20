@@ -21,17 +21,28 @@
         const form = document.getElementById('shortener-form');
         const result = document.getElementById('result');
 
+        // Armazenamento das URLs em um objeto global
+        const urls = {};
+
         form.onsubmit = function(e) {
             e.preventDefault();
             const url = document.getElementById('url').value;
             const shortName = document.getElementById('short-name').value;
 
-            if (localStorage.getItem(shortName)) {
+            if (urls[shortName]) {
                 result.textContent = "Esse nome curto já está em uso. Tente outro.";
             } else {
-                localStorage.setItem(shortName, url);
-                const shortUrl = window.location.href + shortName;
+                urls[shortName] = url;  // Salve a URL no objeto
+                const shortUrl = window.location.origin + '/' + shortName;
                 result.innerHTML = 'Short URL: <a href="' + shortUrl + '">' + shortUrl + '</a>';
+            }
+        };
+
+        // Redirecionamento para a URL original
+        window.onload = function() {
+            const path = window.location.pathname.split('/')[1];
+            if (urls[path]) {
+                window.location.href = urls[path];
             }
         };
     </script>
