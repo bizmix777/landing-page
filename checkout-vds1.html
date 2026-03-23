@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Somos Todos Um</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .form-section label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-section input[type="text"], .form-section input[type="email"], .form-section input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .payment-section {
+            margin-bottom: 20px;
+        }
+        .payment-section label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .payment-section input[type="radio"] {
+            margin-right: 10px;
+        }
+        .confirm-section {
+            text-align: center;
+        }
+        .confirm-section button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Finalizar Compra - Somos Todos Um</h1>
+        </div>
+        <form action="/process_payment" method="post">
+            <div class="form-section">
+                <label for="name">Nome Completo:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-section">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-section">
+                <label for="whatsapp">WhatsApp:</label>
+                <input type="tel" id="whatsapp" name="whatsapp" required>
+            </div>
+            <div class="payment-section">
+                <label for="payment">Escolha o método de pagamento:</label>
+                <input type="radio" id="pix" name="payment" value="pix" required>
+                <label for="pix">PIX</label>
+                <input type="radio" id="credit_card" name="payment" value="credit_card">
+                <label for="credit_card">Cartão de Crédito</label>
+                <input type="radio" id="boleto" name="payment" value="boleto">
+                <label for="boleto">Boleto Bancário</label>
+            </div>
+            <div class="confirm-section">
+                <button type="submit">Finalizar Compra</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
