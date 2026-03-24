@@ -173,21 +173,21 @@
                 const urlParams = new URLSearchParams(window.location.search);
                 const codigoIndicacao = urlParams.get('ref');
                 
-                const formData = {
-                    nome_comprador: document.getElementById('nome').value,
-                    email_comprador: document.getElementById('email').value,
-                    whatsapp_comprador: document.getElementById('whatsapp').value,
-                    telefone_comprador: document.getElementById('whatsapp').value,
-                    cep_comprador: document.getElementById('cep').value,
-                    endereco_comprador: document.getElementById('endereco').value,
-                    cidade_comprador: document.getElementById('cidade').value,
-                    estado_comprador: document.getElementById('estado').value,
-                    codigo_indicacao: codigoIndicacao, // <--- ADICIONEI ISSO
-                    preferencia_rodape: 'padrao',
-                    valor_total: 30.00,
-                    status_pagamento: 'pendente',
-                    produto_id: '1f19140d-d466-4d14-b64c-c6c2ae9c22df'
-                };
+const formData = {
+    nome_comprador: document.getElementById('nome').value.trim(),
+    email_comprador: document.getElementById('email').value.trim(),
+    whatsapp_comprador: document.getElementById('whatsapp').value.trim(),
+    telefone_comprador: document.getElementById('telefone').value.trim(), // corrigido
+    cep_comprador: document.getElementById('cep').value.trim(),
+    endereco_comprador: document.getElementById('endereco').value.trim(),
+    cidade_comprador: document.getElementById('cidade').value.trim(),
+    estado_comprador: document.getElementById('estado').value.trim(),
+    codigo_indicacao: codigoIndicacao,
+    preferencia_rodape: 'padrao',
+    valor_total: 30.00,
+    status_pagamento: 'pendente',
+    produto_id: '1f19140d-d466-4d14-b64c-c6c2ae9c22df'
+};
 
                 // 2. Salva no Supabase (Cria a venda pendente)
                 // Usa 'vendas' que é a tabela oficial
