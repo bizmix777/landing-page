@@ -128,21 +128,21 @@
             e.target.value = v;
         });
 
-        document.getElementById('cep').addEventListener('blur', async function() {
-            const cep = this.value.replace(/\D/g, '');
-            if (cep.length === 8) {
-                try {
-                    const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                    const data = await req.json();
-                    if (!data.erro) {
-                        document.getElementById('endereco').value = data.logradouro;
-                        document.getElementById('bairro').value = data.bairro;
-                        document.getElementById('cidade').value = data.localidade;
-                        document.getElementById('estado').value = data.uf;
-                    }
-                } catch(e) {}
-            }
-        });
+        // document.getElementById('cep').addEventListener('blur', async function() {
+            //const cep = this.value.replace(/\D/g, '');
+            //if (cep.length === 8) {
+                //try {
+                    //const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    //const data = await req.json();
+                    //if (!data.erro) {
+                        //document.getElementById('endereco').value = data.logradouro;
+                        //document.getElementById('bairro').value = data.bairro;
+                        //document.getElementById('cidade').value = data.localidade;
+                        //document.getElementById('estado').value = data.uf;
+                    //}
+                //} catch(e) {}
+            //}
+        //});
 
         function copiarPix() {
             var copyText = document.getElementById("pixCopiaColaInput");
