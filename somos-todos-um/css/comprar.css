@@ -16,6 +16,10 @@ body {
     margin: 0 auto;
 }
 
+.section-title { 
+    color: #fff; 
+}
+
 /* HEADER */
 .header {
     text-align: center;
