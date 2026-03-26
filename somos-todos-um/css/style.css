@@ -273,6 +273,10 @@
             margin-bottom: 1rem;
         }
 
+        .price-new { 
+            text-align: center;
+        }
+
         /* Botão de Compra */
         .btn-submit {
             width: 100%;
