@@ -20,6 +20,10 @@ body {
     color: #fff; 
 }
 
+h2.section-title {
+            color: #fff;
+        }
+
 /* HEADER */
 .header {
     text-align: center;
