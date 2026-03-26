@@ -388,15 +388,16 @@
             display: flex;
         }
 
-        #cta-final,
-        #urgencia {
-               --primary-color: #fff;
-        }
+#cta-final,
+#urgencia {
+  --primary-color: #fff;
+}
 
-        #cta-final .section-title,
-        #urgencia .section-title {
-               color: #fff !important;
-        }
+section#cta-final h2.section-title,
+section#urgencia h2.section-title {
+  color: #fff;
+}
+
 
 
        .spinner {
