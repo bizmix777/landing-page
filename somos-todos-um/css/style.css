@@ -388,17 +388,16 @@
             display: flex;
         }
 
-#cta-final,
-#urgencia {
-  --primary-color: #fff;
-}
-
-section#cta-final h2.section-title,
-section#urgencia h2.section-title {
+.section-title { all: unset; display: block; /* ou revert */ }
+/* então re-aplicar apenas os estilos desejados */
+.section-title {
+  font-family: 'Merriweather', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
   color: #fff;
 }
-
-
 
        .spinner {
             width: 50px;
