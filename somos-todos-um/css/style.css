@@ -397,6 +397,11 @@
             animation: spin 1s linear infinite;
         }
 
+        .section-title { 
+            color: #fff; 
+        }
+
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
