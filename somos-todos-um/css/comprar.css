@@ -356,6 +356,16 @@ h2.section-title {
     background: #5568d3;
 }
 
+#cta-final,
+#urgencia {
+  --primary-color: #fff;
+}
+
+section#cta-final h2.section-title,
+section#urgencia h2.section-title {
+  color: #fff;
+}
+
 /* RESPONSIVO */
 @media (max-width: 768px) {
     .book-showcase {
