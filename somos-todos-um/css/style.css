@@ -387,17 +387,16 @@
         .loading-overlay.active {
             display: flex;
         }
-        
+
         #cta-final,
         #urgencia {
-            --primary-color: #fff;
+               --primary-color: #fff;
         }
 
         #cta-final .section-title,
-        #urgencia .section-title {
-        color: var(--primary-color);
+               #urgencia .section-title {
+               color: #fff !important;
         }
-
 
        .spinner {
             width: 50px;
