@@ -50,12 +50,6 @@
             margin-bottom: var(--spacing-sm);
         }
 
-        /* garante branco apenas para os títulos nessas seções */
-           section#cta-final .section-title,
-           section#urgencia .section-title {
-           color: #ffffff;
-        }
-
         
         img {
             max-width: 100%;
