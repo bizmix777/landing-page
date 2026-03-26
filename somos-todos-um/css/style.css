@@ -397,17 +397,11 @@
             animation: spin 1s linear infinite;
         }
 
-        .section-title { 
-            color: #fff; 
+        #cta-final .section-title,
+        #urgencia .section-title {
+                  color: #fff !important;
         }
 
-        h2.section-title {
-            color: #fff;
-        }
-
-        :root {
-            --primary-color: #fff; 
-        }
 
 
         @keyframes spin {
