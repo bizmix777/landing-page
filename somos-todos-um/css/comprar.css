@@ -89,6 +89,10 @@ body {
     opacity: 0.9;
 }
 
+.price-new { 
+    text-align: center;
+}
+
 .price-value {
     display: block;
     font-size: 48px;
