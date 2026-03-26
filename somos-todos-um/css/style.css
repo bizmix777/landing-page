@@ -401,6 +401,10 @@
             color: #fff; 
         }
 
+        h2.section-title {
+            color: #fff;
+        }
+
 
         @keyframes spin {
             to { transform: rotate(360deg); }
