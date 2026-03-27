@@ -304,6 +304,36 @@
             transform: none;
         }
 
+        .page-bottom-cta {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-blue {
+            display: inline-block;
+            padding: 0.875rem 1.75rem;
+            background: #2563eb;
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+        }
+
+        .btn-blue:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+        }
+
         /* Resumo do Pedido */
         .order-summary {
             background: var(--white);
@@ -679,6 +709,10 @@
                 </p>
             </div>
         </div>
+    </div>
+
+    <div class="page-bottom-cta">
+        <a href="/somos-todos-um/" class="btn-blue">Voltar ao site</a>
     </div>
 
     <script>
