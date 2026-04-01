@@ -99,10 +99,10 @@
                 <div class="icon">🙏</div><h2>Cadastro da sua Igreja</h2><p>Gerencie vendas e comissões.</p><button class="btn">Cadastrar Igreja</button>
             </div>
             <div class="type-card" onclick="selecionarTipo('parceiro')">
-                <div class="icon">🤝</div><h2>Cadastro Parceiro/Corretor</h2><p>Venda produtos com comissões.</p><button class="btn">Cadastrar Parceiro</button>
+                <div class="icon">🤝</div><h2>Cadastro do Parceiro/Corretor</h2><p>Venda produtos com comissões.</p><button class="btn">Cadastrar Parceiro</button>
             </div>
             <div class="type-card" onclick="selecionarTipo('empresa')">
-                <div class="icon">💼</div><h2>Cadastro de Empresa</h2><p>Amplie oportunidades de negócio.</p><button class="btn">Cadastrar Empresa</button>
+                <div class="icon">💼</div><h2>Cadastro da sua Empresa</h2><p>Amplie oportunidades de negócio.</p><button class="btn">Cadastrar Empresa</button>
             </div>
         </div>
 
@@ -152,7 +152,7 @@
                 <!-- Formulário Parceiro -->
         <div class="form-container" id="form-parceiro">
             <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
-            <div class="form-header"><div class="icon">🤝</div><h2>Cadastro Parceiro</h2><p>Seus dados pessoais</p></div>
+            <div class="form-header"><div class="icon">🤝</div><h2>Cadastro do Parceiro</h2><p>Seus dados pessoais</p></div>
             <div class="message" id="message-parceiro"></div>
             <form id="formParceiro" onsubmit="submitCadastroParceiro(event)">
                 <div class="form-grid">
@@ -196,7 +196,7 @@
         <!-- Formulário Empresa -->
         <div class="form-container" id="form-empresa">
             <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
-            <div class="form-header"><div class="icon">💼</div><h2>Cadastro Empresa</h2><p>Dados da empresa</p></div>
+            <div class="form-header"><div class="icon">💼</div><h2>Cadastro da sua empresa</h2><p>Dados da empresa</p></div>
             <div class="message" id="message-empresa"></div>
             <form id="formEmpresa" onsubmit="submitCadastroEmpresa(event)">
                 <div class="form-grid">
@@ -287,7 +287,7 @@
             const bar = document.getElementById(`${tipo}-strength-bar`);
             bar.className = 'password-strength-bar ' + (val.length > 8 ? 'strength-strong' : (val.length > 5 ? 'strength-medium' : 'strength-weak'));
         }
-                   // CADASTRO IGREJA (COM PRESENTE)
+                   // CADASTRO DA IGREJA (COM PRESENTE)
         async function submitCadastroIgreja(e) {
             e.preventDefault();
             const btn = document.getElementById('igreja-btn-submit');
@@ -357,7 +357,7 @@
             }
         }
 
-        // CADASTRO PARCEIRO
+        // CADASTRO DO PARCEIRO
         async function submitCadastroParceiro(e) {
             e.preventDefault();
             const btn = document.getElementById('parceiro-btn-submit');
@@ -416,9 +416,8 @@
             }
         }
 
-        // CADASTRO EMPRESA
-// CADASTRO EMPRESA
-// CADASTRO EMPRESA
+// CADASTRO DA EMPRESA
+
 async function submitCadastroEmpresa(e) {
     e.preventDefault();
     const btn = document.getElementById('empresa-btn-submit');
