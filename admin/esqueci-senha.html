@@ -242,13 +242,13 @@
 
         const redefinirPorOrigem = {
             admin: '/admin/redefinir-senha.html',
-            parceiros: '/login/redefinir-senha.html?origem=parceiros',
-            igrejas: '/login/redefinir-senha.html?origem=igrejas',
-            empresas: '/login/redefinir-senha.html?origem=empresas'
+            parceiros: '/admin/redefinir-senha.html?origem=parceiros',
+            igrejas: '/admin/redefinir-senha.html?origem=igrejas',
+            empresas: '/admin/redefinir-senha.html?origem=empresas'
         };
 
         const loginDestino = loginPorOrigem[origem] || '/parceiros/';
-        const redefinirDestino = redefinirPorOrigem[origem] || '/login/redefinir-senha.html?origem=parceiros';
+        const redefinirDestino = redefinirPorOrigem[origem] || '/admin/redefinir-senha.html?origem=parceiros';
         backToLoginLink.href = loginDestino;
 
         function mostrarAlerta(mensagem, tipo = 'error') {
