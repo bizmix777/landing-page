@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Senha - Biz Mix</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header .logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 20px;
+        }
+
+        .header .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .link-back {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link-back a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .link-back a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 25px;
+            font-size: 13px;
+            color: #1565C0;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 25px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .header .icon {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="header">
+            <div class="icon">🔑</div>
+            <h1>Recuperar Senha</h1>
+            <p>Digite seu email cadastrado e enviaremos um link para redefinir sua senha.</p>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <form id="formRecuperar" onsubmit="submitRecuperar(event)">
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="email" name="email" required placeholder="seu@email.com">
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                📧 Enviar Link de Recuperação
+            </button>
+        </form>
+
+        <div class="link-back">
+            <a href="/admin/login">← Voltar para o Login</a>
+        </div>
+
+        <div class="info-box">
+            <strong>💡 Dica:</strong> Verifique sua caixa de spam se não receber o email em alguns minutos.
+        </div>
+
+    </div>
+
+    <script>
+        console.log('🔑 Página de recuperação de senha carregada');
+
+        // Verificar Supabase
+        if (typeof supabase === 'undefined') {
+            console.error('❌ Supabase não carregado!');
+            alert('❌ Erro ao carregar sistema. Recarregue a página.');
+        } else {
+            console.log('✅ Supabase carregado');
+        }
+
+        // Mostrar mensagem
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = `message show ${type}`;
+        }
+
+        // Esconder mensagem
+        function hideMessage() {
+            const messageDiv = document.getElementById('message');
+            messageDiv.classList.remove('show');
+        }
+
+        // Submeter formulário
+        async function submitRecuperar(event) {
+            event.preventDefault();
+            console.log('📤 Solicitando recuperação de senha...');
+
+            const form = event.target;
+            const submitBtn = document.getElementById('btnSubmit');
+            const email = document.getElementById('email').value;
+            
+            // Desabilitar botão
+            submitBtn.disabled = true;
+            submitBtn.textContent = '📧 Enviando...';
+            hideMessage();
+
+            try {
+               // Enviar email de recuperação
+               const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+               redirectTo: `${window.location.origin}/admin/redefinir-senha.html`
+               });
+
+                if (error) {
+                    console.error('❌ Erro ao enviar email:', error);
+                    showMessage('Erro ao enviar email. Verifique se o email está correto.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '📧 Enviar Link de Recuperação';
+                    return;
+                }
+
+                console.log('✅ Email de recuperação enviado:', data);
+
+                // Sucesso
+                showMessage('✅ Email enviado com sucesso! Verifique sua caixa de entrada.', 'success');
+                
+                // Limpar formulário
+                form.reset();
+                
+                // Manter botão desabilitado por 30 segundos
+                let countdown = 30;
+                submitBtn.textContent = `✅ Aguarde ${countdown}s`;
+                
+                const interval = setInterval(() => {
+                    countdown--;
+                    submitBtn.textContent = `✅ Aguarde ${countdown}s`;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(interval);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '📧 Enviar Link de Recuperação';
+                    }
+                }, 1000);
+
+            } catch (err) {
+                console.error('❌ Erro:', err);
+                showMessage('Erro ao processar solicitação: ' + err.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📧 Enviar Link de Recuperação';
+            }
+        }
+    </script>
+</body>
+</html>
