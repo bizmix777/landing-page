@@ -3,15 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Senha - Biz Mix</title>
-    
-    <!-- Supabase -->
+    <title>Recuperar Senha - Bizmix</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/js/supabase-config.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
         * {
             margin: 0;
             padding: 0;
@@ -19,29 +14,139 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             padding: 20px;
         }
-
+        
         .container {
             background: white;
             border-radius: 20px;
-            padding: 50px 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 440px;
             width: 100%;
-            animation: slideIn 0.5s ease;
+            padding: 50px 40px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
         }
 
-        @keyframes slideIn {
+        .logo h1 {
+            color: #667eea;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(-10px);
             }
             to {
                 opacity: 1;
@@ -49,268 +154,166 @@
             }
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
         }
 
-        .header .logo {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin-bottom: 20px;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        .header .icon {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 15px;
-            line-height: 1.6;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 15px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 14px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .link-back {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .link-back a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .link-back a:hover {
-            text-decoration: underline;
-            color: #764ba2;
-        }
-
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
+        button.loading .btn-text {
             display: none;
         }
 
-        .message.show {
+        button.loading .loading-spinner {
             display: block;
         }
 
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .info-box {
-            background: #e7f3ff;
-            border-left: 4px solid #2196F3;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 25px;
+        .cooldown-text {
+            text-align: center;
+            color: #6b7280;
             font-size: 13px;
-            color: #1565C0;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 40px 25px;
-            }
-
-            .header h1 {
-                font-size: 24px;
-            }
-
-            .header .icon {
-                font-size: 48px;
-            }
+            margin-top: 12px;
+            min-height: 18px;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="logo">
+            <h1>🔐 Recuperar Senha</h1>
+            <p>Digite seu email para receber o link de recuperação</p>
+        </div>
         
-        <div class="header">
-            <div class="icon">🔑</div>
-            <h1>Recuperar Senha</h1>
-            <p>Digite seu email cadastrado e enviaremos um link para redefinir sua senha.</p>
-        </div>
-
-        <div class="message" id="message"></div>
-
-        <form id="formRecuperar" onsubmit="submitRecuperar(event)">
+        <div id="alert" class="alert"></div>
+        
+        <form id="formRecuperar">
             <div class="form-group">
-                <label>Email *</label>
-                <input type="email" id="email" name="email" required placeholder="seu@email.com">
+                <label for="email">Email:</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email"
+                    required 
+                    placeholder="seu@email.com"
+                    autocomplete="email"
+                >
             </div>
-
-            <button type="submit" class="btn-submit" id="btnSubmit">
-                📧 Enviar Link de Recuperação
+            
+            <button type="submit" id="btnEnviar">
+                <span class="btn-text">Enviar Link de Recuperação</span>
+                <div class="loading-spinner"></div>
             </button>
+            <p id="cooldownText" class="cooldown-text"></p>
         </form>
-
-        <div class="link-back">
-            <a href="/admin/login">← Voltar para o Login</a>
+        
+        <div class="back-link">
+            <a id="backToLoginLink" href="/parceiros/">← Voltar para o login</a>
         </div>
-
-        <div class="info-box">
-            <strong>💡 Dica:</strong> Verifique sua caixa de spam se não receber o email em alguns minutos.
-        </div>
-
     </div>
 
+    <script src="/js/supabase-config.js"></script>
+    
     <script>
-        console.log('🔑 Página de recuperação de senha carregada');
+        const formRecuperar = document.getElementById('formRecuperar');
+        const btnEnviar = document.getElementById('btnEnviar');
+        const alertDiv = document.getElementById('alert');
+        const cooldownText = document.getElementById('cooldownText');
+        const backToLoginLink = document.getElementById('backToLoginLink');
+        const COOLDOWN_SECONDS = 45;
+        let cooldownTimer = null;
+        let cooldownRemaining = 0;
+        const origem = new URLSearchParams(window.location.search).get('origem') || 'parceiros';
 
-        // Verificar Supabase
-        if (typeof supabase === 'undefined') {
-            console.error('❌ Supabase não carregado!');
-            alert('❌ Erro ao carregar sistema. Recarregue a página.');
-        } else {
-            console.log('✅ Supabase carregado');
-        }
+        const loginPorOrigem = {
+            admin: '/admin/login',
+            parceiros: '/parceiros/',
+            igrejas: '/igrejas/',
+            empresas: '/empresas/'
+        };
 
-        // Mostrar mensagem
-        function showMessage(text, type) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = text;
-            messageDiv.className = `message show ${type}`;
-        }
+        const redefinirPorOrigem = {
+            admin: '/admin/redefinir-senha.html',
+            parceiros: '/login/redefinir-senha.html?origem=parceiros',
+            igrejas: '/login/redefinir-senha.html?origem=igrejas',
+            empresas: '/login/redefinir-senha.html?origem=empresas'
+        };
 
-        // Esconder mensagem
-        function hideMessage() {
-            const messageDiv = document.getElementById('message');
-            messageDiv.classList.remove('show');
-        }
+        const loginDestino = loginPorOrigem[origem] || '/parceiros/';
+        const redefinirDestino = redefinirPorOrigem[origem] || '/login/redefinir-senha.html?origem=parceiros';
+        backToLoginLink.href = loginDestino;
 
-        // Submeter formulário
-        async function submitRecuperar(event) {
-            event.preventDefault();
-            console.log('📤 Solicitando recuperação de senha...');
-
-            const form = event.target;
-            const submitBtn = document.getElementById('btnSubmit');
-            const email = document.getElementById('email').value;
+        function mostrarAlerta(mensagem, tipo = 'error') {
+            alertDiv.textContent = mensagem;
+            alertDiv.className = `alert alert-${tipo} show`;
             
-            // Desabilitar botão
-            submitBtn.disabled = true;
-            submitBtn.textContent = '📧 Enviando...';
-            hideMessage();
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 5000);
+        }
 
+        formRecuperar.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+
+            if (!email) {
+                mostrarAlerta('Por favor, preencha o email.', 'error');
+                return;
+            }
+
+            // Adicionar loading
+            btnEnviar.classList.add('loading');
+            btnEnviar.disabled = true;
+            
             try {
-               // Enviar email de recuperação
-               const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-               redirectTo: `${window.location.origin}/admin/redefinir-senha.html`
-               });
+                await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}${redefinirDestino}`
+                });
 
-                if (error) {
-                    console.error('❌ Erro ao enviar email:', error);
-                    showMessage('Erro ao enviar email. Verifique se o email está correto.', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = '📧 Enviar Link de Recuperação';
-                    return;
+                // Resposta neutra por segurança: não expõe se o email existe.
+                mostrarAlerta('Se o email existir em nossa base, enviaremos um link de recuperação.', 'success');
+                document.getElementById('email').value = '';
+            } catch (error) {
+                console.error('Erro:', error);
+                // Mantém a mesma resposta para evitar enumeração de contas.
+                mostrarAlerta('Se o email existir em nossa base, enviaremos um link de recuperação.', 'success');
+            } finally {
+                // Remover loading
+                btnEnviar.classList.remove('loading');
+                iniciarCooldown();
+            }
+        });
+
+        function iniciarCooldown() {
+            clearInterval(cooldownTimer);
+            cooldownRemaining = COOLDOWN_SECONDS;
+            btnEnviar.disabled = true;
+            atualizarCooldown();
+
+            cooldownTimer = setInterval(() => {
+                cooldownRemaining -= 1;
+                atualizarCooldown();
+
+                if (cooldownRemaining <= 0) {
+                    clearInterval(cooldownTimer);
+                    btnEnviar.disabled = false;
+                    cooldownText.textContent = '';
                 }
+            }, 1000);
+        }
 
-                console.log('✅ Email de recuperação enviado:', data);
-
-                // Sucesso
-                showMessage('✅ Email enviado com sucesso! Verifique sua caixa de entrada.', 'success');
-                
-                // Limpar formulário
-                form.reset();
-                
-                // Manter botão desabilitado por 30 segundos
-                let countdown = 30;
-                submitBtn.textContent = `✅ Aguarde ${countdown}s`;
-                
-                const interval = setInterval(() => {
-                    countdown--;
-                    submitBtn.textContent = `✅ Aguarde ${countdown}s`;
-                    
-                    if (countdown <= 0) {
-                        clearInterval(interval);
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = '📧 Enviar Link de Recuperação';
-                    }
-                }, 1000);
-
-            } catch (err) {
-                console.error('❌ Erro:', err);
-                showMessage('Erro ao processar solicitação: ' + err.message, 'error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = '📧 Enviar Link de Recuperação';
+        function atualizarCooldown() {
+            if (cooldownRemaining > 0) {
+                cooldownText.textContent = `Aguarde ${cooldownRemaining}s para enviar novamente.`;
             }
         }
     </script>
