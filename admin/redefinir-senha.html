@@ -209,12 +209,10 @@
 
     <script src="/js/supabase-config.js"></script>
     <script>
-        // Detectar se há token de recuperação na URL
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const accessToken = hashParams.get('access_token');
-        const type = hashParams.get('type');
+        
+        // 1. Configurações de Origem e Destino
         const queryParams = new URLSearchParams(window.location.search);
-        const origem = queryParams.get('origem') || 'parceiros';
+        const origem = queryParams.get('origem') || 'admin';
         const backToLoginLink = document.getElementById('backToLoginLink');
 
         const loginPorOrigem = {
@@ -224,20 +222,29 @@
             empresas: '/empresas/'
         };
 
-        const loginDestino = loginPorOrigem[origem] || '/parceiros/';
-        window.location.href = loginDestino;
-        backToLoginLink.href = loginDestino;
+        const loginDestino = loginPorOrigem[origem] || '/admin/login';
+        if (backToLoginLink) backToLoginLink.href = loginDestino;
 
-        console.log('🔍 Verificando token de recuperação...');
-        console.log('Access Token:', accessToken ? 'Presente' : 'Ausente');
-        console.log('Type:', type);
+        // 2. VERIFICAÇÃO DE SEGURANÇA (O que impedia você de entrar)
+        async function validarAcesso() {
+            console.log('🔍 Verificando sessão de recuperação...');
+            
+        // O getSession() processa o token do e-mail automaticamente
+            const { data: { session }, error } = await supabase.auth.getSession();
 
-        if (!accessToken || type !== 'recovery') {
-            showAlert('Link inválido ou expirado. Solicite um novo link de recuperação.', 'error');
-            setTimeout(() => {
-                window.location.href = `/login/esqueci-senha.html?origem=${encodeURIComponent(origem)}`;
-            }, 3000);
+            if (error || !session) {
+                console.error('❌ Sessão não encontrada ou expirada');
+                showAlert('Link inválido ou expirado. Redirecionando para o login...', 'error');
+                
+                setTimeout(() => {
+                    window.location.href = loginDestino;
+                }, 3000);
+                return;
+            }
+            console.log('✅ Sessão de recuperação ativa para:', session.user.email);
         }
+
+        validarAcesso();
 
         // Processar formulário
         document.getElementById('resetForm').addEventListener('submit', async (e) => {
