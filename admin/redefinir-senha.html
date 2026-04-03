@@ -225,6 +225,7 @@
         };
 
         const loginDestino = loginPorOrigem[origem] || '/parceiros/';
+        window.location.href = loginDestino;
         backToLoginLink.href = loginDestino;
 
         console.log('🔍 Verificando token de recuperação...');
