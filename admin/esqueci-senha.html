@@ -275,7 +275,7 @@
         try {
             // O link do e-mail será montado com base no domínio atual + a pasta admin
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: 'https://bizmix.com.br'
+                redirectTo: 'https://bizmix.com.br/admin/redefinir-senha.html'
                // redirectTo: `${window.location.origin}${redefinirDestino}`
             });
 
