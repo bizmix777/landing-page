@@ -223,75 +223,74 @@
     <script src="/js/supabase-config.js"></script>
     
     <script>
-        const formRecuperar = document.getElementById('formRecuperar');
-        const btnEnviar = document.getElementById('btnEnviar');
-        const alertDiv = document.getElementById('alert');
-        const cooldownText = document.getElementById('cooldownText');
-        const backToLoginLink = document.getElementById('backToLoginLink');
-        const COOLDOWN_SECONDS = 45;
-        let cooldownTimer = null;
-        let cooldownRemaining = 0;
-        const origem = new URLSearchParams(window.location.search).get('origem') || 'parceiros';
+    const formRecuperar = document.getElementById('formRecuperar');
+    const btnEnviar = document.getElementById('btnEnviar');
+    const alertDiv = document.getElementById('alert');
+    const cooldownText = document.getElementById('cooldownText');
+    const backToLoginLink = document.getElementById('backToLoginLink');
+    const COOLDOWN_SECONDS = 45;
+    let cooldownTimer = null;
+    let cooldownRemaining = 0;
 
-        const loginPorOrigem = {
-            admin: '/admin/login',
-            parceiros: '/parceiros/',
-            igrejas: '/igrejas/',
-            empresas: '/empresas/'
-        };
+    // Pega a origem da URL atual (ex: ?origem=admin) ou define 'parceiros' como padrão
+    const origem = new URLSearchParams(window.location.search).get('origem') || 'parceiros';
 
-        const redefinirPorOrigem = {
-            admin: '/admin/redefinir-senha.html',
-            parceiros: '/admin/redefinir-senha.html?origem=parceiros',
-            igrejas: '/admin/redefinir-senha.html?origem=igrejas',
-            empresas: '/admin/redefinir-senha.html?origem=empresas'
-        };
+    // Onde o usuário volta se clicar em "Voltar para o login"
+    const loginPorOrigem = {
+        admin: '/admin/login',
+        parceiros: '/parceiros/',
+        igrejas: '/igrejas/',
+        empresas: '/empresas/'
+    };
 
-        const loginDestino = loginPorOrigem[origem] || '/parceiros/';
-        const redefinirDestino = redefinirPorOrigem[origem] || '/admin/redefinir-senha.html?origem=parceiros';
-        backToLoginLink.href = loginDestino;
+    // NOVO: Todos agora apontam para a pasta /admin/ sem parâmetros extras
+    const redefinirDestino = '/admin/redefinir-senha.html';
+    
+    const loginDestino = loginPorOrigem[origem] || '/parceiros/';
+    backToLoginLink.href = loginDestino;
 
-        function mostrarAlerta(mensagem, tipo = 'error') {
-            alertDiv.textContent = mensagem;
-            alertDiv.className = `alert alert-${tipo} show`;
-            
-            setTimeout(() => {
-                alertDiv.classList.remove('show');
-            }, 5000);
+    function mostrarAlerta(mensagem, tipo = 'error') {
+        alertDiv.textContent = mensagem;
+        alertDiv.className = `alert alert-${tipo} show`;
+        
+        setTimeout(() => {
+            alertDiv.classList.remove('show');
+        }, 5000);
+    }
+
+    formRecuperar.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+
+        if (!email) {
+            mostrarAlerta('Por favor, preencha o email.', 'error');
+            return;
         }
 
-        formRecuperar.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value.trim();
+        // Adicionar loading
+        btnEnviar.classList.add('loading');
+        btnEnviar.disabled = true;
+        
+        try {
+            // O link do e-mail será montado com base no domínio atual + a pasta admin
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}${redefinirDestino}`
+            });
 
-            if (!email) {
-                mostrarAlerta('Por favor, preencha o email.', 'error');
-                return;
-            }
+            if (error) throw error;
 
-            // Adicionar loading
-            btnEnviar.classList.add('loading');
-            btnEnviar.disabled = true;
-            
-            try {
-                await supabase.auth.resetPasswordForEmail(email, {
-                    redirectTo: `${window.location.origin}${redefinirDestino}`
-                });
+            mostrarAlerta('E-mail de recuperação enviado com sucesso!', 'success');
+            // Iniciar o seu cooldown/contador aqui se desejar...
 
-                // Resposta neutra por segurança: não expõe se o email existe.
-                mostrarAlerta('Se o email existir em nossa base, enviaremos um link de recuperação.', 'success');
-                document.getElementById('email').value = '';
-            } catch (error) {
-                console.error('Erro:', error);
-                // Mantém a mesma resposta para evitar enumeração de contas.
-                mostrarAlerta('Se o email existir em nossa base, enviaremos um link de recuperação.', 'success');
-            } finally {
-                // Remover loading
-                btnEnviar.classList.remove('loading');
-                iniciarCooldown();
-            }
-        });
+        } catch (error) {
+            mostrarAlerta('Erro ao enviar e-mail: ' + error.message, 'error');
+            btnEnviar.disabled = false;
+        } finally {
+            btnEnviar.classList.remove('loading');
+        }
+    });
+</script>
 
         function iniciarCooldown() {
             clearInterval(cooldownTimer);
