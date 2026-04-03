@@ -233,12 +233,12 @@
             if (session) {
                 // Verificar se é admin
                 const { data: usuario } = await supabase
-                    .from('usuarios')
-                    .select('tipo')
-                    .eq('email', session.user.email)
-                    .single();
+                      .from('admins') // Tabela correta
+                      .select('nivel') // Coluna correta
+                      .eq('email', session.user.email)
+                      .single();
 
-                if (usuario && (usuario.tipo === 'admin' || usuario.tipo === 'super_admin')) {
+                if (usuario && usuario.nivel === 'admin') {
                     window.location.href = '/admin/index.html';
                 }
             }
@@ -266,28 +266,27 @@
 
                 if (authError) throw authError;
 
-                // Verificar se é admin
-                const { data: usuario, error: userError } = await supabase
-                    .from('usuarios')
-                    .select('tipo')
+                // Verificar se é admin na tabela correta
+                    const { data: usuario, error: userError } = await supabase
+                    .from('admins') // Tabela correta
+                    .select('nivel') // Coluna correta
                     .eq('email', email)
                     .single();
 
-                if (userError) throw new Error('Usuário não encontrado');
+                 if (userError) throw new Error('Usuário não encontrado na tabela de administradores');
 
-                if (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin') {
-                    await supabase.auth.signOut();
-                    throw new Error('Acesso negado. Você não tem permissão de administrador.');
+                // Verificação de permissão corrigida
+                   if (usuario.nivel !== 'admin') {
+                   await supabase.auth.signOut();
+                   throw new Error('Acesso negado. Você não tem permissão de administrador.');
                 }
 
-                // Redirecionar baseado no tipo
-                if (usuario.tipo === 'super_admin') {
-                    window.location.href = '/admin/super-admin/index.html';
-                } else {
-                    window.location.href = '/admin/index.html';
+                // Redirecionar (Removi o super_admin que você disse que não existe mais)
+                window.location.href = '/admin/index.html';
+
                 }
 
-            } catch (error) {
+              catch (error) {
                 console.error('Erro no login:', error);
                 errorMessage.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
                 errorMessage.classList.add('show');
