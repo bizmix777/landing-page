@@ -197,47 +197,61 @@
         </div>
     </div>
         <script>
-        // Verificar autenticação (usa o config externo)
-        async function verificarAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) { window.location.href = '/admin/login.html'; return; }
+// 1. Corrigir a Verificação de Acesso
+async function verificarAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = '/admin/login.html'; return; }
 
-            const { data: usuario } = await supabase.from('usuarios').select('tipo, nome').eq('email', session.user.email).single();
-            if (!usuario || usuario.tipo !== 'super_admin') { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; return; }
+    // Tabela: admins | Colunas: nivel, nome
+    const { data: usuario, error } = await supabase
+        .from('admins')
+        .select('nivel, nome')
+        .eq('email', session.user.email)
+        .single();
 
-            document.getElementById('userName').textContent = usuario.nome || 'Super Admin';
-            document.getElementById('userAvatar').textContent = (usuario.nome || 'S').charAt(0).toUpperCase();
-            carregarDashboard();
+    // Permitir se o nível for 'admin' (já que você disse que não usa mais super_admin)
+    if (error || !usuario || usuario.nivel !== 'admin') { 
+        await supabase.auth.signOut(); 
+        window.location.href = '/admin/login.html'; 
+        return; 
+    }
+
+    document.getElementById('userName').textContent = usuario.nome || 'Administrador';
+    document.getElementById('userAvatar').textContent = (usuario.nome || 'A').charAt(0).toUpperCase();
+    carregarDashboard();
+}
+
+// 2. Corrigir o carregamento da tabela de Admins no Dashboard
+async function carregarAdmins() {
+    try {
+        // Tabela correta: admins
+        const { data: admins } = await supabase
+            .from('admins')
+            .select('*')
+            .eq('nivel', 'admin') // Filtro correto
+            .limit(10);
+
+        const tbody = document.getElementById('adminsTableBody'); 
+        tbody.innerHTML = '';
+
+        if(admins) {
+            admins.forEach(admin => {
+                const tr = document.createElement('tr');
+                // IMPORTANTE: Mudei admin.tipo para admin.nivel e admin.status para admin.ativo
+                tr.innerHTML = `
+                    <td>${admin.nome}</td>
+                    <td>${admin.email}</td>
+                    <td>${admin.nivel}</td>
+                    <td>${admin.ativo ? 'Ativo' : 'Inativo'}</td>
+                    <td>-</td>
+                    <td><button class="btn-action btn-edit"><i class="fas fa-edit"></i></button></td>`;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('adminsTable').style.display = 'table';
         }
-
-        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
-
-        async function carregarDashboard() {
-            try { await carregarEstatisticas(); await carregarAdmins(); await carregarVendas(); } catch (error) { console.error('Erro:', error); }
-        }
-
-        async function carregarEstatisticas() {
-            try {
-                const { count: totalUsuarios } = await supabase.from('usuarios').select('*', { count: 'exact', head: true });
-                document.getElementById('totalUsuarios').textContent = totalUsuarios || 0;
-            } catch (error) { console.error(error); }
-        }
-
-        async function carregarAdmins() {
-            try {
-                const { data: admins } = await supabase.from('usuarios').select('*').in('tipo', ['admin', 'super_admin']).limit(10);
-                const tbody = document.getElementById('adminsTableBody'); tbody.innerHTML = '';
-                if(admins) {
-                    admins.forEach(admin => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `<td>${admin.nome}</td><td>${admin.email}</td><td>${admin.tipo}</td><td>${admin.status}</td><td>-</td><td><button class="btn-action btn-edit"><i class="fas fa-edit"></i></button></td>`;
-                        tbody.appendChild(tr);
-                    });
-                    document.getElementById('adminsTable').style.display = 'table';
-                }
-                document.getElementById('adminsLoading').style.display = 'none';
-            } catch (e) { console.error(e); }
-        }
+        document.getElementById('adminsLoading').style.display = 'none';
+    } catch (e) { console.error(e); }
+}
 
         // --- VENDAS (COM BOTÃO EXCLUIR) ---
                 async function carregarVendas() {
