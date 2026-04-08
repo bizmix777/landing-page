@@ -196,39 +196,40 @@
             </table>
         </div>
     </div>
-        <script>
-// 1. Corrigir a Verificação de Acesso
+<script>
+// 1. Verificação de Acesso Centralizada na tabela 'usuarios'
 async function verificarAuth() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { window.location.href = '/admin/login.html'; return; }
 
-    // Tabela: admins | Colunas: nivel, nome
+    // Mudamos para 'usuarios' e usamos 'tipo' em vez de 'nivel'
     const { data: usuario, error } = await supabase
-        .from('admins')
-        .select('nivel, nome')
-        .eq('email', session.user.email)
+        .from('usuarios')
+        .select('tipo, nome')
+        .eq('id', session.user.id) // Usar ID é mais rápido e seguro que e-mail
         .single();
 
-    // Permitir se o nível for 'admin' (já que você disse que não usa mais super_admin)
-    if (error || !usuario || usuario.nivel !== 'admin') { 
+    // Se der erro ou o tipo não for admin, expulsa o usuário
+    if (error || !usuario || usuario.tipo !== 'admin') { 
+        console.error("Acesso negado ou usuário não encontrado");
         await supabase.auth.signOut(); 
         window.location.href = '/admin/login.html'; 
         return; 
     }
 
+    // Preenche os dados na tela
     document.getElementById('userName').textContent = usuario.nome || 'Administrador';
     document.getElementById('userAvatar').textContent = (usuario.nome || 'A').charAt(0).toUpperCase();
     carregarDashboard();
 }
 
-// 2. Corrigir o carregamento da tabela de Admins no Dashboard
+// 2. Carregar a lista de administradores da tabela 'usuarios'
 async function carregarAdmins() {
     try {
-        // Tabela correta: admins
         const { data: admins } = await supabase
-            .from('admins')
+            .from('usuarios')
             .select('*')
-            .eq('nivel', 'admin') // Filtro correto
+            .eq('tipo', 'admin') // Filtra quem é admin na tabela central
             .limit(10);
 
         const tbody = document.getElementById('adminsTableBody'); 
@@ -237,12 +238,11 @@ async function carregarAdmins() {
         if(admins) {
             admins.forEach(admin => {
                 const tr = document.createElement('tr');
-                // IMPORTANTE: Mudei admin.tipo para admin.nivel e admin.status para admin.ativo
                 tr.innerHTML = `
-                    <td>${admin.nome}</td>
-                    <td>${admin.email}</td>
-                    <td>${admin.nivel}</td>
-                    <td>${admin.ativo ? 'Ativo' : 'Inativo'}</td>
+                    <td>${admin.nome || 'Sem nome'}</td>
+                    <td>${admin.email || 'Sem e-mail'}</td>
+                    <td>${admin.tipo}</td>
+                    <td>Ativo</td>
                     <td>-</td>
                     <td><button class="btn-action btn-edit"><i class="fas fa-edit"></i></button></td>`;
                 tbody.appendChild(tr);
@@ -250,8 +250,14 @@ async function carregarAdmins() {
             document.getElementById('adminsTable').style.display = 'table';
         }
         document.getElementById('adminsLoading').style.display = 'none';
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        console.error("Erro ao carregar lista:", e); 
+    }
 }
+
+// Inicializa a verificação ao carregar a página
+verificarAuth();
+</script>
 
         // --- VENDAS (COM BOTÃO EXCLUIR) ---
                 async function carregarVendas() {
