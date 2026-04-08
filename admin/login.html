@@ -227,22 +227,26 @@
         const loading = document.getElementById('loading');
 
         // Verificar se já está logado
-        async function verificarSessao() {
-            const { data: { session } } = await supabase.auth.getSession();
-            
-            if (session) {
-                // Verificar se é admin
-                const { data: usuario } = await supabase
-                      .from('admins') // Tabela correta
-                      .select('nivel') // Coluna correta
-                      .eq('email', session.user.email)
-                      .single();
+async function verificarSessao() {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session) {
+        // Busca na tabela que limpamos as políticas (usuarios)
+        const { data: usuario } = await supabase
+              .from('usuarios')
+              .select('tipo')
+              .eq('id', session.user.id)
+              .single();
 
-                if (usuario && usuario.nivel === 'admin') {
-                    window.location.href = '/admin/index.html';
-                }
-            }
+        if (usuario && usuario.tipo === 'admin') {
+            window.location.href = '/admin/index.html';
+        } else {
+            // Se estiver logado mas não for admin, desloga por segurança
+            await supabase.auth.signOut();
         }
+    }
+}
+
 
         // Login
         loginForm.addEventListener('submit', async (e) => {
