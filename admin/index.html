@@ -197,6 +197,25 @@
         </div>
     </div>
 <script>
+
+// Adicionada esta função em 08.04.2026 para o botão "Sair" funcionar
+async function logout() {
+    try {
+        // Faz o logout no Supabase
+        await supabase.auth.signOut();
+        
+        // Redireciona para a página de login
+        // Ajuste o caminho se o seu login estiver em outro lugar
+        window.location.href = '/admin/login.html'; 
+    } catch (error) {
+        console.error('Erro ao sair:', error);
+    }
+}
+
+// Garante que a função seja vista pelo 'onclick' do HTML
+window.logout = logout;
+
+    
 // 1. Verificação de Acesso Centralizada na tabela 'usuarios'
 async function verificarAuth() {
     const { data: { session } } = await supabase.auth.getSession();
