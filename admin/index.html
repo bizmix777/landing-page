@@ -196,8 +196,8 @@
             </table>
         </div>
     </div>
-<script>
 
+<script>
 // Adicionada esta função em 08.04.2026 para o botão "Sair" funcionar
 async function logout() {
     try {
@@ -284,6 +284,61 @@ async function carregarAdmins() {
         loading.innerHTML = '<p style="color: red;">Erro ao carregar dados.</p>';
     }
 }
+
+async function carregarVendas() {
+    const tableBody = document.getElementById('vendasTableBody');
+    const loading = document.getElementById('vendasLoading');
+    const table = document.getElementById('vendasTable');
+
+    try {
+        // Busca as últimas 10 vendas no Supabase
+        const { data: vendas, error } = await supabase
+            .from('vendas') // Verifique se o nome da tabela está correto
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+
+        tableBody.innerHTML = '';
+
+        if (vendas && vendas.length > 0) {
+            vendas.forEach(venda => {
+                const tr = document.createElement('tr');
+                // Formatação de moeda e data
+                const valor = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(venda.valor || 0);
+                const data = venda.created_at ? new Date(venda.created_at).toLocaleDateString('pt-BR') : '-';
+
+                tr.innerHTML = `
+                    <td>${venda.email_cliente || venda.id}</td>
+                    <td>${venda.produto || 'N/A'}</td>
+                    <td>${venda.parceiro || '-'}</td>
+                    <td>${valor}</td>
+                    <td><span class="badge ${venda.status === 'pago' ? 'sucesso' : 'pendente'}">${venda.status || 'pendente'}</span></td>
+                    <td>${data}</td>
+                    <td>
+                        <button class="btn-action" onclick="verDetalhes('${venda.id}')"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            table.style.display = 'table';
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="7">Nenhuma venda encontrada.</td></tr>';
+            table.style.display = 'table';
+        }
+
+        loading.style.display = 'none';
+
+    } catch (error) {
+        console.error('Erro ao carregar vendas:', error);
+        loading.innerHTML = '<p style="color: red;">Erro ao carregar vendas.</p>';
+    }
+}
+
+// Chame a função para ela rodar
+carregarVendas();
+
 
 // Chama a função para ela rodar quando a página abrir
 carregarAdmins();
