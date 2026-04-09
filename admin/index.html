@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Admin - BizMix</title>
+    <title>Admin - BizMix</title>
     
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -244,35 +244,50 @@ async function verificarAuth() {
 
 // 2. Carregar a lista de administradores da tabela 'usuarios'
 async function carregarAdmins() {
+    const tableBody = document.getElementById('adminsTableBody');
+    const loading = document.getElementById('adminsLoading');
+    const table = document.getElementById('adminsTable');
+
     try {
-        const { data: admins } = await supabase
+        // Busca na tabela 'usuarios' todos que são do tipo 'admin'
+        const { data: admins, error } = await supabase
             .from('usuarios')
             .select('*')
-            .eq('tipo', 'admin') // Filtra quem é admin na tabela central
-            .limit(10);
+            .eq('tipo', 'admin')
+            .order('created_at', { ascending: false });
 
-        const tbody = document.getElementById('adminsTableBody'); 
-        tbody.innerHTML = '';
+        if (error) throw error;
 
-        if(admins) {
-            admins.forEach(admin => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${admin.nome || 'Sem nome'}</td>
-                    <td>${admin.email || 'Sem e-mail'}</td>
-                    <td>${admin.tipo}</td>
-                    <td>Ativo</td>
-                    <td>-</td>
-                    <td><button class="btn-action btn-edit"><i class="fas fa-edit"></i></button></td>`;
-                tbody.appendChild(tr);
-            });
-            document.getElementById('adminsTable').style.display = 'table';
-        }
-        document.getElementById('adminsLoading').style.display = 'none';
-    } catch (e) { 
-        console.error("Erro ao carregar lista:", e); 
+        // Limpa o corpo da tabela
+        tableBody.innerHTML = '';
+
+        // Preenche a tabela com os dados
+        admins.forEach(admin => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${admin.nome || 'N/A'}</td>
+                <td>${admin.email}</td>
+                <td><span class="badge admin">${admin.tipo}</span></td>
+                <td><span class="status-active">Ativo</span></td>
+                <td>${admin.last_login ? new Date(admin.last_login).toLocaleDateString() : 'N/A'}</td>
+                <td><button class="btn-action"><i class="fas fa-edit"></i></button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Esconde o loading e mostra a tabela
+        loading.style.display = 'none';
+        table.style.display = 'table';
+
+    } catch (error) {
+        console.error('Erro ao carregar admins:', error);
+        loading.innerHTML = '<p style="color: red;">Erro ao carregar dados.</p>';
     }
 }
+
+// Chama a função para ela rodar quando a página abrir
+carregarAdmins();
+
 
 // Inicializa a verificação ao carregar a página
 verificarAuth();
