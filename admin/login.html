@@ -219,8 +219,7 @@
             <p style="margin-top: 15px; color: #666;">Autenticando...</p>
         </div>
     </div>
-
-    <script>
+<script>
     const loginForm = document.getElementById('loginForm');
     const btnLogin = document.getElementById('btnLogin');
     const errorMessage = document.getElementById('errorMessage');
@@ -240,7 +239,6 @@
             if (usuario && usuario.tipo === 'admin') {
                 window.location.href = '/admin/index.html';
             } else if (usuario) {
-                // Se logou mas não é admin, limpa a sessão
                 await supabase.auth.signOut();
             }
         }
@@ -257,7 +255,7 @@
         btnLogin.disabled = true;
         btnLogin.textContent = 'Entrando...';
         errorMessage.classList.remove('show');
-        loading.style.display = 'block';
+        if (loading) loading.style.display = 'block';
 
         try {
             // Fazer login no Auth
@@ -268,7 +266,7 @@
 
             if (authError) throw authError;
 
-            // Verificar permissão na tabela que otimizamos (usuarios)
+            // Verificar permissão na tabela usuarios
             const { data: usuario, error: userError } = await supabase
                 .from('usuarios')
                 .select('tipo')
@@ -294,70 +292,13 @@
             errorMessage.classList.add('show');
             btnLogin.disabled = false;
             btnLogin.textContent = 'Entrar';
-            loading.style.display = 'none';
+            if (loading) loading.style.display = 'none';
         }
     });
 
     // Iniciar verificação ao carregar a página
     verificarSessao();
-// </script>
+</script>
 
-
-        // Login
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Desabilitar botão e mostrar loading
-            btnLogin.disabled = true;
-            btnLogin.textContent = 'Entrando...';
-            errorMessage.classList.remove('show');
-            loading.style.display = 'block';
-
-            try {
-    // 1. Faz o login no Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-    });
-
-    if (authError) throw authError;
-
-    // 2. BUSCA NA TABELA CENTRAL (usuarios) em vez de 'admins'
-    const { data: usuario, error: userError } = await supabase
-        .from('usuarios') 
-        .select('tipo')
-        .eq('id', authData.user.id) // Busca pelo ID único do usuário
-        .single();
-
-    if (userError || !usuario) {
-        await supabase.auth.signOut();
-        throw new Error('Usuário não encontrado na base de dados.');
-    }
-
-    // 3. Verifica o "tipo" que configuramos nas políticas de RLS
-    if (usuario.tipo !== 'admin') {
-        await supabase.auth.signOut();
-        throw new Error('Acesso negado. Você não tem permissão de administrador.');
-    }
-
-    // Sucesso! Redireciona
-    window.location.href = '/admin/index.html';
-
-} catch (error) {
-                console.error('Erro no login:', error);
-                errorMessage.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
-                errorMessage.classList.add('show');
-                btnLogin.disabled = false;
-                btnLogin.textContent = 'Entrar';
-                loading.style.display = 'none';
-            }
-        });
-
-        // Verificar sessão ao carregar
-        verificarSessao();
-    </script>
 </body>
 </html>
