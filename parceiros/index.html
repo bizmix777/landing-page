@@ -1222,13 +1222,8 @@
         </main>
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="../js/supabase-config.js"></script>
 
         // DOM Elements
         const loginScreen = document.getElementById('loginScreen');
@@ -1664,7 +1659,7 @@
         }
         
         // Copiar link
-        window.copiarLinkParceiro = function() {
+            function copiarLinkParceiro( {
             const input = document.getElementById('linkUnicoParceiro');
             
             if (input.value.includes('Erro') || input.value.includes('Carregando')) {
@@ -2209,7 +2204,7 @@
 
                     card.innerHTML = `
                         <div style="height: 150px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 8px;">
-                           <img src="/somos-todos-um/images/capa-livro.jpg" alt="Produto" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;">
+                           <img src="${prod.imagem_url || '/somos-todos-um/images/capa-livro.jpg'}" alt="${prod.nome}" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;">
                         </div>
                         <div style="padding: 20px;">
                             <h3 style="font-size: 18px; margin-bottom: 10px;">${prod.nome}</h3>
