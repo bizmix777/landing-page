@@ -698,7 +698,7 @@
                 </div>
 
                 <!-- Login com Email/Senha -->
-                <form id="emailLoginForm" class="login-form active">
+                <form id="emailLoginForm" class="login-form active" onsubmit="event.preventDefault();">
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" placeholder="seu@email.com" required autocomplete="email">
@@ -715,7 +715,7 @@
                 </form>
 
                 <!-- Login com Código -->
-                <form id="codeLoginForm" class="login-form">
+                <form id="codeLoginForm" class="login-form" onsubmit="event.preventDefault();">
                     <div class="form-group">
                         <label for="partnerCode">Código do Parceiro</label>
                         <input type="text" id="partnerCode" placeholder="Ex: PARC000001" required>
