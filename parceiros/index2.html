@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal do Parceiro - Biz Mix</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" href="https://bizmix.com.br/favicon.ico" type="image/x-icon">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm" defer></script>
+<script src="/js/supabase-config.js" defer></script>
+<script src="/js/main.js" defer></script>
+</head>
+<body>
+<!-- ==================== LOGO & HEADER ==================== -->
+<header class="login-screen" id="loginScreen">
+    <div class="login-container">
+        <div class="login-header"><h1>🔐 Portal do Parceiro</h1><p>Faça login para acessar sua área</p></div>
+        <div class="login-body">
+            <div id="alertContainer"></div>
+            <div class="login-tabs"><button class="login-tab active" data-tab="email">Email/Senha</button><button class="login-tab" data-tab="code">Código</button></div>
+            <!-- Email/Senha -->
+            <form id="emailLoginForm" class="login-form active">
+                <div class="form-group"><label for="email">Email</label><input type="email" id="email" placeholder="seu@email.com" required></div>
+                <div class="form-group"><label for="senha">Senha</label><input type="password" id="senha" placeholder="••••••••" required></div>
+                <button type="submit" class="btn btn-primary" id="btnEmailLogin">Entrar</button>
+                <div class="loading" id="emailLoading"><div class="spinner"></div><p>Autenticando…</p></div>
+            </form>
+            <!-- Código -->
+            <form id="codeLoginForm" class="login-form">
+                <div class="form-group"><label for="partnerCode">Código do Parceiro</label><input type="text" id="partnerCode" placeholder="Ex: PARC000001" required></div>
+                <button type="submit" class="btn btn-primary" id="btnCodeLogin">Entrar</button>
+                <div class="loading" id="codeLoading"><div class="spinner"></div><p>Autenticando…</p></div>
+            </form>
+        </div>
+        <div class="login-footer"><p>Ainda não é parceiro? <a href="/cadastro">Cadastre-se aqui</a></p><p>Esqueci minha senha <a href="/admin/esqueci-senha.html?origem=parceiros">link</a></p></div>
+    </div>
+</header>
+<!-- ==================== DASHBOARD ==================== -->
+<div id="dashboardScreen" class="dashboard-screen hidden">
+    <button id="mobileMenuToggle" class="mobile-menu-toggle">☰</button>
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header"><img src="https://bizmix.com.br/images/logo-bizmix-branco.png" alt="Biz Mix" onerror="this.src='https://bizmix.com.br/logo.png'"><h3 id="partnerNameSidebar">Carregando…</h3><span class="partner-code" id="partnerCodeSidebar"></span></div>
+        <nav class="sidebar-nav"><ul>
+            <li><a href="#" data-section="dashboard" class="active">Dashboard</a></li>
+            <li><a href="#" data-section="sales">Vendas</a></li>
+            <li><a href="#" data-section="products">Vitrine de Produtos</a></li>
+            <li><a href="#" data-section="affiliate">Link de Afiliado</a></li>
+            <li><a href="#" data-section="withdrawal">Saque</a></li>
+            <li><a href="#" data-section="meus-dados">Meus Dados</a></li>
+        </ul></nav>
+    </aside>
+    <main class="main-content"><div class="dashboard-header"><h1>Bem‑vindo(a), <span id="welcomePartnerName">Parceiro</span>!</h1><button id="logoutButton" class="btn-logout">Sair</button></div>
+        <section id="dashboard" class="dashboard-section active"><div class="stats-grid"><div class="stat-card"><div class="icon">📦</div><div class="label">Total de Vendas</div><div id="totalSales" class="value">0</div></div><div class="stat-card"><div class="icon">💰</div><div class="label">Valor Total</div><div id="totalValue" class="value">R$ 0,00</div></div><div class="stat-card"><div class="icon">✅</div><div class="label">Comissão Total</div><div id="totalCommission" class="value">R$ 0,00</div></div><div class="stat-card"><div class="icon">⏳</div><div class="label">Comissão Pendente</div><div id="pendingCommission" class="value">R$ 0,00</div></div></div>
+            <div class="section-card"><h2>📊 Estatísticas do Seu Link</h2><div class="stats-grid"><div class="stat-card"><div class="icon">👁️</div><div class="label">Total de Cliques</div><div id="totalClicks" class="value">0</div></div><div class="stat-card"><div class="icon">📈</div><div class="label">Taxa de Conversão</div><div id="conversionRate" class="value">0%</div></div><div class="stat-card"><div class="icon">⏰</div><div class="label">Cliques Hoje</div><div id="clicksToday" class="value">0</div></div><div class="stat-card"><div class="icon">📅</div><div class="label">Cliques Este Mês</div><div id="clicksMonth" class="value">0</div></div></div></div>
+            <div class="section-card"><h2>📈 Últimas Vendas</h2><div class="table-responsive"><table class="data-table"><thead><tr><th>Data</th><th>Comprador</th><th>Valor</th><th>Comissão</th><th>Status</th></tr></thead><tbody id="salesTableBody"><tr><td colspan="5" style="text-align:center;padding:30px;">Carregando vendas…</td></tr></tbody></table></div></div>
+            <div class="link-unique-section"><div class="link-unique-header"><h2>🔗 Seu Link Único de Vendas</h2></div><div class="link-gradient-box"><h3>💰 Ganhe Comissões Compartilhando</h3><p>Compartilhe este link e receba comissão de <strong id="percentualComissaoParceiro">30%</strong> sobre esta venda!<br>Todo <br>geralmente aparece quando o link funciona.</p><div class="link-input-group"><input type="text" id="linkUnicoParceiro" readonly value="Carregando seu link único…"><button onclick="copiarLinkParceiro()" class="btn-copy-link">📋 Copiar</button></div><div class="share-buttons"><button onclick="compartilharWhatsAppParceiro()" class="btn-share btn-whatsapp">📱 WhatsApp</button><button onclick="compartilharEmailParceiro()" class="btn-share btn-email">✉️ Email</button><button onclick="compartilharFacebookParceiro()" class="btn-share btn-facebook">📘 Facebook</button><button onclick="compartilharInstagramParceiro()" class="btn-share btn-instagram">📷 Instagram</button></div></div><div class="tips-box"><h4>💡 Dicas para Aumentar Suas Vendas:</h4><div class="tips-grid"><div class="tip-item"><span>📱</span><div><strong>Redes Sociais</strong><p>Compartilhe no Instagram, Facebook, TikTok e grupos de WhatsApp</p></div></div><div class="tip-item"><span>💬</span><div><strong>Status e Stories</strong><p>Publique nos status do WhatsApp e stories do Instagram</p></div></div><div class="tip-item"><span>👥</span><div><strong>Amigos e Família</strong><p>Envie diretamente para pessoas que se interessam pelo tema</p></div></div><div class="tip-item"><span>🎯</span><div><strong>Grupos Segmentados</strong><p>Compartilhe em grupos de estudos bíblicos e comunidades</p></div></div></div></div><div class="info-box-blue"><strong>📊 Estatísticas:</strong><p>Acompanhe acima quantas pessoas clicaram no seu link e a taxa de conversão em vendas!</p></div></div>
+        </section>
+        <section id="products" class="dashboard-section"><div class="section-card"><h2>📦 Produtos para Divulgar</h2><p style="margin-bottom:20px;color:#666;">Escolha um produto, copie seu link exclusivo e comece a vender!</p><div id="productsLoading" style="text-align:center;padding:40px;"><div class="spinner"></div>Carregando vitrine…</div><div id="productsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;"></div></div></section>
+        <section id="sales" class="dashboard-section"><div class="section-card"><h2>💳 Todas as Vendas</h2><div class="table-responsive"><table class="data-table"><thead><tr><th>Data</th><th>Comprador</th><th>Email</th><th>Valor</th><th>Comissão</th><th>Status</th></tr></thead><tbody id="allSalesTableBody"><tr><td colspan="6" style="text-align:center;padding:30px;">Nenhuma venda ainda.</td></tr></tbody></table></div></div></section>
+        <section id="affiliate" class="dashboard-section"><div class="section-card"><h2>🔗 Seu Link de Afiliado</h2><p style="margin-bottom:20px;color:#666;">Use este link para divulgar o produto e garantir suas comissões. Cada venda realizada através dele será creditada a você!</p><div style="background:#f8f9fa;padding:20px;border-radius:8px;"><label style="display:block;font-weight:600;margin-bottom:10px;">Link do Checkout:</label><input type="text" id="affiliateLink" readonly style="width:100%;padding:12px;border:1px solid var(--border-light);border-radius:8px;background:white;font-size:14px;font-family:monospace;"><button id="copyLinkButton" class="btn-copy-link" style="margin-top:10px;width:auto;padding:10px 20px;">📋 Copiar Link</button></div><p id="copyMessage" class="alert alert-success hidden" style="margin-top:15px;">Link copiado com sucesso!</p></div></section>
+        <section id="withdrawal" class="dashboard-section"><div class="section-card"><h2>💸 Solicitar Saque</h2><p style="margin-bottom:20px;">Saldo disponível: <strong id="availableBalance" style="color:var(--success-green);font-size:20px;">R$ 0,00</strong></p><p style="margin-bottom:20px;color:#666;font-size:14px;">O valor mínimo para saque é de R$ 50,00.</p><div class="form-group"><label for="withdrawalAmount">Valor do Saque (R$)</label><input type="number" id="withdrawalAmount" min="50" step="0.01" placeholder="Ex: 100.00"></div><div class="form-group"><label for="paymentMethod">Método de Pagamento</label><select id="paymentMethod"><option value="">Selecione</option><option value="pix">PIX</option><option value="bank_transfer">Transferência Bancária</option></select></div><div class="form-group"><label for="paymentDetails">Detalhes do Pagamento</label><textarea id="paymentDetails" rows="4" placeholder="Informe sua chave PIX ou dados bancários completos"></textarea></div><button id="requestWithdrawalButton" class="btn btn-primary">Solicitar Saque</button><p id="withdrawalMessage" class="alert hidden" style="margin-top:15px;"></p></div></section>
+        <section id="meus-dados" class="dashboard-section"><div class="section-card"><h2>👤 Dados Pessoais</h2><form id="personalDataForm"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;"><div class="form-group"><label for="editNomeCompleto">Nome Completo *</label><input type="text" id="editNomeCompleto" required></div><div class="form-group"><label for="editEmail">Email *</label><input type="email" id="editEmail" required></div><div class="form-group"><label for="editTelefone">Telefone</label><input type="text" id="editTelefone" placeholder="(00) 00000-0000"></div><div class="form-group"><label for="editCPF">CPF</label><input type="text" id="editCPF" placeholder="000.000.000-00"></div></div><button type="submit" class="btn btn-primary" id="savePersonalDataButton">💾 Salvar Dados Pessoais</button><p id="personalDataMessage" class="alert hidden" style="margin-top:15px;"></p></form></div>
+            <div class="section-card"><h2>📍 Endereço</h2><form id="addressForm"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;"><div class="form-group"><label for="editCEP">CEP</label><input type="text" id="editCEP" placeholder="00000-000"></div><div class="form-group"><label for="editEndereco">Endereço</label><input type="text" id="editEndereco" placeholder="Rua, Avenida, etc."></div><div class="form-group"><label for="editNumero">Número</label><input type="text" id="editNumero" placeholder="123"></div><div class="form-group"><label for="editComplemento">Complemento</label><input type="text" id="editComplemento" placeholder="Apto, Bloco, etc."></div><div class="form-group"><label for="editBairro">Bairro</label><input type="text" id="editBairro"></div><div class="form-group"><label for="editCidade">Cidade</label><input type="text" id="editCidade"></div><div class="form-group"><label for="editEstado">Estado</label><select id="editEstado"><option value="">Selecione</option><option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AP">Amapá</option><option value="AM">Amazonas</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option><option value="MG">Minas Gerais</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PR">Paraná</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RS">Rio Grande do Sul</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="SC">Santa Catarina</option><option value="SP">São Paulo</option><option value="SE">Sergipe</option><option value="TO">Tocantins</option></select></div></div><button type="submit" class="btn btn-primary" id="saveAddressButton">💾 Salvar Endereço</button><p id="addressMessage" class="alert hidden" style="margin-top:15px;"></p></form></div>
+            <div class="section-card"><h2>🏦 Dados Bancários</h2><form id="bankDataForm"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;"><div class="form-group"><label for="editBanco">Banco</label><input type="text" id="editBanco" placeholder="Ex: Banco do Brasil"></div><div class="form-group"><label for="editAgencia">Agência</label><input type="text" id="editAgencia" placeholder="0000"></div><div class="form-group"><label for="editConta">Conta</label><input type="text" id="editConta" placeholder="00000-0"></div><div class="form-group"><label for="editTipoConta">Tipo de Conta</label><select id="editTipoConta"><option value="">Selecione</option><option value="Corrente">Corrente</option><option value="Poupança">Poupança</option></select></div><div class="form-group"><label for="editPixTipo">Tipo de Chave PIX</label><select id="editPixTipo"><option value="">Selecione</option><option value="cpf">CPF</option><option value="cnpj">CNPJ</option><option value="email">Email</option><option value="telefone">Telefone</option><option value="aleatoria">Chave Aleatória</option></select></div><div class="form-group"><label for="editPixChave">Chave PIX</label><input type="text" id="editPixChave" placeholder="Sua chave PIX"></div></div><button type="submit" class="btn btn-primary" id="saveBankDataButton">💾 Salvar Dados Bancários</button><p id="bankDataMessage" class="alert hidden" style="margin-top:15px;"></p></form></div>
+            <div class="section-card"><h2>🔒 Alterar Senha</h2><form id="passwordForm"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;"><div class="form-group"><label for="currentPassword">Senha Atual *</label><input type="password" id="currentPassword" required></div><div class="form-group"><label for="newPassword">Nova Senha *</label><input type="password" id="newPassword" required minlength="6"></div><div class="form-group"><label for="confirmPassword">Confirmar Nova Senha *</label><input type="password" id="confirmPassword" required minlength="6"></div></div><button type="submit" class="btn btn-primary" id="changePasswordButton">🔐 Alterar Senha</button><p id="passwordMessage" class="alert hidden" style="margin-top:15px;"></p></form></div>
+        </section>
+    </main>
+</div>
+<script>
+/* --------- Supabase Initialization (src/js/supabase-config.js) --------- */
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* --------- Utility Functions (src/js/main.js) --------- */
+function validarEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+function mascararCPF(cpf) {
+  return cpf.replace(/(\\d{3})\\d{3}(\\d{3})\\d{2}/, '$1.XXX.XXX-$2');
+}
+/* Token Refresh automático */
+async function refreshTokenPeriodic() {
+  const userData = await supabase.auth.getSession();
+  if (userData.data?.session) {
+    setTimeout(refreshTokenPeriodic, 15 * 60 * 1000); // refresh each 15 min
+  }
+}
+refreshTokenPeriodic();
+/* Global error handler */
+window.addEventListener('error', e => {
+  console.error('Erro global:', e);
+  const alertContainer = document.getElementById('alertContainer');
+  alertContainer.innerHTML = '<div class="alert alert-error">Ocorreu um erro. Tente novamente.</div>';
+});
+/* Logar via email/senha */
+document.getElementById('emailLoginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('senha').value;
+  if (!validarEmail(email)) { alert('Email inválido'); return; }
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) { alert(error.message); return; }
+  // Redirecionar para dashboard
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('dashboardScreen').classList.remove('hidden');
+});
+/* Cópia do link único */
+function copiarLinkParceiro() {
+  const linkEl = document.getElementById('linkUnicoParceiro');
+  navigator.clipboard.writeText(linkEl.value).then(() => {
+    linkEl.classList.add('copied');
+    setTimeout(() => linkEl.classList.remove('copied'), 1500);
+  });
+}
+/* Compartilhamento de rede social (exemplo simples) */
+function compartilharWhatsAppParceiro() {
+  const link = encodeURIComponent(document.getElementById('linkUnicoParceiro').value);
+  window.open(`https://wa.me/55999999999?text=Confira%20meu%20link%20de%20vendas:${link}`, '_blank');
+}
+function compartilharEmailParceiro() { /* similar */ }
+function compartilharFacebookParceiro() { /* similar */ }
+function compartilharInstagramParceiro() { /* similar */ }
+/* Mobile menu toggle */
+document.getElementById('mobileMenuToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('active');
+});
+/* HTTPS recomendação: carregar <meta http-equiv="Content-Security-Policy" ...> em header se não existir */
+/* cookie seguro: definir estratégias no backend via set-cookie: Secure; SameSite=Lax; HttpOnly */
+</script>
+</body>
+</html>
