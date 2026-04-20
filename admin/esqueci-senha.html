@@ -292,29 +292,29 @@
     });
 </script>
 
-        function iniciarCooldown() {
-            clearInterval(cooldownTimer);
-            cooldownRemaining = COOLDOWN_SECONDS;
-            btnEnviar.disabled = true;
+function iniciarCooldown() {
+        clearInterval(cooldownTimer);
+        cooldownRemaining = COOLDOWN_SECONDS;
+        btnEnviar.disabled = true;
+        atualizarCooldown();
+
+        cooldownTimer = setInterval(() => {
+            cooldownRemaining -= 1;
             atualizarCooldown();
 
-            cooldownTimer = setInterval(() => {
-                cooldownRemaining -= 1;
-                atualizarCooldown();
-
-                if (cooldownRemaining <= 0) {
-                    clearInterval(cooldownTimer);
-                    btnEnviar.disabled = false;
-                    cooldownText.textContent = '';
-                }
-            }, 1000);
-        }
-
-        function atualizarCooldown() {
-            if (cooldownRemaining > 0) {
-                cooldownText.textContent = `Aguarde ${cooldownRemaining}s para enviar novamente.`;
+            if (cooldownRemaining <= 0) {
+                clearInterval(cooldownTimer);
+                btnEnviar.disabled = false;
+                cooldownText.textContent = '';
             }
+        }, 1000);
+    }
+
+    function atualizarCooldown() {
+        if (cooldownRemaining > 0) {
+            cooldownText.textContent = `Aguarde ${cooldownRemaining}s para enviar novamente.`;
         }
-    </script>
+    }
+</script>
 </body>
 </html>
