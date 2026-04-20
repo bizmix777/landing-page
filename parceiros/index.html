@@ -1359,6 +1359,8 @@
         emailLoginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            alert("📍 TESTE 1: O botão foi clicado e o JS ouviu!");
+
             const email = document.getElementById('email').value.trim();
             const senha = document.getElementById('senha').value;
 
@@ -1372,13 +1374,19 @@
             emailLoading.classList.add('active');
 
             try {
+                alert("📍 TESTE 2: Dados pegos. Tentando conectar ao Supabase...");
+                
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: senha,
                 });
 
-                if (error) throw new Error(error.message);
+                if (error) {
+                    alert("📍 TESTE 3 (ERRO): O Supabase recusou. Motivo: " + error.message);
+                    throw new Error(error.message);
+                }
 
+                alert("📍 TESTE 4 (SUCESSO): Supabase aceitou o login! Redirecionando...");
                 await loginWithAuth(data.session);
 
             } catch (error) {
