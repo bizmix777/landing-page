@@ -1415,6 +1415,17 @@
             showSection('dashboard');
         });
 
+        // ==================== NAVEGAÇÃO DO MENU LATERAL ====================
+        document.querySelectorAll('.sidebar-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault(); // Impede que o link recarregue a página
+                const sectionId = link.dataset.section;
+                if (sectionId) {
+                    showSection(sectionId); // Chama a função que esconde as outras abas e mostra a correta
+                }
+            });
+        });
+        
         // Inicializa o sistema ao carregar a página
         checkLogin();
 
