@@ -2242,6 +2242,72 @@
             }
         }
     </script>
+    <script>
+    window.fazerLogin = async function() {
+        const emailInput = document.getElementById('email');
+        const senhaInput = document.getElementById('senha');
+        const btnEmailLogin = document.getElementById('btnEmailLogin');
+        const emailLoading = document.getElementById('emailLoading');
 
+        if (!emailInput || !senhaInput) {
+            console.error("❌ ERRO: Campos de email ou senha não encontrados no HTML!");
+            return;
+        }
+
+        const email = emailInput.value.trim();
+        const senha = senhaInput.value;
+
+        if (!email || !senha) {
+            showAlert('Por favor, preencha todos os campos.', 'error');
+            return;
+        }
+
+        btnEmailLogin.disabled = true;
+        btnEmailLogin.textContent = 'Entrando...';
+        if(emailLoading) emailLoading.classList.add('active');
+
+        try {
+            console.log("⏳ Autenticando usuário: " + email);
+            
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: senha,
+            });
+
+            if (error) throw new Error(error.message);
+
+            console.log("✅ Supabase autorizou! Carregando painel...");
+            
+            // Chama a função que abre o painel (ela já existe no seu código principal)
+            if (typeof loginWithAuth === "function") {
+                await loginWithAuth(data.session);
+            } else {
+                console.warn("⚠️ A função loginWithAuth não foi encontrada, recarregando a página para forçar o acesso...");
+                window.location.reload();
+            }
+
+        } catch (error) {
+            console.error('❌ Erro no login:', error);
+            let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
+            
+            if (error.message.includes('Invalid login credentials')) {
+                mensagemErro = 'Email ou senha incorretos.';
+            } else if (error.message.includes('Email not confirmed')) {
+                mensagemErro = 'Por favor, confirme seu email antes de fazer login.';
+            }
+            
+            // Se o showAlert falhar por não estar acessível, usamos o alert nativo
+            if (typeof showAlert === "function") {
+                showAlert(mensagemErro, 'error');
+            } else {
+                alert(mensagemErro);
+            }
+        } finally {
+            btnEmailLogin.disabled = false;
+            btnEmailLogin.textContent = 'Entrar';
+            if(emailLoading) emailLoading.classList.remove('active');
+        }
+    };
+</script>
 </body>
 </html>
