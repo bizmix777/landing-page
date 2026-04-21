@@ -707,7 +707,7 @@
                         <label for="senha">Senha</label>
                         <input type="password" id="senha" placeholder="••••••••" required autocomplete="current-password">
                     </div>
-                    <button type="submit" class="btn btn-primary" id="btnEmailLogin">Entrar</button>
+                    <button type="button" class="btn btn-primary" id="btnEmailLogin" onclick="fazerLogin()">Entrar</button>
                     <div class="loading" id="emailLoading">
                         <div class="spinner"></div>
                         <p style="margin-top: 10px; color: #666;">Autenticando...</p>
@@ -1356,54 +1356,57 @@
         };
 
         // Login with Email/Password
-        emailLoginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            alert("📍 TESTE 1: O botão foi clicado e o JS ouviu!");
-
+        // Login à prova de falhas (via onclick)
+        window.fazerLogin = async function() {
             const email = document.getElementById('email').value.trim();
             const senha = document.getElementById('senha').value;
+            const btnEmailLogin = document.getElementById('btnEmailLogin');
+            const emailLoading = document.getElementById('emailLoading');
 
             if (!email || !senha) {
                 showAlert('Por favor, preencha todos os campos.', 'error');
                 return;
             }
 
+            // Trava o botão e mostra o loading
             btnEmailLogin.disabled = true;
             btnEmailLogin.textContent = 'Entrando...';
             emailLoading.classList.add('active');
 
             try {
-                alert("📍 TESTE 2: Dados pegos. Tentando conectar ao Supabase...");
+                console.log("⏳ Autenticando usuário: " + email);
                 
+                // Comunica com o Supabase
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: senha,
                 });
 
                 if (error) {
-                    alert("📍 TESTE 3 (ERRO): O Supabase recusou. Motivo: " + error.message);
                     throw new Error(error.message);
                 }
 
-                alert("📍 TESTE 4 (SUCESSO): Supabase aceitou o login! Redirecionando...");
+                console.log("✅ Supabase autorizou! Puxando os dados do parceiro...");
                 await loginWithAuth(data.session);
 
             } catch (error) {
                 console.error('❌ Erro no login:', error);
                 let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
+                
                 if (error.message.includes('Invalid login credentials')) {
                     mensagemErro = 'Email ou senha incorretos.';
                 } else if (error.message.includes('Email not confirmed')) {
                     mensagemErro = 'Por favor, confirme seu email antes de fazer login.';
                 }
+                
                 showAlert(mensagemErro, 'error');
             } finally {
+                // Destrava o botão
                 btnEmailLogin.disabled = false;
                 btnEmailLogin.textContent = 'Entrar';
                 emailLoading.classList.remove('active');
             }
-        });
+        };
 
         // Login with Partner Code
         codeLoginForm.addEventListener('submit', async (e) => {
