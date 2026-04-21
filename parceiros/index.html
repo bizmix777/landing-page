@@ -1225,6 +1225,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <script src="../js/supabase-config.js"></script>
 
+       <script>
         // DOM Elements
         const loginScreen = document.getElementById('loginScreen');
         const dashboardScreen = document.getElementById('dashboardScreen');
@@ -1233,117 +1234,62 @@
         // Login Elements
         const loginTabs = document.querySelectorAll('.login-tab');
         const loginForms = document.querySelectorAll('.login-form');
-        const emailLoginForm = document.getElementById('emailLoginForm');
-        const codeLoginForm = document.getElementById('codeLoginForm');
-        const emailLoading = document.getElementById('emailLoading');
-        const codeLoading = document.getElementById('codeLoading');
         const btnEmailLogin = document.getElementById('btnEmailLogin');
+        const emailLoading = document.getElementById('emailLoading');
+        const codeLoginForm = document.getElementById('codeLoginForm');
         const btnCodeLogin = document.getElementById('btnCodeLogin');
+        const codeLoading = document.getElementById('codeLoading');
 
         // Dashboard Elements
         const welcomePartnerName = document.getElementById('welcomePartnerName');
         const partnerNameSidebar = document.getElementById('partnerNameSidebar');
         const partnerCodeSidebar = document.getElementById('partnerCodeSidebar');
         const logoutButton = document.getElementById('logoutButton');
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const sidebar = document.getElementById('sidebar');
-
-        // Stats Elements
-        const totalSalesElem = document.getElementById('totalSales');
-        const totalValueElem = document.getElementById('totalValue');
-        const totalCommissionElem = document.getElementById('totalCommission');
-        const pendingCommissionElem = document.getElementById('pendingCommission');
-        const availableBalanceElem = document.getElementById('availableBalance');
-
-        // Tables
-        const salesTableBody = document.getElementById('salesTableBody');
-        const allSalesTableBody = document.getElementById('allSalesTableBody');
-
-        // Affiliate
-        const affiliateLink = document.getElementById('affiliateLink');
-        const copyLinkButton = document.getElementById('copyLinkButton');
-        const copyMessage = document.getElementById('copyMessage');
-
-        // Withdrawal
-        const withdrawalAmountInput = document.getElementById('withdrawalAmount');
-        const paymentMethodSelect = document.getElementById('paymentMethod');
-        const paymentDetailsTextarea = document.getElementById('paymentDetails');
-        const requestWithdrawalButton = document.getElementById('requestWithdrawalButton');
-        const withdrawalMessage = document.getElementById('withdrawalMessage');
-
-        // Meus Dados - Parceiro Specific
-        const editNomeCompleto = document.getElementById('editNomeCompleto');
-        const editCPF = document.getElementById('editCPF');
 
         let currentPartner = null;
 
-        // Helper Functions
-        const formatCurrency = (value) => {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-        };
-
-        const formatDate = (dateString) => {
-            return new Date(dateString).toLocaleDateString('pt-BR');
-        };
-
-        const getStatusBadge = (status) => {
-            switch (status) {
-                case 'approved': return `<span class="badge badge-success">Aprovado</span>`;
-                case 'pending': return `<span class="badge badge-warning">Pendente</span>`;
-                case 'rejected': return `<span class="badge badge-danger">Rejeitado</span>`;
-                default: return `<span class="badge">${status}</span>`;
-            }
-        };
+        // ==================== FUNÇÕES AUXILIARES ====================
+        const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        const formatDate = (dateString) => new Date(dateString).toLocaleDateString('pt-BR');
 
         const showAlert = (message, type = 'error') => {
             alertContainer.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => {
-                alertContainer.innerHTML = '';
-            }, 5000);
+            setTimeout(() => { alertContainer.innerHTML = ''; }, 5000);
         };
 
         const showSection = (sectionId) => {
-            document.querySelectorAll('.dashboard-section').forEach(section => {
-                section.classList.remove('active');
-            });
+            document.querySelectorAll('.dashboard-section').forEach(section => section.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
-
-            document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                link.classList.remove('active');
-            });
+            document.querySelectorAll('.sidebar-nav a').forEach(link => link.classList.remove('active'));
             document.querySelector(`.sidebar-nav a[data-section="${sectionId}"]`).classList.add('active');
-
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove('active');
-            }
+            if (window.innerWidth <= 768) { sidebar.classList.remove('active'); }
         };
 
-        // Login Tabs
+        // Abas de Login
         loginTabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 loginTabs.forEach(t => t.classList.remove('active'));
                 loginForms.forEach(f => f.classList.remove('active'));
                 tab.classList.add('active');
-                const tabName = tab.dataset.tab;
-                document.getElementById(`${tabName}LoginForm`).classList.add('active');
+                document.getElementById(`${tab.dataset.tab}LoginForm`).classList.add('active');
             });
         });
 
-        // Check Login on Load
+        // ==================== LÓGICA DE LOGIN ====================
+        
         const checkLogin = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                console.log('✅ Sessão Supabase Auth encontrada');
                 await loginWithAuth(session);
                 return;
             }
 
             const storedPartner = localStorage.getItem('partner');
             if (storedPartner) {
-                console.log('✅ Parceiro encontrado no localStorage');
                 currentPartner = JSON.parse(storedPartner);
                 if (currentPartner.tipo_parceiro !== 'parceiro' && currentPartner.tipo_parceiro !== 'empresa') {
-                    showAlert('Tipo de conta inválido para este portal. Faça login no portal de igrejas.', 'error');
+                    showAlert('Tipo de conta inválido para este portal.', 'error');
                     localStorage.clear();
                     return;
                 }
@@ -1355,106 +1301,6 @@
             dashboardScreen.classList.add('hidden');
         };
 
-        // Login with Email/Password
-        // Login à prova de falhas (via onclick)
-        window.fazerLogin = async function() {
-            const email = document.getElementById('email').value.trim();
-            const senha = document.getElementById('senha').value;
-            const btnEmailLogin = document.getElementById('btnEmailLogin');
-            const emailLoading = document.getElementById('emailLoading');
-
-            if (!email || !senha) {
-                showAlert('Por favor, preencha todos os campos.', 'error');
-                return;
-            }
-
-            // Trava o botão e mostra o loading
-            btnEmailLogin.disabled = true;
-            btnEmailLogin.textContent = 'Entrando...';
-            emailLoading.classList.add('active');
-
-            try {
-                console.log("⏳ Autenticando usuário: " + email);
-                
-                // Comunica com o Supabase
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: senha,
-                });
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                console.log("✅ Supabase autorizou! Puxando os dados do parceiro...");
-                await loginWithAuth(data.session);
-
-            } catch (error) {
-                console.error('❌ Erro no login:', error);
-                let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
-                
-                if (error.message.includes('Invalid login credentials')) {
-                    mensagemErro = 'Email ou senha incorretos.';
-                } else if (error.message.includes('Email not confirmed')) {
-                    mensagemErro = 'Por favor, confirme seu email antes de fazer login.';
-                }
-                
-                showAlert(mensagemErro, 'error');
-            } finally {
-                // Destrava o botão
-                btnEmailLogin.disabled = false;
-                btnEmailLogin.textContent = 'Entrar';
-                emailLoading.classList.remove('active');
-            }
-        };
-
-        // Login with Partner Code
-        codeLoginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const partnerCode = document.getElementById('partnerCode').value.trim();
-
-            if (!partnerCode) {
-                showAlert('Por favor, insira seu código de parceiro.', 'error');
-                return;
-            }
-
-            btnCodeLogin.disabled = true;
-            btnCodeLogin.textContent = 'Entrando...';
-            codeLoading.classList.add('active');
-
-            try {
-                const { data, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('codigo_parceiro', partnerCode)
-                    .single();
-
-                if (error) throw new Error('Código de parceiro inválido.');
-
-                if (data.tipo_parceiro === 'igreja') {
-                    throw new Error('Este código pertence a uma igreja. Use o portal de igrejas.');
-                }
-
-                if (data.status !== 'ativo') {
-                    throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
-                }
-
-                currentPartner = data;
-                localStorage.setItem('partner', JSON.stringify(currentPartner));
-                await showDashboard();
-
-            } catch (error) {
-                console.error('❌ Erro no login:', error);
-                showAlert(error.message, 'error');
-            } finally {
-                btnCodeLogin.disabled = false;
-                btnCodeLogin.textContent = 'Entrar';
-                codeLoading.classList.remove('active');
-            }
-        });
-
-        // Login with Auth Session
         const loginWithAuth = async (session) => {
             try {
                 const { data: parceiro, error } = await supabase
@@ -1464,704 +1310,100 @@
                     .single();
 
                 if (error) throw new Error('Parceiro não encontrado no sistema.');
+                if (parceiro.tipo_parceiro === 'igreja') throw new Error('Este login pertence a uma igreja. Use o portal correspondente.');
+                if (parceiro.status !== 'ativo') throw new Error('Sua conta está inativa. Contate o suporte.');
 
-                if (parceiro.tipo_parceiro === 'igreja') {
-                    throw new Error('Este login pertence a uma igreja. Use o portal de igrejas.');
-                }
-
-                if (parceiro.status !== 'ativo') {
-                    throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
-                }
-
-                await supabase
-                    .from('parceiros')
-                    .update({ ultimo_acesso: new Date().toISOString() })
-                    .eq('id', parceiro.id);
-
+                await supabase.from('parceiros').update({ ultimo_acesso: new Date().toISOString() }).eq('id', parceiro.id);
+                
                 currentPartner = parceiro;
                 localStorage.setItem('partner', JSON.stringify(currentPartner));
                 await showDashboard();
 
             } catch (error) {
-                console.error('❌ Erro ao buscar parceiro:', error);
                 showAlert(error.message, 'error');
                 await supabase.auth.signOut();
             }
         };
 
-        // Show Dashboard
+        // Função global de login chamada pelo botão HTML
+        window.fazerLogin = async function() {
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+
+            if (!email || !senha) {
+                showAlert('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+
+            btnEmailLogin.disabled = true;
+            btnEmailLogin.textContent = 'Entrando...';
+            emailLoading.classList.add('active');
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email: email, password: senha });
+                if (error) throw new Error(error.message);
+                
+                // Se o Supabase aprovou, puxa os dados e abre o painel
+                await loginWithAuth(data.session);
+
+            } catch (error) {
+                let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
+                if (error.message.includes('Invalid login credentials')) {
+                    mensagemErro = 'Email ou senha incorretos.';
+                }
+                showAlert(mensagemErro, 'error');
+            } finally {
+                btnEmailLogin.disabled = false;
+                btnEmailLogin.textContent = 'Entrar';
+                emailLoading.classList.remove('active');
+            }
+        };
+
+        // Login com Código de Parceiro
+        codeLoginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const partnerCode = document.getElementById('partnerCode').value.trim();
+            if (!partnerCode) { showAlert('Insira seu código.', 'error'); return; }
+
+            btnCodeLogin.disabled = true;
+            btnCodeLogin.textContent = 'Entrando...';
+            codeLoading.classList.add('active');
+
+            try {
+                const { data, error } = await supabase.from('parceiros').select('*').eq('codigo_parceiro', partnerCode).single();
+                if (error) throw new Error('Código de parceiro inválido.');
+                if (data.tipo_parceiro === 'igreja') throw new Error('Código de igreja. Use o portal correto.');
+                if (data.status !== 'ativo') throw new Error('Conta inativa.');
+
+                currentPartner = data;
+                localStorage.setItem('partner', JSON.stringify(currentPartner));
+                await showDashboard();
+            } catch (error) {
+                showAlert(error.message, 'error');
+            } finally {
+                btnCodeLogin.disabled = false;
+                btnCodeLogin.textContent = 'Entrar';
+                codeLoading.classList.remove('active');
+            }
+        });
+
+        // ==================== DASHBOARD E DADOS ====================
         const showDashboard = async () => {
             loginScreen.classList.add('hidden');
             dashboardScreen.classList.remove('hidden');
             
-            welcomePartnerName.textContent = currentPartner.nome_completo;
-            partnerNameSidebar.textContent = currentPartner.nome_completo;
-            partnerCodeSidebar.textContent = currentPartner.codigo_parceiro;
+            welcomePartnerName.textContent = currentPartner.nome_completo || 'Parceiro';
+            partnerNameSidebar.textContent = currentPartner.nome_completo || 'Parceiro';
+            partnerCodeSidebar.textContent = currentPartner.codigo_parceiro || '';
             
-            // Link antigo (mantido para compatibilidade)
-            affiliateLink.value = `https://somos.bizmix.com.br?ref=${currentPartner.codigo_parceiro}`;
-
-            await loadStatistics();
-            await loadSales();
-            loadPartnerData();
-            
-            // NOVO: Carregar link único
-            carregarLinkUnicoParceiro();
-            
-            // ADICIONEI ESTA LINHA AQUI 👇
-            loadProductsShowcase();
-        };
-
-        // ============================================
-        // CARREGAR ESTATÍSTICAS DE CLIQUES
-        // ============================================
-        const loadClickStatistics = async () => {
-            try {
-                // Total de cliques
-                const { count: totalClicks } = await supabase
-                    .from('link_clicks')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('codigo_referencia', currentPartner.codigo_parceiro);
-
-                document.getElementById('totalClicks').textContent = totalClicks || 0;
-
-                // Cliques hoje
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const todayISO = today.toISOString();
-
-                const { count: clicksToday } = await supabase
-                    .from('link_clicks')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('codigo_referencia', currentPartner.codigo_parceiro)
-                    .gte('clicked_at', todayISO);
-
-                document.getElementById('clicksToday').textContent = clicksToday || 0;
-
-                // Cliques este mês
-                const firstDayOfMonth = new Date();
-                firstDayOfMonth.setDate(1);
-                firstDayOfMonth.setHours(0, 0, 0, 0);
-                const monthISO = firstDayOfMonth.toISOString();
-
-                const { count: clicksMonth } = await supabase
-                    .from('link_clicks')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('codigo_referencia', currentPartner.codigo_parceiro)
-                    .gte('clicked_at', monthISO);
-
-                document.getElementById('clicksMonth').textContent = clicksMonth || 0;
-
-                // Taxa de conversão
-                const totalSales = parseInt(totalSalesElem.textContent) || 0;
-                const conversionRate = totalClicks > 0 ? ((totalSales / totalClicks) * 100).toFixed(1) : 0;
-                document.getElementById('conversionRate').textContent = conversionRate + '%';
-
-                console.log('✅ Estatísticas de cliques carregadas');
-
-            } catch (error) {
-                console.error('❌ Erro ao carregar estatísticas de cliques:', error);
-                document.getElementById('totalClicks').textContent = '0';
-                document.getElementById('clicksToday').textContent = '0';
-                document.getElementById('clicksMonth').textContent = '0';
-                document.getElementById('conversionRate').textContent = '0%';
+            // Verifica se a função de carregar vitrine existe antes de chamar
+            if (typeof loadProductsShowcase === 'function') {
+                loadProductsShowcase();
+            }
+            if (typeof carregarLinkUnicoParceiro === 'function') {
+                carregarLinkUnicoParceiro();
             }
         };
-
-        // Load Statistics
-        const loadStatistics = async () => {
-            try {
-                const { data: vendas, error } = await supabase
-                    .from('vendas')
-                    .select('*')
-                    .eq('codigo_indicacao', currentPartner.codigo_parceiro);
-
-                if (error) throw error;
-
-                const totalSales = vendas.length;
-                const totalValue = vendas.reduce((sum, v) => sum + (v.valor_total || 0), 0);
-                const totalCommission = vendas
-                    .filter(v => v.status_pagamento === 'approved')
-                    .reduce((sum, v) => sum + (v.valor_comissao || 0), 0);
-                const pendingCommission = vendas
-                    .filter(v => v.status_pagamento === 'approved' && !v.comissao_paga)
-                    .reduce((sum, v) => sum + (v.valor_comissao || 0), 0);
-
-                totalSalesElem.textContent = totalSales;
-                totalValueElem.textContent = formatCurrency(totalValue);
-                totalCommissionElem.textContent = formatCurrency(totalCommission);
-                pendingCommissionElem.textContent = formatCurrency(pendingCommission);
-                availableBalanceElem.textContent = formatCurrency(pendingCommission);
-                
-                // CARREGAR ESTATÍSTICAS DE CLIQUES
-                await loadClickStatistics();
-                
-            } catch (error) {
-                console.error('❌ Erro ao carregar estatísticas:', error);
-            }
-        };
-
-        // Load Sales
-        const loadSales = async () => {
-            try {
-                const { data: vendas, error } = await supabase
-                    .from('vendas')
-                    .select('*')
-                    .eq('codigo_indicacao', currentPartner.codigo_parceiro)
-                    .order('data_venda', { ascending: false });
-
-                if (error) throw error;
-
-                const lastSales = vendas.slice(0, 10);
-                salesTableBody.innerHTML = lastSales.length === 0 
-                    ? '<tr><td colspan="5" style="text-align: center; padding: 30px;">Nenhuma venda ainda.</td></tr>'
-                    : lastSales.map(v => `
-                        <tr>
-                            <td>${formatDate(v.data_venda)}</td>
-                            <td>${v.nome_comprador}</td>
-                            <td>${formatCurrency(v.valor_total)}</td>
-                            <td>${formatCurrency(v.valor_comissao)}</td>
-                            <td>${getStatusBadge(v.status_pagamento)}</td>
-                        </tr>
-                    `).join('');
-
-                allSalesTableBody.innerHTML = vendas.length === 0 
-                    ? '<tr><td colspan="6" style="text-align: center; padding: 30px;">Nenhuma venda ainda.</td></tr>'
-                    : vendas.map(v => `
-                        <tr>
-                            <td>${formatDate(v.data_venda)}</td>
-                            <td>${v.nome_comprador}</td>
-                            <td>${v.email_comprador}</td>
-                            <td>${formatCurrency(v.valor_total)}</td>
-                            <td>${formatCurrency(v.valor_comissao)}</td>
-                            <td>${getStatusBadge(v.status_pagamento)}</td>
-                        </tr>
-                    `).join('');
-
-            } catch (error) {
-                console.error('❌ Erro ao carregar vendas:', error);
-                salesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Erro ao carregar vendas.</td></tr>';
-                allSalesTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: red;">Erro ao carregar vendas.</td></tr>';
-            }
-        };
-
-        // ==================== FUNÇÕES DO LINK ÚNICO ====================
-        
-        // Carregar link único do parceiro
-        async function carregarLinkUnicoParceiro() {
-            if (!currentPartner) {
-                console.error('❌ Parceiro não carregado');
-                return;
-            }
-            
-            try {
-                console.log('🔗 Carregando link único para:', currentPartner.codigo_parceiro);
-                
-                const linkUnico = `https://somos.bizmix.com.br?ref=${currentPartner.codigo_parceiro}`;
-                document.getElementById('linkUnicoParceiro').value = linkUnico;
-                document.getElementById('percentualComissaoParceiro').textContent = `${currentPartner.comissao_padrao || 10}%`;
-                
-                console.log('✅ Link único carregado:', linkUnico);
-                
-            } catch (error) {
-                console.error('❌ Erro ao carregar link:', error);
-                document.getElementById('linkUnicoParceiro').value = 'Erro ao carregar. Recarregue a página.';
-            }
-        }
-        
-        // Copiar link
-            function copiarLinkParceiro( {
-            const input = document.getElementById('linkUnicoParceiro');
-            
-            if (input.value.includes('Erro') || input.value.includes('Carregando')) {
-                alert('⚠️ Link ainda não está disponível. Aguarde o carregamento.');
-                return;
-            }
-            
-            input.select();
-            input.setSelectionRange(0, 99999);
-            
-            try {
-                document.execCommand('copy');
-                
-                const button = event.target;
-                const originalText = button.innerHTML;
-                button.innerHTML = '✅ Copiado!';
-                button.style.background = '#28a745';
-                button.style.color = 'white';
-                
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.style.background = 'white';
-                    button.style.color = '#667eea';
-                }, 2000);
-                
-                console.log('✅ Link copiado!');
-                
-            } catch (err) {
-                alert('❌ Erro ao copiar. Selecione e copie manualmente (Ctrl+C).');
-                console.error('Erro ao copiar:', err);
-            }
-        };
-        
-        // Compartilhar WhatsApp
-        window.compartilharWhatsAppParceiro = function() {
-            const link = document.getElementById('linkUnicoParceiro').value;
-            
-            if (link.includes('Erro') || link.includes('Carregando')) {
-                alert('⚠️ Link ainda não está disponível.');
-                return;
-            }
-            
-            const texto = encodeURIComponent(
-                `📖 *Livro: SOMOS TODOS UM*\n\n` +
-                `A Verdade Bíblica Sobre a Unidade da Humanidade\n\n` +
-                `✅ Conteúdo profundo e transformador\n` +
-                `✅ Baseado nas Escrituras\n` +
-                `✅ Ideal para estudo em grupo\n\n` +
-                `Acesse: ${link}`
-            );
-            
-            window.open(`https://wa.me/?text=${texto}`, '_blank');
-            console.log('📱 Compartilhado via WhatsApp');
-        };
-        
-        // Compartilhar Email
-        window.compartilharEmailParceiro = function() {
-            const link = document.getElementById('linkUnicoParceiro').value;
-            
-            if (link.includes('Erro') || link.includes('Carregando')) {
-                alert('⚠️ Link ainda não está disponível.');
-                return;
-            }
-            
-            const assunto = encodeURIComponent('📖 Livro: SOMOS TODOS UM');
-            const corpo = encodeURIComponent(
-                `Olá!\n\n` +
-                `Gostaria de compartilhar com você o livro "SOMOS TODOS UM".\n\n` +
-                `É um conteúdo profundo sobre a unidade da humanidade sob a perspectiva bíblica.\n\n` +
-                `Acesse: ${link}\n\n` +
-                `Abraços!\n`
-            );
-            
-            window.location.href = `mailto:?subject=${assunto}&body=${corpo}`;
-            console.log('✉️ Compartilhado via Email');
-        };
-        
-        // Compartilhar Facebook
-        window.compartilharFacebookParceiro = function() {
-            const link = document.getElementById('linkUnicoParceiro').value;
-            
-            if (link.includes('Erro') || link.includes('Carregando')) {
-                alert('⚠️ Link ainda não está disponível.');
-                return;
-            }
-            
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`, '_blank');
-            console.log('📘 Compartilhado via Facebook');
-        };
-        
-        // Compartilhar Instagram
-        window.compartilharInstagramParceiro = function() {
-            const link = document.getElementById('linkUnicoParceiro').value;
-            
-            if (link.includes('Erro') || link.includes('Carregando')) {
-                alert('⚠️ Link ainda não está disponível.');
-                return;
-            }
-            
-            const tempInput = document.createElement('input');
-            tempInput.value = link;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            
-            alert('✅ Link copiado!\n\nAgora abra o Instagram e cole o link na sua bio ou em uma publicação.');
-            
-            window.open('instagram://story-camera', '_blank');
-            
-            console.log('📷 Link preparado para Instagram');
-        };
-
-        // Copy Affiliate Link (antigo - mantido para compatibilidade)
-        copyLinkButton.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(affiliateLink.value);
-                copyMessage.classList.remove('hidden');
-                setTimeout(() => copyMessage.classList.add('hidden'), 3000);
-            } catch (error) {
-                alert('Erro ao copiar link. Tente novamente.');
-            }
-        });
-
-        // Request Withdrawal
-        requestWithdrawalButton.addEventListener('click', async () => {
-            const amount = parseFloat(withdrawalAmountInput.value);
-            const method = paymentMethodSelect.value;
-            const details = paymentDetailsTextarea.value.trim();
-            const available = parseFloat(pendingCommissionElem.textContent.replace('R$', '').replace('.', '').replace(',', '.'));
-
-            withdrawalMessage.classList.add('hidden');
-
-            if (!amount || amount < 50) {
-                withdrawalMessage.textContent = 'O valor mínimo para saque é R$ 50,00.';
-                withdrawalMessage.classList.remove('hidden', 'alert-success');
-                withdrawalMessage.classList.add('alert-error');
-                return;
-            }
-
-            if (amount > available) {
-                withdrawalMessage.textContent = `Saldo insuficiente. Disponível: ${formatCurrency(available)}`;
-                withdrawalMessage.classList.remove('hidden', 'alert-success');
-                withdrawalMessage.classList.add('alert-error');
-                return;
-            }
-
-            if (!method || !details) {
-                withdrawalMessage.textContent = 'Preencha todos os campos.';
-                withdrawalMessage.classList.remove('hidden', 'alert-success');
-                withdrawalMessage.classList.add('alert-error');
-                return;
-            }
-
-            requestWithdrawalButton.disabled = true;
-            requestWithdrawalButton.textContent = 'Solicitando...';
-
-            try {
-                const { error } = await supabase
-                    .from('solicitacoes_saque')
-                    .insert([{
-                        parceiro_id: currentPartner.id,
-                        valor: amount,
-                        metodo_pagamento: method,
-                        detalhes_pagamento: details,
-                        status: 'pendente'
-                    }]);
-
-                if (error) throw error;
-
-                withdrawalMessage.textContent = 'Solicitação enviada com sucesso!';
-                withdrawalMessage.classList.remove('hidden', 'alert-error');
-                withdrawalMessage.classList.add('alert-success');
-                
-                withdrawalAmountInput.value = '';
-                paymentMethodSelect.value = '';
-                paymentDetailsTextarea.value = '';
-                
-                await loadStatistics();
-
-            } catch (error) {
-                console.error('❌ Erro ao solicitar saque:', error);
-                withdrawalMessage.textContent = `Erro: ${error.message}`;
-                withdrawalMessage.classList.remove('hidden', 'alert-success');
-                withdrawalMessage.classList.add('alert-error');
-            } finally {
-                requestWithdrawalButton.disabled = false;
-                requestWithdrawalButton.textContent = 'Solicitar Saque';
-            }
-        });
-
-        // Load Partner Data
-        const loadPartnerData = () => {
-            if (!currentPartner) return;
-
-            editNomeCompleto.value = currentPartner.nome_completo || '';
-            document.getElementById('editEmail').value = currentPartner.email || '';
-            document.getElementById('editTelefone').value = currentPartner.telefone || '';
-            editCPF.value = currentPartner.cpf || currentPartner.cpf_cnpj || '';
-
-            document.getElementById('editCEP').value = currentPartner.cep || '';
-            document.getElementById('editEndereco').value = currentPartner.endereco || '';
-            document.getElementById('editNumero').value = currentPartner.numero || '';
-            document.getElementById('editComplemento').value = currentPartner.complemento || '';
-            document.getElementById('editBairro').value = currentPartner.bairro || '';
-            document.getElementById('editCidade').value = currentPartner.cidade || '';
-            document.getElementById('editEstado').value = currentPartner.estado || '';
-
-            document.getElementById('editBanco').value = currentPartner.banco || '';
-            document.getElementById('editAgencia').value = currentPartner.agencia || '';
-            document.getElementById('editConta').value = currentPartner.conta || '';
-            document.getElementById('editTipoConta').value = currentPartner.tipo_conta || '';
-            document.getElementById('editPixTipo').value = currentPartner.pix_tipo || '';
-            document.getElementById('editPixChave').value = currentPartner.pix_chave || '';
-        };
-
-        // Save Personal Data
-        document.getElementById('personalDataForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const nomeCompleto = editNomeCompleto.value.trim();
-            const email = document.getElementById('editEmail').value.trim();
-            const telefone = document.getElementById('editTelefone').value.trim();
-            const cpf = editCPF.value.trim();
-            const saveButton = document.getElementById('savePersonalDataButton');
-            const message = document.getElementById('personalDataMessage');
-
-            message.classList.add('hidden');
-
-            if (!nomeCompleto || !email) {
-                message.textContent = 'Nome completo e Email são obrigatórios.';
-                message.classList.remove('hidden', 'alert-success');
-                message.classList.add('alert-error');
-                return;
-            }
-
-            saveButton.disabled = true;
-            saveButton.textContent = '💾 Salvando...';
-
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({
-                        nome_completo: nomeCompleto,
-                        email: email,
-                        telefone: telefone,
-                        cpf: cpf,
-                        cpf_cnpj: cpf,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', currentPartner.id);
-
-                if (error) throw error;
-
-                currentPartner.nome_completo = nomeCompleto;
-                currentPartner.email = email;
-                currentPartner.telefone = telefone;
-                currentPartner.cpf = cpf;
-                currentPartner.cpf_cnpj = cpf;
-                localStorage.setItem('partner', JSON.stringify(currentPartner));
-
-                welcomePartnerName.textContent = nomeCompleto;
-                partnerNameSidebar.textContent = nomeCompleto;
-
-                message.textContent = '✅ Dados pessoais salvos com sucesso!';
-                message.classList.remove('hidden', 'alert-error');
-                message.classList.add('alert-success');
-
-            } catch (error) {
-                console.error('❌ Erro ao salvar dados pessoais:', error);
-                message.textContent = `Erro: ${error.message}`;
-                message.classList.remove('hidden', 'alert-success');
-                message.classList.add('alert-error');
-            } finally {
-                saveButton.disabled = false;
-                saveButton.textContent = '💾 Salvar Dados Pessoais';
-            }
-        });
-
-        // Save Address
-        document.getElementById('addressForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const cep = document.getElementById('editCEP').value.trim();
-            const endereco = document.getElementById('editEndereco').value.trim();
-            const numero = document.getElementById('editNumero').value.trim();
-            const complemento = document.getElementById('editComplemento').value.trim();
-            const bairro = document.getElementById('editBairro').value.trim();
-            const cidade = document.getElementById('editCidade').value.trim();
-            const estado = document.getElementById('editEstado').value;
-            const saveButton = document.getElementById('saveAddressButton');
-            const message = document.getElementById('addressMessage');
-
-            message.classList.add('hidden');
-
-            saveButton.disabled = true;
-            saveButton.textContent = '💾 Salvando...';
-
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({
-                        cep: cep,
-                        endereco: endereco,
-                        numero: numero,
-                        complemento: complemento,
-                        bairro: bairro,
-                        cidade: cidade,
-                        estado: estado,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', currentPartner.id);
-
-                if (error) throw error;
-
-                currentPartner.cep = cep;
-                currentPartner.endereco = endereco;
-                currentPartner.numero = numero;
-                currentPartner.complemento = complemento;
-                currentPartner.bairro = bairro;
-                currentPartner.cidade = cidade;
-                currentPartner.estado = estado;
-                localStorage.setItem('partner', JSON.stringify(currentPartner));
-
-                message.textContent = '✅ Endereço salvo com sucesso!';
-                message.classList.remove('hidden', 'alert-error');
-                message.classList.add('alert-success');
-
-            } catch (error) {
-                console.error('❌ Erro ao salvar endereço:', error);
-                message.textContent = `Erro: ${error.message}`;
-                message.classList.remove('hidden', 'alert-success');
-                message.classList.add('alert-error');
-            } finally {
-                saveButton.disabled = false;
-                saveButton.textContent = '💾 Salvar Endereço';
-            }
-        });
-
-        // Save Bank Data
-        document.getElementById('bankDataForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const banco = document.getElementById('editBanco').value.trim();
-            const agencia = document.getElementById('editAgencia').value.trim();
-            const conta = document.getElementById('editConta').value.trim();
-            const tipoConta = document.getElementById('editTipoConta').value;
-            const pixTipo = document.getElementById('editPixTipo').value;
-            const pixChave = document.getElementById('editPixChave').value.trim();
-            const saveButton = document.getElementById('saveBankDataButton');
-            const message = document.getElementById('bankDataMessage');
-
-            message.classList.add('hidden');
-
-            saveButton.disabled = true;
-            saveButton.textContent = '💾 Salvando...';
-
-            try {
-                const { error } = await supabase
-                    .from('parceiros')
-                    .update({
-                        banco: banco,
-                        agencia: agencia,
-                        conta: conta,
-                        tipo_conta: tipoConta,
-                        pix_tipo: pixTipo,
-                        pix_chave: pixChave,
-                        updated_at: new Date().toISOString()
-                    })
-                    .eq('id', currentPartner.id);
-
-                if (error) throw error;
-
-                currentPartner.banco = banco;
-                currentPartner.agencia = agencia;
-                currentPartner.conta = conta;
-                currentPartner.tipo_conta = tipoConta;
-                currentPartner.pix_tipo = pixTipo;
-                currentPartner.pix_chave = pixChave;
-                localStorage.setItem('partner', JSON.stringify(currentPartner));
-
-                message.textContent = '✅ Dados bancários salvos com sucesso!';
-                message.classList.remove('hidden', 'alert-error');
-                message.classList.add('alert-success');
-            } catch (error) {
-                console.error('❌ Erro ao salvar dados bancários:', error);
-                message.textContent = `Erro: ${error.message}`;
-                message.classList.remove('hidden', 'alert-success');
-                message.classList.add('alert-error');
-            } finally {
-                saveButton.disabled = false;
-                saveButton.textContent = '💾 Salvar Dados Bancários';
-            }
-        });
-
-        // Change Password
-        document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const changeButton = document.getElementById('changePasswordButton');
-            const message = document.getElementById('passwordMessage');
-
-            message.classList.add('hidden');
-
-            if (newPassword.length < 6) {
-                message.textContent = 'A nova senha deve ter no mínimo 6 caracteres.';
-                message.classList.remove('hidden', 'alert-success');
-                message.classList.add('alert-error');
-                return;
-            }
-
-            if (newPassword !== confirmPassword) {
-                message.textContent = 'As senhas não coincidem.';
-                message.classList.remove('hidden', 'alert-success');
-                message.classList.add('alert-error');
-                return;
-            }
-
-            changeButton.disabled = true;
-            changeButton.textContent = '🔐 Alterando...';
-
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) {
-                    throw new Error('Alteração de senha disponível apenas para login com email/senha.');
-                }
-
-                const { error: loginError } = await supabase.auth.signInWithPassword({
-                    email: currentPartner.email,
-                    password: currentPassword
-                });
-
-                if (loginError) {
-                    throw new Error('Senha atual incorreta.');
-                }
-
-                const { error: updateError } = await supabase.auth.updateUser({
-                    password: newPassword
-                });
-
-                if (updateError) throw updateError;
-
-                message.textContent = '✅ Senha alterada com sucesso!';
-                message.classList.remove('hidden', 'alert-error');
-                message.classList.add('alert-success');
-
-                document.getElementById('currentPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-
-            } catch (error) {
-                console.error('❌ Erro ao alterar senha:', error);
-                message.textContent = error.message;
-                message.classList.remove('hidden', 'alert-success');
-                message.classList.add('alert-error');
-            } finally {
-                changeButton.disabled = false;
-                changeButton.textContent = '🔐 Alterar Senha';
-            }
-        });
-
-        // Busca CEP
-        document.getElementById('editCEP').addEventListener('blur', async (e) => {
-            const cep = e.target.value.replace(/\D/g, '');
-            if (cep.length === 8) {
-                try {
-                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                    const data = await response.json();
-                    if (!data.erro) {
-                        document.getElementById('editEndereco').value = data.logradouro || '';
-                        document.getElementById('editBairro').value = data.bairro || '';
-                        document.getElementById('editCidade').value = data.localidade || '';
-                        document.getElementById('editEstado').value = data.uf || '';
-                    }
-                } catch (error) {
-                    console.error('Erro ao buscar CEP:', error);
-                }
-            }
-        });
-
-        // Sidebar Navigation
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const sectionId = link.dataset.section;
-                if (sectionId) showSection(sectionId);
-            });
-        });
 
         // Logout
         logoutButton.addEventListener('click', async () => {
@@ -2173,141 +1415,11 @@
             showSection('dashboard');
         });
 
-        // Mobile Menu Toggle
-        mobileMenuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-
-        // Initialize
+        // Inicializa o sistema ao carregar a página
         checkLogin();
 
-                // Carregar Vitrine de Produtos
-        async function loadProductsShowcase() {
-            try {
-                const grid = document.getElementById('productsGrid');
-                const loading = document.getElementById('productsLoading');
-                
-                // Busca produtos ativos
-                const { data: produtos, error } = await supabase
-                    .from('produtos')
-                    .select('*')
-                    .eq('ativo', true)
-                    .eq('status', 'ativo'); // Ajuste conforme seu banco
-
-                if (error) throw error;
-
-                loading.style.display = 'none';
-                grid.innerHTML = '';
-
-                if (!produtos || produtos.length === 0) {
-                    grid.innerHTML = '<p>Nenhum produto disponível.</p>';
-                    return;
-                }
-
-                produtos.forEach(prod => {
-                    // Gera o link com o código do parceiro
-                    const linkAfiliado = `https://bizmix.com.br/checkout.html?produto=${prod.id}&ref=${currentPartner.codigo_parceiro}`;
-                    
-                    const card = document.createElement('div');
-                    card.style.cssText = "border: 1px solid #eee; border-radius: 10px; overflow: hidden; transition: transform 0.3s;";
-                    card.onmouseover = () => card.style.transform = "translateY(-5px)";
-                    card.onmouseout = () => card.style.transform = "translateY(0)";
-
-                    card.innerHTML = `
-                        <div style="height: 150px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 8px;">
-                           <img src="${prod.imagem_url || '/somos-todos-um/images/capa-livro.jpg'}" alt="${prod.nome}" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;">
-                        </div>
-                        <div style="padding: 20px;">
-                            <h3 style="font-size: 18px; margin-bottom: 10px;">${prod.nome}</h3>
-                            <p style="font-size: 14px; color: #4b5563; margin-bottom: 10px; line-height: 1.5;">
-                                ${prod.descricao || 'Um livro transformador sobre vida, propósito e conexão humana.'}
-                            </p>
-                            <p style="color: #667eea; font-weight: bold; font-size: 20px;">R$ ${prod.preco.toFixed(2).replace('.', ',')}</p>
-                            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Comissão: <strong>${currentPartner.comissao_padrao || 10}%</strong></p>
-                            
-                            <div style="background: #f0f3ff; padding: 10px; border-radius: 5px; font-size: 12px; margin-bottom: 15px; word-break: break-all;">
-                                ${linkAfiliado}
-                            </div>
-                            
-                            <button onclick="navigator.clipboard.writeText('${linkAfiliado}'); alert('Link copiado!')" style="width: 100%; padding: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">
-                                📋 Copiar Link
-                            </button>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-
-            } catch (error) {
-                console.error('Erro ao carregar vitrine:', error);
-            }
-        }
     </script>
-    <script>
-    window.fazerLogin = async function() {
-        const emailInput = document.getElementById('email');
-        const senhaInput = document.getElementById('senha');
-        const btnEmailLogin = document.getElementById('btnEmailLogin');
-        const emailLoading = document.getElementById('emailLoading');
-
-        if (!emailInput || !senhaInput) {
-            console.error("❌ ERRO: Campos de email ou senha não encontrados no HTML!");
-            return;
-        }
-
-        const email = emailInput.value.trim();
-        const senha = senhaInput.value;
-
-        if (!email || !senha) {
-            showAlert('Por favor, preencha todos os campos.', 'error');
-            return;
-        }
-
-        btnEmailLogin.disabled = true;
-        btnEmailLogin.textContent = 'Entrando...';
-        if(emailLoading) emailLoading.classList.add('active');
-
-        try {
-            console.log("⏳ Autenticando usuário: " + email);
-            
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: senha,
-            });
-
-            if (error) throw new Error(error.message);
-
-            console.log("✅ Supabase autorizou! Carregando painel...");
-            
-            // Chama a função que abre o painel (ela já existe no seu código principal)
-            if (typeof loginWithAuth === "function") {
-                await loginWithAuth(data.session);
-            } else {
-                console.warn("⚠️ A função loginWithAuth não foi encontrada, recarregando a página para forçar o acesso...");
-                window.location.reload();
-            }
-
-        } catch (error) {
-            console.error('❌ Erro no login:', error);
-            let mensagemErro = 'Erro ao fazer login. Verifique suas credenciais.';
-            
-            if (error.message.includes('Invalid login credentials')) {
-                mensagemErro = 'Email ou senha incorretos.';
-            } else if (error.message.includes('Email not confirmed')) {
-                mensagemErro = 'Por favor, confirme seu email antes de fazer login.';
-            }
-            
-            // Se o showAlert falhar por não estar acessível, usamos o alert nativo
-            if (typeof showAlert === "function") {
-                showAlert(mensagemErro, 'error');
-            } else {
-                alert(mensagemErro);
-            }
-        } finally {
-            btnEmailLogin.disabled = false;
-            btnEmailLogin.textContent = 'Entrar';
-            if(emailLoading) emailLoading.classList.remove('active');
-        }
-    };
-</script>
+</body>
+</html>
 </body>
 </html>
