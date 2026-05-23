@@ -1,8 +1,7 @@
 // 
 // MÓDULO DE COMPROVANTE DE VENDA (CLIENTE)
 // 
-
-const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
+const SUPABASE_URL = 'https://hjlpmorykllywjodusqx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
 
 const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
