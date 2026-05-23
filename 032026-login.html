@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Biz Mix</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header .logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* Seleção de Tipo */
+        .type-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .type-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .type-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .type-card.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .type-card .icon {
+            font-size: 56px;
+            margin-bottom: 18px;
+        }
+
+        .type-card h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .type-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .type-card .btn {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-card.active .btn {
+            background: white;
+            color: #667eea;
+        }
+
+        .type-card .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Formulário */
+        .form-container {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-container.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .form-header h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            transform: translateX(-5px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .link-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link-group a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .link-group a:hover {
+            text-decoration: underline;
+        }
+
+        /* Link Esqueci Senha */
+        .forgot-password {
+            text-align: right;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+
+        .divider {
+            margin: 20px 0;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 32px;
+            }
+            .type-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Header -->
+        <div class="header">
+            <img src="/images/logo-bizmix-branco.png" alt="Biz Mix" class="logo">
+            <h1>Biz Mix</h1>
+            <p>Escolha o tipo de acesso</p>
+        </div>
+
+        <!-- Seleção de Tipo -->
+        <div class="type-selection" id="type-selection">
+            
+            <!-- Card Igreja -->
+            <div class="type-card" onclick="selecionarTipo('igreja')">
+                <div class="icon">🙏</div>
+                <h2>Igreja</h2>
+                <p>Acesse o portal da sua igreja para gerenciar vendas e comissões.</p>
+                <button class="btn">Acessar Portal</button>
+            </div>
+
+            <!-- Card Parceiro -->
+            <div class="type-card" onclick="selecionarTipo('parceiro')">
+                <div class="icon">🤝</div>
+                <h2>Parceiro</h2>
+                <p>Acesse seu dashboard de parceiro para acompanhar vendas.</p>
+                <button class="btn">Acessar Dashboard</button>
+            </div>
+
+            <!-- Card Admin -->
+            <div class="type-card" onclick="selecionarTipo('admin')">
+                <div class="icon">💼</div>
+                <h2>Admin</h2>
+                <p>Acesso administrativo do sistema Biz Mix.</p>
+                <button class="btn">Acessar Admin</button>
+            </div>
+
+            <!-- Card Super Admin -->
+            <div class="type-card" onclick="selecionarTipo('superadmin')">
+                <div class="icon">👑</div>
+                <h2>Super Admin</h2>
+                <p>Acesso completo e irrestrito ao sistema.</p>
+                <button class="btn">Acessar Super Admin</button>
+            </div>
+
+        </div>
+
+        <!-- Formulário Igreja -->
+        <div class="form-container" id="form-igreja">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            
+            <div class="form-header">
+                <div class="icon">🙏</div>
+                <h2>Portal da Igreja</h2>
+                <p>Entre com suas credenciais</p>
+            </div>
+
+            <div class="error-message" id="error-igreja"></div>
+
+            <form id="formIgreja" onsubmit="submitLogin(event, 'igreja')">
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha *</label>
+                    <input type="password" name="senha" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Entrar</button>
+            </form>
+
+            <div class="divider">ou</div>
+
+            <form id="formIgrejaCode" onsubmit="submitLoginCode(event, 'igreja')">
+                <div class="form-group">
+                    <label>Código da Igreja *</label>
+                    <input type="text" name="codigo" required placeholder="Ex: IGR001">
+                </div>
+
+                <button type="submit" class="btn-submit">Entrar com Código</button>
+            </form>
+
+            <div class="link-group">
+                <a href="/cadastro">Ainda não tem cadastro? Cadastre-se aqui</a>
+            </div>
+        </div>
+
+        <!-- Formulário Parceiro -->
+        <div class="form-container" id="form-parceiro">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            
+            <div class="form-header">
+                <div class="icon">🤝</div>
+                <h2>Dashboard do Parceiro</h2>
+                <p>Entre com suas credenciais</p>
+            </div>
+
+            <div class="error-message" id="error-parceiro"></div>
+
+            <form id="formParceiro" onsubmit="submitLogin(event, 'parceiro')">
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha *</label>
+                    <input type="password" name="senha" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Entrar</button>
+            </form>
+
+            <div class="link-group">
+                <a href="/cadastro">Ainda não tem cadastro? Cadastre-se aqui</a>
+            </div>
+        </div>
+
+        <!-- Formulário Admin -->
+        <div class="form-container" id="form-admin">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            
+            <div class="form-header">
+                <div class="icon">💼</div>
+                <h2>Painel Administrativo</h2>
+                <p>Acesso administrativo</p>
+            </div>
+
+            <div class="error-message" id="error-admin"></div>
+
+            <form id="formAdmin" onsubmit="submitLogin(event, 'admin')">
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha *</label>
+                    <input type="password" name="senha" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Entrar</button>
+            </form>
+        </div>
+
+        <!-- Formulário Super Admin -->
+        <div class="form-container" id="form-superadmin">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            
+            <div class="form-header">
+                <div class="icon">👑</div>
+                <h2>Super Admin</h2>
+                <p>Acesso completo ao sistema</p>
+            </div>
+
+            <div class="error-message" id="error-superadmin"></div>
+
+            <form id="formSuperAdmin" onsubmit="submitLogin(event, 'superadmin')">
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Senha *</label>
+                    <input type="password" name="senha" required>
+                </div>
+
+                <div class="forgot-password">
+                    <a href="/esqueci-senha">Esqueci minha senha</a>
+                </div>
+
+                <button type="submit" class="btn-submit">Entrar</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        console.log('🔐 Página de login carregada');
+
+        // Verificar Supabase
+        if (typeof supabase === 'undefined') {
+            console.error('❌ Supabase não carregado!');
+            alert('❌ Erro ao carregar sistema. Recarregue a página.');
+        } else {
+            console.log('✅ Supabase carregado');
+        }
+
+        // Selecionar tipo de login
+        function selecionarTipo(tipo) {
+            console.log('🔐 Tipo selecionado:', tipo);
+            
+            // Esconder seleção
+            document.getElementById('type-selection').style.display = 'none';
+            
+            // Mostrar formulário correspondente
+            document.getElementById(`form-${tipo}`).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Voltar para seleção
+        function voltarSelecao() {
+            console.log('↩️ Voltando para seleção');
+            
+            // Esconder todos os formulários
+            document.querySelectorAll('.form-container').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            // Esconder mensagens de erro
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.classList.remove('show');
+            });
+            
+            // Mostrar seleção
+            document.getElementById('type-selection').style.display = 'grid';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mostrar erro
+        function mostrarErro(tipo, mensagem) {
+            const errorDiv = document.getElementById(`error-${tipo}`);
+            errorDiv.textContent = mensagem;
+            errorDiv.classList.add('show');
+        }
+
+        // Esconder erro
+        function esconderErro(tipo) {
+            const errorDiv = document.getElementById(`error-${tipo}`);
+            errorDiv.classList.remove('show');
+        }
+
+        // Login com Email/Senha
+        async function submitLogin(event, tipo) {
+            event.preventDefault();
+            console.log('📤 Fazendo login:', tipo);
+
+            const form = event.target;
+            const submitBtn = form.querySelector('.btn-submit');
+            const email = form.email.value;
+            const senha = form.senha.value;
+            
+            // Desabilitar botão
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Entrando...';
+            esconderErro(tipo);
+
+            try {
+                // Login no Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: senha
+                });
+
+                if (authError) {
+                    console.error('❌ Erro de autenticação:', authError);
+                    mostrarErro(tipo, 'Email ou senha incorretos.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Entrar';
+                    return;
+                }
+
+                console.log('✅ Autenticação bem-sucedida:', authData);
+
+                // Buscar dados do parceiro/igreja
+                const { data: userData, error: userError } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', email)
+                    .single();
+
+                if (userError || !userData) {
+                    console.error('❌ Usuário não encontrado:', userError);
+                    mostrarErro(tipo, 'Usuário não encontrado no sistema.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Entrar';
+                    return;
+                }
+
+                console.log('✅ Dados do usuário:', userData);
+
+                // Validar tipo de usuário
+                if (tipo === 'igreja' && userData.tipo_parceiro !== 'igreja') {
+                    mostrarErro(tipo, 'Este email não está cadastrado como igreja.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Entrar';
+                    return;
+                }
+
+                if (tipo === 'parceiro' && userData.tipo_parceiro === 'igreja') {
+                    mostrarErro(tipo, 'Este email é de uma igreja. Use o login de igrejas.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Entrar';
+                    return;
+                }
+
+                if ((tipo === 'admin' || tipo === 'superadmin') && !userData.is_admin) {
+                    mostrarErro(tipo, 'Você não tem permissão de administrador.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Entrar';
+                    return;
+                }
+
+                // Salvar sessão
+                localStorage.setItem('userId', userData.id);
+                localStorage.setItem('userEmail', userData.email);
+                localStorage.setItem('userName', userData.nome_completo);
+                localStorage.setItem('userType', userData.tipo_parceiro || 'parceiro');
+                localStorage.setItem('isAdmin', userData.is_admin || false);
+
+                console.log('✅ Login completo! Redirecionando...');
+
+                // Redirecionar para dashboard correto
+                if (tipo === 'igreja') {
+                    window.location.href = '/somos-todos-um/igrejas/portal-igreja.html';
+                } else if (tipo === 'parceiro') {
+                    window.location.href = '/somos-todos-um/parceiros/dashboard-parceiro.html';
+                } else if (tipo === 'admin' || tipo === 'superadmin') {
+                    window.location.href = '/admin/dashboard.html';
+                }
+
+            } catch (err) {
+                console.error('❌ Erro:', err);
+                mostrarErro(tipo, 'Erro ao processar login: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Entrar';
+            }
+        }
+
+        // Login com Código (só para igrejas)
+        async function submitLoginCode(event, tipo) {
+            event.preventDefault();
+            console.log('📤 Login com código:', tipo);
+
+            const form = event.target;
+            const submitBtn = form.querySelector('.btn-submit');
+            const codigo = form.codigo.value.toUpperCase();
+            
+            // Desabilitar botão
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verificando...';
+            esconderErro(tipo);
+
+            try {
+                // Buscar igreja pelo código
+                const { data: userData, error: userError } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('codigo_igreja', codigo)
+                    .eq('tipo_parceiro', 'igreja')
+                    .single();
+
+                if (userError || !userData) {
+                    console.error('❌ Código inválido:', userError);
+                    mostrarErro(tipo, 'Código de igreja inválido.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Entrar com Código';
+                    return;
+                }
+
+                console.log('✅ Igreja encontrada:', userData);
+
+                // Salvar sessão
+                localStorage.setItem('userId', userData.id);
+                localStorage.setItem('userEmail', userData.email);
+                localStorage.setItem('userName', userData.nome_completo);
+                localStorage.setItem('userType', 'igreja');
+                localStorage.setItem('loginMethod', 'code');
+
+                console.log('✅ Login com código completo! Redirecionando...');
+
+                // Redirecionar
+                window.location.href = '/somos-todos-um/igrejas/portal-igreja.html';
+
+            } catch (err) {
+                console.error('❌ Erro:', err);
+                mostrarErro(tipo, 'Erro ao processar código: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Entrar com Código';
+            }
+        }
+    </script>
+</body>
+</html>

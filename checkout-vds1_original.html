@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Somos Todos Um</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+    
+    <!-- Supabase Config Centralizado -->
+    <script src="/somos-todos-um/js/supabase-config.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #667eea; --secondary-color: #764ba2; --dark-bg: #1a1a2e;
+            --light-bg: #f8f9fa; --white: #ffffff; --text-dark: #2d3748;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.6; color: var(--text-dark); background: var(--light-bg); }
+        .checkout-container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: 1fr 400px; gap: 2rem; }
+        .checkout-form, .order-summary { background: var(--white); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .form-section { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #e2e8f0; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        
+        /* Container do Pix Dinâmico */
+        #pixDynamicContainer { display: none; text-align: center; background: #f0fdf4; padding: 20px; border-radius: 10px; border: 2px solid #28a745; margin-top: 20px; }
+        .pix-qrcode { width: 200px; height: 200px; display: block; margin: 0 auto 15px; border-radius: 10px; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .btn-copy-pix { width: 100%; padding: 12px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; margin-bottom: 15px; transition: transform 0.2s; background: #009ee3; color: white; }
+        .btn-copy-pix:active { transform: scale(0.98); }
+        .btn-submit { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); border: none; border-radius: 8px; font-size: 1.2rem; font-weight: 700; cursor: pointer; margin-top: 2rem; }
+        
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; color: white; flex-direction: column; }
+        .loading-overlay.active { display: flex; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @media (max-width: 768px) { .checkout-container { grid-template-columns: 1fr; } .order-summary { order: -1; } }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay">
+        <div class="spinner"></div>
+        <p id="loadingText">Processando...</p>
+    </div>
+
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <h1>Finalizar Compra</h1>
+            
+            <form id="checkoutForm">
+                <!-- Seus Dados -->
+                <div class="form-section">
+                    <h2>Seus Dados</h2>
+                    <div class="form-group"><label>Nome Completo *</label><input type="text" id="nome" required></div>
+                    <div class="form-group"><label>E-mail *</label><input type="email" id="email" required></div>
+                    <div class="form-group"><label>WhatsApp *</label><input type="tel" id="whatsapp" placeholder="(00) 00000-0000" required></div>
+                </div>
+
+                <!-- Endereço -->
+                <div class="form-section">
+                    <h2>Endereço de Entrega</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>CEP</label><input type="text" id="cep"></div>
+                        <div class="form-group"><label>Cidade</label><input type="text" id="cidade"></div>
+                    </div>
+                    <div class="form-group"><label>Endereço</label><input type="text" id="endereco"></div>
+                    <div class="form-group"><label>Bairro</label><input type="text" id="bairro"></div>
+                    <div class="form-group"><label>Estado</label>
+                        <select id="estado"><option value="">Selecione</option><option value="SP">SP</option><option value="RJ">RJ</option><option value="MG">MG</option><option value="GO">GO</option><option value="DF">DF</option><option value="RS">RS</option><option value="BA">BA</option><option value="PE">PE</option></select>
+                    </div>
+                </div>
+                                <!-- Personalização (DESLIGADO) -->
+                <div class="form-section" style="display: none;">
+                    <h2>Personalização do Rodapé</h2>
+                    <div class="form-group">
+                        <label><input type="radio" name="rodape" value="padrao" checked> Padrão</label>
+                    </div>
+                </div>
+
+                <!-- ÁREA DE PAGAMENTO -->
+                <div class="form-section">
+                    <h2>Pagamento</h2>
+                    
+                    <!-- PIX AUTOMÁTICO (Invisível até gerar) -->
+                    <div id="pixDynamicContainer">
+                        <h3 style="color:#28a745; margin-bottom:10px;">✅ Pedido Criado!</h3>
+                        <p style="margin-bottom: 15px;">Escaneie o QR Code abaixo para pagar e receber seu livro na hora:</p>
+                        
+                        <!-- Imagem do QR Code que vem do Render -->
+                        <img id="imgQrCode" src="" alt="QR Code Pix" class="pix-qrcode">
+                        
+                        <!-- Código Copia e Cola -->
+                        <input type="text" id="pixCopiaColaInput" style="position:absolute; opacity:0;">
+                        
+                        <button type="button" onclick="copiarPix()" class="btn-copy-pix">
+                            <span id="btnTextPix">📑 Copiar Código PIX</span>
+                        </button>
+                        
+                        <p style="font-size:0.9rem; color:#555; margin-top:10px;">Assim que pagar, o livro chega no seu e-mail em instantes!</p>
+                    </div>
+                </div>
+
+                <!-- BOTÃO DE CONFIRMAR -->
+                <button type="submit" id="btnSubmit" class="btn-submit">Gerar Pix de Pagamento</button>
+                
+                <p id="msgAviso" style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem; font-weight: bold;">
+                    Clique para gerar o QR Code.
+                </p>
+            </form>
+        </div>
+                <!-- Resumo -->
+        <div class="order-summary">
+            <h2>Resumo</h2>
+            <img src="/somos-todos-um/images/capa_checkout.jpg" alt="Capa" style="width:100%; border-radius:8px; margin-bottom:1rem;">
+            <h3>Livro: Somos Todos Um</h3>
+            <div style="display:flex; justify-content:space-between; margin-top:1rem; padding-top:1rem; border-top:1px solid #eee; font-weight:bold; color:var(--primary-color); font-size:1.2rem;">
+                <span>Total:</span>
+                <span>R$ 30,00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // URL do seu servidor Render (CÉREBRO)
+        const RENDER_URL = "https://gerador-pdf-bizmix.onrender.com/gerar_pix";
+
+        // MÁSCARAS
+        document.getElementById('whatsapp').addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 2) v = `(${v.slice(0,2)}) ${v.slice(2)}`;
+            if (v.length > 9) v = `${v.slice(0,10)}-${v.slice(10)}`;
+            e.target.value = v;
+        });
+
+        document.getElementById('cep').addEventListener('blur', async function() {
+            const cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                try {
+                    const req = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await req.json();
+                    if (!data.erro) {
+                        document.getElementById('endereco').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('estado').value = data.uf;
+                    }
+                } catch(e) {}
+            }
+        });
+
+        function copiarPix() {
+            var copyText = document.getElementById("pixCopiaColaInput");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value).then(function() {
+                var btn = document.querySelector('.btn-copy-pix');
+                var txt = document.getElementById('btnTextPix');
+                var original = txt.innerText;
+                btn.style.background = '#28A745'; btn.style.color = '#FFF'; txt.innerText = '✅ COPIADO!';
+                setTimeout(() => { btn.style.background = '#009ee3'; btn.style.color = '#fff'; txt.innerText = original; }, 3000);
+            }, function() { alert("Copie manualmente."); });
+        }
+
+        // SUBMIT (GERAR PIX)
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const loading = document.querySelector('.loading-overlay');
+            const loadingText = document.getElementById('loadingText');
+            
+            loading.classList.add('active');
+            loadingText.innerText = "Registrando Pedido...";
+
+            try {
+                // 1. Coleta dados
+                // CAPTURA A INDICAÇÃO DA URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const codigoIndicacao = urlParams.get('ref');
+                
+                const formData = {
+                    nome_comprador: document.getElementById('nome').value,
+                    email_comprador: document.getElementById('email').value,
+                    whatsapp_comprador: document.getElementById('whatsapp').value,
+                    telefone_comprador: document.getElementById('whatsapp').value,
+                    cep_comprador: document.getElementById('cep').value,
+                    endereco_comprador: document.getElementById('endereco').value,
+                    cidade_comprador: document.getElementById('cidade').value,
+                    estado_comprador: document.getElementById('estado').value,
+                    codigo_indicacao: codigoIndicacao, // <--- ADICIONEI ISSO
+                    preferencia_rodape: 'padrao',
+                    valor_total: 30.00,
+                    status_pagamento: 'pendente',
+                    produto_id: '1f19140d-d466-4d14-b64c-c6c2ae9c22df'
+                };
+
+                // 2. Salva no Supabase (Cria a venda pendente)
+                // Usa 'vendas' que é a tabela oficial
+                const data = await supabaseFetch('vendas', { method: 'POST', body: JSON.stringify(formData) });
+                
+                // 3. Chama o Render para Gerar o Pix
+                loadingText.innerText = "Gerando Pix com Mercado Pago...";
+                
+                const response = await fetch(RENDER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: formData.email_comprador,
+                        nome: formData.nome_comprador
+                    })
+                });
+
+                const pixData = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(pixData.erro || 'Erro ao gerar Pix');
+                }
+
+                // 4. Sucesso! Mostra o Pix
+                loading.classList.remove('active');
+                
+                // Esconde botão de confirmar
+                document.getElementById('btnSubmit').style.display = 'none';
+                document.getElementById('msgAviso').style.display = 'none';
+                
+                // Mostra o QR Code
+                const container = document.getElementById('pixDynamicContainer');
+                const img = document.getElementById('imgQrCode');
+                const input = document.getElementById('pixCopiaColaInput');
+                
+                img.src = `data:image/jpeg;base64,${pixData.qr_base64}`;
+                input.value = pixData.qr_code;
+                container.style.display = 'block';
+                
+                // Rola a tela até o Pix
+                container.scrollIntoView({behavior: 'smooth'});
+
+            } catch (error) {
+                loading.classList.remove('active');
+                console.error(error);
+                alert('Erro: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

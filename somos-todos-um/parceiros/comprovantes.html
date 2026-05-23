@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Comprovantes - Área do Parceiro</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <style>
+        body {
+            background: #111827;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            border: 1px solid #374151;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #4b5563;
+        }
+
+        .card {
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #374151;
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+
+        .card .subtitle {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0 0 24px 0;
+        }
+
+        .info-box {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-left: 4px solid #10b981;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .info-box p {
+            color: #d1d5db;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 12px 0;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box strong {
+            color: white;
+        }
+
+        .comprovantes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .comprovante-card {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .comprovante-card:hover {
+            border-color: #10b981;
+            transform: translateY(-4px);
+        }
+
+        .comprovante-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .comprovante-info {
+            margin-bottom: 16px;
+        }
+
+        .comprovante-label {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .comprovante-value {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .comprovante-filename {
+            color: #d1d5db;
+            font-size: 13px;
+            margin-bottom: 16px;
+            word-break: break-all;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-download:hover {
+            background: #059669;
+        }
+
+        .btn-view {
+            width: 100%;
+            padding: 12px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 8px;
+        }
+
+        .btn-view:hover {
+            background: #2563eb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            color: white;
+            font-size: 20px;
+            margin: 0 0 8px 0;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .filter-box {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-box input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            background: #1f2937;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .filter-box input:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-back {
+                width: 100%;
+                text-align: center;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .comprovantes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-box {
+                flex-direction: column;
+            }
+
+            .filter-box input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <p>⏳ Carregando comprovantes...</p>
+    </div>
+
+    <div class="container" id="conteudo" style="display: none;">
+        <div class="header">
+            <h1>📄 Meus Comprovantes</h1>
+            <a href="dashboard.html" class="btn-back">← Voltar ao Dashboard</a>
+        </div>
+
+        <div class="card">
+            <h2>ℹ️ Sobre os Comprovantes</h2>
+            <p class="subtitle">Comprovantes de pagamento das suas comissões</p>
+            
+            <div class="info-box">
+                <p><strong>💡 Como funciona:</strong></p>
+                <p>Quando suas comissões são pagas, o administrador envia o comprovante de pagamento aqui.</p>
+                <p>Você pode visualizar e baixar todos os comprovantes enviados para você.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Seus Comprovantes</h2>
+            <p class="subtitle">Todos os comprovantes de pagamento enviados</p>
+
+            <div class="filter-box">
+                <input type="text" id="searchComprovantes" placeholder="🔍 Buscar por nome do arquivo...">
+            </div>
+
+            <div id="comprovantesContainer" class="comprovantes-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Página de Comprovantes - Iniciada');
+
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://hjlpmorykllywjodusqx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let usuarioAtual = null;
+        let parceiroAtual = null;
+        let todosComprovantes = [];
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarAutenticacao();
+        });
+
+        async function verificarAutenticacao() {
+            console.log('🔍 Verificando autenticação...');
+            
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error || !session) {
+                    console.log('❌ Sessão inválida - redirecionando');
+                    window.location.href = '/painel-acesso/';
+                    return;
+                }
+                
+                console.log('✅ Sessão válida:', session.user.email);
+                usuarioAtual = session.user;
+                
+                await buscarDadosParceiro();
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                window.location.href = '/painel-acesso/';
+            }
+        }
+
+        async function buscarDadosParceiro() {
+            console.log('📥 Buscando dados do parceiro...');
+            
+            try {
+                // Buscar em igrejas
+                let { data: igreja, error: erroIgreja } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (igreja) {
+                    parceiroAtual = {
+                        id: igreja.id,
+                        nome: igreja.nome,
+                        email: igreja.email,
+                        codigo: igreja.codigo || igreja.id,
+                        tipo: 'igreja'
+                    };
+                    await carregarComprovantes();
+                    return;
+                }
+                
+                // Buscar em parceiros
+                let { data: parceiro, error: erroParceiro } = await supabaseClient
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (parceiro) {
+                    parceiroAtual = {
+                        id: parceiro.id,
+                        nome: parceiro.nome,
+                        email: parceiro.email,
+                        codigo: parceiro.codigo || parceiro.id,
+                        tipo: 'parceiro'
+                    };
+                    await carregarComprovantes();
+                    return;
+                }
+                
+                console.warn('⚠️ Parceiro não encontrado');
+                alert('Cadastro não encontrado.');
+                window.location.href = '/painel-acesso/';
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar dados: ' + error.message);
+                window.location.href = '/painel-acesso/';
+            }
+        }
+
+        async function carregarComprovantes() {
+            console.log('📊 Carregando comprovantes...');
+            
+            try {
+                // Listar todos os arquivos do bucket "comprovantes"
+                const { data: arquivos, error } = await supabaseClient.storage
+                    .from('comprovantes')
+                    .list();
+                
+                if (error) {
+                    console.error('❌ Erro ao buscar comprovantes:', error);
+                    throw error;
+                }
+                
+                console.log('📄 Arquivos encontrados:', arquivos);
+                
+                // Filtrar comprovantes que pertencem a este parceiro
+                // Assumindo que o nome do arquivo contém o código do parceiro
+                // Exemplo: comprovante-henrique65-2024-01.pdf
+                const codigoParceiro = parceiroAtual.codigo.toLowerCase();
+                
+                todosComprovantes = arquivos.filter(arquivo => {
+                    const nomeArquivo = arquivo.name.toLowerCase();
+                    return nomeArquivo.includes(codigoParceiro) || 
+                           nomeArquivo.includes(parceiroAtual.email.split('@')[0].toLowerCase());
+                });
+                
+                console.log('📋 Comprovantes do parceiro:', todosComprovantes);
+                
+                renderizarComprovantes(todosComprovantes);
+                
+                // Mostrar conteúdo
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('conteudo').style.display = 'block';
+                
+                console.log('✅ Comprovantes carregados');
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar comprovantes: ' + error.message);
+            }
+        }
+
+        function renderizarComprovantes(comprovantes) {
+            const container = document.getElementById('comprovantesContainer');
+            
+            if (!comprovantes || comprovantes.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>Nenhum comprovante ainda</h3>
+                        <p>Seus comprovantes de pagamento aparecerão aqui quando forem enviados</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            comprovantes.forEach(arquivo => {
+                const nomeArquivo = arquivo.name;
+                const tamanhoKB = (arquivo.metadata?.size / 1024).toFixed(2);
+                const dataUpload = arquivo.created_at ? new Date(arquivo.created_at).toLocaleDateString('pt-BR') : 'N/A';
+                
+                // Determinar ícone baseado na extensão
+                let icone = '📄';
+                if (nomeArquivo.endsWith('.pdf')) icone = '📄';
+                else if (nomeArquivo.match(/\.(jpg|jpeg|png)$/i)) icone = '🖼️';
+                
+                html += `
+                    <div class="comprovante-card">
+                        <div class="comprovante-icon">${icone}</div>
+                        
+                        <div class="comprovante-info">
+                            <div class="comprovante-label">Data de Envio</div>
+                            <div class="comprovante-value">${dataUpload}</div>
+                        </div>
+                        
+                        <div class="comprovante-info">
+                            <div class="comprovante-label">Tamanho</div>
+                            <div class="comprovante-value">${tamanhoKB} KB</div>
+                        </div>
+                        
+                        <div class="comprovante-filename">${nomeArquivo}</div>
+                        
+                        <button class="btn-view" onclick="visualizarComprovante('${nomeArquivo}')">
+                            👁️ Visualizar
+                        </button>
+                        
+                        <button class="btn-download" onclick="baixarComprovante('${nomeArquivo}')">
+                            ⬇️ Baixar Comprovante
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        async function visualizarComprovante(nomeArquivo) {
+            try {
+                console.log('👁️ Visualizando:', nomeArquivo);
+                
+                const { data, error } = await supabaseClient.storage
+                    .from('comprovantes')
+                    .getPublicUrl(nomeArquivo);
+                
+                if (error) throw error;
+                
+                // Abrir em nova aba
+                window.open(data.publicUrl, '_blank');
+                
+            } catch (error) {
+                console.error('❌ Erro ao visualizar:', error);
+                alert('Erro ao visualizar comprovante: ' + error.message);
+            }
+        }
+
+        async function baixarComprovante(nomeArquivo) {
+            try {
+                console.log('⬇️ Baixando:', nomeArquivo);
+                
+                const { data, error } = await supabaseClient.storage
+                    .from('comprovantes')
+                    .download(nomeArquivo);
+                
+                if (error) throw error;
+                
+                // Criar URL temporária e fazer download
+                const url = URL.createObjectURL(data);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = nomeArquivo;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('✅ Download concluído');
+                
+            } catch (error) {
+                console.error('❌ Erro ao baixar:', error);
+                alert('Erro ao baixar comprovante: ' + error.message);
+            }
+        }
+
+        // Busca de comprovantes
+        document.getElementById('searchComprovantes').addEventListener('input', (e) => {
+            const termo = e.target.value.toLowerCase();
+            
+            if (!termo) {
+                renderizarComprovantes(todosComprovantes);
+                return;
+            }
+            
+            const filtrados = todosComprovantes.filter(comp => 
+                comp.name.toLowerCase().includes(termo)
+            );
+            
+            renderizarComprovantes(filtrados);
+        });
+
+        console.log('✅ Sistema de comprovantes pronto');
+    </script>
+</body>
+</html>

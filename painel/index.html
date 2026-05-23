@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionando...</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script src="/js/supabase-config.js"></script>
+    <style>
+        body { font-family: sans-serif; background: #eee; display: flex; justify-content: center; align-items: center; height: 100vh; flex-direction: column; }
+        .box { background: white; padding: 40px; border-radius: 10px; text-align: center; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #status { color: #666; margin-bottom: 10px; }
+        #error-msg { color: red; display: none; margin-top: 10px; font-weight: bold; }
+        button { margin-top: 20px; padding: 10px 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="spinner" id="spinner"></div>
+        <h2 id="title">Acessando Painel...</h2>
+        <p id="status">Iniciando...</p>
+        <p id="error-msg"></p>
+        <button onclick="window.location.href='/painel-acesso/'" style="display:none;" id="btn-login">Voltar para Login</button>
+    </div>
+
+    <script>
+        function log(msg, isError = false) {
+            console.log(msg);
+            document.getElementById('status').textContent = msg;
+            if (isError) {
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('title').textContent = 'Erro de Acesso';
+                document.getElementById('error-msg').textContent = msg;
+                document.getElementById('error-msg').style.display = 'block';
+                document.getElementById('btn-login').style.display = 'inline-block';
+            }
+        }
+
+        if (typeof supabase === 'undefined') {
+            log("Erro Crítico: Supabase não carregou.", true);
+        } else {
+            verificarCredenciais();
+        }
+
+        async function verificarCredenciais() {
+            try {
+                log("Verificando sessão ativa...");
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error) throw error;
+
+                if (!session) {
+                    log("Nenhuma sessão encontrada. Redirecionando...");
+                    window.location.href = '/painel-acesso/';
+                    return;
+                }
+
+                log("Usuário autenticado. Buscando perfil...");
+                const userId = session.user.id;
+
+                const { data: parceiro, error: errParceiro } = await supabase
+                    .from('parceiros')
+                    .select('tipo_parceiro, is_admin, status')
+                    .eq('auth_user_id', userId)
+                    .single();
+
+                if (errParceiro) throw errParceiro;
+
+                if (!parceiro) {
+                    log("Perfil não encontrado no banco de dados.", true);
+                    return;
+                }
+
+                log("Perfil encontrado: " + parceiro.tipo_parceiro);
+
+                if (parceiro.is_admin) {
+                    window.location.href = '/admin/index.html';
+                    return;
+                }
+
+                if (parceiro.status !== 'ativo' && parceiro.status !== 'aprovado') {
+                    log("Sua conta está pendente de aprovação.", true);
+                    await supabase.auth.signOut();
+                    return;
+                }
+
+                if (parceiro.tipo_parceiro === 'igreja') {
+                    window.location.href = '/igrejas/index.html';
+                } else if (parceiro.tipo_parceiro === 'empresa') {
+                    window.location.href = '/empresas/index.html';
+                } else if (parceiro.tipo_parceiro === 'parceiro') {
+                    window.location.href = '/parceiros/index.html';
+                } else {
+                    log("Tipo de perfil não reconhecido: " + parceiro.tipo_parceiro, true);
+                }
+
+            } catch (err) {
+                log("Erro Técnico: " + err.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

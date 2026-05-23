@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Short URLs</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📎 Gerenciador de Short URLs</h1>
+
+        <!-- Formulário para criar novo link -->
+        <div class="form-section">
+            <h2>Criar novo Short URL</h2>
+            <form id="createForm">
+                <div class="form-group">
+                    <label for="longUrl">URL completa:</label>
+                    <input 
+                        type="url" 
+                        id="longUrl" 
+                        placeholder="https://seu-site.com/produto/livro-python"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="shortCode">Código curto (opcional):</label>
+                    <input 
+                        type="text" 
+                        id="shortCode" 
+                        placeholder="livro1"
+                    >
+                    <small>Se deixar vazio, será gerado automaticamente</small>
+                </div>
+
+                <button type="submit" class="btn-primary">Gerar Short URL</button>
+            </form>
+
+            <div id="successMessage" class="message success" style="display: none;">
+                <p>✅ Link criado com sucesso!</p>
+                <p id="generatedLink"></p>
+                <button onclick="copyToClipboard()" class="btn-secondary">Copiar</button>
+            </div>
+
+            <div id="errorMessage" class="message error" style="display: none;">
+                <p id="errorText"></p>
+            </div>
+        </div>
+
+        <!-- Lista de links criados -->
+        <div class="list-section">
+            <h2>Meus Short URLs</h2>
+            <div id="linksList" class="links-list">
+                <p class="loading">Carregando...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/supabase-config.js" type="module"></script>
+    <script src="script.js" type="module"></script>
+</body>
+</html>

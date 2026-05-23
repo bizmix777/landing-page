@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Igrejas - Vendas e Comissões</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .link-box {
+            background: #e3f2fd;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+            display: inline-block;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .btn-copiar {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .btn-copiar:hover {
+            background: #0b7dda;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .valor-positivo {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .valor-zero {
+            color: #999;
+        }
+        .filtros {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .filtros input, .filtros select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-refresh {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-refresh:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏛️ Painel de Igrejas</h1>
+        <p class="subtitle">Gestão de Vendas e Comissões</p>
+        
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <h3>Total de Igrejas</h3>
+                <div class="value" id="totalIgrejas">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total de Vendas</h3>
+                <div class="value" id="totalVendas">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total em Comissões</h3>
+                <div class="value" id="totalComissoes">-</div>
+            </div>
+        </div>
+
+        <div class="filtros">
+            <input type="text" id="filtroNome" placeholder="🔍 Buscar por nome da igreja..." style="flex: 1;">
+            <select id="filtroStatus">
+                <option value="">Todos os status</option>
+                <option value="true">Ativas</option>
+                <option value="false">Inativas</option>
+            </select>
+            <button class="btn-refresh" onclick="carregarDados()">🔄 Atualizar</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            ⏳ Carregando dados...
+        </div>
+
+        <table id="tabelaIgrejas" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Igreja</th>
+                    <th>Código</th>
+                    <th>Status</th>
+                    <th>Vendas</th>
+                    <th>Comissões</th>
+                    <th>Link de Indicação</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="corpoTabela">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://hjlpmorykllywjodusqx.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function carregarDados() {
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('tabelaIgrejas').style.display = 'none';
+
+                // Buscar igrejas
+                const { data: igrejas, error: erroIgrejas } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .order('nome');
+
+                if (erroIgrejas) {
+                    console.error('Erro ao buscar igrejas:', erroIgrejas);
+                    document.getElementById('loading').textContent = '❌ Erro ao carregar igrejas';
+                    return;
+                }
+
+                // Buscar vendas agrupadas por igreja
+                const { data: vendas, error: erroVendas } = await supabaseClient
+                    .from('vendas')
+                    .select('igreja_id, valor_comissao, status_pagamento');
+
+                if (erroVendas) {
+                    console.error('Erro ao buscar vendas:', erroVendas);
+                }
+
+                // Processar dados
+                const vendasPorIgreja = {};
+                let totalVendasGeral = 0;
+                let totalComissoesGeral = 0;
+
+                if (vendas) {
+                    vendas.forEach(venda => {
+                        if (venda.igreja_id) {
+                            if (!vendasPorIgreja[venda.igreja_id]) {
+                                vendasPorIgreja[venda.igreja_id] = {
+                                    quantidade: 0,
+                                    comissao: 0
+                                };
+                            }
+                            vendasPorIgreja[venda.igreja_id].quantidade++;
+                            vendasPorIgreja[venda.igreja_id].comissao += parseFloat(venda.valor_comissao || 0);
+                            
+                            totalVendasGeral++;
+                            totalComissoesGeral += parseFloat(venda.valor_comissao || 0);
+                        }
+                    });
+                }
+
+                // Atualizar estatísticas
+                document.getElementById('totalIgrejas').textContent = igrejas.length;
+                document.getElementById('totalVendas').textContent = totalVendasGeral;
+                document.getElementById('totalComissoes').textContent = 'R$ ' + totalComissoesGeral.toFixed(2);
+
+                // Preencher tabela
+                const tbody = document.getElementById('corpoTabela');
+                tbody.innerHTML = '';
+
+                const filtroNome = document.getElementById('filtroNome').value.toLowerCase();
+                const filtroStatus = document.getElementById('filtroStatus').value;
+
+                igrejas.forEach(igreja => {
+                    // Aplicar filtros
+                    if (filtroNome && !igreja.nome.toLowerCase().includes(filtroNome)) {
+                        return;
+                    }
+                    if (filtroStatus && igreja.ativo.toString() !== filtroStatus) {
+                        return;
+                    }
+
+                    const stats = vendasPorIgreja[igreja.id] || { quantidade: 0, comissao: 0 };
+                    const link = igreja.codigo ? `https://somos.bizmix.com.br/checkout.html?igreja=${igreja.codigo}` : 'Sem código';
+                    
+                    const statusBadge = igreja.ativo 
+                        ? '<span class="badge badge-success">✅ Ativa</span>'
+                        : '<span class="badge badge-danger">❌ Inativa</span>';
+
+                    const comissaoClass = stats.comissao > 0 ? 'valor-positivo' : 'valor-zero';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <strong>${igreja.nome}</strong><br>
+                            <small style="color: #666;">
+                                ${igreja.cidade || ''} ${igreja.estado || ''}<br>
+                                ${igreja.pastor ? 'Pastor: ' + igreja.pastor : ''}
+                            </small>
+                        </td>
+                        <td><code>${igreja.codigo || 'N/A'}</code></td>
+                        <td>${statusBadge}</td>
+                        <td><strong>${stats.quantidade}</strong></td>
+                        <td class="${comissaoClass}">R$ ${stats.comissao.toFixed(2)}</td>
+                        <td>
+                            ${igreja.codigo ? `<div class="link-box" title="${link}">${link}</div>` : 'Sem código'}
+                        </td>
+                        <td>
+                            ${igreja.codigo ? `<button class="btn-copiar" onclick="copiarLink('${link}', this)">📋 Copiar</button>` : '-'}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('tabelaIgrejas').style.display = 'table';
+
+            } catch (err) {
+                console.error('Erro:', err);
+                document.getElementById('loading').textContent = '❌ Erro ao carregar dados';
+            }
+        }
+
+        function copiarLink(link, btn) {
+            navigator.clipboard.writeText(link).then(() => {
+                const textoOriginal = btn.textContent;
+                btn.textContent = '✅ Copiado!';
+                btn.style.background = '#4CAF50';
+                
+                setTimeout(() => {
+                    btn.textContent = textoOriginal;
+                    btn.style.background = '#2196F3';
+                }, 2000);
+            });
+        }
+
+        // Filtros em tempo real
+        document.getElementById('filtroNome').addEventListener('input', carregarDados);
+        document.getElementById('filtroStatus').addEventListener('change', carregarDados);
+
+        // Carregar ao iniciar
+        carregarDados();
+    </script>
+</body>
+</html>

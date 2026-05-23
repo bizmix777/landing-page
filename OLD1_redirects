@@ -1,0 +1,12 @@
+# Não redirecionar arquivos estáticos
+/*/images/*  200
+/*/css/*     200
+/*/js/*      200
+
+# Redirecionar apenas páginas HTML
+/direito/*  /direito/index.html  200
+/somos-todos-um  /somos-todos-um/index.html  200
+/sis-ig          /sis-ig/index.html          200
+
+# Fallback
+/*  /index.html  404

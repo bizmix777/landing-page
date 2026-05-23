@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Painel BizMix</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        /* Reset e Estilos Básicos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Container do Formulário de Login */
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cabeçalho do Formulário */
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Grupos de Formulário */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Botão de Login */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Mensagens de Alerta */
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none; /* Escondido por padrão */
+            text-align: center;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        /* Links Adicionais */
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 8px;
+            transition: color 0.2s;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+
+        /* Loader Spinner */
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1> Login do Painel</h1>
+            <p>Acesse seu Painel Aqui</p>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">E-mail</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="seu@email.com" 
+                    required 
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <input 
+                    type="password" 
+                    id="senha" 
+                    name="senha" 
+                    placeholder="••••••••" 
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+
+            <button type="submit" class="btn-login" id="btnLogin">
+                Entrar
+            </button>
+        </form>
+
+        <div class="links">
+            <a href="/recuperar-senha.html">Esqueci minha senha?</a>
+            <a href="/cadastro/">Criar conta</a>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÃO SUPABASE ---
+        // --- INICIALIZAÇÃO SUPABASE ---
+                
+        // const supabase = window.supabase;
+
+        // --- ELEMENTOS DO DOM ---
+        const loginForm = document.getElementById('loginForm');
+        const btnLogin = document.getElementById('btnLogin');
+        const alertBox = document.getElementById('alertBox');
+        const emailInput = document.getElementById('email');
+        const senhaInput = document.getElementById('senha');
+
+        // --- FUNÇÕES AUXILIARES ---
+
+        /**
+         * Exibe uma mensagem de alerta na tela.
+         * @param {string} message - A mensagem a ser exibida.
+         * @param {'error'|'success'} type - O tipo de alerta (error ou success).
+         */
+        function showAlert(message, type = 'error') {
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            
+            // Esconde o alerta após 5 segundos
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        /**
+         * Define o estado de carregamento do botão de login.
+         * @param {boolean} isLoading - true para estado de carregamento, false para estado normal.
+         */
+        function setLoading(isLoading) {
+            btnLogin.disabled = isLoading;
+            if (isLoading) {
+                btnLogin.innerHTML = '<span class="loader"></span>Entrando...';
+            } else {
+                btnLogin.innerHTML = 'Entrar';
+            }
+        }
+
+        /**
+         * Valida o formato de um e-mail.
+         * @param {string} email - O e-mail a ser validado.
+         * @returns {boolean} - true se o e-mail for válido, false caso contrário.
+         */
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // --- LÓGICA DE AUTENTICAÇÃO ---
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Previne o recarregamento da página
+
+            const email = emailInput.value.trim();
+            const senha = senhaInput.value;
+
+            // Validações básicas
+            if (!email || !senha) {
+                showAlert('Por favor, preencha todos os campos.');
+                return;
+            }
+            if (!isValidEmail(email)) {
+                showAlert('Por favor, insira um e-mail válido.');
+                return;
+            }
+            if (senha.length < 6) { // Supabase Auth default min password length is 6
+                showAlert('A senha deve ter no mínimo 6 caracteres.');
+                return;
+            }
+
+            setLoading(true); // Ativa o estado de carregamento
+
+            try {
+                // 1. Autenticar com o Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: senha
+                });
+
+                if (authError) {
+                    // Mensagens de erro mais amigáveis
+                    if (authError.message.includes('Invalid login credentials')) {
+                        showAlert('E-mail ou senha incorretos. Verifique suas credenciais.');
+                    } else {
+                        showAlert(`Erro ao fazer login: ${authError.message}`);
+                    }
+                    return; // Interrompe a execução
+                }
+
+                const userId = authData.user.id;
+
+                // 2. Consultar a tabela 'parceiros' para obter dados adicionais
+                const { data: parceiroData, error: parceiroError } = await supabase
+                    .from('parceiros')
+                    .select()
+                    .eq('auth_user_id', userId) // Assumindo que você tem uma coluna 'auth_user_id' linkando ao Supabase Auth
+                    .single();
+
+                if (parceiroError || !parceiroData) {
+                    // Se o usuário autenticou mas não está na tabela 'parceiros'
+                    showAlert('Seu perfil de parceiro não foi encontrado. Entre em contato com o suporte.');
+                    await supabase.auth.signOut(); // Desloga do Supabase Auth
+                    return;
+                }
+
+                // 3. Verificar o status de aprovação
+                if (parceiroData.status !== 'ativo' && parceiroData.status !== 'aprovado') {
+                    showAlert('Sua conta está aguardando aprovação. Por favor, aguarde ou entre em contato.', 'error');
+                    await supabase.auth.signOut(); // Desloga do Supabase Auth
+                    return;
+                }
+
+                // 4. Atualizar o campo 'ultimo_acesso'
+                const { error: updateError } = await supabase
+                    .from('parceiros')
+                    .update({ ultimo_acesso: new Date().toISOString() })
+                    .eq('id', parceiroData.id); // Usa o ID do parceiro da tabela 'parceiros'
+
+                if (updateError) {
+                    console.warn('Não foi possível atualizar o último acesso:', updateError.message);
+                    // Não impede o login, mas registra o aviso
+                }
+
+                // 5. Redirecionar para o painel principal
+                showAlert('Login realizado com sucesso! Redirecionando...', 'success');
+                window.location.href = '/painel/index.html';
+
+            } catch (error) {
+                console.error('Erro inesperado no login:', error);
+                showAlert('Ocorreu um erro inesperado. Tente novamente mais tarde.');
+            } finally {
+                setLoading(false); // Desativa o estado de carregamento
+            }
+        });
+
+        // --- VERIFICAR SESSÃO EXISTENTE AO CARREGAR A PÁGINA ---
+        (async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                // Se já houver uma sessão ativa, redireciona diretamente
+                window.location.href = '/painel/index.html';
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Bizmix</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 440px;
+            width: 100%;
+            padding: 50px 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🔐 Bizmix</h1>
+            <p>Redefina sua senha</p>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <form id="resetForm">
+            <div class="form-group">
+                <label for="newPassword">Nova Senha</label>
+                <input 
+                    type="password" 
+                    id="newPassword" 
+                    name="newPassword" 
+                    placeholder="••••••••"
+                    required
+                    minlength="6"
+                >
+                <div class="password-requirements">
+                    Mínimo 6 caracteres
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Nova Senha</label>
+                <input 
+                    type="password" 
+                    id="confirmPassword" 
+                    name="confirmPassword" 
+                    placeholder="••••••••"
+                    required
+                    minlength="6"
+                >
+            </div>
+
+            <button type="submit" class="btn" id="btnReset">
+                Redefinir Senha
+            </button>
+        </form>
+
+        <div class="back-link">
+            <a id="backToLoginLink" href="/parceiros/">← Voltar para o login</a>
+        </div>
+    </div>
+
+    <script src="/js/supabase-config.js"></script>
+    <script>
+        
+        // 1. Configurações de Origem e Destino
+        const queryParams = new URLSearchParams(window.location.search);
+        const origem = queryParams.get('origem') || 'admin';
+        const backToLoginLink = document.getElementById('backToLoginLink');
+
+        const loginPorOrigem = {
+            admin: '/admin/login',
+            parceiros: '/parceiros/',
+            igrejas: '/igrejas/',
+            empresas: '/empresas/'
+        };
+
+        const loginDestino = loginPorOrigem[origem] || '/admin/login';
+        if (backToLoginLink) backToLoginLink.href = loginDestino;
+
+        // 2. VERIFICAÇÃO DE SEGURANÇA (O que impedia você de entrar)
+        async function validarAcesso() {
+            console.log('🔍 Verificando sessão de recuperação...');
+            
+        // O getSession() processa o token do e-mail automaticamente
+            const { data: { session }, error } = await supabase.auth.getSession();
+
+            if (error || !session) {
+                console.error('❌ Sessão não encontrada ou expirada');
+                showAlert('Link inválido ou expirado. Redirecionando para o login...', 'error');
+                
+                setTimeout(() => {
+                    window.location.href = loginDestino;
+                }, 3000);
+                return;
+            }
+            console.log('✅ Sessão de recuperação ativa para:', session.user.email);
+        }
+
+        validarAcesso();
+
+        // Processar formulário
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const btnReset = document.getElementById('btnReset');
+
+            // Validar senhas
+            if (newPassword !== confirmPassword) {
+                showAlert('As senhas não coincidem!', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showAlert('A senha deve ter pelo menos 6 caracteres!', 'error');
+                return;
+            }
+
+            try {
+                btnReset.disabled = true;
+                btnReset.textContent = 'Redefinindo...';
+
+                console.log('🔄 Atualizando senha...');
+
+                // Atualizar senha usando o token de recuperação
+                const { data, error } = await supabase.auth.updateUser({
+                    password: newPassword
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                console.log('✅ Senha atualizada com sucesso!');
+
+                showAlert('Senha redefinida com sucesso! Redirecionando...', 'success');
+
+                // Limpa sessão de recuperação antes de voltar ao login.
+                await supabase.auth.signOut();
+
+                // Redirecionar para o login após 2 segundos
+                setTimeout(() => {
+                    window.location.href = loginDestino;
+                }, 2000);
+
+            } catch (error) {
+                console.error('❌ Erro ao redefinir senha:', error);
+                showAlert('Erro ao redefinir senha: ' + error.message, 'error');
+                btnReset.disabled = false;
+                btnReset.textContent = 'Redefinir Senha';
+            }
+        });
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

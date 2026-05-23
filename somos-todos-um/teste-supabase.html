@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Supabase</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .result {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        button {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        table td {
+            padding: 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Conexão Supabase</h1>
+        <p>Clique no botão abaixo para testar a conexão com o banco de dados.</p>
+        <button id="btnTestar">🔍 Testar Conexão</button>
+        <div id="resultado" class="result">
+            <p>Aguardando teste...</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script>
+        (function() {
+            console.log('🚀 Script iniciado');
+
+            const SUPABASE_URL = 'https://hjlpmorykllywjodusqx.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+
+            let supabase;
+
+            // Aguardar carregamento
+            function inicializar() {
+                console.log('✅ Inicializando...');
+
+                if (typeof window.supabase === 'undefined') {
+                    console.error('❌ Biblioteca Supabase não carregou');
+                    document.getElementById('resultado').innerHTML = '<p class="error">❌ Erro: Biblioteca Supabase não carregou. Recarregue a página.</p>';
+                    return;
+                }
+
+                const { createClient } = window.supabase;
+                supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+                console.log('✅ Supabase client criado');
+
+                // Adicionar evento ao botão
+                const btn = document.getElementById('btnTestar');
+                btn.addEventListener('click', testarConexao);
+                console.log('✅ Evento adicionado ao botão');
+            }
+
+            async function testarConexao() {
+                console.log('🔍 Função testarConexao() chamada');
+                
+                const resultado = document.getElementById('resultado');
+                
+                if (!supabase) {
+                    resultado.innerHTML = '<p class="error">❌ Erro: Supabase não foi inicializado.</p>';
+                    return;
+                }
+                
+                resultado.innerHTML = '<p>⏳ Testando conexão... Aguarde...</p>';
+
+                try {
+                    // Teste: Buscar igrejas
+                    console.log('📥 Buscando igrejas...');
+                    
+                    const { data: igrejas, error: igrejasError } = await supabase
+                        .from('igrejas')
+                        .select('*')
+                        .eq('ativa', true)
+                        .order('nome');
+
+                    console.log('📊 Resultado:', { igrejas, igrejasError });
+
+                    if (igrejasError) {
+                        console.error('❌ Erro:', igrejasError);
+                        throw igrejasError;
+                    }
+
+                    // Sucesso!
+                    console.log('✅ SUCESSO! Igrejas encontradas:', igrejas.length);
+                    
+                    let html = `
+                        <h2 class="success">✅ CONEXÃO OK!</h2>
+                        <p><strong>Igrejas ativas encontradas:</strong> ${igrejas.length}</p>
+                    `;
+
+                    if (igrejas.length > 0) {
+                        html += `
+                            <h3>📋 Lista de Igrejas:</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Cidade</th>
+                                        <th>Estado</th>
+                                        <th>Pastor</th>
+                                        <th>Comissão</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                        `;
+
+                        igrejas.forEach(igreja => {
+                            html += `
+                                <tr>
+                                    <td>${igreja.nome}</td>
+                                    <td>${igreja.cidade || 'N/A'}</td>
+                                    <td>${igreja.estado || 'N/A'}</td>
+                                    <td>${igreja.pastor || 'N/A'}</td>
+                                    <td>${igreja.percentual_comissao}%</td>
+                                </tr>
+                            `;
+                        });
+
+                        html += `
+                                </tbody>
+                            </table>
+                        `;
+                    } else {
+                        html += '<p class="error">⚠️ Nenhuma igreja ativa encontrada.</p>';
+                    }
+
+                    resultado.innerHTML = html;
+
+                } catch (error) {
+                    console.error('❌ ERRO:', error);
+                    
+                    resultado.innerHTML = `
+                        <h2 class="error">❌ ERRO NA CONEXÃO</h2>
+                        <p><strong>Mensagem:</strong> ${error.message || 'Erro desconhecido'}</p>
+                        <p><strong>Código:</strong> ${error.code || 'N/A'}</p>
+                        <p><strong>Detalhes:</strong> ${error.details || 'N/A'}</p>
+                        <p><strong>Hint:</strong> ${error.hint || 'N/A'}</p>
+                        
+                        <h3>🔍 Possíveis Causas:</h3>
+                        <ul>
+                            <li>RLS (Row Level Security) bloqueando acesso</li>
+                            <li>Política de segurança não configurada</li>
+                            <li>Credenciais inválidas</li>
+                        </ul>
+                        
+                        <h3>📋 Erro Completo:</h3>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                }
+            }
+
+            // Inicializar quando o DOM e Supabase estiverem prontos
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', inicializar);
+            } else {
+                inicializar();
+            }
+        })();
+    </script>
+</body>
+</html>

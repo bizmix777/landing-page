@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - BizMix</title>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <!-- Configuração Universal -->
+    <script src="/js/supabase-config.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; min-height: 100vh; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2); padding: 20px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .header h1 { color: white; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        .super-badge { background: rgba(255,255,255,0.3); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
+        .user-info { display: flex; align-items: center; gap: 10px; color: white; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        .btn-logout { padding: 10px 20px; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s ease; }
+        .btn-logout:hover { background: white; color: #667eea; }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed; left: 0; top: 80px; width: 250px; height: calc(100vh - 80px);
+            background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.1); padding: 30px 20px; overflow-y: auto;
+        }
+        .nav-section { margin-bottom: 25px; }
+        .nav-section-title { color: #999; font-size: 12px; font-weight: 600; text-transform: uppercase; margin-bottom: 10px; padding: 0 16px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: #666; text-decoration: none; border-radius: 8px; margin-bottom: 8px; transition: all 0.3s ease; }
+        .nav-item:hover, .nav-item.active { background: #f0f3ff; color: #667eea; }
+        .nav-item i { font-size: 18px; width: 24px; }
+
+        /* Main Content */
+        .main-content { margin-left: 250px; padding: 40px; }
+
+        /* Stats Cards */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 20px; transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+        .stat-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
+        .stat-icon.purple { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .stat-icon.blue { background: linear-gradient(135deg, #56ccf2, #2f80ed); }
+        .stat-icon.green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .stat-icon.red { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .stat-icon.teal { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .stat-info h3 { color: #999; font-size: 14px; font-weight: 500; margin-bottom: 5px; }
+        .stat-info p { color: #333; font-size: 28px; font-weight: 700; }
+
+        /* Tables */
+        .table-container { background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 25px; margin-bottom: 30px; }
+        .table-container h2 { color: #333; font-size: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #f8f9fa; }
+        th { padding: 15px; text-align: left; color: #666; font-weight: 600; font-size: 14px; }
+        td { padding: 15px; border-bottom: 1px solid #f0f0f0; color: #333; font-size: 14px; }
+        tbody tr:hover { background: #f8f9fa; }
+
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-badge.ativo { background: #d4edda; color: #155724; }
+        .status-badge.inativo { background: #f8d7da; color: #721c24; }
+        .status-badge.aprovado { background: #d4edda; color: #155724; }
+        .status-badge.pendente { background: #fff3cd; color: #856404; }
+
+        .action-buttons { display: flex; gap: 8px; align-items: center; }
+        .btn-action { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s ease; color: white; }
+        .btn-edit { background: #007bff; }
+        .btn-edit:hover { background: #0056b3; }
+        .btn-delete { background: #dc3545; }
+        .btn-delete:hover { background: #c82333; }
+        .btn-approve { background: #28a745; color: white; }
+        .btn-approve:hover { background: #218838; }
+
+        .loading { text-align: center; padding: 40px; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Quick Actions */
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 40px; }
+        .quick-action-btn { padding: 20px; background: white; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .quick-action-btn:hover { border-color: #667eea; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3); }
+        .quick-action-btn i { font-size: 32px; color: #667eea; }
+        .quick-action-btn span { color: #333; font-weight: 600; font-size: 14px; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 0; overflow: hidden; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .header { padding: 15px 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1><i class="fas fa-crown"></i> Novo Admin <span class="super-badge">MASTER</span></h1>
+        <div class="header-actions">
+            <div class="user-info"><div class="user-avatar" id="userAvatar">S</div><span id="userName">Super Admin</span></div>
+            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="nav-section">
+            <div class="nav-section-title">Dashboard</div>
+            <a href="/admin/index.html" class="nav-item active"><i class="fas fa-home"></i> Visão Geral</a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Gestão</div>
+            <a href="/admin/gerenciar-parceiros.html" class="nav-item"><i class="fas fa-users"></i> Parceiros</a>
+            <a href="/admin/dashboard-igrejas.html" class="nav-item"><i class="fas fa-church"></i> Igrejas</a>
+            <a href="#" class="nav-item"><i class="fas fa-user-shield"></i> Administradores</a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Operações</div>
+            <a href="/admin/produtos.html" class="nav-item"><i class="fas fa-box"></i> Produtos</a>
+            <a href="/admin/venda.html" class="nav-item"><i class="fas fa-shopping-cart"></i> Nova Venda</a>
+            <a href="/admin/comissoes.html" class="nav-item"><i class="fas fa-dollar-sign"></i> Comissões</a>
+            <a href="#" class="nav-item"><i class="fas fa-money-check-alt"></i> Saques</a>
+        </div>
+        <div class="nav-section">
+            <div class="nav-section-title">Sistema</div>
+            <a href="#" class="nav-item"><i class="fas fa-cog"></i> Configurações</a>
+            <a href="/admin/relatorios.html" class="nav-item"><i class="fas fa-file-alt"></i> Relatórios</a>
+            <a href="#" class="nav-item"><i class="fas fa-database"></i> Backup</a>
+            <a href="#" class="nav-item"><i class="fas fa-history"></i> Logs do Sistema</a>
+        </div>
+    </div>
+        <!-- Main Content -->
+    <div class="main-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-icon purple"><i class="fas fa-users"></i></div><div class="stat-info"><h3>Total de Usuários</h3><p id="totalUsuarios">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-user-tie"></i></div><div class="stat-info"><h3>Parceiros Ativos</h3><p id="parceirosAtivos">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon green"><i class="fas fa-shopping-cart"></i></div><div class="stat-info"><h3>Vendas Total</h3><p id="totalVendas">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-dollar-sign"></i></div><div class="stat-info"><h3>Faturamento</h3><p id="faturamentoTotal">R$ 0,00</p></div></div>
+            <div class="stat-card"><div class="stat-icon red"><i class="fas fa-church"></i></div><div class="stat-info"><h3>Igrejas Cadastradas</h3><p id="totalIgrejas">0</p></div></div>
+            <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-percentage"></i></div><div class="stat-info"><h3>Comissões Pagas</h3><p id="comissoesPagas">R$ 0,00</p></div></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <h2 style="margin-bottom: 20px; color: #333;">⚡ Ações Rápidas</h2>
+        <div class="quick-actions">
+            <button class="quick-action-btn" onclick="enviarCortesia()"><i class="fas fa-gift" style="color: #e91e63;"></i><span>Enviar Cortesia</span></button>
+            <button class="quick-action-btn" onclick="window.location.href='/admin/gerenciar-parceiros.html'"><i class="fas fa-user-plus"></i><span>Adicionar Parceiro</span></button>
+            <button class="quick-action-btn" onclick="window.location.href='/admin/dashboard-igrejas.html'"><i class="fas fa-church"></i><span>Cadastrar Igreja</span></button>
+            <button class="quick-action-btn"><i class="fas fa-box-open"></i><span>Novo Produto</span></button>
+            <button class="quick-action-btn"><i class="fas fa-file-invoice-dollar"></i><span>Gerar Relatório</span></button>
+            <button class="quick-action-btn"><i class="fas fa-cog"></i><span>Configurações</span></button>
+            <button class="quick-action-btn"><i class="fas fa-database"></i><span>Backup Sistema</span></button>
+        </div>
+
+        <!-- Últimos Admins -->
+        <div class="table-container">
+            <h2><i class="fas fa-user-shield"></i> Administradores do Sistema</h2>
+            <div id="adminsLoading" class="loading"><div class="spinner"></div><p style="margin-top: 15px; color: #666;">Carregando administradores...</p></div>
+            <table id="adminsTable" style="display: none;">
+                <thead>
+                    <tr><th>Nome</th><th>Email</th><th>Tipo</th><th>Status</th><th>Último Acesso</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="adminsTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Últimas Vendas -->
+        <div class="table-container">
+            <h2><i class="fas fa-shopping-cart"></i> Últimas Vendas</h2>
+            <div id="vendasLoading" class="loading"><div class="spinner"></div><p style="margin-top: 15px; color: #666;">Carregando vendas...</p></div>
+            <table id="vendasTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID / Email</th>
+                        <th>Produto</th>
+                        <th>Parceiro</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                        <th>Ações</th> <!-- Coluna para os botões -->
+                    </tr>
+                </thead>
+                <tbody id="vendasTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+// Adicionada esta função em 08.04.2026 para o botão "Sair" funcionar
+async function logout() {
+    try {
+        // Faz o logout no Supabase
+        await supabase.auth.signOut();
+        
+        // Redireciona para a página de login
+        // Ajuste o caminho se o seu login estiver em outro lugar
+        window.location.href = '/admin/login.html'; 
+    } catch (error) {
+        console.error('Erro ao sair:', error);
+    }
+}
+
+// Garante que a função seja vista pelo 'onclick' do HTML
+window.logout = logout;
+
+    
+// 1. Verificação de Acesso Centralizada na tabela 'usuarios'
+async function verificarAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = '/admin/login.html'; return; }
+
+    // Mudamos para 'usuarios' e usamos 'tipo' em vez de 'nivel'
+    const { data: usuario, error } = await supabase
+        .from('usuarios')
+        .select('tipo, nome')
+        .eq('id', session.user.id) // Usar ID é mais rápido e seguro que e-mail
+        .single();
+
+    // Se der erro ou o tipo não for admin, expulsa o usuário
+    if (error || !usuario || usuario.tipo !== 'admin') { 
+        console.error("Acesso negado ou usuário não encontrado");
+        await supabase.auth.signOut(); 
+        window.location.href = '/admin/login.html'; 
+        return; 
+    }
+
+    // Preenche os dados na tela
+    document.getElementById('userName').textContent = usuario.nome || 'Administrador';
+    document.getElementById('userAvatar').textContent = (usuario.nome || 'A').charAt(0).toUpperCase();
+    carregarDashboard();
+}
+
+// 2. Carregar a lista de administradores da tabela 'usuarios'
+async function carregarAdmins() {
+    const tableBody = document.getElementById('adminsTableBody');
+    const loading = document.getElementById('adminsLoading');
+    const table = document.getElementById('adminsTable');
+
+    try {
+        // Busca na tabela 'usuarios' todos que são do tipo 'admin'
+        const { data: admins, error } = await supabase
+            .from('usuarios')
+            .select('*')
+            .eq('tipo', 'admin')
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Limpa o corpo da tabela
+        tableBody.innerHTML = '';
+
+        // Preenche a tabela com os dados
+        admins.forEach(admin => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${admin.nome || 'N/A'}</td>
+                <td>${admin.email}</td>
+                <td><span class="badge admin">${admin.tipo}</span></td>
+                <td><span class="status-active">Ativo</span></td>
+                <td>${admin.last_login ? new Date(admin.last_login).toLocaleDateString() : 'N/A'}</td>
+                <td><button class="btn-action"><i class="fas fa-edit"></i></button></td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Esconde o loading e mostra a tabela
+        loading.style.display = 'none';
+        table.style.display = 'table';
+
+    } catch (error) {
+        console.error('Erro ao carregar admins:', error);
+        loading.innerHTML = '<p style="color: red;">Erro ao carregar dados.</p>';
+    }
+}
+
+async function carregarVendas() {
+    const tableBody = document.getElementById('vendasTableBody');
+    const loading = document.getElementById('vendasLoading');
+    const table = document.getElementById('vendasTable');
+
+    try {
+        // Busca as últimas 10 vendas no Supabase
+        const { data: vendas, error } = await supabase
+            .from('vendas') // Verifique se o nome da tabela está correto
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(10);
+
+        if (error) throw error;
+
+        tableBody.innerHTML = '';
+
+        if (vendas && vendas.length > 0) {
+            vendas.forEach(venda => {
+                const tr = document.createElement('tr');
+                // Formatação de moeda e data
+                const valor = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(venda.valor || 0);
+                const data = venda.created_at ? new Date(venda.created_at).toLocaleDateString('pt-BR') : '-';
+
+                tr.innerHTML = `
+                    <td>${venda.email_cliente || venda.id}</td>
+                    <td>${venda.produto || 'N/A'}</td>
+                    <td>${venda.parceiro || '-'}</td>
+                    <td>${valor}</td>
+                    <td><span class="badge ${venda.status === 'pago' ? 'sucesso' : 'pendente'}">${venda.status || 'pendente'}</span></td>
+                    <td>${data}</td>
+                    <td>
+                        <button class="btn-action" onclick="verDetalhes('${venda.id}')"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            table.style.display = 'table';
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="7">Nenhuma venda encontrada.</td></tr>';
+            table.style.display = 'table';
+        }
+
+        loading.style.display = 'none';
+
+    } catch (error) {
+        console.error('Erro ao carregar vendas:', error);
+        loading.innerHTML = '<p style="color: red;">Erro ao carregar vendas.</p>';
+    }
+}
+
+// Chame a função para ela rodar
+carregarVendas();
+
+
+// Chama a função para ela rodar quando a página abrir
+carregarAdmins();
+
+
+// Inicializa a verificação ao carregar a página
+verificarAuth();
+
+
+        // --- VENDAS (COM BOTÃO EXCLUIR) ---
+                async function carregarVendas() {
+            try {
+                const { data: vendas, error } = await supabase
+                    .from('vendas')
+                    .select('id, valor_total, status_pagamento, email_comprador, created_at, parceiro_id')
+                    .order('created_at', { ascending: false }) // Pega as mais recentes primeiro
+                    .limit(50); // Aumentei o limite para ver mais
+
+                if (error) throw error;
+
+                // --- ORDENAÇÃO INTELIGENTE (JavaScript) ---
+                // Coloca 'pendente' primeiro
+                vendas.sort((a, b) => {
+                    const statusA = a.status_pagamento || 'pendente';
+                    const statusB = b.status_pagamento || 'pendente';
+                    
+                    if (statusA === 'pendente' && statusB !== 'pendente') return -1; // A vem primeiro
+                    if (statusA !== 'pendente' && statusB === 'pendente') return 1;  // B vem primeiro
+                    return 0; // Mantém a ordem de data
+                });
+                // -------------------------------------------
+
+                const parceiroIds = [...new Set(vendas.map(v => v.parceiro_id).filter(Boolean))];
+                let parceirosMap = {};
+                if (parceiroIds.length > 0) {
+                    const { data: parceiros } = await supabase.from('usuarios').select('id, nome').in('id', parceiroIds);
+                    if (parceiros) parceiros.forEach(p => parceirosMap[p.id] = p.nome);
+                }
+
+                const tbody = document.getElementById('vendasTableBody'); tbody.innerHTML = '';
+
+                if (vendas && vendas.length > 0) {
+                    vendas.forEach(venda => {
+                        // ... (o resto do código HTML da linha continua IGUAL) ...
+                        // Vou colar aqui resumido para você ver onde encaixa
+                        const status = venda.status_pagamento || 'pendente';
+                        const isPendente = status === 'pendente';
+                        const nomeParceiro = parceirosMap[venda.parceiro_id] || 'Venda Direta';
+
+                        // Destaque visual para pendentes (fundo levemente amarelo)
+                        const bgStyle = isPendente ? 'background-color: #fffde7;' : '';
+
+                        const tr = document.createElement('tr');
+                        tr.style = bgStyle; // Aplica o destaque
+                        tr.innerHTML = `
+                            <td><div>#${venda.id.slice(0,8)}...</div><div style="font-size:11px; color:#666;">${venda.email_comprador || 'Sem e-mail'}</div></td>
+                            <td>Livro Somos Todos Um</td>
+                            <td>${nomeParceiro}</td>
+                            <td>${formatarMoeda(venda.valor_total)}</td>
+                            <td><span class="status-badge ${getStatusClass(status)}">${getStatusText(status)}</span></td>
+                            <td>${formatarData(venda.created_at)}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    ${isPendente ? 
+                                        `<button onclick="aprovarVenda('${venda.id}')" class="btn-action btn-approve" title="Aprovar e Enviar"><i class="fas fa-check"></i> Liberar</button>` : 
+                                        '<span style="color:green; font-weight:bold; margin-right:5px;"><i class="fas fa-check-circle"></i></span>'
+                                    }
+                                    <button onclick="excluirVenda('${venda.id}')" class="btn-action btn-delete" title="Excluir"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    document.getElementById('vendasTable').style.display = 'table';
+                }
+                document.getElementById('vendasLoading').style.display = 'none';
+            } catch (error) { console.error(error); document.getElementById('vendasLoading').innerHTML = '<p>Erro vendas</p>'; }
+        }
+
+        // --- APROVAR ---
+        async function aprovarVenda(idVenda) {
+            if(!confirm("Confirmar pagamento e enviar o livro?")) return;
+            try {
+                const { error } = await supabase.from('vendas').update({ status_pagamento: 'pago' }).eq('id', idVenda);
+                if (error) throw error;
+                alert("✅ Confirmado!");
+                carregarVendas();
+            } catch (error) { console.error(error); alert("Erro ao aprovar."); }
+        }
+
+        // --- EXCLUIR ---
+        async function excluirVenda(idVenda) {
+            if(!confirm("⚠️ Tem certeza que deseja EXCLUIR esta venda?")) return;
+            try {
+                const { error } = await supabase.from('vendas').delete().eq('id', idVenda);
+                if (error) throw error;
+                // alert("🗑️ Excluído!"); // Opcional: tirei o alert pra ficar mais rápido
+                carregarVendas();
+            } catch (error) { console.error(error); alert("Erro ao excluir."); }
+        }
+
+        // --- ENVIAR CORTESIA (COM VALIDAÇÃO RIGOROSA) ---
+        async function enviarCortesia() {
+            // 1. Pede Nome
+            const nome = prompt("1/3 - Digite o NOME COMPLETO:");
+            if (!nome || nome.trim().length < 3) {
+                alert("❌ Cancelado: Nome inválido ou vazio.");
+                return;
+            }
+
+            // 2. Pede Email
+            const email = prompt("2/3 - Digite o E-MAIL:");
+            if (!email || !email.includes('@') || !email.includes('.')) {
+                alert("❌ Cancelado: E-mail inválido.");
+                return;
+            }
+
+            // 3. Pede WhatsApp (Obrigatório agora)
+            const zap = prompt("3/3 - Digite o WHATSAPP (com DDD):");
+            if (!zap || zap.trim().length < 10) {
+                alert("❌ Cancelado: WhatsApp inválido ou vazio.");
+                return;
+            }
+
+            // Confirmação final
+            if (!confirm(`CONFIRMAR ENVIO?\n\n👤 Nome: ${nome}\n📧 Email: ${email}\n📱 Zap: ${zap}`)) return;
+
+            try {
+                const { error } = await supabase.from('vendas').insert({
+                    nome_comprador: nome,
+                    email_comprador: email,
+                    whatsapp_comprador: zap, // Agora salva o zap real
+                    telefone_comprador: zap, // Salva aqui também pra garantir
+                    valor_total: 0.00,
+                //  status: 'aprovado', retirado em 22.02.2026
+                    status_pagamento: 'pago',
+                    forma_pagamento: 'cortesia'
+                });
+
+                if (error) throw error;
+
+                alert("✅ Cortesia enviada com sucesso! O livro chegará no e-mail.");
+                carregarVendas();
+
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao enviar: " + error.message);
+            }
+        }
+        
+        // Helpers
+        function formatarMoeda(v) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0); }
+        function formatarData(d) { return new Date(d).toLocaleDateString('pt-BR'); }
+        function getStatusClass(s) { return (s === 'pago' || s === 'aprovado') ? 'aprovado' : 'pendente'; }
+        function getStatusText(s) { return (s === 'pago' || s === 'aprovado') ? 'Pago ✅' : 'Pendente ⏳'; }
+
+        // Start
+        verificarAuth();
+    </script>
+</body>
+</html>

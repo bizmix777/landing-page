@@ -1,0 +1,7 @@
+name = "temu"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "dist"
+
+[[routes]]
+pattern = "temu.bizmix.com.br/*"
+script = "index.html"

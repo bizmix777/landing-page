@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Acessos - Biz Mix</title>
+    <meta name="description" content="Central de links administrativos da Biz Mix">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #3b82f6;
+            --secondary: #1e293b;
+            --slate-dark: #334155;
+            --slate-light: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-600: #475569;
+            --blue-400: #60a5fa;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            min-height: 100vh;
+        }
+        
+        /* HEADER */
+        .header {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .btn-back {
+            background: var(--primary);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-back:hover {
+            background: var(--blue-400);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* HERO */
+        .hero {
+            padding: 60px 20px 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2em;
+            color: #cbd5e1;
+        }
+        
+        /* CONTAINER */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px 80px;
+        }
+        
+        /* SECTION */
+        .section {
+            margin-bottom: 50px;
+        }
+        
+        .section-header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            color: white;
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-description {
+            color: #cbd5e1;
+            font-size: 1em;
+        }
+        
+        /* LINKS GRID */
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .link-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+            border-color: var(--primary);
+        }
+        
+        .link-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .link-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .link-icon.admin {
+            background: linear-gradient(135deg, #1e293b, #334155);
+        }
+        
+        .link-icon.cadastro {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        
+        .link-icon.parceiros {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        }
+        
+        .link-icon.sistema {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+        
+        .link-icon.recursos {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+        
+        .link-info {
+            flex: 1;
+        }
+        
+        .link-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 5px;
+        }
+        
+        .link-description {
+            font-size: 0.9em;
+            color: var(--slate-600);
+            line-height: 1.4;
+        }
+        
+        .link-url {
+            font-size: 0.8em;
+            color: #94a3b8;
+            font-family: 'Courier New', monospace;
+            background: var(--slate-100);
+            padding: 5px 10px;
+            border-radius: 5px;
+            word-break: break-all;
+        }
+        
+        .link-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-new {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+        
+        .badge-important {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        
+        .badge-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        
+        /* SEARCH BAR */
+        .search-container {
+            margin-bottom: 40px;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .search-box input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1.1em;
+            color: var(--secondary);
+        }
+        
+        .search-box input::placeholder {
+            color: #94a3b8;
+        }
+        
+        .search-icon {
+            color: var(--primary);
+            font-size: 1.3em;
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .footer p {
+            opacity: 0.9;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-link"></i> Painel de Acessos
+            </div>
+            <a href="/index.html" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Voltar ao Hub
+            </a>
+        </div>
+    </header>
+    
+    <!-- HERO -->
+    <section class="hero">
+        <h1><i class="fas fa-th-large"></i> Central de Links Administrativos</h1>
+        <p class="hero-subtitle">Acesso rápido a todos os painéis e ferramentas</p>
+    </section>
+    
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        <!-- SEARCH BAR -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Buscar link... (ex: upload, parceiros, dashboard)">
+            </div>
+        </div>
+        
+        <!-- ÁREA ADMINISTRATIVA -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-tools"></i>
+                    Área Administrativa
+                </h2>
+                <p class="section-description">Ferramentas de gerenciamento e configuração</p>
+            </div>
+            
+            <div class="links-grid">
+                <a href="/somos-todos-um/admin/upload-pdf.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon admin">
+                            <i class="fas fa-file-upload"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Upload de PDF</div>
+                            <span class="link-badge badge-important">Importante</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Enviar ou substituir o livro em PDF no Supabase Storage
+                    </div>
+                    <div class="link-url">/somos-todos-um/admin/upload-pdf.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/painel-igrejas.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon admin">
+                            <i class="fas fa-church"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Painel de Igrejas</div>
+                            <span class="link-badge badge-info">Dashboard</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Gerenciar igrejas parceiras e visualizar estatísticas
+                    </div>
+                    <div class="link-url">/somos-todos-um/painel-igrejas.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/ig_parceiras.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon admin">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Igrejas Parceiras</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Lista e gerenciamento de igrejas parceiras
+                    </div>
+                    <div class="link-url">/somos-todos-um/ig_parceiras.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- CADASTROS -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-user-plus"></i>
+                    Cadastros
+                </h2>
+                <p class="section-description">Formulários de registro e inscrição</p>
+            </div>
+            
+            <div class="links-grid">
+                <a href="/somos-todos-um/cadastro/" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon cadastro">
+                            <i class="fas fa-church"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Cadastro de Igreja</div>
+                            <span class="link-badge badge-new">Novo</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Formulário para cadastrar novas igrejas parceiras
+                    </div>
+                    <div class="link-url">/somos-todos-um/cadastro/</div>
+                </a>
+                
+                <a href="/somos-todos-um/igrejas.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon cadastro">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Lista de Igrejas</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Visualizar todas as igrejas cadastradas
+                    </div>
+                    <div class="link-url">/somos-todos-um/igrejas.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/links-igrejas.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon cadastro">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Links de Igrejas</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Links personalizados para cada igreja
+                    </div>
+                    <div class="link-url">/somos-todos-um/links-igrejas.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- ÁREA DE PARCEIROS -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-handshake"></i>
+                    Área de Parceiros
+                </h2>
+                <p class="section-description">Sistema completo para parceiros e afiliados</p>
+            </div>
+            
+            <div class="links-grid">
+                <a href="/somos-todos-um/parceiros/registro.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon parceiros">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Registro de Parceiro</div>
+                            <span class="link-badge badge-new">Novo</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Cadastro de novos parceiros no sistema
+                    </div>
+                    <div class="link-url">/parceiros/registro.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/parceiros/login.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon parceiros">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Login de Parceiro</div>
+                            <span class="link-badge badge-important">Acesso</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Entrar na área do parceiro
+                    </div>
+                    <div class="link-url">/parceiros/login.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/parceiros/dashboard.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon parceiros">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Dashboard</div>
+                            <span class="link-badge badge-info">Principal</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Painel principal do parceiro com estatísticas
+                    </div>
+                    <div class="link-url">/parceiros/dashboard.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/parceiros/vendas.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon parceiros">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Vendas</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Histórico e gerenciamento de vendas
+                    </div>
+                    <div class="link-url">/parceiros/vendas.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/parceiros/comissoes.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon parceiros">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Comissões</div>
+                            <span class="link-badge badge-important">Financeiro</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Acompanhar comissões e pagamentos
+                    </div>
+                    <div class="link-url">/parceiros/comissoes.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/parceiros/dados.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon parceiros">
+                            <i class="fas fa-user-cog"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Meus Dados</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Gerenciar informações pessoais e de conta
+                    </div>
+                    <div class="link-url">/parceiros/dados.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/parceiros/materiais.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon parceiros">
+                            <i class="fas fa-file-download"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Materiais</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Download de materiais de divulgação
+                    </div>
+                    <div class="link-url">/parceiros/materiais.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- SISTEMA E PÁGINAS -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Sistema e Páginas
+                </h2>
+                <p class="section-description">Páginas do sistema e funcionalidades</p>
+            </div>
+            
+            <div class="links-grid">
+                <a href="/somos-todos-um/index.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon sistema">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Página Inicial</div>
+                            <span class="link-badge badge-info">Principal</span>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Landing page do projeto Somos Todos Um
+                    </div>
+                    <div class="link-url">/somos-todos-um/index.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/comprar.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon sistema">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Página de Compra</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Formulário de compra do livro
+                    </div>
+                    <div class="link-url">/somos-todos-um/comprar.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/checkout.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon sistema">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Checkout</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Finalização de compra e pagamento
+                    </div>
+                    <div class="link-url">/somos-todos-um/checkout.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/confirmacao.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon sistema">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Confirmação</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Página de confirmação de compra
+                    </div>
+                    <div class="link-url">/somos-todos-um/confirmacao.html</div>
+                </a>
+                
+                <a href="/somos-todos-um/download.html" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon sistema">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Download</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Página de download do livro em PDF
+                    </div>
+                    <div class="link-url">/somos-todos-um/download.html</div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- RECURSOS E ARQUIVOS -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <i class="fas fa-folder-open"></i>
+                    Recursos e Arquivos
+                </h2>
+                <p class="section-description">Arquivos estáticos e recursos do sistema</p>
+            </div>
+            
+            <div class="links-grid">
+                <a href="/somos-todos-um/css/" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon recursos">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Pasta CSS</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Arquivos de estilos e folhas de estilo
+                    </div>
+                    <div class="link-url">/somos-todos-um/css/</div>
+                </a>
+                
+                <a href="/somos-todos-um/images/" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon recursos">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Pasta Images</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Imagens, logos e recursos visuais
+                    </div>
+                    <div class="link-url">/somos-todos-um/images/</div>
+                </a>
+                
+                <a href="/somos-todos-um/js/" class="link-card">
+                    <div class="link-header">
+                        <div class="link-icon recursos">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div class="link-info">
+                            <div class="link-title">Pasta JS</div>
+                        </div>
+                    </div>
+                    <div class="link-description">
+                        Scripts JavaScript e funcionalidades
+                    </div>
+                    <div class="link-url">/somos-todos-um/js/</div>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2025 Biz Mix - Painel de Acessos Administrativos</p>
+    </footer>
+    
+    <script>
+        // BUSCA EM TEMPO REAL
+        const searchInput = document.getElementById('searchInput');
+        const linkCards = document.querySelectorAll('.link-card');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            linkCards.forEach(card => {
+                const title = card.querySelector('.link-title').textContent.toLowerCase();
+                const description = card.querySelector('.link-description').textContent.toLowerCase();
+                const url = card.querySelector('.link-url').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm) || url.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // COPIAR URL AO CLICAR
+        document.querySelectorAll('.link-url').forEach(urlElement => {
+            urlElement.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const url = this.textContent;
+                navigator.clipboard.writeText(window.location.origin + url);
+                
+                const originalText = this.textContent;
+                this.textContent = '✓ URL copiada!';
+                this.style.color = 'var(--primary)';
+                
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.style.color = '';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

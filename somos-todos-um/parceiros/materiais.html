@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materiais de Divulgação - Área do Parceiro</title>
+    <meta name="robots" content="noindex, nofollow">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <style>
+        body {
+            background: #111827;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 18px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            border: 1px solid #374151;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .btn-back {
+            padding: 10px 20px;
+            background: #374151;
+            color: white;
+            border: 1px solid #4b5563;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #4b5563;
+        }
+
+        .card {
+            background: #1f2937;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #374151;
+            margin-bottom: 24px;
+        }
+
+        .card h2 {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+
+        .card .subtitle {
+            color: #9ca3af;
+            font-size: 14px;
+            margin: 0 0 24px 0;
+        }
+
+        .link-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .link-box input {
+            flex: 1;
+            padding: 14px 16px;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn-copy {
+            padding: 14px 24px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .material-card {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 16px;
+            padding: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .material-card:hover {
+            border-color: white;
+            transform: translateY(-4px);
+        }
+
+        .material-preview {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            border-bottom: 1px solid #4b5563;
+        }
+
+        .material-content {
+            padding: 20px;
+        }
+
+        .material-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .material-desc {
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0 0 16px 0;
+        }
+
+        .material-size {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 12px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-download:hover {
+            background: #e5e7eb;
+        }
+
+        .info-box {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .info-box p {
+            color: #d1d5db;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 12px 0;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-box strong {
+            color: white;
+        }
+
+        .info-box ul {
+            margin: 12px 0 0 20px;
+            padding: 0;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .text-templates {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .text-templates h3 {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+        }
+
+        .text-template {
+            background: #1f2937;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .text-template:last-child {
+            margin-bottom: 0;
+        }
+
+        .text-template p {
+            color: #d1d5db;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 12px 0;
+            font-style: italic;
+        }
+
+        .btn-copy-text {
+            padding: 8px 16px;
+            background: #4b5563;
+            color: white;
+            border: 1px solid #6b7280;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-copy-text:hover {
+            background: #6b7280;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-back {
+                width: 100%;
+                text-align: center;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .link-box {
+                flex-direction: column;
+            }
+
+            .btn-copy {
+                width: 100%;
+            }
+
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <p>⏳ Carregando materiais...</p>
+    </div>
+
+    <div class="container" id="conteudo" style="display: none;">
+        <div class="header">
+            <h1>🎨 Materiais de Divulgação</h1>
+            <a href="dashboard.html" class="btn-back">← Voltar ao Dashboard</a>
+        </div>
+
+        <!-- SEU LINK DE INDICAÇÃO -->
+        <div class="card">
+            <h2>🔗 Seu Link de Indicação</h2>
+            <p class="subtitle">Use este link em todos os seus materiais</p>
+            
+            <div class="link-box">
+                <input type="text" id="linkIndicacao" readonly>
+                <button class="btn-copy" onclick="copiarLink()">📋 Copiar</button>
+            </div>
+
+            <div class="info-box">
+                <p><strong>💡 Importante:</strong></p>
+                <p>Este é o seu link exclusivo de indicação. Todas as vendas realizadas através dele serão creditadas a você e gerarão comissões.</p>
+            </div>
+        </div>
+
+        <!-- TEXTOS PRONTOS -->
+        <div class="card">
+            <h2>📝 Textos Prontos para Divulgação</h2>
+            <p class="subtitle">Copie e cole em suas redes sociais</p>
+
+            <div class="text-templates">
+                <h3>Para WhatsApp e Telegram:</h3>
+                
+                <div class="text-template">
+                    <p id="texto1">
+                        🌟 Olá! Você conhece o projeto "Somos Todos Um"? 
+                        <br><br>
+                        É uma iniciativa incrível que une espiritualidade e transformação pessoal. 
+                        <br><br>
+                        Acesse pelo meu link e conheça: <span id="linkTexto1">[SEU LINK]</span>
+                        <br><br>
+                        Vamos juntos nessa jornada! 🙏✨
+                    </p>
+                    <button class="btn-copy-text" onclick="copiarTexto('texto1')">📋 Copiar Texto</button>
+                </div>
+
+                <div class="text-template">
+                    <p id="texto2">
+                        🙏 Transforme sua vida com o projeto "Somos Todos Um"!
+                        <br><br>
+                        ✨ Conteúdo espiritual de qualidade
+                        <br>💫 Comunidade acolhedora
+                        <br>📚 Materiais exclusivos
+                        <br><br>
+                        Conheça agora: <span id="linkTexto2">[SEU LINK]</span>
+                    </p>
+                    <button class="btn-copy-text" onclick="copiarTexto('texto2')">📋 Copiar Texto</button>
+                </div>
+
+                <div class="text-template">
+                    <p id="texto3">
+                        💙 Você está buscando crescimento espiritual?
+                        <br><br>
+                        O projeto "Somos Todos Um" pode te ajudar nessa jornada!
+                        <br><br>
+                        Acesse pelo meu link especial: <span id="linkTexto3">[SEU LINK]</span>
+                        <br><br>
+                        Venha fazer parte! 🌟
+                    </p>
+                    <button class="btn-copy-text" onclick="copiarTexto('texto3')">📋 Copiar Texto</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- BANNERS E IMAGENS -->
+        <div class="card">
+            <h2>🖼️ Banners e Imagens</h2>
+            <p class="subtitle">Baixe e compartilhe em suas redes sociais</p>
+
+            <div class="info-box">
+                <p><strong>📌 Como usar:</strong></p>
+                <ul>
+                    <li>Baixe o material desejado</li>
+                    <li>Poste em suas redes sociais (Instagram, Facebook, etc.)</li>
+                    <li>Adicione seu link de indicação na legenda</li>
+                    <li>Marque amigos que possam se interessar</li>
+                </ul>
+            </div>
+
+            <div class="materials-grid">
+                <div class="material-card">
+                    <div class="material-preview">🎨</div>
+                    <div class="material-content">
+                        <h3 class="material-title">Banner Instagram - Feed</h3>
+                        <p class="material-desc">Banner quadrado otimizado para feed do Instagram</p>
+                        <p class="material-size">📐 1080x1080px • JPG</p>
+                        <button class="btn-download" onclick="alert('📥 Material em breve! Entre em contato com o suporte.')">
+                            ⬇️ Baixar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="material-card">
+                    <div class="material-preview">📱</div>
+                    <div class="material-content">
+                        <h3 class="material-title">Banner Instagram - Stories</h3>
+                        <p class="material-desc">Banner vertical para stories do Instagram</p>
+                        <p class="material-size">📐 1080x1920px • JPG</p>
+                        <button class="btn-download" onclick="alert('📥 Material em breve! Entre em contato com o suporte.')">
+                            ⬇️ Baixar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="material-card">
+                    <div class="material-preview">💻</div>
+                    <div class="material-content">
+                        <h3 class="material-title">Banner Facebook - Capa</h3>
+                        <p class="material-desc">Banner horizontal para capa do Facebook</p>
+                        <p class="material-size">📐 820x312px • JPG</p>
+                        <button class="btn-download" onclick="alert('📥 Material em breve! Entre em contato com o suporte.')">
+                            ⬇️ Baixar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="material-card">
+                    <div class="material-preview">📧</div>
+                    <div class="material-content">
+                        <h3 class="material-title">Banner E-mail Marketing</h3>
+                        <p class="material-desc">Banner otimizado para campanhas de e-mail</p>
+                        <p class="material-size">📐 600x400px • JPG</p>
+                        <button class="btn-download" onclick="alert('📥 Material em breve! Entre em contato com o suporte.')">
+                            ⬇️ Baixar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="material-card">
+                    <div class="material-preview">💬</div>
+                    <div class="material-content">
+                        <h3 class="material-title">Banner WhatsApp Status</h3>
+                        <p class="material-desc">Banner vertical para status do WhatsApp</p>
+                        <p class="material-size">📐 1080x1920px • JPG</p>
+                        <button class="btn-download" onclick="alert('📥 Material em breve! Entre em contato com o suporte.')">
+                            ⬇️ Baixar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="material-card">
+                    <div class="material-preview">🎥</div>
+                    <div class="material-content">
+                        <h3 class="material-title">Vídeo de Apresentação</h3>
+                        <p class="material-desc">Vídeo curto para compartilhar nas redes</p>
+                        <p class="material-size">📐 1080x1080px • MP4</p>
+                        <button class="btn-download" onclick="alert('📥 Material em breve! Entre em contato com o suporte.')">
+                            ⬇️ Baixar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DICAS DE DIVULGAÇÃO -->
+        <div class="card">
+            <h2>💡 Dicas de Divulgação</h2>
+            <p class="subtitle">Maximize seus resultados</p>
+
+            <div class="info-box">
+                <p><strong>🎯 Estratégias que funcionam:</strong></p>
+                <ul>
+                    <li><strong>Seja autêntico:</strong> Compartilhe sua experiência pessoal com o projeto</li>
+                    <li><strong>Poste regularmente:</strong> Mantenha presença constante nas redes sociais</li>
+                    <li><strong>Use hashtags:</strong> #SomosTodosUm #Espiritualidade #Transformação</li>
+                    <li><strong>Engaje com seu público:</strong> Responda comentários e mensagens</li>
+                    <li><strong>Compartilhe em grupos:</strong> Participe de grupos relacionados ao tema</li>
+                    <li><strong>Faça lives:</strong> Fale sobre o projeto em transmissões ao vivo</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 Página de Materiais - Iniciada');
+
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://hjlpmorykllywjodusqx.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let usuarioAtual = null;
+        let parceiroAtual = null;
+        let linkIndicacao = '';
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await verificarAutenticacao();
+        });
+
+        async function verificarAutenticacao() {
+            console.log('🔍 Verificando autenticação...');
+            
+            try {
+                const { data: { session }, error } = await supabaseClient.auth.getSession();
+                
+                if (error || !session) {
+                    console.log('❌ Sessão inválida - redirecionando');
+                    window.location.href = '/painel-acesso/';
+                    return;
+                }
+                
+                console.log('✅ Sessão válida:', session.user.email);
+                usuarioAtual = session.user;
+                
+                await buscarDadosParceiro();
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                window.location.href = '/painel-acesso/';
+            }
+        }
+
+        async function buscarDadosParceiro() {
+            console.log('📥 Buscando dados do parceiro...');
+            
+            try {
+                // Buscar em igrejas
+                let { data: igreja, error: erroIgreja } = await supabaseClient
+                    .from('igrejas')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (igreja) {
+                    parceiroAtual = {
+                        id: igreja.id,
+                        nome: igreja.nome,
+                        email: igreja.email,
+                        codigo: igreja.codigo || igreja.id,
+                        tipo: 'igreja'
+                    };
+                    carregarMateriais();
+                    return;
+                }
+                
+                // Buscar em parceiros
+                let { data: parceiro, error: erroParceiro } = await supabaseClient
+                    .from('parceiros')
+                    .select('*')
+                    .eq('email', usuarioAtual.email)
+                    .single();
+                
+                if (parceiro) {
+                    parceiroAtual = {
+                        id: parceiro.id,
+                        nome: parceiro.nome,
+                        email: parceiro.email,
+                        codigo: parceiro.codigo || parceiro.id,
+                        tipo: 'parceiro'
+                    };
+                    carregarMateriais();
+                    return;
+                }
+                
+                console.warn('⚠️ Parceiro não encontrado');
+                alert('Cadastro não encontrado.');
+                window.location.href = '/painel-acesso/';
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar dados: ' + error.message);
+                window.location.href = '/painel-acesso/';
+            }
+        }
+
+        function carregarMateriais() {
+            console.log('📊 Carregando materiais...');
+            
+            // Gerar link de indicação
+            linkIndicacao = `${window.location.origin}/somos-todos-um/parceiros/checkout.html?parceiro=${parceiroAtual.codigo}`;
+            document.getElementById('linkIndicacao').value = linkIndicacao;
+            
+            // Atualizar textos com o link
+            document.getElementById('linkTexto1').textContent = linkIndicacao;
+            document.getElementById('linkTexto2').textContent = linkIndicacao;
+            document.getElementById('linkTexto3').textContent = linkIndicacao;
+            
+            // Mostrar conteúdo
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('conteudo').style.display = 'block';
+            
+            console.log('✅ Materiais carregados');
+        }
+
+        function copiarLink() {
+            const input = document.getElementById('linkIndicacao');
+            input.select();
+            input.setSelectionRange(0, 99999);
+            
+            try {
+                document.execCommand('copy');
+                alert('✅ Link copiado para a área de transferência!');
+            } catch (err) {
+                console.error('❌ Erro ao copiar:', err);
+                alert('❌ Erro ao copiar link. Tente selecionar e copiar manualmente.');
+            }
+        }
+
+        function copiarTexto(idTexto) {
+            const elemento = document.getElementById(idTexto);
+            const texto = elemento.innerText;
+            
+            // Criar elemento temporário
+            const temp = document.createElement('textarea');
+            temp.value = texto;
+            document.body.appendChild(temp);
+            temp.select();
+            
+            try {
+                document.execCommand('copy');
+                alert('✅ Texto copiado para a área de transferência!');
+            } catch (err) {
+                console.error('❌ Erro ao copiar:', err);
+                alert('❌ Erro ao copiar texto. Tente selecionar e copiar manualmente.');
+            }
+            
+            document.body.removeChild(temp);
+        }
+    </script>
+</body>
+</html>

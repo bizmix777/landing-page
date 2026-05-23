@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gamificação - BizMix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    
+    <!-- Config Centralizado -->
+    <script src="/supabase-config.js"></script>
+    
+    <!-- Widget de Nível (opcional) -->
+    <script src="/js/widget-nivel.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .nivel-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .nivel-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .nivel-nome {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .nivel-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .progress-section {
+            margin-top: 30px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .badges-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .badge-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .badge-item.conquistado {
+            background: linear-gradient(135deg, #fff3cd 0%, #fff 100%);
+            border-color: #ffc107;
+        }
+
+        .badge-item.bloqueado {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .badge-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .badge-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .badge-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .badge-desc {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .niveis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .nivel-item {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+
+        .nivel-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nivel-item.atual {
+            background: linear-gradient(135deg, #f0f8ff 0%, #fff 100%);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .nivel-item-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .nivel-item-icon {
+            font-size: 2.5rem;
+        }
+
+        .nivel-item-nome {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .nivel-requisitos {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .requisito {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .requisito:last-child {
+            margin-bottom: 0;
+        }
+
+        .beneficios-list {
+            list-style: none;
+        }
+
+        .beneficios-list li {
+            padding: 5px 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .beneficios-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .ranking-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ranking-table thead {
+            background: #f8f9fa;
+        }
+
+        .ranking-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .ranking-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .ranking-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .posicao-medal {
+            font-size: 1.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .nivel-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .badges-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .niveis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>🎮 Sistema de Gamificação</h1>
+            <p>Acompanhe seu progresso, conquistas e ranking</p>
+        </div>
+
+        <div id="loadingSection" class="loading">
+            <div class="spinner"></div>
+            <p>Carregando dados...</p>
+        </div>
+
+        <div id="mainContent" style="display: none;">
+
+            <!-- NÍVEL ATUAL -->
+            <div class="nivel-card">
+                <div class="nivel-icon" id="nivelIcon">🥉</div>
+                <div class="nivel-nome" id="nivelNome">Bronze</div>
+                <p style="color: #666; margin-top: 10px;" id="nivelDesc">Nível inicial - Continue vendendo!</p>
+
+                <div class="nivel-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Total de Vendas</div>
+                        <div class="stat-value" id="totalVendas">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Taxa de Conversão</div>
+                        <div class="stat-value" id="taxaConversao">0%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Pontos</div>
+                        <div class="stat-value" id="pontos">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Comissão Atual</div>
+                        <div class="stat-value" id="comissaoAtual">10%</div>
+                    </div>
+                </div>
+
+                <div class="progress-section" id="progressSection" style="display: none;">
+                    <div class="progress-label">
+                        <span>Progresso para o próximo nível</span>
+                        <span id="progressText">0/5 vendas</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BADGES -->
+            <div class="badges-section">
+                <div class="section-title">🏆 Conquistas</div>
+                <div class="badges-grid" id="badgesGrid">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- TODOS OS NÍVEIS -->
+            <div class="badges-section">
+                <div class="section-title">📊 Todos os Níveis</div>
+                <div class="niveis-grid" id="niveisGrid">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- RANKING -->
+            <div class="ranking-section">
+                <div class="section-title">🥇 Top 10 Parceiros</div>
+                <table class="ranking-table">
+                    <thead>
+                        <tr>
+                            <th>Posição</th>
+                            <th>Parceiro</th>
+                            <th>Nível</th>
+                            <th>Vendas</th>
+                            <th>Conversão</th>
+                            <th>Pontos</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTableBody">
+                        <!-- Preenchido dinamicamente -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        console.log('🎮 Gamificação carregada');
+
+        // ============================================
+        // CONFIGURAÇÃO (usando supabase-config.js)
+        // ============================================
+        console.log('✅ Usando configuração centralizada do Supabase');
+
+        // PARCEIRO ID (pegar da URL ou sessão - exemplo fixo aqui)
+        const urlParams = new URLSearchParams(window.location.search);
+        const parceiroId = urlParams.get('parceiro') || 'DEMO';
+
+        // ============================================
+        // CARREGAR DADOS
+        // ============================================
+        async function carregarDados() {
+            try {
+                document.getElementById('loadingSection').style.display = 'block';
+                document.getElementById('mainContent').style.display = 'none';
+
+                // Atualizar gamificação do parceiro
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/atualizar-gamificacao`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify({ parceiro_id: parceiroId })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Erro ao carregar dados');
+                }
+
+                console.log('✅ Dados carregados:', result);
+
+                exibirNivelAtual(result.parceiro);
+                exibirBadges(result.badges_conquistados);
+                await carregarTodosNiveis(result.parceiro.nivel);
+                await carregarRanking();
+
+                // Verificar notificações
+                if (result.notificacoes && result.notificacoes.length > 0) {
+                    result.notificacoes.forEach(notif => {
+                        alert(`${notif.titulo}\n\n${notif.mensagem}`);
+                    });
+                }
+
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                alert('Erro ao carregar dados: ' + error.message);
+            }
+        }
+
+        function exibirNivelAtual(parceiro) {
+            const nivel = parceiro.nivel;
+
+            document.getElementById('nivelIcon').textContent = nivel.icone;
+            document.getElementById('nivelNome').textContent = nivel.nome;
+            document.getElementById('nivelNome').style.color = nivel.cor;
+            
+            document.getElementById('totalVendas').textContent = parceiro.total_vendas;
+            document.getElementById('taxaConversao').textContent = parceiro.taxa_conversao.toFixed(2) + '%';
+            document.getElementById('pontos').textContent = parceiro.pontos;
+            
+            const comissaoTotal = 10 + (nivel.comissao_bonus || 0);
+            document.getElementById('comissaoAtual').textContent = comissaoTotal + '%';
+        }
+
+        async function exibirBadges(conquistados) {
+            try {
+                // Buscar todos os badges
+                const { data: badges, error } = await supabaseClient
+                    .from('badges')
+                    .select('*')
+                    .eq('ativo', true)
+                    .order('requisito_valor', { ascending: true });
+
+                if (error) throw error;
+
+                const grid = document.getElementById('badgesGrid');
+                grid.innerHTML = '';
+
+                const conquistadosIds = conquistados.map(b => b.id);
+
+                badges.forEach(badge => {
+                    const conquistado = conquistadosIds.includes(badge.id);
+                    
+                    const div = document.createElement('div');
+                    div.className = `badge-item ${conquistado ? 'conquistado' : 'bloqueado'}`;
+                    
+                    div.innerHTML = `
+                        <div class="badge-icon">${badge.icone}</div>
+                        <div class="badge-name">${badge.nome}</div>
+                        <div class="badge-desc">${badge.descricao}</div>
+                    `;
+                    
+                    grid.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar badges:', error);
+            }
+        }
+
+        async function carregarTodosNiveis(nivelAtual) {
+            try {
+                const { data: niveis, error } = await supabaseClient
+                    .from('niveis')
+                    .select('*')
+                    .order('ordem', { ascending: true });
+
+                if (error) throw error;
+
+                const grid = document.getElementById('niveisGrid');
+                grid.innerHTML = '';
+
+                niveis.forEach(nivel => {
+                    const isAtual = nivel.id === nivelAtual.id;
+                    
+                    const div = document.createElement('div');
+                    div.className = `nivel-item ${isAtual ? 'atual' : ''}`;
+                    div.style.borderLeftColor = nivel.cor;
+                    
+                    let beneficiosHtml = '';
+                    if (nivel.beneficios && nivel.beneficios.length > 0) {
+                        beneficiosHtml = '<ul class="beneficios-list">';
+                        nivel.beneficios.forEach(beneficio => {
+                            beneficiosHtml += `<li>${beneficio}</li>`;
+                        });
+                        beneficiosHtml += '</ul>';
+                    }
+                    
+                    div.innerHTML = `
+                        <div class="nivel-item-header">
+                            <div class="nivel-item-icon">${nivel.icone}</div>
+                            <div>
+                                <div class="nivel-item-nome" style="color: ${nivel.cor}">${nivel.nome}</div>
+                                ${isAtual ? '<small style="color: #28a745; font-weight: 600;">✓ SEU NÍVEL ATUAL</small>' : ''}
+                            </div>
+                        </div>
+                        <div class="nivel-requisitos">
+                            <div class="requisito">
+                                <span>Vendas mínimas:</span>
+                                <strong>${nivel.vendas_minimas}</strong>
+                            </div>
+                            <div class="requisito">
+                                <span>Conversão mínima:</span>
+                                <strong>${nivel.taxa_conversao_minima}%</strong>
+                            </div>
+                            <div class="requisito">
+                                <span>Bônus de comissão:</span>
+                                <strong style="color: #28a745;">+${nivel.comissao_bonus}%</strong>
+                            </div>
+                        </div>
+                        ${beneficiosHtml}
+                    `;
+                    
+                    grid.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar níveis:', error);
+            }
+        }
+
+        async function carregarRanking() {
+            try {
+                const { data: ranking, error } = await supabaseClient
+                    .rpc('ranking_parceiros', { p_limite: 10 });
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('rankingTableBody');
+                tbody.innerHTML = '';
+
+                const medals = ['🥇', '🥈', '🥉'];
+
+                ranking.forEach((r, index) => {
+                    const tr = document.createElement('tr');
+                    
+                    const posicaoDisplay = index < 3 ? medals[index] : r.posicao;
+                    
+                    tr.innerHTML = `
+                        <td class="posicao-medal">${posicaoDisplay}</td>
+                        <td>${r.nome}</td>
+                        <td>${r.nivel || 'Bronze'}</td>
+                        <td>${r.total_vendas}</td>
+                        <td>${r.taxa_conversao.toFixed(2)}%</td>
+                        <td><strong>${r.pontos}</strong></td>
+                    `;
+                    
+                    tbody.appendChild(tr);
+                });
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar ranking:', error);
+            }
+        }
+
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Dashboard de gamificação inicializado');
+            carregarDados();
+        });
+    </script>
+
+</body>
+</html>

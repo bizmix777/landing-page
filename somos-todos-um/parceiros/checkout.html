@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Somos Todos Um</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <!-- Checkout Config -->
+    <script src="/js/checkout-config.js"></script>
+    <script src="/js/checkout-pix.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .checkout-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .checkout-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .checkout-header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .checkout-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .preco-destaque {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .checkout-body {
+            padding: 30px;
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .payment-method {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .payment-method.active {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .payment-method.active::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .payment-method.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
+        .payment-method-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .payment-method-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .coming-soon {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-pagar {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .btn-pagar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-pagar:active {
+            transform: translateY(0);
+        }
+
+        .btn-pagar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #0c4a6e;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .security-info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .checkout-container {
+                border-radius: 0;
+            }
+
+            .checkout-body {
+                padding: 20px;
+            }
+
+            .preco-destaque {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <!-- Header -->
+        <div class="checkout-header">
+            <h1>📖 Livro Digital</h1>
+            <p>Somos Todos Um</p>
+            <div class="preco-destaque">R$ 29,90</div>
+        </div>
+
+        <!-- Body -->
+        <div class="checkout-body">
+            
+            <!-- Métodos de Pagamento -->
+            <div class="payment-methods">
+                <div class="payment-method active" id="method-pix" onclick="selecionarMetodo('pix')">
+                    <div class="payment-method-icon">💳</div>
+                    <div class="payment-method-name">PIX</div>
+                </div>
+                
+                <div class="payment-method disabled" id="method-card">
+                    <div class="payment-method-icon">💳</div>
+                    <div class="payment-method-name">Cartão</div>
+                    <div class="coming-soon">Em breve</div>
+                </div>
+            </div>
+
+            <!-- Formulário -->
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="nome">Nome Completo *</label>
+                    <input 
+                        type="text" 
+                        id="nome" 
+                        name="nome" 
+                        placeholder="Seu nome completo" 
+                        required
+                        autocomplete="name"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">E-mail *</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="seu@email.com" 
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="telefone">Telefone/WhatsApp *</label>
+                    <input 
+                        type="tel" 
+                        id="telefone" 
+                        name="telefone" 
+                        placeholder="(00) 00000-0000" 
+                        required
+                        maxlength="15"
+                        autocomplete="tel"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="cpf">CPF *</label>
+                    <input 
+                        type="text" 
+                        id="cpf" 
+                        name="cpf" 
+                        placeholder="000.000.000-00" 
+                        required
+                        maxlength="14"
+                    >
+                </div>
+
+                <button type="submit" class="btn-pagar" id="btn-pagar">
+                    💳 Pagar com PIX - R$ 29,90
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 15px; color: #667eea; font-weight: 600;">Processando...</p>
+                </div>
+            </form>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <strong>✅ Pagamento 100% Seguro</strong>
+                Após o pagamento, você receberá o link de download por email imediatamente.
+            </div>
+
+            <!-- Security -->
+            <div class="security-info">
+                🔒 Ambiente seguro e criptografado
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Estado global
+        let metodoSelecionado = 'pix'
+
+        // Selecionar método de pagamento
+        function selecionarMetodo(metodo) {
+            if (metodo === 'card') {
+                alert('💳 Pagamento com cartão estará disponível em breve!\n\nPor enquanto, use PIX para pagamento instantâneo.')
+                return
+            }
+
+            metodoSelecionado = metodo
+
+            // Atualizar UI
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('active')
+            })
+            document.getElementById(`method-${metodo}`).classList.add('active')
+
+            // Atualizar botão
+            const btn = document.getElementById('btn-pagar')
+            if (metodo === 'pix') {
+                btn.innerHTML = '💳 Pagar com PIX - R$ 29,90'
+            } else if (metodo === 'card') {
+                btn.innerHTML = '💳 Pagar com Cartão - R$ 29,90'
+            }
+        }
+
+        // Aplicar máscaras
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            e.target.value = CHECKOUT_CONFIG.aplicarMascaraTelefone(e.target.value)
+        })
+
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            e.target.value = CHECKOUT_CONFIG.aplicarMascaraCPF(e.target.value)
+        })
+
+        // Submit do formulário
+        document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+            e.preventDefault()
+
+            // Desabilitar botão e mostrar loading
+            const btn = document.getElementById('btn-pagar')
+            const loading = document.getElementById('loading')
+            
+            btn.disabled = true
+            loading.classList.add('active')
+
+            // Coletar dados
+            const dados = {
+                nome: document.getElementById('nome').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                telefone: document.getElementById('telefone').value,
+                cpf: document.getElementById('cpf').value,
+                referencia: CHECKOUT_CONFIG.obterParametroURL('ref')
+            }
+
+            console.log('📝 Dados do formulário:', dados)
+
+            // Processar pagamento
+            if (metodoSelecionado === 'pix') {
+                const resultado = await CHECKOUT_PIX.processar(dados)
+                
+                if (!resultado.success) {
+                    alert('❌ Erro ao processar pagamento. Tente novamente.')
+                    btn.disabled = false
+                    loading.classList.remove('active')
+                }
+            }
+        })
+
+        // Log inicial
+        console.log('🛒 Checkout carregado')
+        console.log('💰 Produto:', CHECKOUT_CONFIG.produto.nome)
+        console.log('💵 Preço:', CHECKOUT_CONFIG.formatarMoeda(CHECKOUT_CONFIG.produto.preco))
+    </script>
+</body>
+</html>

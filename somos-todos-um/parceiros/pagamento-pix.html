@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💳 Pagamento PIX - Somos Todos Um</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .valor-destaque {
+            font-size: 42px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .body {
+            padding: 30px;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .qr-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #qrcode-direto {
+            display: inline-block;
+            padding: 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .pix-code-container {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px dashed #ccc;
+        }
+
+        .pix-code-container strong {
+            color: #333;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .pix-code {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            color: #333;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .btn-copy {
+            width: 100%;
+            padding: 14px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-copy:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .info-box.warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+
+        .info-box.success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .instructions {
+            margin-top: 25px;
+        }
+
+        .instructions h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+            color: #666;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .dados-bancarios {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .dados-bancarios strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 0;
+            }
+            .valor-destaque {
+                font-size: 32px;
+            }
+            .body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>💳 Pagamento PIX</h1>
+            <p>Livro Digital - Somos Todos Um</p>
+            <div class="valor-destaque" id="valor-display">R$ 29,90</div>
+        </div>
+
+        <!-- Body -->
+        <div class="body">
+            
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p style="margin-top: 15px; color: #667eea; font-weight: 600;">Gerando código PIX...</p>
+            </div>
+
+            <!-- Conteúdo PIX -->
+            <div id="content-pix" style="display: none;">
+                
+                <div class="info-box success">
+                    <strong>✅ PIX - Recebimento Imediato</strong>
+                    Pagamento cai direto na conta sem taxas intermediárias!
+                </div>
+
+                <!-- QR Code -->
+                <div class="qr-section">
+                    <h3>Escaneie o QR Code:</h3>
+                    <div id="qrcode-direto"></div>
+                </div>
+
+                <!-- Código Pix Copia e Cola -->
+                <div class="pix-code-container">
+                    <strong>Ou copie o código PIX:</strong>
+                    <div class="pix-code" id="pixcode-direto">Gerando...</div>
+                    <button class="btn-copy" onclick="copiarCodigo()">
+                        📋 Copiar Código PIX
+                    </button>
+                </div>
+
+                <!-- Dados Bancários -->
+                <div class="dados-bancarios">
+                    <strong>📌 Dados do Beneficiário:</strong><br>
+                    Nome: HENRIQUE GOMES DA SILVA<br>
+                    CPF: 349.656.291-91<br>
+                    Banco: C6 (336) - Ag: 0001<br>
+                    Chave PIX: 6ea0fa32-993a-4769-b515-61dbca2db8f6
+                </div>
+
+                <!-- Instruções -->
+                <div class="instructions">
+                    <h3>Como pagar:</h3>
+                    <ol>
+                        <li>Abra o app do seu banco</li>
+                        <li>Escolha <strong>PIX → Pagar com QR Code</strong> ou <strong>PIX Copia e Cola</strong></li>
+                        <li>Escaneie o QR Code ou cole o código acima</li>
+                        <li>Confirme o valor de <strong>R$ 29,90</strong></li>
+                        <li>Finalize o pagamento</li>
+                    </ol>
+                </div>
+
+                <div class="info-box warning">
+                    <strong>⚠️ Importante:</strong> Após o pagamento, aguarde alguns minutos. Você receberá o link de download por email.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        console.log('🚀 INICIANDO PÁGINA DE PAGAMENTO PIX');
+        console.log('📍 URL atual:', window.location.href);
+
+        // Verificar se QRCode library carregou
+        if (typeof QRCode === 'undefined') {
+            console.error('❌ ERRO: Biblioteca QRCode não carregou!');
+            alert('❌ Erro ao carregar biblioteca QR Code. Recarregue a página.');
+        } else {
+            console.log('✅ Biblioteca QRCode carregada');
+        }
+
+        // Verificar se Supabase carregou
+        if (typeof supabase === 'undefined') {
+            console.error('❌ ERRO: Supabase não carregado!');
+            alert('❌ Erro ao carregar Supabase. Recarregue a página.');
+        } else {
+            console.log('✅ Supabase carregado');
+        }
+
+        // Obter venda_id da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const vendaId = urlParams.get('venda_id');
+
+        console.log('📋 Venda ID extraído da URL:', vendaId);
+
+        if (!vendaId) {
+            console.error('❌ ERRO: ID da venda não encontrado na URL!');
+            alert('❌ Erro: ID da venda não encontrado!');
+        }
+
+        // Dados da venda
+        let dadosVenda = null;
+
+        // Carregar dados da venda
+        async function carregarDadosVenda() {
+            console.log('📥 Carregando dados da venda...');
+            console.log('🔍 Buscando venda ID:', vendaId);
+            
+            try {
+                const { data, error } = await supabase
+                    .from('vendas')
+                    .select('*')
+                    .eq('id', vendaId)
+                    .single();
+
+                if (error) {
+                    console.error('❌ Erro ao carregar venda:', error);
+                    alert('❌ Erro ao carregar dados da venda: ' + error.message);
+                    return null;
+                }
+
+                if (!data) {
+                    console.error('❌ Nenhum dado retornado!');
+                    alert('❌ Venda não encontrada!');
+                    return null;
+                }
+
+                console.log('✅ Venda carregada:', data);
+                dadosVenda = data;
+                
+                // Atualizar valor na tela
+                const valorFormatado = `R$ ${data.valor_total.toFixed(2).replace('.', ',')}`;
+                console.log('💰 Valor:', valorFormatado);
+                document.getElementById('valor-display').textContent = valorFormatado;
+
+                return data;
+            } catch (err) {
+                console.error('❌ Erro:', err);
+                alert('❌ Erro inesperado: ' + err.message);
+                return null;
+            }
+        }
+
+        // Gerar código PIX Direto (formato EMV) - VERSÃO FINAL COM CAMPO 62
+        function gerarPixDireto(valor) {
+            console.log('🏦 Gerando PIX para valor:', valor);
+            
+            // ✅ Chave UUID confirmada
+            const chavePix = '6ea0fa32-993a-4769-b515-61dbca2db8f6';
+            const nome = 'HENRIQUE GOMES DA SILVA';
+            const cidade = 'SAO PAULO';
+            
+            console.log('🔑 Chave PIX (UUID):', chavePix);
+            console.log('👤 Nome:', nome);
+            console.log('🌆 Cidade:', cidade);
+
+            // Função auxiliar para formatar campos EMV
+            function formatarCampo(id, valor) {
+                const tamanho = valor.length.toString().padStart(2, '0');
+                return `${id}${tamanho}${valor}`;
+            }
+
+            // Gerar Transaction ID único (25 caracteres alfanuméricos)
+            function gerarTxId() {
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                let txid = '';
+                for (let i = 0; i < 25; i++) {
+                    txid += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                return txid;
+            }
+
+            // Montar payload PIX (VERSÃO FINAL)
+            let payload = '';
+            
+            payload += formatarCampo('00', '01'); // Payload Format Indicator
+            payload += formatarCampo('01', '12'); // Point of Initiation Method
+            
+            // Merchant Account Information (tag 26)
+            const merchantAccount = formatarCampo('00', 'br.gov.bcb.pix') + formatarCampo('01', chavePix);
+            payload += formatarCampo('26', merchantAccount);
+            
+            payload += formatarCampo('52', '0000'); // Merchant Category Code
+            payload += formatarCampo('53', '986'); // Currency (BRL)
+            payload += formatarCampo('54', valor.toFixed(2)); // Transaction Amount
+            payload += formatarCampo('58', 'BR'); // Country Code
+            payload += formatarCampo('59', nome); // Merchant Name
+            payload += formatarCampo('60', cidade); // Merchant City
+            
+            // ✅ ADICIONAR CAMPO 62 (Additional Data Field Template)
+            const txid = gerarTxId();
+            const additionalData = formatarCampo('05', txid); // Transaction ID
+            payload += formatarCampo('62', additionalData);
+            
+            // Calcular CRC16
+            payload += '6304'; // CRC placeholder
+            const crc = calcularCRC16(payload);
+            payload += crc;
+
+            console.log('✅ Código PIX gerado:', payload);
+            console.log('📏 Tamanho:', payload.length, 'caracteres');
+            console.log('🆔 Transaction ID:', txid);
+            
+            return payload;
+        }
+
+        // Calcular CRC16 (checksum)
+        function calcularCRC16(str) {
+            let crc = 0xFFFF;
+            for (let i = 0; i < str.length; i++) {
+                crc ^= str.charCodeAt(i) << 8;
+                for (let j = 0; j < 8; j++) {
+                    if (crc & 0x8000) {
+                        crc = (crc << 1) ^ 0x1021;
+                    } else {
+                        crc = crc << 1;
+                    }
+                }
+            }
+            crc = crc & 0xFFFF;
+            return crc.toString(16).toUpperCase().padStart(4, '0');
+        }
+
+        // Exibir PIX na tela
+        function exibirPix(codigoPix) {
+            console.log('🎨 Exibindo PIX na tela');
+
+            // Mostrar código
+            document.getElementById('pixcode-direto').textContent = codigoPix;
+            console.log('✅ Código inserido no elemento');
+
+            // Gerar QR Code
+            const qrcodeDiv = document.getElementById('qrcode-direto');
+            qrcodeDiv.innerHTML = ''; // Limpar
+            
+            console.log('🎨 Gerando QR Code visual...');
+            
+            try {
+                new QRCode(qrcodeDiv, {
+                    text: codigoPix,
+                    width: 250,
+                    height: 250,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                console.log('✅ QR Code gerado com sucesso!');
+            } catch (error) {
+                console.error('❌ Erro ao gerar QR Code:', error);
+                qrcodeDiv.innerHTML = '<p style="color: red;">Erro ao gerar QR Code: ' + error.message + '</p>';
+            }
+        }
+
+        // Copiar código PIX
+        function copiarCodigo() {
+            const codigo = document.getElementById('pixcode-direto').textContent;
+            console.log('📋 Copiando código PIX...');
+            
+            navigator.clipboard.writeText(codigo)
+                .then(() => {
+                    console.log('✅ Código copiado!');
+                    alert('✅ Código PIX copiado com sucesso!');
+                })
+                .catch(err => {
+                    console.error('❌ Erro ao copiar:', err);
+                    alert('❌ Erro ao copiar. Tente manualmente.');
+                });
+        }
+
+        // Inicializar
+        async function inicializar() {
+            console.log('🚀 Inicializando página...');
+            
+            try {
+                // Carregar venda
+                console.log('1️⃣ Carregando dados da venda...');
+                const venda = await carregarDadosVenda();
+                if (!venda) {
+                    console.error('❌ Falha ao carregar venda');
+                    return;
+                }
+
+                // Gerar PIX
+                console.log('2️⃣ Gerando código PIX...');
+                const pixDireto = gerarPixDireto(venda.valor_total);
+                
+                console.log('3️⃣ Exibindo PIX na tela...');
+                exibirPix(pixDireto);
+
+                // Esconder loading e mostrar conteúdo
+                console.log('4️⃣ Escondendo loading...');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('content-pix').style.display = 'block';
+
+                console.log('🎉 PÁGINA CARREGADA COM SUCESSO!');
+
+            } catch (error) {
+                console.error('❌ ERRO FATAL:', error);
+                alert('❌ Erro ao carregar página: ' + error.message);
+            }
+        }
+
+        // Executar ao carregar
+        console.log('⏳ Aguardando DOM...');
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('✅ DOM carregado');
+                inicializar();
+            });
+        } else {
+            console.log('✅ DOM já pronto');
+            inicializar();
+        }
+    </script>
+</body>
+</html>

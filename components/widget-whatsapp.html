@@ -1,0 +1,133 @@
+<!-- WIDGET WHATSAPP - Cole este código em QUALQUER página -->
+<div id="whatsapp-widget">
+    <style>
+        #whatsapp-widget .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        #whatsapp-widget .whatsapp-button {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            animation: pulse-whatsapp 2s infinite;
+        }
+
+        #whatsapp-widget .whatsapp-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+        }
+
+        #whatsapp-widget .whatsapp-icon {
+            font-size: 32px;
+            color: white;
+        }
+
+        #whatsapp-widget .whatsapp-tooltip {
+            position: absolute;
+            right: 70px;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            white-space: nowrap;
+            font-family: 'Poppins', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        #whatsapp-widget .whatsapp-button:hover + .whatsapp-tooltip {
+            opacity: 1;
+        }
+
+        @keyframes pulse-whatsapp {
+            0%, 100% {
+                box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            }
+            50% {
+                box-shadow: 0 4px 30px rgba(37, 211, 102, 0.7);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #whatsapp-widget .whatsapp-float {
+                bottom: 15px;
+                right: 15px;
+            }
+
+            #whatsapp-widget .whatsapp-button {
+                width: 55px;
+                height: 55px;
+            }
+
+            #whatsapp-widget .whatsapp-icon {
+                font-size: 28px;
+            }
+
+            #whatsapp-widget .whatsapp-tooltip {
+                display: none;
+            }
+        }
+    </style>
+
+    <div class="whatsapp-float">
+        <a href="https://wa.me/55622475080?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20BizMix%20e%20preciso%20de%20ajuda." 
+           target="_blank" 
+           class="whatsapp-button"
+           aria-label="Fale conosco no WhatsApp">
+            <span class="whatsapp-icon">💬</span>
+        </a>
+        <div class="whatsapp-tooltip">
+            Precisa de ajuda? Fale conosco!
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configuração do WhatsApp
+    const WHATSAPP_CONFIG = {
+        numero: '5562992475080', // ALTERAR PARA SEU NÚMERO
+        mensagemPadrao: 'Olá! Vim pelo site da BizMix e preciso de ajuda.',
+        
+        // Mensagens personalizadas por página
+        mensagensPorPagina: {
+            '/checkout.html': 'Olá! Estou com dúvida no checkout.',
+            '/produto.html': 'Olá! Gostaria de saber mais sobre este produto.',
+            '/confirmacao.html': 'Olá! Preciso de ajuda com meu pedido.'
+        }
+    };
+
+    // Detectar página atual e ajustar mensagem
+    function getMensagemWhatsApp() {
+        const pagina = window.location.pathname;
+        return WHATSAPP_CONFIG.mensagensPorPagina[pagina] || WHATSAPP_CONFIG.mensagemPadrao;
+    }
+
+    // Atualizar link do WhatsApp
+    function atualizarLinkWhatsApp() {
+        const mensagem = getMensagemWhatsApp();
+        const link = `https://wa.me/${WHATSAPP_CONFIG.numero}?text=${encodeURIComponent(mensagem)}`;
+        
+        const botao = document.querySelector('#whatsapp-widget .whatsapp-button');
+        if (botao) {
+            botao.href = link;
+        }
+    }
+
+    // Executar quando página carregar
+    window.addEventListener('DOMContentLoaded', atualizarLinkWhatsApp);
+</script>

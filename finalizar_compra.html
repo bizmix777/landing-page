@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - Somos Todos Um</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>">
+    <link rel="stylesheet" href="/somos-todos-um/css/style.css">
+    <script src="/js/supabase-config.js"></script>
+</head>
+<body>
+    <div class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <h1>Finalizar Compra</h1>
+
+            <form id="checkoutForm">
+                <div class="form-section">
+                    <h2>Seus Dados</h2>
+
+                    <div class="form-group">
+                        <label for="nome">Nome Completo *</label>
+                        <input type="text" id="nome" name="nome" required>
+                        <span class="error-message">Por favor, insira seu nome completo</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-mail *</label>
+                        <input type="email" id="email" name="email" required>
+                        <span class="error-message">Por favor, insira um e-mail válido</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="whatsapp">WhatsApp (com DDD) *</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" placeholder="(00) 00000-0000" required>
+                        <span class="error-message">Por favor, insira um WhatsApp válido</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Endereço de Entrega</h2>
+
+                    <div class="form-group">
+                        <label for="cep">CEP</label>
+                        <input type="text" id="cep" name="cep" placeholder="00000-000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="endereco">Endereço</label>
+                        <input type="text" id="endereco" name="endereco">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="numero">Número</label>
+                            <input type="text" id="numero" name="numero">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="complemento">Complemento</label>
+                            <input type="text" id="complemento" name="complemento">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bairro">Bairro</label>
+                        <input type="text" id="bairro" name="bairro">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" name="cidade">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado" name="estado">
+                                <option value="">Selecione</option>
+                                <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+                                <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+                                <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+                                <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+                                <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+                                <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option>
+                                <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+                                <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+                                <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>O que você quer que venha escrito no rodapé deste livro?</h2>
+                    <div class="form-group">
+                        <div class="personalization-options">
+                            <label class="radio-option">
+                                <input type="radio" name="rodape" value="nome">
+                                <div>
+                                    <strong>Apenas o meu nome</strong>
+                                    <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">Apenas seu nome aparecerá no rodapé</p>
+                                </div>
+                            </label>
+
+                            <label class="radio-option">
+                                <input type="radio" name="rodape" value="nome_data">
+                                <div>
+                                    <strong>Nome e data</strong>
+                                    <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">Seu nome e a data de hoje aparecerão no rodapé</p>
+                                </div>
+                            </label>
+
+                            <label class="radio-option selected">
+                                <input type="radio" name="rodape" value="padrao" checked>
+                                <div>
+                                    <strong>Rodapé Padrão</strong>
+                                    <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">Sem personalização</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>É um Presente?</h2>
+                    <label class="gift-checkbox">
+                        <input type="checkbox" id="isPresente" name="isPresente">
+                        <span>Sim, este livro é um presente</span>
+                    </label>
+
+                    <div class="gift-details" id="giftDetails">
+                        <div class="form-group">
+                            <label for="nomeDestinatario">Nome do Destinatário *</label>
+                            <input type="text" id="nomeDestinatario" name="nomeDestinatario">
+                            <small>Este nome aparecerá no rodapé do livro</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rodapePersonalizado">Rodapé Personalizado para o Presente</label>
+                            <textarea id="rodapePersonalizado" name="rodapePersonalizado" maxlength="150" placeholder="Digite a mensagem que deseja no rodapé do livro (máx. 150 caracteres)"></textarea>
+                            <small>Exemplo: "Para Maria, com carinho. João - Janeiro/2026"</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Forma de Pagamento</h2>
+                    <div class="payment-methods">
+                        <label class="payment-option active">
+                            <input type="radio" name="pagamento" value="pix" checked>
+                            <div>
+                                <strong>Pix</strong>
+                                <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">Aprovação imediata</p>
+                            </div>
+                        </label>
+
+                        <label class="payment-option">
+                            <input type="radio" name="pagamento" value="cartao">
+                            <div>
+                                <strong>Cartão</strong>
+                                <p style="font-size: 0.875rem; color: var(--text-light); margin-top: 0.25rem;">Crédito ou Débito</p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="payment-details active" id="pixDetails">
+                        <div class="pix-info">
+                            <p>Após finalizar a compra, você receberá o código Pix para pagamento.</p>
+                        </div>
+                    </div>
+
+                    <div class="payment-details" id="cartaoDetails">
+                        <div class="pix-info">
+                            <p>Você será redirecionado para a página de pagamento seguro.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">Finalizar Compra - R$ 30,00</button>
+            </form>
+        </div>
+
+        <div class="order-summary">
+            <h2>Resumo do Pedido</h2>
+            <div class="product-info">
+                <img src="/somos-todos-um/images/capa_checkout.jpg" alt="Capa do Livro - Somos Todos Um" class="product-image">
+                <div class="product-details">
+                    <h3>Livro: Somos Todos Um</h3>
+                    <p>Edição Física Personalizada</p>
+                    <p style="margin-top: 0.5rem; color: var(--primary-color); font-weight: 600;">Quantidade: 1</p>
+                </div>
+            </div>
+
+            <div class="order-item">
+                <span>Subtotal:</span>
+                <span>R$ 30,00</span>
+            </div>
+
+            <div class="order-item">
+                <span>Frete:</span>
+                <span id="freteValor">Grátis</span>
+            </div>
+
+            <div class="order-item total">
+                <span>Total:</span>
+                <span id="totalValor">R$ 30,00</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('whatsapp').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            }
+            e.target.value = value;
+        });
+
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = value.replace(/(\d{5})(\d{3})/, '$1-$2');
+            e.target.value = value;
+        });
+
+        document.getElementById('cep').addEventListener('blur', async function() {
+            const cep = this.value.replace(/\D/g, '');
+            if (cep.length === 8) {
+                try {
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await response.json();
+                    if (!data.erro) {
+                        document.getElementById('endereco').value = data.logradouro;
+                        document.getElementById('bairro').value = data.bairro;
+                        document.getElementById('cidade').value = data.localidade;
+                        document.getElementById('estado').value = data.uf;
+                    }
+                } catch (error) {
+                    console.error('Erro ao buscar CEP:', error);
+                }
+            }
+        });
+
+        document.querySelectorAll('input[name="rodape"]').forEach((radio) => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.radio-option').forEach((opt) => opt.classList.remove('selected'));
+                this.closest('.radio-option').classList.add('selected');
+            });
+        });
+
+        document.getElementById('isPresente').addEventListener('change', function() {
+            const giftDetails = document.getElementById('giftDetails');
+            giftDetails.classList.toggle('active', this.checked);
+        });
+
+        document.querySelectorAll('input[name="pagamento"]').forEach((radio) => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.payment-option').forEach((opt) => opt.classList.remove('active'));
+                this.closest('.payment-option').classList.add('active');
+                document.querySelectorAll('.payment-details').forEach((det) => det.classList.remove('active'));
+                document.getElementById(this.value === 'pix' ? 'pixDetails' : 'cartaoDetails').classList.add('active');
+            });
+        });
+
+        document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            loadingOverlay.classList.add('active');
+
+            try {
+                let rodapeFinal = document.querySelector('input[name="rodape"]:checked').value;
+                let textoRodape = null;
+                const isPresente = document.getElementById('isPresente').checked;
+
+                if (isPresente) {
+                    const rodapePersonalizado = document.getElementById('rodapePersonalizado').value;
+                    if (rodapePersonalizado.trim()) {
+                        rodapeFinal = 'personalizado';
+                        textoRodape = rodapePersonalizado;
+                    }
+                }
+
+                const formData = {
+                    nome_comprador: document.getElementById('nome').value,
+                    email_comprador: document.getElementById('email').value,
+                    whatsapp_comprador: document.getElementById('whatsapp').value,
+                    cep_comprador: document.getElementById('cep').value || null,
+                    endereco_comprador: document.getElementById('endereco').value || null,
+                    numero_comprador: document.getElementById('numero').value || null,
+                    complemento_comprador: document.getElementById('complemento').value || null,
+                    bairro_comprador: document.getElementById('bairro').value || null,
+                    cidade_comprador: document.getElementById('cidade').value || null,
+                    estado_comprador: document.getElementById('estado').value || null,
+                    preferencia_rodape: rodapeFinal,
+                    texto_rodape: textoRodape,
+                    is_presente: isPresente,
+                    nome_destinatario: document.getElementById('nomeDestinatario').value || null,
+                    forma_pagamento: document.querySelector('input[name="pagamento"]:checked').value,
+                    valor_total: 30.00,
+                    valor_unitario: 30.00,
+                    quantidade: 1,
+                    status_pagamento: 'pendente',
+                    produto_id: 1
+                };
+
+                await supabaseFetch('vendas', { method: 'POST', body: JSON.stringify(formData) });
+                alert('Compra registrada com sucesso! Você receberá as instruções de pagamento por e-mail.');
+            } catch (error) {
+                console.error('Erro ao processar compra:', error);
+                alert('Erro ao processar compra. Tente novamente.');
+            } finally {
+                loadingOverlay.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo de Uso - Widget de Nível</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    
+    <!-- Config Centralizado -->
+    <script src="/supabase-config.js"></script>
+    
+    <!-- Widget de Nível -->
+    <script src="/js/widget-nivel.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f6f9;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+
+        code {
+            color: #d63384;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>🎮 Exemplos de Uso do Widget de Nível</h1>
+
+        <div class="grid">
+
+            <!-- Widget Completo -->
+            <div class="section">
+                <h2>Widget Completo</h2>
+                <div id="widget-nivel" data-parceiro-id="COLOQUE-ID-AQUI"></div>
+                
+                <pre style="margin-top: 20px;"><code>&lt;div id="widget-nivel" 
+     data-parceiro-id="UUID"&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+
+            <!-- Widget Compacto -->
+            <div class="section">
+                <h2>Widget Compacto</h2>
+                <div id="widget-nivel" data-parceiro-id="COLOQUE-ID-AQUI" data-compact></div>
+                
+                <pre style="margin-top: 20px;"><code>&lt;div id="widget-nivel" 
+     data-parceiro-id="UUID"
+     data-compact&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+
+            <!-- Widget Sem Progresso -->
+            <div class="section">
+                <h2>Sem Barra de Progresso</h2>
+                <div id="widget-nivel" data-parceiro-id="COLOQUE-ID-AQUI" data-no-progress></div>
+                
+                <pre style="margin-top: 20px;"><code>&lt;div id="widget-nivel" 
+     data-parceiro-id="UUID"
+     data-no-progress&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+
+            <!-- Widget Sem Badges -->
+            <div class="section">
+                <h2>Sem Badges</h2>
+                <div id="widget-nivel" data-parceiro-id="COLOQUE-ID-AQUI" data-no-badges></div>
+                
+                <pre style="margin-top: 20px;"><code>&lt;div id="widget-nivel" 
+     data-parceiro-id="UUID"
+     data-no-badges&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+
+        </div>
+
+        <!-- Instruções de Uso -->
+        <div class="section">
+            <h2>📝 Instruções de Uso</h2>
+            
+            <h3>1. Incluir os scripts necessários:</h3>
+            <pre><code>&lt;!-- Supabase --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"&gt;&lt;/script&gt;
+
+&lt;!-- Config Centralizado --&gt;
+&lt;script src="/supabase-config.js"&gt;&lt;/script&gt;
+
+&lt;!-- Widget de Nível --&gt;
+&lt;script src="/js/widget-nivel.js"&gt;&lt;/script&gt;</code></pre>
+
+            <h3>2. Adicionar o container do widget:</h3>
+            <pre><code>&lt;div id="widget-nivel" data-parceiro-id="UUID-DO-PARCEIRO"&gt;&lt;/div&gt;</code></pre>
+
+            <h3>3. Opções disponíveis (atributos data):</h3>
+            <ul style="margin-top: 15px; line-height: 2;">
+                <li><code>data-parceiro-id</code> - <strong>Obrigatório:</strong> UUID do parceiro</li>
+                <li><code>data-compact</code> - Modo compacto (uma linha)</li>
+                <li><code>data-no-progress</code> - Ocultar barra de progresso</li>
+                <li><code>data-no-badges</code> - Ocultar badges conquistados</li>
+            </ul>
+
+            <h3>4. Inicialização automática:</h3>
+            <p>O widget é inicializado automaticamente quando a página carrega. Não é necessário código JavaScript adicional!</p>
+
+            <h3>5. Inicialização manual (opcional):</h3>
+            <pre><code>&lt;script&gt;
+  // Inicializar após carregar dados do parceiro
+  WidgetNivel.init();
+  
+  // Ou com opções personalizadas
+  WidgetNivel.init({
+    containerId: 'meu-widget',
+    compact: true,
+    showProgress: false
+  });
+&lt;/script&gt;</code></pre>
+        </div>
+
+    </div>
+
+</body>
+</html>

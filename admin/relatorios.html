@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Admin BizMix</title>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <!-- Configuração Universal -->
+    <script src="/js/supabase-config.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #f5f7fa; display: flex; min-height: 100vh; }
+
+        /* Sidebar (Padrão Admin) */
+        .sidebar { width: 260px; background: white; color: #333; padding: 30px 20px; position: fixed; height: 100vh; overflow-y: auto; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+        .sidebar-header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .sidebar-header h2 { font-size: 22px; color: #667eea; }
+        .menu-item { margin-bottom: 10px; list-style: none; }
+        .menu-item a { display: flex; align-items: center; padding: 12px 15px; color: #666; text-decoration: none; border-radius: 8px; transition: 0.3s; }
+        .menu-item a:hover, .menu-item a.active { background: #f0f3ff; color: #667eea; }
+        .menu-item a i { margin-right: 12px; width: 20px; }
+        .btn-logout { width: 100%; padding: 10px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; }
+
+        /* Main Content */
+        .main-content { margin-left: 260px; flex: 1; padding: 30px; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); max-width: 800px; margin: 0 auto; }
+        .card-header { text-align: center; margin-bottom: 30px; }
+        .card-header h1 { font-size: 24px; color: #333; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        .form-group select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Poppins', sans-serif; }
+        
+        .btn-generate { width: 100%; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-generate:disabled { background: #ccc; cursor: not-allowed; }
+
+        .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; border-radius: 8px; margin-top: 25px; font-size: 0.9rem; color: #1565C0; }
+        .info-box ul { margin-left: 20px; margin-top: 10px; }
+
+        @media (max-width: 768px) { .sidebar { display: none; } .main-content { margin-left: 0; } }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Admin</h2>
+            <p>Relatórios</p>
+        </div>
+        <ul class="menu">
+            <li class="menu-item"><a href="/admin/index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li class="menu-item"><a href="/admin/gerenciar-parceiros.html"><i class="fas fa-users"></i> Parceiros</a></li>
+            <li class="menu-item"><a href="/admin/dashboard-igrejas.html"><i class="fas fa-church"></i> Igrejas</a></li>
+            <li class="menu-item"><a href="/admin/venda.html"><i class="fas fa-shopping-cart"></i> Nova Venda</a></li>
+            <li class="menu-item"><a href="/admin/comissoes.html"><i class="fas fa-dollar-sign"></i> Comissões</a></li>
+            <li class="menu-item"><a href="/admin/relatorios.html" class="active"><i class="fas fa-file-alt"></i> Relatórios</a></li>
+        </ul>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="card">
+            <div class="card-header">
+                <h1>📄 Gerador de Relatórios</h1>
+                <p>Selecione os filtros para gerar o PDF</p>
+            </div>
+
+            <form id="formRelatorio">
+                <div class="form-group">
+                    <label for="tipoRelatorio">Tipo de Relatório</label>
+                    <select id="tipoRelatorio">
+                        <option value="vendas">Vendas Detalhadas</option>
+                        <option value="comissoes">Comissões a Pagar</option>
+                        <option value="parceiros">Lista de Parceiros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="periodo">Período</label>
+                    <select id="periodo">
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30" selected>Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="all">Todo o período</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="all">Todos</option>
+                        <option value="pago">Pagos / Aprovados</option>
+                        <option value="pendente">Pendentes</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-generate" id="btnGenerate">
+                    <i class="fas fa-print"></i> Gerar Relatório
+                </button>
+            </form>
+
+            <div class="info-box">
+                <strong>ℹ️ Como funciona:</strong>
+                <ul>
+                    <li>O sistema vai buscar os dados no banco em tempo real.</li>
+                    <li>Uma nova janela abrirá com o relatório formatado.</li>
+                    <li>A janela de impressão do navegador abrirá automaticamente.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+        <script>
+        // const supabase = window.supabase;
+
+        // Auth
+        async function verificarAuth() {
+            if (!supabase) { alert("Erro config"); return; }
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) { window.location.href = '/admin/login.html'; return; }
+            // Opcional: checar admin
+        }
+        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
+
+        // Gerar Relatório
+        document.getElementById('formRelatorio').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnGenerate');
+            btn.disabled = true; btn.textContent = '⏳ Buscando dados...';
+
+            const tipo = document.getElementById('tipoRelatorio').value;
+            const dias = document.getElementById('periodo').value;
+            const status = document.getElementById('status').value;
+
+            try {
+                // 1. Definir Query
+                let query;
+                if (tipo === 'vendas' || tipo === 'comissoes') {
+                    query = supabase.from('vendas').select('*').order('created_at', { ascending: false });
+                } else {
+                    query = supabase.from('parceiros').select('*').order('created_at', { ascending: false });
+                }
+
+                // 2. Filtro de Data
+                if (dias !== 'all') {
+                    const dataLimite = new Date();
+                    dataLimite.setDate(dataLimite.getDate() - parseInt(dias));
+                    query = query.gte('created_at', dataLimite.toISOString());
+                }
+
+                // 3. Filtro de Status
+                if (status !== 'all') {
+                    if (tipo === 'parceiros') query = query.eq('status', status === 'pago' ? 'ativo' : 'pendente');
+                    else query = query.eq('status_pagamento', status);
+                }
+
+                const { data, error } = await query;
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    alert("Nenhum dado encontrado para esse filtro.");
+                    return;
+                }
+
+                // 4. Montar HTML do Relatório
+                gerarPaginaImpressao(tipo, data);
+
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao gerar: " + err.message);
+            } finally {
+                btn.disabled = false; btn.innerHTML = '<i class="fas fa-print"></i> Gerar Relatório';
+            }
+        });
+
+        function gerarPaginaImpressao(tipo, dados) {
+            const novaJanela = window.open('', '_blank');
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+            
+            let html = `
+                <html>
+                <head>
+                    <title>Relatório - BizMix</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        h1 { color: #333; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        .total { margin-top: 20px; font-size: 18px; font-weight: bold; text-align: right; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Relatório de ${tipo.toUpperCase()}</h1>
+                    <p>Gerado em: ${dataHoje} | Total de Registros: ${dados.length}</p>
+                    <table>
+                        <thead>`;
+
+            // Cabeçalhos
+            if (tipo === 'vendas') html += `<tr><th>Data</th><th>Cliente</th><th>Email</th><th>Valor</th><th>Status</th></tr></thead><tbody>`;
+            else if (tipo === 'comissoes') html += `<tr><th>Data</th><th>Parceiro (Ref)</th><th>Venda</th><th>Comissão</th><th>Status Pagto</th></tr></thead><tbody>`;
+            else html += `<tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Tipo</th><th>Status</th></tr></thead><tbody>`;
+
+            // Linhas
+            let somaTotal = 0;
+            dados.forEach(d => {
+                if (tipo === 'vendas') {
+                    somaTotal += d.valor_total || 0;
+                    html += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.nome_comprador}</td><td>${d.email_comprador}</td><td>R$ ${d.valor_total}</td><td>${d.status_pagamento}</td></tr>`;
+                } else if (tipo === 'comissoes') {
+                    somaTotal += d.comissao_valor || 0;
+                    html += `<tr><td>${new Date(d.created_at).toLocaleDateString()}</td><td>${d.codigo_indicacao || '-'}</td><td>R$ ${d.valor_total}</td><td>R$ ${d.comissao_valor}</td><td>${d.comissao_paga ? 'PAGO' : 'PENDENTE'}</td></tr>`;
+                } else {
+                    html += `<tr><td>${d.nome_completo || d.nome_igreja}</td><td>${d.email}</td><td>${d.telefone}</td><td>${d.tipo_parceiro}</td><td>${d.status}</td></tr>`;
+                }
+            });
+
+            html += `</tbody></table>`;
+            if (tipo !== 'parceiros') html += `<div class="total">Total do Período: R$ ${somaTotal.toFixed(2).replace('.', ',')}</div>`;
+            html += `</body></html>`;
+
+            novaJanela.document.write(html);
+            novaJanela.document.close();
+            setTimeout(() => novaJanela.print(), 500);
+        }
+
+        verificarAuth();
+    </script>
+</body>
+</html>

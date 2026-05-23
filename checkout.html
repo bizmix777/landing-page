@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - BizMix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase Config -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script src="/js/supabase-config.js"></script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #333; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        .container { background-color: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); padding: 30px; max-width: 900px; width: 100%; display: flex; flex-wrap: wrap; gap: 30px; margin-top: 20px; }
+        .product-summary, .checkout-form { flex: 1; min-width: 300px; }
+        
+        .product-summary { background-color: #f9f9f9; border-radius: 10px; padding: 20px; text-align: center; height: fit-content; }
+        .product-summary img { max-width: 180px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .product-summary h2 { color: #333; font-size: 1.5em; margin-bottom: 5px; }
+        .product-summary .price { font-size: 2.2em; color: #667eea; font-weight: 700; margin-top: 15px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #444; font-size: 0.9em; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        .form-group input:focus { border-color: #667eea; outline: none; }
+        .row-group { display: flex; gap: 15px; }
+        .row-group .form-group { flex: 1; }
+
+        .payment-methods { margin-top: 30px; text-align: center; }
+        .payment-option { background-color: #f0f0f0; border: 2px solid #ddd; border-radius: 10px; padding: 15px 25px; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; color: #555; width: 100%; justify-content: center; }
+        .payment-option.selected { border-color: #667eea; background-color: #eef2ff; color: #667eea; }
+        
+        #pixDynamicContainer { display: none; text-align: center; background: #f0fdf4; padding: 20px; border-radius: 10px; border: 2px solid #28a745; margin-top: 20px; animation: fadeIn 0.5s; }
+        .pix-qrcode { width: 200px; height: 200px; display: block; margin: 0 auto 15px; border-radius: 10px; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-copy-pix { width: 100%; padding: 12px; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; background: #009ee3; color: white; margin-bottom: 10px; }
+
+        .submit-button { background-color: #28a745; color: white; padding: 15px 25px; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 700; cursor: pointer; width: 100%; margin-top: 20px; transition: transform 0.2s; }
+        .submit-button:hover { transform: translateY(-2px); background-color: #218838; }
+        .submit-button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); display: none; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
+        .loading-overlay.active { display: flex; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #667eea; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .container { flex-direction: column; } }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p id="loadingMessage">Carregando...</p>
+    </div>
+
+    <div class="container">
+        <!-- Resumo do Produto (Dinâmico) -->
+        <div class="product-summary">
+            <img id="productImage" src="" alt="Produto" style="display:none;">
+            <h2 id="productName">Carregando produto...</h2>
+            <p id="productDesc">Aguarde um momento</p>
+            <div class="price" id="productPrice">R$ --,--</div>
+            <!-- Mostra quem indicou -->
+            <p id="refMessage" style="font-size: 0.8em; color: #28a745; display: none;">Indicação Aplicada ✅</p>
+        </div>
+
+        <div class="checkout-form">
+            <h2>Finalizar Compra</h2>
+            <form id="checkoutForm">
+                <div class="form-group"><label>Nome Completo *</label><input type="text" id="nome" required placeholder="Seu nome"></div>
+                <div class="form-group"><label>E-mail *</label><input type="email" id="email" required placeholder="seu@email.com"></div>
+                
+                <div class="row-group">
+                    <div class="form-group"><label>CPF *</label><input type="text" id="cpf" required placeholder="000.000.000-00" maxlength="14"></div>
+                    <div class="form-group"><label>WhatsApp *</label><input type="tel" id="whatsapp" required placeholder="(00) 00000-0000"></div>
+                </div>
+
+                <h3>Endereço</h3>
+                <div class="row-group">
+                    <div class="form-group"><label>CEP *</label><input type="text" id="cep" required maxlength="9"></div>
+                    <div class="form-group"><label>Número *</label><input type="text" id="numero" required></div>
+                </div>
+                <div class="form-group"><label>Rua</label><input type="text" id="endereco" readonly></div>
+                <div class="row-group">
+                    <div class="form-group"><label>Bairro</label><input type="text" id="bairro" readonly></div>
+                    <div class="form-group"><label>Cidade</label><input type="text" id="cidade" readonly></div>
+                    <div class="form-group"><label>UF</label><input type="text" id="estado" readonly></div>
+                </div>
+                <div class="form-group"><label>Complemento</label><input type="text" id="complemento"></div>
+
+                <div class="payment-methods">
+                    <h3>Forma de Pagamento</h3>
+                    <div class="payment-option selected" id="optPix"><span>💠 PIX (Aprovação Imediata)</span></div>
+                </div>
+
+                <!-- ÁREA DO PIX GERADO -->
+                <div id="pixDynamicContainer">
+                    <h3 style="color:#28a745; margin-bottom:10px;">✅ Pedido Criado!</h3>
+                    <p>Escaneie para pagar:</p>
+                    <img id="imgQrCode" src="" alt="QR Code Pix" class="pix-qrcode">
+                    <input type="text" id="pixCopiaColaInput" style="position:absolute; opacity:0;">
+                    <button type="button" onclick="copiarPix()" class="btn-copy-pix">📑 Copiar Código PIX</button>
+                    <p style="font-size:0.8rem; margin-top:10px;">O sistema identificará seu pagamento automaticamente.</p>
+                </div>
+                
+                <button type="submit" class="submit-button" id="btnSubmit">Gerar Pix</button>
+            </form>
+        </div>
+    </div>
+        <script>
+        const RENDER_URL = "https://gerador-pdf-bizmix.onrender.com/gerar_pix";
+        const supabase = window.supabase;
+        
+        let produtoAtual = null;
+        let codigoIndicacao = null;
+
+        // 1. Carregar Produto E Código de Indicação
+        async function carregarDados() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('produto');
+            codigoIndicacao = params.get('ref'); // <--- AQUI CAPTURA O CÓDIGO DO PARCEIRO!
+
+            if(codigoIndicacao) {
+                document.getElementById('refMessage').style.display = 'block';
+                console.log("Parceiro identificado:", codigoIndicacao);
+            }
+
+            if (!id) { alert('Produto não especificado!'); return; }
+
+            try {
+                const { data, error } = await supabase.from('produtos').select('*').eq('id', id).single();
+                if (error) throw error;
+
+                produtoAtual = data;
+                document.getElementById('productName').textContent = data.nome;
+                document.getElementById('productDesc').textContent = data.descricao || '';
+                document.getElementById('productPrice').textContent = `R$ ${data.preco.toFixed(2).replace('.', ',')}`;
+                
+                if(data.imagem_url) {
+                    const img = document.getElementById('productImage');
+                    img.src = data.imagem_url; img.style.display = 'block';
+                }
+                document.getElementById('loadingOverlay').classList.remove('active');
+            } catch (error) { console.error(error); alert('Produto não encontrado.'); }
+        }
+
+        // 2. Submit (Salva Comissão)
+        document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(!produtoAtual) return;
+
+            const loading = document.getElementById('loadingOverlay');
+            const msg = document.getElementById('loadingMessage');
+            loading.classList.add('active');
+            msg.textContent = "Registrando pedido...";
+
+            try {
+                const dados = {
+                    nome_comprador: document.getElementById('nome').value,
+                    email_comprador: document.getElementById('email').value,
+                    cpf_comprador: document.getElementById('cpf').value,
+                    whatsapp_comprador: document.getElementById('whatsapp').value,
+                    telefone_comprador: document.getElementById('whatsapp').value,
+                    cep_comprador: document.getElementById('cep').value,
+                    endereco_comprador: document.getElementById('endereco').value,
+                    numero_comprador: document.getElementById('numero').value,
+                    bairro_comprador: document.getElementById('bairro').value,
+                    cidade_comprador: document.getElementById('cidade').value,
+                    estado_comprador: document.getElementById('estado').value,
+                    complemento_comprador: document.getElementById('complemento').value,
+                    
+                    // DADOS VITAIS:
+                    produto_id: produtoAtual.id,
+                    valor_total: produtoAtual.preco,
+                    
+                    // SALVA A COMISSÃO AQUI 👇
+                    codigo_indicacao: codigoIndicacao, 
+                    
+                    status_pagamento: 'pendente',
+                    forma_pagamento: 'pix_mp'
+                };
+
+                // Salva no Supabase (vendas)
+                const { error: dbError } = await supabase.from('vendas').insert([dados]);
+                if (dbError) throw dbError;
+
+                // Chama o Render
+                msg.textContent = "Gerando Pix...";
+                const response = await fetch(RENDER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: dados.email_comprador,
+                        nome: dados.nome_comprador,
+                        valor: produtoAtual.preco,
+                        descricao: produtoAtual.nome
+                    })
+                });
+
+                const pixData = await response.json();
+                if (!response.ok) throw new Error(pixData.erro || 'Erro Pix');
+
+                // Mostra Pix
+                loading.classList.remove('active');
+                document.getElementById('btnSubmit').style.display = 'none';
+                
+                const container = document.getElementById('pixDynamicContainer');
+                document.getElementById('imgQrCode').src = `data:image/jpeg;base64,${pixData.qr_base64}`;
+                document.getElementById('pixCopiaColaInput').value = pixData.qr_code;
+                container.style.display = 'block';
+                container.scrollIntoView({behavior: 'smooth'});
+
+            } catch (error) {
+                loading.classList.remove('active');
+                console.error(error);
+                alert('Erro: ' + error.message);
+            }
+        });
+
+        // CEP e Máscaras
+        document.getElementById('cep').addEventListener('blur', async function() {
+            const val = this.value.replace(/\D/g, '');
+            if(val.length === 8) {
+                const res = await fetch(`https://viacep.com.br/ws/${val}/json/`);
+                const json = await res.json();
+                if(!json.erro) {
+                    document.getElementById('endereco').value = json.logradouro;
+                    document.getElementById('bairro').value = json.bairro;
+                    document.getElementById('cidade').value = json.localidade;
+                    document.getElementById('estado').value = json.uf;
+                    document.getElementById('numero').focus();
+                }
+            }
+        });
+
+        window.copiarPix = function() {
+            const input = document.getElementById('pixCopiaColaInput');
+            input.select(); document.execCommand('copy');
+            alert('Copiado!');
+        }
+
+        carregarDados();
+    </script>
+</body>
+</html>

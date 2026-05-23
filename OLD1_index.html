@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMix - Plataforma Integrada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #app { min-height: 100vh; }
+        .transition-content { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+    <!-- Header Fixo (Comum a Todas as Páginas) -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <img src="/logo.png" alt="BizMix Logo" class="h-10 w-auto">
+                <span class="text-xl font-bold text-slate-900">BizMix</span>
+            </div>
+            <ul class="flex space-x-8">
+                <li><a href="/" class="text-slate-600 hover:text-slate-900 font-medium">Home</a></li>
+                <li><a href="/juridico" class="text-slate-600 hover:text-slate-900 font-medium">Jurídico</a></li>
+                <li><a href="/sis-ig" class="text-slate-600 hover:text-slate-900 font-medium">SIS-IG</a></li>
+                <li><a href="/somos-todos-um" class="text-slate-600 hover:text-slate-900 font-medium">Somos Todos Um</a></li>
+                <li><a href="/imoveis" class="text-slate-600 hover:text-slate-900 font-medium">Imóveis</a></li>
+            </ul>
+            <a href="https://wa.me/SEUNUMERO" class="bg-amber-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-amber-600">Contato</a>
+        </nav>
+    </header>
+
+    <!-- Container Dinâmico (Conteúdo Carregado via JS) -->
+    <main id="app" class="max-w-7xl mx-auto px-4 py-8">
+        <div id="content" class="transition-content opacity-0">
+            <!-- Conteúdo injetado aqui dinamicamente -->
+        </div>
+    </main>
+
+    <!-- Footer Fixo -->
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2025 BizMix. Dr. Henrique | OAB/SC. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Roteador SPA Simples (Vanilla JS)
+        const routes = {
+            '/': { title: 'BizMix - Home', content: '<h1 class="text-4xl font-bold text-center mb-8">Bem-vindo à BizMix</h1><p class="text-lg text-center">Plataforma integrada para negócios jurídicos e imobiliários.</p>' },
+            '/juridico': { title: 'BizMix - Jurídico', content: fetch('/direito/juridico.html').then(r => r.text()).catch(() => '<h1>Carregando Portal Jurídico...</h1>') },
+            '/sis-ig': { title: 'BizMix - SIS-IG', content: fetch('/sis-ig/index.html').then(r => r.text()).catch(() => '<h1>Carregando SIS-IG...</h1>') },
+            '/somos-todos-um': { title: 'BizMix - Somos Todos Um', content: fetch('/somos-todos-um/index.html').then(r => r.text()).catch(() => '<h1>Carregando Somos Todos Um...</h1>') },
+            '/imoveis': { title: 'BizMix - Imóveis', content: '<h1 class="text-4xl font-bold text-center mb-8">Consultoria Imobiliária</h1><p class="text-lg text-center">Due Diligence e negociações seguras.</p>' }
+        };
+
+        // Função de Roteamento
+        function router() {
+            const path = window.location.pathname || '/';
+            const route = routes[path] || routes['/'];
+            document.title = route.title;
+
+            if (typeof route.content === 'string') {
+                document.getElementById('content').innerHTML = route.content;
+                document.getElementById('content').classList.remove('opacity-0');
+                document.getElementById('content').classList.add('opacity-100');
+            } else {
+                route.content.then(html => {
+                    document.getElementById('content').innerHTML = html;
+                    document.getElementById('content').classList.remove('opacity-0');
+                    document.getElementById('content').classList.add('opacity-100');
+                });
+            }
+        }
+
+        // Intercepta cliques em links internos
+        document.addEventListener('click', e => {
+            if (e.target.tagName === 'A' && e.target.href.includes(window.location.origin)) {
+                e.preventDefault();
+                const url = new URL(e.target.href);
+                history.pushState(null, '', url.pathname);
+                router();
+            }
+        });
+
+        // Escuta mudanças na URL
+        window.addEventListener('popstate', router);
+
+        // Inicializa
+        router();
+    </script>
+</body>
+</html>

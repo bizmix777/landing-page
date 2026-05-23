@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Como Funciona - Biz Mix</title>
+    
+    <meta name="description" content="Entenda como funciona um projeto na BizMix. Processo simples e transparente: Consulta → Proposta → Execução.">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: #f8fafc;
+        }
+        
+        /* NAVBAR */
+        .navbar {
+            background: #1e293b;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container img {
+            height: 50px;
+            width: auto;
+        }
+        
+        .btn-back {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .btn-back:hover {
+            background: #2563eb;
+        }
+        
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* CONTAINER */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+        
+        .section {
+            margin-bottom: 80px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .section-intro {
+            font-size: 1.1rem;
+            color: #475569;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px;
+            line-height: 1.8;
+        }
+        
+        /* O QUE É UM PROJETO */
+        .projeto-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+        
+        .projeto-box h3 {
+            font-size: 1.5rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+        }
+        
+        .projeto-box p {
+            font-size: 1.1rem;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .projeto-box ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        
+        .projeto-box li {
+            padding: 12px 0;
+            color: #475569;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            font-size: 1.05rem;
+        }
+        
+        .projeto-box li:before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        /* TIPOS DE PROJETOS */
+        .tipos-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+        
+        @media (min-width: 768px) {
+            .tipos-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .tipo-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+        
+        .tipo-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+            transform: translateY(-5px);
+        }
+        
+        .tipo-icon {
+            width: 60px;
+            height: 60px;
+            background: #dbeafe;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .tipo-icon i {
+            font-size: 1.8rem;
+            color: #3b82f6;
+        }
+        
+        .tipo-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+        
+        .tipo-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tipo-card li {
+            padding: 8px 0;
+            color: #475569;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+        
+        .tipo-card li:before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        /* PROCESSO */
+        .processo-steps {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .processo-steps {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .step {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            position: relative;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .step:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.15);
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+        
+        .step h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #1e293b;
+        }
+        
+        .step p {
+            color: #475569;
+            line-height: 1.8;
+        }
+        
+        /* DIFERENCIAIS */
+        .diferenciais-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .diferenciais-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .diferencial-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: start;
+            gap: 15px;
+        }
+        
+        .diferencial-icon {
+            width: 40px;
+            height: 40px;
+            background: #dbeafe;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .diferencial-icon i {
+            color: #3b82f6;
+            font-size: 1.2rem;
+        }
+        
+        .diferencial-info h4 {
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .diferencial-info p {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            padding: 60px 30px;
+            border-radius: 16px;
+            text-align: center;
+            color: white;
+        }
+        
+        .cta-section h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .cta-section p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #dbeafe;
+        }
+        
+        .btn-whatsapp {
+            display: inline-flex;
+            align-items: center;
+            background: #10b981;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #059669;
+        }
+        
+        .btn-whatsapp i {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: #1e293b;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .footer p {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo-container">
+                <img src="/images/logo_par.png" alt="BizMix Logo" onerror="this.src='logo.png'">
+            </div>
+           <a href="/" class="btn-back">
+               <i class="fas fa-arrow-left"></i> Voltar
+           </a>
+            </div>
+    </nav>
+    
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Como Funciona um Projeto na BizMix?</h1>
+        <p>Processo simples, transparente e focado em resultados. Veja como transformamos sua necessidade em solução.</p>
+    </section>
+    
+    <!-- CONTAINER -->
+    <div class="container">
+        <!-- O QUE É UM PROJETO -->
+        <section class="section">
+            <h2 class="section-title">O que é um Projeto na BizMix?</h2>
+            
+            <div class="projeto-box">
+                <h3>Definição</h3>
+                <p>
+                    Um <strong>projeto na BizMix</strong> é uma solução personalizada e estruturada para resolver um desafio específico da sua empresa ou vida pessoal. Seja uma questão jurídica, uma transação comercial ou uma negociação imobiliária, trabalhamos com <strong>início, meio e fim definidos</strong>, sempre com foco em resultados concretos.
+                </p>
+                
+                <h3>Características de um Projeto BizMix:</h3>
+                <ul>
+                    <li><strong>Objetivo Claro:</strong> Sabemos exatamente onde você quer chegar</li>
+                    <li><strong>Prazo Definido:</strong> Estabelecemos cronograma realista e cumprimos</li>
+                    <li><strong>Escopo Transparente:</strong> Você sabe o que será feito, como e por quê</li>
+                    <li><strong>Acompanhamento Constante:</strong> Você recebe atualizações regulares</li>
+                    <li><strong>Entrega Concreta:</strong> Documentos, contratos, negócios fechados ou problemas resolvidos</li>
+                </ul>
+            </div>
+            
+            <p class="section-intro">
+                <strong>Não trabalhamos com "achismos" ou promessas vazias.</strong> Cada projeto é tratado com seriedade, expertise técnica e visão comercial. Combinamos a segurança jurídica da advocacia com a agilidade e pragmatismo do mundo dos negócios.
+            </p>
+        </section>
+        
+        <!-- TIPOS DE PROJETOS -->
+        <section class="section">
+            <h2 class="section-title">Tipos de Projetos que Atendemos</h2>
+            
+            <div class="tipos-grid">
+                <div class="tipo-card">
+                    <div class="tipo-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3>Advocacia</h3>
+                    <ul>
+                        <li>Elaboração de contratos empresariais</li>
+                        <li>Due diligence jurídica completa</li>
+                        <li>Regularização de empresas e CNDs</li>
+                        <li>Consultoria preventiva e compliance</li>
+                        <li>Defesa judicial e recursos</li>
+                        <li>Análise de riscos jurídicos</li>
+                    </ul>
+                </div>
+                
+                <div class="tipo-card">
+                    <div class="tipo-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Negócios</h3>
+                    <ul>
+                        <li>Compra e venda de empresas (M&A)</li>
+                        <li>Intermediação comercial estratégica</li>
+                        <li>Valuation empresarial (avaliação)</li>
+                        <li>Estruturação de sociedades</li>
+                        <li>Parcerias e joint ventures</li>
+                        <li>Negociação de contratos complexos</li>
+                    </ul>
+                </div>
+                
+                <div class="tipo-card">
+                    <div class="tipo-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Imóveis</h3>
+                    <ul>
+                        <li>Compra e venda de imóveis</li>
+                        <li>Análise jurídica completa (matrícula)</li>
+                        <li>Regularização documental</li>
+                        <li>Negociação com segurança jurídica</li>
+                        <li>Acompanhamento até o registro</li>
+                        <li>Consultoria para investidores</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- PROCESSO -->
+        <section class="section">
+            <h2 class="section-title">Nosso Processo em 3 Etapas</h2>
+            
+            <div class="processo-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Consulta Inicial</h3>
+                    <p>Conversamos para entender sua necessidade, contexto, objetivos e expectativas. Analisamos a viabilidade e alinhamos expectativas. <strong>Sem compromisso, sem custo.</strong></p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Proposta Personalizada</h3>
+                    <p>Elaboramos uma proposta sob medida com escopo detalhado, cronograma realista, valores transparentes e forma de pagamento. Você decide se seguimos ou não.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Execução e Entrega</h3>
+                    <p>Colocamos a mão na massa com acompanhamento constante, comunicação clara e foco total no resultado. Entregamos o que foi prometido, no prazo combinado.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- DIFERENCIAIS -->
+        <section class="section">
+            <h2 class="section-title">Por que Escolher a BizMix?</h2>
+            
+            <div class="diferenciais-grid">
+                <div class="diferencial-card">
+                    <div class="diferencial-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="diferencial-info">
+                        <h4>Segurança Jurídica</h4>
+                        <p>Advogado inscrito na OAB com visão técnica e experiência prática</p>
+                    </div>
+                </div>
+                
+                <div class="diferencial-card">
+                    <div class="diferencial-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <div class="diferencial-info">
+                        <h4>Visão Comercial</h4>
+                        <p>Entendemos de negócios, não apenas de leis. Falamos a língua do mercado</p>
+                    </div>
+                </div>
+                
+                <div class="diferencial-card">
+                    <div class="diferencial-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="diferencial-info">
+                        <h4>Agilidade</h4>
+                        <p>Trabalhamos com prazos reais e cumprimos o que prometemos</p>
+                    </div>
+                </div>
+                
+                <div class="diferencial-card">
+                    <div class="diferencial-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <div class="diferencial-info">
+                        <h4>Transparência</h4>
+                        <p>Valores claros, sem surpresas. Você sabe exatamente o que vai pagar</p>
+                    </div>
+                </div>
+                
+                <div class="diferencial-card">
+                    <div class="diferencial-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="diferencial-info">
+                        <h4>Experiência Diversa</h4>
+                        <p>Desde 1990 inovando: tecnologia, negócios e direito em um só lugar</p>
+                    </div>
+                </div>
+                
+                <div class="diferencial-card">
+                    <div class="diferencial-icon">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <div class="diferencial-info">
+                        <h4>Foco em Resultados</h4>
+                        <p>Não vendemos horas, vendemos soluções. O que importa é resolver</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- CTA -->
+        <section class="cta-section">
+            <h2>Pronto para Iniciar Seu Projeto?</h2>
+            <p>Entre em contato agora e vamos conversar sobre como podemos ajudar você ou sua empresa a alcançar seus objetivos com segurança e agilidade.</p>
+            <a href="https://wa.me/5562992475080?text=Olá!%20Gostaria%20de%20iniciar%20um%20projeto%20com%20a%20BizMix." target="_blank" class="btn-whatsapp">
+                <i class="fab fa-whatsapp"></i>
+                Falar com Especialista
+            </a>
+        </section>
+    </div>
+    
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>© 2025 BizMix - Inteligência de Negócios</p>
+    </footer>
+</body>
+</html>

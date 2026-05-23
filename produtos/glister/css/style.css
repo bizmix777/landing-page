@@ -1,0 +1,413 @@
+/* ======================================================
+   PARTE 1: RESET E VARIÁVEIS
+   ====================================================== */
+:root {
+  --primary-color: #2E7D32; /* Verde Escuro Glister */
+  --secondary-color: #4CAF50; /* Verde Claro */
+  --accent-color: #00E676; /* Verde Neon (Botão) */
+  --text-color: #333;
+  --bg-light: #f9f9f9;
+  --white: #ffffff;
+  --modal-bg: rgba(0, 0, 0, 0.6);
+  --shadow: 0 4px 6px rgba(0,0,0,0.1);
+  --radius: 8px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--bg-light);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+a { text-decoration: none; }
+ul { list-style: none; }
+img { max-width: 100%; height: auto; }
+/* ======================================================
+   PARTE 2: HERO E BOTÕES (CTA)
+   ====================================================== */
+.hero {
+    background: linear-gradient(135deg, #0277bd, #009ee3) !important;
+    background-color: #009ee3 !important; /* Fallback se degradê falhar */
+    color: #fff !important;
+}
+
+/* Garante que o texto dentro fique branco */
+.hero h1, .hero p {
+    color: #fff !important;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+.btn-cta {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 50px;
+  text-transform: uppercase;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 230, 118, 0.4);
+}
+
+.btn-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 230, 118, 0.6);
+}
+
+.btn-secondary {
+  background-color: #fff;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+/* ======================================================
+   PARTE 3: GRID DE DORES (SEM ÍCONES)
+   ====================================================== */
+
+.pain-section {
+  padding: 60px 20px;
+  background-color: #fff;
+}
+
+.pain-grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 Colunas */
+  gap: 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: stretch; /* Alturas iguais */
+}
+
+/* --- ESTILO DAS CAIXAS (TODAS COM BORDA AZUL) --- */
+.pain-card, 
+.agitation-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  height: 100%; 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  
+  /* LINHA AZUL DO EMPREENDEDOR EM TODAS */
+  border-left: 6px solid #009ee3 !important; 
+  
+  /* Remove outras bordas */
+  border-top: none; 
+  border-right: none; 
+  border-bottom: none;
+}
+
+/* --- O ANIQUILADOR DE ÍCONES (ESCONDE TUDO) --- */
+/* Isso pega qualquer ícone SVG e ESCONDE */
+.pain-icon, 
+.pain-card svg,
+.pain-icon svg,
+.agitation-box svg {
+    display: none !important; /* SOME COM TUDO! */
+}
+
+/* --- AJUSTE DE TÍTULOS --- */
+/* Como tiramos os ícones, vamos dar uma margem no topo */
+.pain-card h3,
+.agitation-box h3 {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .pain-grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+/* ======================================================
+   PARTE 4: BENEFÍCIOS E VITRINE
+   ====================================================== */
+.benefits-section {
+  padding: 60px 20px;
+  background-color: var(--bg-light);
+}
+
+.benefit-card {
+  text-align: center;
+  padding: 20px;
+  background: #fff;
+  border-radius: var(--radius);
+  margin-bottom: 20px;
+}
+
+.product-showcase {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 5px 0;
+}
+
+.product-item {
+  width: 300px;
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: var(--radius);
+  text-align: center;
+}
+/* ======================================================
+   PARTE 5: MODAIS (POP-UPS)
+   ====================================================== */
+.modal {
+  display: none; /* JS ativa com display: flex */
+  position: fixed;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--modal-bg);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.active {
+  opacity: 1;
+}
+
+.modal-content {
+  background-color: #fff;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh; /* Altura máxima da tela */
+  overflow-y: auto; /* Barra de rolagem se for grande */
+  border-radius: 12px;
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-close-empreendedor, 
+.modal-close-cliente {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+/* Formulários Internos */
+.form-group { margin-bottom: 15px; }
+.form-row { display: flex; gap: 15px; }
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+/* Área do Pix */
+#pixDynamicContainer {
+  margin-top: 15px;
+  padding: 15px;
+  background: #e8f5e9;
+  border: 2px dashed var(--primary-color);
+  border-radius: 8px;
+  text-align: center;
+}
+/* ======================================================
+   PARTE 6: RODAPÉ E EXTRAS
+   ====================================================== */
+footer {
+  background: linear-gradient(135deg, #0277bd, #009ee3);
+  color: #fff;
+  padding: 14px 20px;
+  text-align: center;
+}
+
+Só isso! O degradê azul vai ficar idêntico ao Hero. Como ficou?
+
+
+footer a { color: var(--accent-color); }
+
+/* Animações Simples */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeIn 0.8s ease forwards; }
+
+/* Utilitários */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.mt-20 { margin-top: 20px; }
+
+/* Ajuste Mobile para Inputs Lado a Lado */
+@media (max-width: 600px) {
+  .form-row { flex-direction: column; gap: 10px; }
+  .pain-grid-container { grid-template-columns: 1fr; }
+}
+
+/* [BLOCO DUPLICADO REMOVIDO - regras consolidadas na PARTE 3] */
+/* [BLOCO DUPLICADO REMOVIDO - regras consolidadas na PARTE 3] */
+/* ======================================================
+   AJUSTE FINAL: CENTRALIZAR TOPO + BOTÃO AZUL CLARO
+   ====================================================== */
+
+/* 1. CENTRALIZAR TUDO NO HERO */
+.hero, 
+.hero .container, 
+.hero-content {
+    text-align: center !important;       /* Centraliza texto */
+    display: flex !important;            /* Garante flexbox */
+    flex-direction: column !important;   /* Empilha um embaixo do outro */
+    align-items: center !important;      /* Centraliza os itens no meio */
+    justify-content: center !important;
+}
+
+/* 2. BOTÃO: DE VERDE PARA AZUL CLARO (CELESTE) */
+#btn-hero-vip {
+    /* Cor de fundo: Azul Claro Vibrante */
+    background-color: #00b0ff !important; 
+    background: linear-gradient(to right, #00b0ff, #40c4ff) !important;
+    
+    /* Texto branco */
+    color: #ffffff !important;
+    
+    /* Sombra azulada em vez de verde */
+    box-shadow: 0 4px 15px rgba(0, 176, 255, 0.4) !important;
+    
+    /* Remove bordas antigas */
+    border: none !important;
+}
+
+/* Efeito ao passar o mouse (fica quase branco/ciano) */
+#btn-hero-vip:hover {
+    background: #40c4ff !important;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 176, 255, 0.6) !important;
+}
+/* ======================================================
+   AJUSTE FINAL DE ALTURA: HERO MAIOR (+20%)
+   ====================================================== */
+
+/* 1. AUMENTAR A ALTURA DO TOPO */
+.hero {
+    /* Padding original era 80px 20px. Aumentei para 120px 20px */
+    padding: 40px 20px !important;
+    
+    /* Centraliza tudo (já estava aqui, mas garante) */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Garante fundo azul */
+    background: linear-gradient(135deg, #0277bd, #009ee3) !important;
+}
+
+/* 2. BOTÃO: GARANTIR QUE FIQUE EMBAIXO DO TEXTO */
+.hero-content {
+    margin-bottom: 30px; /* Mais espaço depois do texto */
+}
+
+#btn-hero-vip {
+    margin-top: 15px;    /* Espaço extra antes do botão */
+    
+    /* Cor Azul Claro (Se você já trocou antes, ok) */
+    background: #00b0ff !important;
+    box-shadow: 0 5px 20px rgba(0, 176, 255, 0.5) !important;
+}
+/* ======================================================
+   HERO: LAYOUT COM FOTO
+   ====================================================== */
+
+.hero .container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: left !important;
+}
+
+.hero-content {
+    flex: 1;
+    text-align: center !important;
+    align-items: center !important;
+}
+
+.hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.hero-image img {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    object-fit: cover;
+}
+
+/* CELULAR: foto vai para baixo do texto */
+@media (max-width: 768px) {
+    .hero .container {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+    .hero-content {
+        text-align: center !important;
+        align-items: center !important;
+    }
+    .hero-image img {
+        max-width: 280px;
+    }
+}
+.offer-section h2 {
+    margin-bottom: 10px;
+}
+.offer-section {
+    padding: 30px 20px;
+}
+/* ======================================================
+   BENEFÍCIOS: GRID 2 COLUNAS + RESPONSIVO
+   ====================================================== */
+.benefit-card {
+  text-align: center;
+  padding: 20px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border-left: 4px solid #009ee3;
+}
+
+@media (max-width: 768px) {
+  div[style*="grid-template-columns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}

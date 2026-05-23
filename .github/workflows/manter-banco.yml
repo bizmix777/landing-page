@@ -1,0 +1,17 @@
+name: Manter Supabase Acordado
+
+on:
+  schedule:
+    # Roda todos os dias automaticamente ao meio-dia (UTC)
+    - cron: '0 12 * * *'
+  workflow_dispatch: # Permite que você rode manualmente se quiser testar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fazer uma leitura invisivel no banco
+        run: |
+          curl -s -X GET 'https://hjlpmorykllywjodusqx.supabase.co/rest/v1/parceiros?select=id&limit=1' \
+          -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqbHBtb3J5a2xseXdqb2R1c3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM4MjgxMTAsImV4cCI6MjA3OTQwNDExMH0.avz_D-StFtmD93YMrxfdLpbxaRSPPjNvcwu_Gnx2Nak" \
+          -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqbHBtb3J5a2xseXdqb2R1c3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM4MjgxMTAsImV4cCI6MjA3OTQwNDExMH0.avz_D-StFtmD93YMrxfdLpbxaRSPPjNvcwu_Gnx2Nak"

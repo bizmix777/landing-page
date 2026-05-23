@@ -1,0 +1,15 @@
+[build]
+  publish = "."
+  command = ""
+
+[[redirects]]
+  from = "/livro"
+  to = "/livro/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/livro/*"
+  to = "/livro/:splat"
+  status = 200
+  force = true

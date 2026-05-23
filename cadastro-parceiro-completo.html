@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Parceiro - BizMix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .progress-bar {
+            background: #f0f0f0;
+            height: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .steps-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: #e0e0e0;
+            color: #999;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-number {
+            background: #667eea;
+            color: white;
+        }
+
+        .step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .step.active .step-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .form-content {
+            background: white;
+            padding: 40px;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tipo-parceiro-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tipo-option {
+            position: relative;
+        }
+
+        .tipo-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .tipo-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .tipo-option input[type="radio"]:checked + label {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .tipo-option label:hover {
+            border-color: #667eea;
+        }
+
+        .tipo-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .tipo-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .codigo-parceiro {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+
+        .codigo-parceiro strong {
+            font-size: 1.5rem;
+            color: #28a745;
+            font-family: 'Courier New', monospace;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .tipo-parceiro-options {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3>Processando...</h3>
+            <p id="loadingMessage">Aguarde um momento</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="header">
+            <h1>🤝 Cadastro de Parceiro</h1>
+            <p>Complete as 3 etapas para se tornar um parceiro BizMix</p>
+        </div>
+
+        <div class="form-content">
+
+            <div class="steps-indicator">
+                <div class="step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Dados Pessoais</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Dados Bancários</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Segurança</div>
+                </div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 33%;">Step 1 de 3</div>
+            </div>
+            <div id="alertBox" class="alert"></div>
+                        <form id="cadastroForm">
+
+                <!-- STEP 1: DADOS PESSOAIS -->
+                <div class="step-content active" data-step="1">
+                    <div class="section-title">👤 Tipo de Parceiro</div>
+
+                    <div class="tipo-parceiro-options">
+                        <div class="tipo-option">
+                            <input type="radio" name="tipo_parceiro" id="tipoFisica" value="pessoa_fisica" checked>
+                            <label for="tipoFisica">
+                                <div class="tipo-icon">👤</div>
+                                <div class="tipo-label">Pessoa Física</div>
+                            </label>
+                        </div>
+
+                        <div class="tipo-option">
+                            <input type="radio" name="tipo_parceiro" id="tipoIgreja" value="igreja">
+                            <label for="tipoIgreja">
+                                <div class="tipo-icon">⛪</div>
+                                <div class="tipo-label">Igreja</div>
+                            </label>
+                        </div>
+
+                        <div class="tipo-option">
+                            <input type="radio" name="tipo_parceiro" id="tipoEmpresa" value="empresa">
+                            <label for="tipoEmpresa">
+                                <div class="tipo-icon">💼</div>
+                                <div class="tipo-label">Empresa</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="section-title">📝 Informações Básicas</div>
+
+                    <div class="form-group">
+                        <label for="nomeCompleto">Nome Completo <span class="required">*</span></label>
+                        <input type="text" id="nomeCompleto" required placeholder="Digite seu nome completo">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail <span class="required">*</span></label>
+                            <input type="email" id="email" required placeholder="seu@email.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="telefone">Telefone/WhatsApp <span class="required">*</span></label>
+                            <input type="tel" id="telefone" required placeholder="(00) 00000-0000">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cpfCnpj">CPF/CNPJ <span class="required">*</span></label>
+                            <input type="text" id="cpfCnpj" required placeholder="000.000.000-00">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dataNascimento">Data de Nascimento</label>
+                            <input type="date" id="dataNascimento">
+                        </div>
+                    </div>
+
+                    <!-- CAMPOS IGREJA -->
+                    <div id="camposIgreja" class="hidden">
+                        <div class="section-title">⛪ Dados da Igreja</div>
+
+                        <div class="form-group">
+                            <label for="nomeIgreja">Nome da Igreja <span class="required">*</span></label>
+                            <input type="text" id="nomeIgreja" placeholder="Nome completo da igreja">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="denominacao">Denominação</label>
+                                <input type="text" id="denominacao" placeholder="Ex: Batista, Presbiteriana...">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cargoIgreja">Seu Cargo</label>
+                                <select id="cargoIgreja">
+                                    <option value="">Selecione...</option>
+                                    <option value="pastor">Pastor</option>
+                                    <option value="lider">Líder</option>
+                                    <option value="tesoureiro">Tesoureiro</option>
+                                    <option value="secretario">Secretário</option>
+                                    <option value="membro">Membro</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CAMPOS EMPRESA -->
+                    <div id="camposEmpresa" class="hidden">
+                        <div class="section-title">💼 Dados da Empresa</div>
+
+                        <div class="form-group">
+                            <label for="nomeEmpresa">Nome da Empresa <span class="required">*</span></label>
+                            <input type="text" id="nomeEmpresa" placeholder="Razão social ou nome fantasia">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="segmento">Segmento</label>
+                                <input type="text" id="segmento" placeholder="Ex: Tecnologia, Educação...">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cargoEmpresa">Seu Cargo</label>
+                                <input type="text" id="cargoEmpresa" placeholder="Ex: Gerente, Diretor...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VINCULO COM IGREJA (apenas para pessoa física) -->
+                    <div id="vinculoIgreja">
+                        <div class="form-group">
+                            <label for="igrejaVinculada">É membro de alguma igreja parceira? (Opcional)</label>
+                            <select id="igrejaVinculada">
+                                <option value="">Não / Não tenho vínculo</option>
+                            </select>
+                            <small>Se sua igreja já é parceira, selecione aqui</small>
+                        </div>
+                    </div>
+
+                    <div class="section-title">📍 Endereço</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cidade">Cidade</label>
+                            <input type="text" id="cidade" placeholder="Sua cidade">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estado">Estado</label>
+                            <select id="estado">
+                                <option value="">Selecione...</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pais">País</label>
+                            <input type="text" id="pais" value="Brasil" readonly>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id="btnNext1">
+                            Próximo ➔
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 2: DADOS BANCÁRIOS -->
+                <div class="step-content" data-step="2">
+                    <div class="section-title">💳 Dados Bancários</div>
+
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Essas informações são necessárias para o pagamento das suas comissões.
+                    </p>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="banco">Banco <span class="required">*</span></label>
+                            <input type="text" id="banco" required placeholder="Ex: Banco do Brasil, Caixa, Nubank...">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipoConta">Tipo de Conta <span class="required">*</span></label>
+                            <select id="tipoConta" required>
+                                <option value="">Selecione...</option>
+                                <option value="corrente">Conta Corrente</option>
+                                <option value="poupanca">Conta Poupança</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="agencia">Agência <span class="required">*</span></label>
+                            <input type="text" id="agencia" required placeholder="0000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="conta">Conta (com dígito) <span class="required">*</span></label>
+                            <input type="text" id="conta" required placeholder="00000-0">
+                        </div>
+                    </div>
+
+                    <div class="section-title">🔑 Chave PIX (Opcional)</div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pixTipo">Tipo de Chave PIX</label>
+                            <select id="pixTipo">
+                                <option value="">Não cadastrar PIX</option>
+                                <option value="cpf">CPF</option>
+                                <option value="cnpj">CNPJ</option>
+                                <option value="email">E-mail</option>
+                                <option value="telefone">Telefone</option>
+                                <option value="aleatoria">Chave Aleatória</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pixChave">Chave PIX</label>
+                            <input type="text" id="pixChave" placeholder="Digite a chave PIX">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" id="btnPrev2">
+                            ← Voltar
+                        </button>
+                        <button type="button" class="btn btn-primary" id="btnNext2">
+                            Próximo ➔
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: SEGURANÇA -->
+                <div class="step-content" data-step="3">
+                    <div class="section-title">🔒 Segurança da Conta</div>
+
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Crie uma senha forte para proteger sua conta.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="senha">Senha <span class="required">*</span></label>
+                        <input type="password" id="senha" required placeholder="Mínimo 6 caracteres">
+                        <small>Use letras, números e símbolos para maior segurança</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senhaConfirm">Confirmar Senha <span class="required">*</span></label>
+                        <input type="password" id="senhaConfirm" required placeholder="Digite a senha novamente">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="termos" required>
+                            Aceito os <a href="/termos.html" target="_blank">Termos de Uso</a> e 
+                            <a href="/privacidade.html" target="_blank">Política de Privacidade</a>
+                            <span class="required">*</span>
+                        </label>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary" id="btnPrev3">
+                            ← Voltar
+                        </button>
+                        <button type="submit" class="btn btn-success" id="btnSubmit">
+                            🚀 Finalizar Cadastro
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- MENSAGEM DE SUCESSO -->
+            <div id="successMessage" class="success-message">
+                <div class="success-icon">🎉</div>
+                <h2>Cadastro Concluído!</h2>
+                <p>Bem-vindo(a) ao time de parceiros BizMix!</p>
+                
+                <div class="codigo-parceiro">
+                    <p style="margin-bottom: 10px;">Seu código de parceiro:</p>
+                    <strong id="codigoParceiro"></strong>
+                </div>
+
+                <p>Você pode acessar seu dashboard com o e-mail e senha cadastrados.</p>
+                <p><strong>Importante:</strong> Guarde seu código em local seguro!</p>
+
+                <button class="btn btn-success" onclick="window.location.href='/login.html'">
+                    🔐 Fazer Login
+                </button>
+            </div>
+        </div>
+    </div>
+        <script>
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE (INLINE) ✅
+        // ============================================
+        const SUPABASE_URL = 'https://hjlpmorykllywjodusqx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+        
+        console.log('✅ Configuração Supabase carregada (inline)');
+
+        let currentStep = 1;
+
+        // ============================================
+        // FUNÇÕES DE NAVEGAÇÃO
+        // ============================================
+        function irParaStep(step) {
+            currentStep = step;
+            
+            // Esconder todos os steps
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Mostrar step atual
+            document.querySelector(`.step-content[data-step="${step}"]`).classList.add('active');
+
+            // Atualizar indicadores
+            document.querySelectorAll('.step').forEach((stepEl, index) => {
+                const stepNum = index + 1;
+                stepEl.classList.remove('active', 'completed');
+                
+                if (stepNum < step) {
+                    stepEl.classList.add('completed');
+                } else if (stepNum === step) {
+                    stepEl.classList.add('active');
+                }
+            });
+
+            // Atualizar progress bar
+            const progress = (step / 3) * 100;
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = `${progress}%`;
+            progressFill.textContent = `Step ${step} de 3`;
+            
+            console.log('📊 Navegou para Step', step);
+        }
+
+        function validarCamposObrigatorios(step) {
+            const stepContent = document.querySelector(`.step-content[data-step="${step}"]`);
+            const inputs = stepContent.querySelectorAll('input[required], select[required]');
+            
+            let valido = true;
+            inputs.forEach(input => {
+                // Verificar se o campo está visível
+                const isVisible = input.offsetParent !== null;
+                
+                if (isVisible && !input.value.trim()) {
+                    input.style.borderColor = '#e74c3c';
+                    valido = false;
+                } else {
+                    input.style.borderColor = '#e0e0e0';
+                }
+            });
+
+            if (!valido) {
+                showAlert('❌ Preencha todos os campos obrigatórios', 'error');
+            }
+
+            return valido;
+        }
+
+        // ============================================
+        // EVENT LISTENERS DOS BOTÕES
+        // ============================================
+        document.getElementById('btnNext1').addEventListener('click', function() {
+            console.log('🔘 Clicou em Próximo (Step 1)');
+            if (validarCamposObrigatorios(1)) {
+                irParaStep(2);
+            }
+        });
+
+        document.getElementById('btnPrev2').addEventListener('click', function() {
+            console.log('🔘 Clicou em Voltar (Step 2)');
+            irParaStep(1);
+        });
+
+        document.getElementById('btnNext2').addEventListener('click', function() {
+            console.log('🔘 Clicou em Próximo (Step 2)');
+            if (validarCamposObrigatorios(2)) {
+                irParaStep(3);
+            }
+        });
+
+        document.getElementById('btnPrev3').addEventListener('click', function() {
+            console.log('🔘 Clicou em Voltar (Step 3)');
+            irParaStep(2);
+        });
+
+        // ============================================
+        // CONTROLE DE TIPO DE PARCEIRO ✅ LÓGICA CORRIGIDA
+        // ============================================
+        document.querySelectorAll('input[name="tipo_parceiro"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const tipo = this.value;
+                console.log('👤 Tipo alterado para:', tipo);
+                
+                const camposIgreja = document.getElementById('camposIgreja');
+                const camposEmpresa = document.getElementById('camposEmpresa');
+                const vinculoIgreja = document.getElementById('vinculoIgreja');
+                
+                // RESETAR TUDO PRIMEIRO
+                camposIgreja.classList.add('hidden');
+                camposEmpresa.classList.add('hidden');
+                vinculoIgreja.classList.add('hidden');
+                
+                // Remover required
+                document.getElementById('nomeIgreja').required = false;
+                document.getElementById('nomeEmpresa').required = false;
+                
+                // LÓGICA CORRIGIDA ✅
+                if (tipo === 'pessoa_fisica') {
+                    // Pessoa Física: MOSTRAR campo "igreja parceira"
+                    vinculoIgreja.classList.remove('hidden');
+                    console.log('👤 Pessoa Física selecionada - Campo igreja parceira VISÍVEL');
+                    
+                } else if (tipo === 'igreja') {
+                    // Igreja: MOSTRAR campos de igreja + ESCONDER "igreja parceira"
+                    camposIgreja.classList.remove('hidden');
+                    document.getElementById('nomeIgreja').required = true;
+                    vinculoIgreja.classList.add('hidden');
+                    console.log('⛪ Igreja selecionada - Campos igreja VISÍVEIS, campo igreja parceira ESCONDIDO');
+                    
+                } else if (tipo === 'empresa') {
+                    // Empresa: MOSTRAR campos de empresa + ESCONDER "igreja parceira"
+                    camposEmpresa.classList.remove('hidden');
+                    document.getElementById('nomeEmpresa').required = true;
+                    vinculoIgreja.classList.add('hidden');
+                    console.log('💼 Empresa selecionada - Campos empresa VISÍVEIS, campo igreja parceira ESCONDIDO');
+                }
+            });
+        });
+
+        // ============================================
+        // CARREGAR IGREJAS PARCEIRAS (VIA FETCH)
+        // ============================================
+        async function carregarIgrejas() {
+            try {
+                console.log('🔍 Carregando igrejas parceiras...');
+
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/parceiros?tipo_parceiro=eq.igreja&status=eq.ativo&select=id,nome_igreja,cidade,estado&order=nome_igreja`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar igrejas');
+                }
+
+                const igrejas = await response.json();
+                const select = document.getElementById('igrejaVinculada');
+                
+                if (igrejas && igrejas.length > 0) {
+                    igrejas.forEach(igreja => {
+                        const option = document.createElement('option');
+                        option.value = igreja.id;
+                        option.textContent = `${igreja.nome_igreja} - ${igreja.cidade}/${igreja.estado}`;
+                        select.appendChild(option);
+                    });
+                    console.log('✅ Igrejas carregadas:', igrejas.length);
+                }
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar igrejas:', error);
+            }
+        }
+
+        // ============================================
+        // MÁSCARAS DE ENTRADA
+        // ============================================
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 11) value = value.slice(0, 11);
+            
+            if (value.length > 10) {
+                e.target.value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                e.target.value = value.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                e.target.value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+            } else {
+                e.target.value = value.replace(/^(\d*)/, '($1');
+            }
+        });
+
+        document.getElementById('cpfCnpj').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length <= 11) {
+                // CPF
+                if (value.length > 11) value = value.slice(0, 11);
+                
+                if (value.length > 9) {
+                    e.target.value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+                } else if (value.length > 6) {
+                    e.target.value = value.replace(/^(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                } else if (value.length > 3) {
+                    e.target.value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
+                } else {
+                    e.target.value = value;
+                }
+            } else {
+                // CNPJ
+                if (value.length > 14) value = value.slice(0, 14);
+                
+                if (value.length > 12) {
+                    e.target.value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+                } else if (value.length > 8) {
+                    e.target.value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
+                } else if (value.length > 5) {
+                    e.target.value = value.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
+                } else if (value.length > 2) {
+                    e.target.value = value.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+                } else {
+                    e.target.value = value;
+                }
+            }
+        });
+
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 8) value = value.slice(0, 8);
+            
+            if (value.length > 5) {
+                e.target.value = value.replace(/^(\d{5})(\d{0,3})/, '$1-$2');
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        // ============================================
+        // BUSCAR CEP
+        // ============================================
+        document.getElementById('cep').addEventListener('blur', async function(e) {
+            const cep = e.target.value.replace(/\D/g, '');
+            
+            if (cep.length !== 8) return;
+            
+            console.log('🔍 Buscando CEP:', cep);
+            
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await response.json();
+                
+                console.log('📦 Resposta ViaCEP:', dados);
+                
+                if (dados.erro) {
+                    showAlert('❌ CEP não encontrado', 'error');
+                    return;
+                }
+                
+                document.getElementById('cidade').value = dados.localidade;
+                document.getElementById('estado').value = dados.uf;
+                
+                showAlert('✅ CEP encontrado!', 'success');
+                console.log('✅ Endereço preenchido:', dados.localidade, dados.uf);
+                
+            } catch (error) {
+                console.error('❌ Erro ao buscar CEP:', error);
+                showAlert('❌ Erro ao buscar CEP', 'error');
+            }
+        });
+
+        // ============================================
+        // SUBMETER FORMULÁRIO (FETCH DIRETO) ✅
+        // ============================================
+        document.getElementById('cadastroForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('📝 Submetendo formulário');
+
+            const senha = document.getElementById('senha').value;
+            const senhaConfirm = document.getElementById('senhaConfirm').value;
+
+            if (senha.length < 6) {
+                showAlert('❌ A senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+
+            if (senha !== senhaConfirm) {
+                showAlert('❌ As senhas não coincidem', 'error');
+                return;
+            }
+
+            const btnSubmit = document.getElementById('btnSubmit');
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = '⏳ Processando...';
+            
+            showLoading('Registrando seus dados...');
+            
+            try {
+                const tipoParceiro = document.querySelector('input[name="tipo_parceiro"]:checked').value;
+                
+                const dadosParceiro = {
+                    tipo_parceiro: tipoParceiro,
+                    nome_completo: document.getElementById('nomeCompleto').value,
+                    email: document.getElementById('email').value,
+                    telefone: document.getElementById('telefone').value,
+                    cpf_cnpj: document.getElementById('cpfCnpj').value.replace(/\D/g, ''),
+                    data_nascimento: document.getElementById('dataNascimento').value || null,
+                    cep: document.getElementById('cep').value.replace(/\D/g, ''),
+                    cidade: document.getElementById('cidade').value,
+                    estado: document.getElementById('estado').value,
+                    pais: document.getElementById('pais').value,
+                    banco: document.getElementById('banco').value,
+                    agencia: document.getElementById('agencia').value,
+                    conta: document.getElementById('conta').value,
+                    tipo_conta: document.getElementById('tipoConta').value,
+                    pix_tipo: document.getElementById('pixTipo').value || null,
+                    pix_chave: document.getElementById('pixChave').value || null,
+                    senha: senha
+                };
+                
+                if (tipoParceiro === 'igreja') {
+                    dadosParceiro.nome_igreja = document.getElementById('nomeIgreja').value;
+                    dadosParceiro.denominacao = document.getElementById('denominacao').value;
+                    dadosParceiro.cargo_igreja = document.getElementById('cargoIgreja').value;
+                } else if (tipoParceiro === 'empresa') {
+                    dadosParceiro.nome_empresa = document.getElementById('nomeEmpresa').value;
+                    dadosParceiro.segmento = document.getElementById('segmento').value;
+                    dadosParceiro.cargo_empresa = document.getElementById('cargoEmpresa').value;
+                } else if (tipoParceiro === 'pessoa_fisica') {
+                    const igrejaVinculadaId = document.getElementById('igrejaVinculada').value;
+                    if (igrejaVinculadaId) {
+                        dadosParceiro.igreja_vinculada_id = igrejaVinculadaId;
+                    }
+                }
+                
+                console.log('📦 Enviando dados:', dadosParceiro);
+                
+                // FETCH DIRETO PARA EDGE FUNCTION ✅
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/registrar-parceiro`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    },
+                    body: JSON.stringify(dadosParceiro)
+                });
+                
+                console.log('📡 Status da resposta:', response.status);
+                
+                const result = await response.json();
+                console.log('📦 Resultado:', result);
+                
+                    if (!result.success) {
+                    // Mensagens de erro mais amigáveis
+                    let mensagemErro = result.error || 'Erro ao registrar parceiro';
+                    
+                    if (mensagemErro.includes('duplicate key') && mensagemErro.includes('cpf_cnpj')) {
+                        mensagemErro = 'Este CPF/CNPJ já está cadastrado. Por favor, verifique seus dados ou entre em contato com o suporte.';
+                    } else if (mensagemErro.includes('duplicate key') && mensagemErro.includes('email')) {
+                        mensagemErro = 'Este e-mail já está cadastrado. Por favor, use outro e-mail ou recupere sua senha.';
+                    }
+                    
+                    throw new Error(mensagemErro);
+                }
+                
+                console.log('✅ Parceiro registrado:', result);
+                
+                hideLoading();
+                
+                document.getElementById('cadastroForm').style.display = 'none';
+                document.querySelector('.steps-indicator').style.display = 'none';
+                document.querySelector('.progress-bar').style.display = 'none';
+                document.getElementById('successMessage').classList.add('show');
+                document.getElementById('codigoParceiro').textContent = result.codigo_parceiro;
+                
+            } catch (error) {
+                console.error('❌ Erro completo:', error);
+                hideLoading();
+                showAlert('❌ Erro ao realizar cadastro: ' + error.message, 'error');
+                
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = '🚀 Finalizar Cadastro';
+            }
+        });
+
+        // ============================================
+        // FUNÇÕES AUXILIARES
+        // ============================================
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 5000);
+        }
+
+        function showLoading(message) {
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingOverlay').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('show');
+        }
+
+        // ============================================
+        // INICIALIZAR
+        // ============================================
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ Formulário inicializado');
+            carregarIgrejas();
+            irParaStep(1);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Confirmado - BizMix</title>
+    <link rel="icon" href="https://bizmix.com.br/favicon.ico">
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 50px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-icon {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .success-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+        }
+
+        .success-header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        .order-number {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .success-body {
+            padding: 40px 30px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: #1565C0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+
+        .info-box-text {
+            color: #1565C0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            font-weight: 600;
+        }
+
+        .order-details {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+            text-align: right;
+        }
+
+        .detail-value.highlight {
+            color: #28a745;
+            font-size: 1.3rem;
+        }
+
+        .product-info {
+            background: white;
+            border: 2px solid #f0f0f0;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .product-icon {
+            font-size: 60px;
+            flex-shrink: 0;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .product-type {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #28a745;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .download-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .download-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        .download-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .download-text {
+            margin-bottom: 20px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .btn-download {
+            display: inline-block;
+            padding: 18px 40px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .delivery-section {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .delivery-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .delivery-text {
+            color: #856404;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .address-box {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .address-text {
+            color: #333;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .next-steps {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: start;
+        }
+
+        .step-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            width: 35px;
+            height: 35px;
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .step-text {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .support-section {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .support-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .support-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-support {
+            padding: 12px 25px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-support:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .social-proof {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .social-text {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .social-icon {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s ease-in-out infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-text {
+            height: 20px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .success-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .success-icon {
+                font-size: 70px;
+            }
+
+            .product-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .support-buttons {
+                flex-direction: column;
+            }
+
+            .btn-support {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="success-card">
+            <div class="success-header">
+                <div class="success-icon">🎉</div>
+                <h1>Pedido Confirmado!</h1>
+                <p>Obrigado pela sua compra</p>
+                <div class="order-number" id="orderNumber">
+                    Pedido #<span id="orderId">Carregando...</span>
+                </div>
+            </div>
+
+            <div class="success-body">
+
+                <div id="alertBox" class="alert"></div>
+
+                <div class="info-box">
+                    <div class="info-box-title">
+                        <span>✅</span>
+                        <span>Pagamento Confirmado</span>
+                    </div>
+                    <div class="info-box-text">
+                        Recebemos a confirmação do seu pagamento via PIX.<br>
+                        Um email de confirmação foi enviado para <strong id="customerEmail">seu email</strong>.
+                    </div>
+                </div>
+
+                <div class="section-title">📦 Detalhes do Pedido</div>
+
+                <div class="product-info" id="productInfo">
+                    <div class="product-icon">📦</div>
+                    <div class="product-details">
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text" style="width: 60%;"></div>
+                    </div>
+                </div>
+
+                <div class="order-details" id="orderDetails">
+                    <div class="detail-row">
+                        <span class="detail-label">Produto:</span>
+                        <span class="detail-value" id="productName">Carregando...</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Quantidade:</span>
+                        <span class="detail-value" id="quantity">1</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Forma de Pagamento:</span>
+                        <span class="detail-value">PIX</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Data:</span>
+                        <span class="detail-value" id="orderDate">--/--/----</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Valor Total:</span>
+                        <span class="detail-value highlight" id="totalValue">R$ 0,00</span>
+                    </div>
+                </div>
+
+                <!-- Seção de Download (produtos digitais) -->
+                <div id="downloadSection" style="display: none;">
+                    <div class="download-section">
+                        <div class="download-icon">📥</div>
+                        <div class="download-title">Seu Produto Está Pronto!</div>
+                        <div class="download-text">
+                            Clique no botão abaixo para fazer o download do seu produto digital.<br>
+                            O link também foi enviado para o seu email.
+                        </div>
+                        <a href="#" id="btnDownload" class="btn-download">
+                            📥 Baixar Agora
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Seção de Entrega (produtos físicos) -->
+                <div id="deliverySection" style="display: none;">
+                    <div class="delivery-section">
+                        <div class="delivery-title">📦 Informações de Entrega</div>
+                        <div class="delivery-text">
+                            Seu pedido será processado e enviado em até <strong>2 dias úteis</strong>.<br>
+                            O prazo de entrega é de <strong>7 a 15 dias úteis</strong> após o envio.<br>
+                            Você receberá o código de rastreamento por email.
+                        </div>
+                        <div class="address-box">
+                            <div class="address-text">
+                                <strong>📍 Endereço de entrega:</strong><br>
+                                <span id="deliveryAddress">Carregando endereço...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-title">🚀 Próximos Passos</div>
+
+                <div class="next-steps">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Verifique seu Email</div>
+                            <div class="step-text">
+                                Enviamos todas as informações do pedido para o seu email. Confira sua caixa de entrada e spam.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item" id="step2Digital" style="display: none;">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Faça o Download</div>
+                            <div class="step-text">
+                                Clique no botão de download acima ou use o link que enviamos por email.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item" id="step2Physical" style="display: none;">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Aguarde o Envio</div>
+                            <div class="step-text">
+                                Processaremos seu pedido e enviaremos o código de rastreamento em até 2 dias úteis.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Precisa de Ajuda?</div>
+                            <div class="step-text">
+                                Nossa equipe está disponível para tirar dúvidas e oferecer suporte sempre que precisar.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="support-section">
+                    <div class="support-title">💬 Precisa de Ajuda?</div>
+                    <div class="support-buttons">
+                        <a href="https://wa.me/5511999999999" target="_blank" class="btn-support">
+                            <span>📱</span>
+                            <span>WhatsApp</span>
+                        </a>
+                        <a href="mailto:contato@bizmix.com.br" class="btn-support">
+                            <span>✉️</span>
+                            <span>Email</span>
+                        </a>
+                        <a href="https://bizmix.com.br/suporte" target="_blank" class="btn-support">
+                            <span>💡</span>
+                            <span>Central de Ajuda</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="social-proof">
+                    <div class="social-text">
+                        Gostou da sua compra? Compartilhe com seus amigos!
+                    </div>
+                    <div class="social-icons">
+                        <span class="social-icon" onclick="compartilharFacebook()">📘</span>
+                        <span class="social-icon" onclick="compartilharTwitter()">🐦</span>
+                        <span class="social-icon" onclick="compartilharWhatsApp()">💬</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ Página de Confirmação carregada');
+
+        // ============================================
+        // CONFIGURAÇÃO SUPABASE
+        // ============================================
+        const SUPABASE_URL = 'https://hjlpmorykllywjodusqx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ============================================
+        // OBTER PARÂMETROS DA URL
+        // ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const vendaId = urlParams.get('venda_id');
+
+        if (!vendaId) {
+            showAlert('❌ Venda não encontrada. Você será redirecionado.', 'error');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 3000);
+        }
+
+        // ============================================
+        // CARREGAR DADOS DA VENDA
+        // ============================================
+        async function carregarDadosVenda() {
+            try {
+                console.log('📊 Carregando dados da venda:', vendaId);
+
+                const { data: venda, error } = await supabaseClient
+                    .from('vendas')
+                    .select(`
+                        *,
+                        produtos:produto_id (
+                            nome,
+                            descricao,
+                            tipo,
+                            arquivo_url,
+                            imagem_url
+                        )
+                    `)
+                    .eq('id', vendaId)
+                    .single();
+
+                if (error) throw error;
+
+                console.log('✅ Venda encontrada:', venda);
+
+                exibirDadosVenda(venda);
+
+            } catch (error) {
+                console.error('❌ Erro ao carregar venda:', error);
+                showAlert('❌ Erro ao carregar dados da venda.', 'error');
+            }
+        }
+
+        // Exibir dados da venda
+        function exibirDadosVenda(venda) {
+            const produto = venda.produtos;
+            
+            // ID do pedido (últimos 8 caracteres)
+            document.getElementById('orderId').textContent = venda.id.substring(0, 8).toUpperCase();
+
+            // Email do cliente
+            document.getElementById('customerEmail').textContent = venda.email_comprador;
+
+            // Ícone do produto
+            const tipoIcon = produto.tipo === 'digital' ? '📱' : 
+                            produto.tipo === 'fisico' ? '📦' : 
+                            produto.tipo === 'livro' ? '📖' : '⚙️';
+
+            const tipoLabel = produto.tipo === 'digital' ? 'Digital' : 
+                             produto.tipo === 'fisico' ? 'Físico' : 
+                             produto.tipo === 'livro' ? 'Livro' : 'Serviço';
+
+            // Informações do produto
+            document.getElementById('productInfo').innerHTML = `
+                <div class="product-icon">${tipoIcon}</div>
+                <div class="product-details">
+                    <div class="product-name">${produto.nome}</div>
+                    <span class="product-type">${tipoIcon} ${tipoLabel}</span>
+                    ${produto.descricao ? `<div style="color: #666; font-size: 0.9rem; margin-top: 5px;">${produto.descricao}</div>` : ''}
+                </div>
+            `;
+
+            // Detalhes do pedido
+            document.getElementById('productName').textContent = produto.nome;
+            document.getElementById('quantity').textContent = venda.quantidade;
+            document.getElementById('totalValue').textContent = `R$ ${venda.valor_total.toFixed(2)}`;
+            
+            const dataVenda = new Date(venda.data_venda);
+            document.getElementById('orderDate').textContent = dataVenda.toLocaleDateString('pt-BR');
+
+            // Produto digital - mostrar download
+            if (produto.tipo === 'digital' || produto.tipo === 'livro') {
+                document.getElementById('downloadSection').style.display = 'block';
+                document.getElementById('step2Digital').style.display = 'flex';
+                
+                // Link de download
+                const downloadUrl = produto.arquivo_url || `https://bizmix.com.br/download/${venda.id}`;
+                document.getElementById('btnDownload').href = downloadUrl;
+            }
+
+            // Produto físico - mostrar entrega
+            if (produto.tipo === 'fisico') {
+                document.getElementById('deliverySection').style.display = 'block';
+                document.getElementById('step2Physical').style.display = 'flex';
+                
+                // Endereço de entrega
+                if (venda.endereco_entrega) {
+                    const endereco = venda.endereco_entrega;
+                    document.getElementById('deliveryAddress').innerHTML = `
+                        ${endereco.endereco}, ${endereco.numero}${endereco.complemento ? ` - ${endereco.complemento}` : ''}<br>
+                        ${endereco.bairro} - ${endereco.cidade}/${endereco.estado}<br>
+                        CEP: ${endereco.cep}
+                    `;
+                }
+            }
+
+            showAlert('✅ Compra finalizada com sucesso!', 'success');
+        }
+
+        // Compartilhar
+        function compartilharFacebook() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
+        }
+
+        function compartilharTwitter() {
+            const texto = encodeURIComponent('Acabei de comprar na BizMix! 🎉');
+            window.open(`https://twitter.com/intent/tweet?text=${texto}&url=${encodeURIComponent(window.location.href)}`, '_blank');
+        }
+
+        function compartilharWhatsApp() {
+            const texto = encodeURIComponent('Acabei de fazer uma compra incrível na BizMix! 🎉');
+            window.open(`https://wa.me/?text=${texto}%20${encodeURIComponent(window.location.href)}`, '_blank');
+        }
+
+        // Funções auxiliares
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type} show`;
+            
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 6000);
+        }
+
+        // Inicializar
+        window.addEventListener('DOMContentLoaded', async function() {
+            console.log('✅ Página de Confirmação inicializada');
+            console.log('🛒 Venda ID:', vendaId);
+
+            await carregarDadosVenda();
+        });
+
+        // Confetti animation (opcional)
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#f0932b', '#eb4d4b', '#6c5ce7'];
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.opacity = '1';
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.zIndex = '9999';
+                    document.body.appendChild(confetti);
+
+                    const fallDuration = Math.random() * 3 + 2;
+                    const fallDistance = Math.random() * window.innerHeight;
+
+                    confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${fallDistance}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: fallDuration * 1000,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    });
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, fallDuration * 1000);
+                }, i * 30);
+            }
+        }
+
+        // Criar confetti ao carregar
+        setTimeout(createConfetti, 500);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+# ===================================
+# REDIRECIONAMENTOS (CORREÇÕES 301)
+# ===================================
+
+# 1. Matar o Super Admin antigo (Manda pro Admin Novo)
+/admin/super-admin/*    /admin/index.html    301
+/admin/super-admin      /admin/index.html    301
+
+# 2. Atalho /admin vai para o login
+/admin                  /admin/login.html    301
+
+# 3. Login de Parceiros
+/login                  /login/index.html    301
+
+# 4. Atalho /painel vai para o login de parceiros
+/painel                 /login/index.html    301
+
+# ===================================
+# REGRAS DE SPA
+# ===================================
+/*                      /index.html          200

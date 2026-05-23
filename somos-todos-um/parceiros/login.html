@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Painel do Parceiro</title>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    
+    <!-- Configuração centralizada -->
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+            padding: 40px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle input {
+            padding-right: 45px;
+        }
+
+        .toggle-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-login:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            animation: shake 0.5s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #999;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-home a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            .login-container {
+                padding: 30px 20px;
+            }
+
+            .logo h1 {
+                font-size: 28px;
+            }
+
+            .remember-forgot {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>🔐 Área do Parceiro</h1>
+            <p>Faça login para acessar seu painel</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="seu@email.com" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <div class="password-toggle">
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    <span class="toggle-icon" onclick="togglePassword()">👁️</span>
+                </div>
+            </div>
+
+            <div class="remember-forgot">
+                <label class="remember-me">
+                    <input type="checkbox" id="remember" name="remember">
+                    Lembrar-me
+                </label>
+                <a href="#" class="forgot-link" id="forgotPasswordLink">Esqueci minha senha</a>
+            </div>
+
+            <button type="submit" class="btn-login" id="btnLogin">
+                Entrar
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #666;">Autenticando...</p>
+        </div>
+
+        <div class="divider">
+            <span>ou</span>
+        </div>
+
+        <div class="signup-link">
+            Ainda não é parceiro? <a href="cadastro.html">Cadastre-se gratuitamente</a>
+        </div>
+
+        <div class="back-home">
+            <a href="/">← Voltar para o site</a>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const btnLogin = document.getElementById('btnLogin');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const loading = document.getElementById('loading');
+
+        // Verificar se já está logado
+        async function verificarSessao() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                // Verificar se é parceiro
+                const { data: usuario } = await supabase
+                    .from('usuarios')
+                    .select('tipo')
+                    .eq('email', session.user.email)
+                    .single();
+
+                if (usuario && usuario.tipo === 'parceiro') {
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+
+        // Toggle mostrar/ocultar senha
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.toggle-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '👁️‍🗨️';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        // Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+
+            // Desabilitar botão e mostrar loading
+            btnLogin.disabled = true;
+            btnLogin.textContent = 'Entrando...';
+            errorMessage.classList.remove('show');
+            loading.style.display = 'block';
+
+            try {
+                // Fazer login
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (authError) throw authError;
+
+                // Verificar se é parceiro
+                const { data: usuario, error: userError } = await supabase
+                    .from('usuarios')
+                    .select('tipo, status, nome')
+                    .eq('email', email)
+                    .single();
+
+                if (userError) throw new Error('Usuário não encontrado');
+
+                if (usuario.tipo !== 'parceiro') {
+                    await supabase.auth.signOut();
+                    throw new Error('Esta área é exclusiva para parceiros. Use o login correto para sua função.');
+                }
+
+                if (usuario.status === 'inativo') {
+                    await supabase.auth.signOut();
+                    throw new Error('Sua conta está inativa. Entre em contato com o suporte.');
+                }
+
+                if (usuario.status === 'pendente') {
+                    await supabase.auth.signOut();
+                    throw new Error('Sua conta ainda está em análise. Aguarde a aprovação.');
+                }
+
+                // Salvar preferência de "lembrar-me"
+                if (remember) {
+                    localStorage.setItem('rememberMe', 'true');
+                } else {
+                    localStorage.removeItem('rememberMe');
+                }
+
+                // Login bem-sucedido
+                successMessage.textContent = `Bem-vindo, ${usuario.nome}! Redirecionando...`;
+                successMessage.classList.add('show');
+
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Erro no login:', error);
+                errorMessage.textContent = error.message || 'Erro ao fazer login. Verifique suas credenciais.';
+                errorMessage.classList.add('show');
+                btnLogin.disabled = false;
+                btnLogin.textContent = 'Entrar';
+                loading.style.display = 'none';
+            }
+        });
+
+        // Recuperar senha
+        document.getElementById('forgotPasswordLink').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                errorMessage.textContent = 'Por favor, digite seu email no campo acima.';
+                errorMessage.classList.add('show');
+                document.getElementById('email').focus();
+                return;
+            }
+
+            // Validar formato de email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                errorMessage.textContent = 'Por favor, digite um email válido.';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            btnLogin.disabled = true;
+            errorMessage.classList.remove('show');
+
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: `${window.location.origin}/somos-todos-um/parceiros/reset-password.html`
+                });
+
+                if (error) throw error;
+
+                successMessage.textContent = 'Enviamos um link de recuperação para seu email! Verifique sua caixa de entrada.';
+                successMessage.classList.add('show');
+
+            } catch (error) {
+                console.error('Erro ao recuperar senha:', error);
+                errorMessage.textContent = 'Erro ao enviar email de recuperação. Tente novamente.';
+                errorMessage.classList.add('show');
+            } finally {
+                btnLogin.disabled = false;
+            }
+        });
+
+        // Verificar sessão ao carregar
+        verificarSessao();
+
+        // Auto-preencher email se "lembrar-me" estiver ativo
+        if (localStorage.getItem('rememberMe') === 'true') {
+            document.getElementById('remember').checked = true;
+        }
+
+        // Fechar alertas ao clicar
+        errorMessage.addEventListener('click', () => {
+            errorMessage.classList.remove('show');
+        });
+
+        successMessage.addEventListener('click', () => {
+            successMessage.classList.remove('show');
+        });
+    </script>
+</body>
+</html>

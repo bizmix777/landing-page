@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Recusado - BizMix</title>
+    
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    
+    <!-- Configuração centralizada -->
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-icon svg {
+            width: 60px;
+            height: 60px;
+            stroke: white;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .error-details {
+            background: #fff5f5;
+            border: 2px solid #ff6b6b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .error-details h3 {
+            color: #c92a2a;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-details p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .error-code {
+            font-family: 'Courier New', monospace;
+            background: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #c92a2a;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #f8f9ff;
+        }
+
+        .support-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .support-info h4 {
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .support-info p {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .support-info a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .support-info a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-icon">
+            <svg viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </div>
+
+        <h1>Pagamento Recusado</h1>
+        <p class="subtitle">Ops! Não conseguimos processar seu pagamento.</p>
+
+        <div class="error-details" id="errorDetails">
+            <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                Detalhes do Erro
+            </h3>
+            <p id="errorMessage">Carregando informações...</p>
+            <div id="errorCodeContainer"></div>
+        </div>
+
+        <div class="actions">
+            <a href="pagamento-pix.html" class="btn btn-primary" id="retryBtn">
+                Tentar Novamente
+            </a>
+            <a href="/produtos" class="btn btn-secondary">
+                Voltar à Loja
+            </a>
+        </div>
+
+        <div class="support-info">
+            <h4>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                Precisa de Ajuda?
+            </h4>
+            <p>Se o problema persistir, entre em contato com nosso suporte:</p>
+            <p>📧 Email: <a href="mailto:suporte@bizmix.com.br">suporte@bizmix.com.br</a></p>
+            <p>📱 WhatsApp: <a href="https://wa.me/5511999999999">(11) 99999-9999</a></p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px; color: #666;">Processando...</p>
+        </div>
+    </div>
+
+    <script>
+        // Buscar dados da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const vendaId = urlParams.get('venda_id');
+        const errorCode = urlParams.get('error');
+        const errorMessage = urlParams.get('message');
+
+        // Exibir detalhes do erro
+        if (errorMessage) {
+            document.getElementById('errorMessage').textContent = decodeURIComponent(errorMessage);
+        } else {
+            document.getElementById('errorMessage').textContent = 'Não foi possível processar o pagamento. Verifique os dados do cartão ou tente outra forma de pagamento.';
+        }
+
+        if (errorCode) {
+            const errorCodeHtml = `
+                <p><strong>Código do erro:</strong></p>
+                <div class="error-code">${errorCode}</div>
+            `;
+            document.getElementById('errorCodeContainer').innerHTML = errorCodeHtml;
+        }
+
+        // Atualizar link de retry com dados
+        if (vendaId) {
+            const retryBtn = document.getElementById('retryBtn');
+            retryBtn.href = `pagamento-pix.html?venda_id=${vendaId}`;
+        }
+
+        // Registrar tentativa no Supabase
+        async function registrarTentativa() {
+            if (!vendaId) return;
+
+            try {
+                const { error } = await supabase
+                    .from('vendas')
+                    .update({
+                        status: 'erro',
+                        erro_mensagem: errorMessage || 'Pagamento recusado',
+                        erro_codigo: errorCode || 'UNKNOWN'
+                    })
+                    .eq('id', vendaId);
+
+                if (error) throw error;
+            } catch (error) {
+                console.error('Erro ao registrar tentativa:', error);
+            }
+        }
+
+        // Executar ao carregar
+        registrarTentativa();
+
+        // Mapear códigos de erro comuns
+        const errorMessages = {
+            'cc_rejected_insufficient_amount': 'Saldo insuficiente no cartão',
+            'cc_rejected_bad_filled_security_code': 'Código de segurança incorreto',
+            'cc_rejected_bad_filled_date': 'Data de validade incorreta',
+            'cc_rejected_bad_filled_other': 'Verifique os dados do cartão',
+            'cc_rejected_high_risk': 'Pagamento recusado por segurança',
+            'cc_rejected_invalid_installments': 'Número de parcelas inválido',
+            'cc_rejected_max_attempts': 'Excedeu o número de tentativas',
+            'cc_rejected_duplicated_payment': 'Pagamento duplicado detectado',
+            'cc_rejected_card_disabled': 'Cartão desabilitado',
+            'cc_rejected_blacklist': 'Cartão bloqueado'
+        };
+
+        if (errorCode && errorMessages[errorCode]) {
+            document.getElementById('errorMessage').textContent = errorMessages[errorCode];
+        }
+    </script>
+</body>
+</html>
