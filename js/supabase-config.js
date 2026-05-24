@@ -4,7 +4,7 @@
 // ============================================
 
 const SUPABASE_URL = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqbHBtb3J5a2xseXdqb2R1c3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM4MjgxMTAsImV4cCI6MjA3OTQwNDExMH0.avz_D-StFtmD93YMrxfdLpbxaRSPPjNvcwu_Gnx2Nak';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
 console.log('✅ Configuração carregada:', SUPABASE_URL);
 
 // --- 1. Inicializa o SDK Oficial (Se a biblioteca estiver carregada) ---
