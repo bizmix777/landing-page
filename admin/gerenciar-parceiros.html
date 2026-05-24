@@ -204,6 +204,7 @@
                 const { data, error } = await supabase
                     .from('parceiros')
                     .select('*')
+                    .eq('tipo_parceiro', 'parceiro')
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;

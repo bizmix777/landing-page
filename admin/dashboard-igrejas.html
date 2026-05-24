@@ -194,23 +194,33 @@
 
         async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
 
-        async function carregarDados() { try { await carregarEstatisticas(); await carregarIgrejas(); } catch (error) { console.error('Erro:', error); } }
-
         async function carregarEstatisticas() {
             try {
-                const { count: totalIgrejas } = await supabase.from('igrejas').select('*', { count: 'exact', head: true });
+                // Conta apenas quem tem tipo_parceiro = 'igreja'
+                const { count: totalIgrejas } = await supabase
+                    .from('parceiros')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('tipo_parceiro', 'igreja');
                 document.getElementById('totalIgrejas').textContent = totalIgrejas || 0;
-                // Outras estatísticas podem ser ajustadas conforme necessidade
             } catch (error) { console.error(error); }
         }
 
         async function carregarIgrejas() {
             try {
-                const { data, error } = await supabase.from('igrejas').select('*').order('nome', { ascending: true });
+                // Puxa da tabela parceiros, mas só as igrejas!
+                const { data, error } = await supabase
+                    .from('parceiros')
+                    .select('*')
+                    .eq('tipo_parceiro', 'igreja')
+                    .order('created_at', { ascending: false });
+                
                 if (error) throw error;
                 igrejas = data || [];
                 exibirIgrejas(igrejas);
-            } catch (error) { console.error(error); document.getElementById('loading').innerHTML = '<p>Erro igrejas</p>'; }
+            } catch (error) { 
+                console.error(error); 
+                document.getElementById('loading').innerHTML = '<p>Erro igrejas</p>'; 
+            }
         }
 
         function exibirIgrejas(dados) {
@@ -223,13 +233,16 @@
             }
             dados.forEach(igreja => {
                 const tr = document.createElement('tr');
+                // Como unificamos, o nome da igreja pode estar em nome_igreja ou nome_completo
+                const nomeDaIgreja = igreja.nome_igreja || igreja.nome_completo || 'N/A';
+                
                 tr.innerHTML = `
-                    <td>${igreja.nome || 'N/A'}</td>
+                    <td>${nomeDaIgreja}</td>
                     <td>${igreja.cidade || 'N/A'}</td>
                     <td>${igreja.estado || 'N/A'}</td>
-                    <td>${igreja.total_parceiros || 0}</td>
-                    <td>${igreja.total_vendas || 0}</td>
-                    <td><span class="status-badge ${igreja.status === 'ativa' ? 'ativa' : 'inativa'}">${igreja.status === 'ativa' ? 'Ativa' : 'Inativa'}</span></td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td><span class="status-badge ${igreja.status === 'ativo' ? 'ativa' : 'inativa'}">${igreja.status === 'ativo' ? 'Ativa' : 'Inativa'}</span></td>
                     <td>
                         <div class="action-buttons">
                             <button class="btn-action btn-edit" onclick="editarIgreja('${igreja.id}')"><i class="fas fa-edit"></i> Editar</button>
