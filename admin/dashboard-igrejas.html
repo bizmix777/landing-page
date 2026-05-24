@@ -172,152 +172,174 @@
     </div>
 
     <script>
-        // Blindagem de Inicialização
-        var supabase;
-        if (typeof window.supabase !== 'undefined') {
-            supabase = window.supabase;
-        } else {
-            const _URL = 'https://hjlpmorykllywjodusqx.supabase.co';
-            const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpvZnhoZmJqZ3ZwYnFqdGxrYmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYxNzY2MDAsImV4cCI6MjA4MTc1MjYwMH0.cOkzl5m_FzkACi6yc7398VKNhefK3I_JcRN8df1ILzM';
-            supabase = window.supabase = supabase.createClient(_URL, _KEY);
-        }
-        
         let igrejas = [];
 
-        async function verificarAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) { window.location.href = '/admin/login.html'; return; }
-            const { data: usuario } = await supabase.from('usuarios').select('tipo').eq('email', session.user.email).single();
-            if (!usuario || (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin')) { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; return; }
+async function verificarAuth() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = '/admin/login.html'; return; }
+    const { data: usuario } = await supabase.from('usuarios').select('tipo').eq('id', session.user.id).single();
+    if (!usuario || (usuario.tipo !== 'admin' && usuario.tipo !== 'super_admin')) { 
+        await supabase.auth.signOut(); 
+        window.location.href = '/admin/login.html'; 
+        return; 
+    }
+    carregarDados();
+}
+
+async function logout() { 
+    await supabase.auth.signOut(); 
+    window.location.href = '/admin/login.html'; 
+}
+
+async function carregarDados() { 
+    try { 
+        await carregarEstatisticas(); 
+        await carregarIgrejas(); 
+    } catch (error) { 
+        console.error('Erro ao carregar dados:', error); 
+    } 
+}
+
+async function carregarEstatisticas() {
+    try {
+        const { count: totalIgrejas } = await supabase
+            .from('parceiros')
+            .select('*', { count: 'exact', head: true })
+            .eq('tipo_parceiro', 'igreja');
+        document.getElementById('totalIgrejas').textContent = totalIgrejas || 0;
+    } catch (error) { 
+        console.error('Erro nas estatísticas:', error); 
+    }
+}
+
+async function carregarIgrejas() {
+    try {
+        const { data, error } = await supabase
+            .from('parceiros')
+            .select('*')
+            .eq('tipo_parceiro', 'igreja')
+            .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        igrejas = data || [];
+        exibirIgrejas(igrejas);
+    } catch (error) { 
+        console.error('Erro ao carregar igrejas:', error); 
+        document.getElementById('loading').innerHTML = '<p style="color: red;">Erro ao carregar igrejas</p>'; 
+    }
+}
+
+function exibirIgrejas(dados) {
+    const tbody = document.getElementById('igrejasTableBody'); 
+    tbody.innerHTML = '';
+    
+    if (dados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhuma igreja cadastrada</td></tr>';
+        document.getElementById('igrejasTable').style.display = 'table';
+        document.getElementById('loading').style.display = 'none';
+        return;
+    }
+    
+    dados.forEach(igreja => {
+        const tr = document.createElement('tr');
+        const nomeDaIgreja = i?.nome_igreja || igreja.nome_completo || 'N/A';
+        
+        tr.innerHTML = `
+            <td>${nomeDaIgreja}</td>
+            <td>${igreja.cidade || 'N/A'}</td>
+            <td>${igreja.estado || 'N/A'}</td>
+            <td>0</td>
+            <td>0</td>
+            <td><span class="status-badge ${igreja.status === 'ativo' ? 'ativa' : 'inativa'}">${igreja.status === 'ativo' ? 'Ativa' : 'Inativa'}</span></td>
+            <td>
+                <div class="action-buttons">
+                    <button class="btn-action btn-edit" onclick="editarIgreja('${igreja.id}')"><i class="fas fa-edit"></i> Editar</button>
+                    <button class="btn-action btn-delete" onclick="deletarIgreja('${igreja.id}')"><i class="fas fa-trash"></i> Excluir</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    document.getElementById('igrejasTable').style.display = 'table';
+    document.getElementById('loading').style.display = 'none';
+}
+
+// Edição e Salvamento vinculados à tabela unificada 'parceiros'
+function editarIgreja(id) {
+    const igreja = igrejas.find(i => i.id === id);
+    if (!igreja) return;
+    
+    const inputId = document.getElementById('editId') || document.getElementById('id');
+    if (inputId) inputId.value = igreja.id;
+    
+    document.getElementById('nome').value = igreja.nome_igreja || igreja.nome_completo || '';
+    document.getElementById('endereco').value = igreja.endereco || '';
+    document.getElementById('cidade').value = igreja.cidade || '';
+    document.getElementById('estado').value = igreja.estado || '';
+    document.getElementById('telefone').value = igreja.telefone || '';
+    document.getElementById('email').value = igreja.email || '';
+    document.getElementById('pastor').value = igreja.responsavel_igreja || '';
+    document.getElementById('observacoes').value = igreja.observacoes || '';
+    document.getElementById('status').value = igreja.status || 'ativo';
+    
+    if (typeof abrirModal === 'function') abrirModal();
+}
+
+const formElement = document.querySelector('form') || document.getElementById('igrejaForm');
+if (formElement) {
+    formElement.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const inputId = document.getElementById('editId') || document.getElementById('id');
+        const id = inputId ? inputId.value : '';
+
+        const dados = {
+            nome_igreja: document.getElementById('nome').value,
+            nome_completo: document.getElementById('nome').value,
+            endereco: document.getElementById('endereco').value,
+            cidade: document.getElementById('cidade').value,
+            estado: document.getElementById('estado').value.toUpperCase(),
+            telefone: document.getElementById('telefone').value,
+            email: document.getElementById('email').value,
+            responsavel_igreja: document.getElementById('pastor').value,
+            observacoes: document.getElementById('observacoes').value,
+            status: document.getElementById('status').value,
+            tipo_parceiro: 'igreja'
+        };
+
+        try {
+            if (id) { 
+                await supabase.from('parceiros').update(dados).eq('id', id); 
+                alert('Atualizado com sucesso!'); 
+            } else { 
+                await supabase.from('parceiros').insert([dados]); 
+                alert('Cadastrado com sucesso!'); 
+            }
+            if (typeof fecharModal === 'function') fecharModal(); 
             carregarDados();
+        } catch (error) { 
+            console.error(error); 
+            alert('Erro ao salvar os dados.'); 
         }
+    });
+}
 
-        async function logout() { await supabase.auth.signOut(); window.location.href = '/admin/login.html'; }
+async function deletarIgreja(id) {
+    if (!confirm('Tem certeza que deseja excluir esta igreja?')) return;
+    try { 
+        await supabase.from('parceiros').delete().eq('id', id); 
+        alert('Excluído com sucesso!'); 
+        carregarDados(); 
+    } catch (error) { 
+        console.error(error); 
+        alert('Erro ao excluir.'); 
+    }
+}
 
-        async function carregarEstatisticas() {
-            try {
-                // Conta apenas quem tem tipo_parceiro = 'igreja'
-                const { count: totalIgrejas } = await supabase
-                    .from('parceiros')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('tipo_parceiro', 'igreja');
-                document.getElementById('totalIgrejas').textContent = totalIgrejas || 0;
-            } catch (error) { console.error(error); }
-        }
+function formatarMoeda(valor) { 
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor || 0); 
+}
 
-        async function carregarIgrejas() {
-            try {
-                // Puxa da tabela parceiros, mas só as igrejas!
-                const { data, error } = await supabase
-                    .from('parceiros')
-                    .select('*')
-                    .eq('tipo_parceiro', 'igreja')
-                    .order('created_at', { ascending: false });
-                
-                if (error) throw error;
-                igrejas = data || [];
-                exibirIgrejas(igrejas);
-            } catch (error) { 
-                console.error(error); 
-                document.getElementById('loading').innerHTML = '<p>Erro igrejas</p>'; 
-            }
-        }
-
-        function exibirIgrejas(dados) {
-            const tbody = document.getElementById('igrejasTableBody'); tbody.innerHTML = '';
-            if (dados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Nenhuma igreja cadastrada</td></tr>';
-                document.getElementById('igrejasTable').style.display = 'table';
-                document.getElementById('loading').style.display = 'none';
-                return;
-            }
-            dados.forEach(igreja => {
-                const tr = document.createElement('tr');
-                // Como unificamos, o nome da igreja pode estar em nome_igreja ou nome_completo
-                const nomeDaIgreja = igreja.nome_igreja || igreja.nome_completo || 'N/A';
-                
-                tr.innerHTML = `
-                    <td>${nomeDaIgreja}</td>
-                    <td>${igreja.cidade || 'N/A'}</td>
-                    <td>${igreja.estado || 'N/A'}</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td><span class="status-badge ${igreja.status === 'ativo' ? 'ativa' : 'inativa'}">${igreja.status === 'ativo' ? 'Ativa' : 'Inativa'}</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-action btn-edit" onclick="editarIgreja('${igreja.id}')"><i class="fas fa-edit"></i> Editar</button>
-                            <button class="btn-action btn-delete" onclick="deletarIgreja('${igreja.id}')"><i class="fas fa-trash"></i> Excluir</button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            document.getElementById('igrejasTable').style.display = 'table';
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            const termo = e.target.value.toLowerCase();
-            const filtradas = igrejas.filter(i => (i.nome?.toLowerCase().includes(termo)) || (i.cidade?.toLowerCase().includes(termo)));
-            exibirIgrejas(filtradas);
-        });
-
-        function abrirModalAdicionar() {
-            document.getElementById('modalTitle').textContent = 'Nova Igreja';
-            document.getElementById('igrejaForm').reset();
-            document.getElementById('igrejaId').value = '';
-            document.getElementById('igrejaModal').classList.add('show');
-        }
-
-        function editarIgreja(id) {
-            const igreja = igrejas.find(i => i.id === id);
-            if (!igreja) return;
-            document.getElementById('modalTitle').textContent = 'Editar Igreja';
-            document.getElementById('igrejaId').value = igreja.id;
-            document.getElementById('nome').value = igreja.nome || '';
-            document.getElementById('endereco').value = igreja.endereco || '';
-            document.getElementById('cidade').value = igreja.cidade || '';
-            document.getElementById('estado').value = igreja.estado || '';
-            document.getElementById('telefone').value = igreja.telefone || '';
-            document.getElementById('email').value = igreja.email || '';
-            document.getElementById('pastor').value = igreja.pastor || '';
-            document.getElementById('observacoes').value = igreja.observacoes || '';
-            document.getElementById('status').value = igreja.status || 'ativa';
-            document.getElementById('igrejaModal').classList.add('show');
-        }
-
-        function fecharModal() { document.getElementById('igrejaModal').classList.remove('show'); }
-
-        document.getElementById('igrejaForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('igrejaId').value;
-            const dados = {
-                nome: document.getElementById('nome').value,
-                endereco: document.getElementById('endereco').value,
-                cidade: document.getElementById('cidade').value,
-                estado: document.getElementById('estado').value.toUpperCase(),
-                telefone: document.getElementById('telefone').value,
-                email: document.getElementById('email').value,
-                pastor: document.getElementById('pastor').value,
-                observacoes: document.getElementById('observacoes').value,
-                status: document.getElementById('status').value
-            };
-            try {
-                if (id) { await supabase.from('igrejas').update(dados).eq('id', id); alert('Atualizado!'); }
-                else { await supabase.from('igrejas').insert([dados]); alert('Cadastrado!'); }
-                fecharModal(); carregarDados();
-            } catch (error) { console.error(error); alert('Erro ao salvar.'); }
-        });
-
-        async function deletarIgreja(id) {
-            if (!confirm('Excluir igreja?')) return;
-            try { await supabase.from('igrejas').delete().eq('id', id); alert('Excluído!'); carregarDados(); }
-            catch (error) { console.error(error); alert('Erro ao excluir.'); }
-        }
-
-        function formatarMoeda(valor) { return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor || 0); }
-
-        verificarAuth();
+verificarAuth();
     </script>
 </body>
 </html>
