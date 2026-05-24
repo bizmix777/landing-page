@@ -3,7 +3,7 @@
 // Híbrido: REST API + SDK Oficial ✅
 // ============================================
 
-const SUPABASE_URL = 'https://hjlpmorykllywjodusqx.supabase.co';
+const supabaseUrl = 'https://zofxhfbjgvpbqjtlkbbk.supabase.co'
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhqbHBtb3J5a2xseXdqb2R1c3F4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM4MjgxMTAsImV4cCI6MjA3OTQwNDExMH0.avz_D-StFtmD93YMrxfdLpbxaRSPPjNvcwu_Gnx2Nak';
 console.log('✅ Configuração carregada:', SUPABASE_URL);
 
