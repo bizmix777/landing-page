@@ -498,6 +498,40 @@ verificarAuth();
 
         // Start
         verificarAuth();
+
+        // 3. Carregar Estatísticas Separadas por Tipo
+async function carregarEstatisticasCards() {
+    try {
+        const { data: todosParceiros, error } = await supabase
+            .from('parceiros')
+            .select('tipo_parceiro');
+
+        if (error) throw error;
+
+        let qtdIgrejas = 0;
+        let qtdParceiros = 0;
+        let qtdEmpresas = 0;
+
+        todosParceiros.forEach(p => {
+            if (p.tipo_parceiro === 'igreja') qtdIgrejas++;
+            if (p.tipo_parceiro === 'parceiro') qtdParceiros++;
+            if (p.tipo_parceiro === 'empresa') qtdEmpresas++;
+        });
+
+        // Atualiza os números nos quadradinhos coloridos do topo
+        if(document.getElementById('totalIgrejas')) {
+            document.getElementById('totalIgrejas').textContent = qtdIgrejas;
+        }
+        if(document.getElementById('parceirosAtivos')) {
+            document.getElementById('parceirosAtivos').textContent = qtdParceiros;
+        }
+    } catch (error) {
+        console.error('Erro ao contar parceiros e igrejas:', error);
+    }
+}
+
+// Chame a função para ela rodar junto com as outras
+carregarEstatisticasCards();
     </script>
 </body>
 </html>
