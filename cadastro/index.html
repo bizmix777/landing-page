@@ -310,7 +310,15 @@
                 pix_tipo: document.getElementById('igreja-pix-tipo').value,
                 pix_chave: document.getElementById('igreja-pix-chave').value
             };
+            
+            if (dados.cnpj.replace(/\D/g, '').length !== 14) {
+        alert('❌ Por favor, digite um CNPJ válido e completo para a Igreja!');
+        return; // Impede o envio do formulário
+    }
 
+    try {
+        const { data: auth, error: ae } = await supabase.auth.signUp({
+             
             try {
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
                 if(ae) throw ae;
@@ -380,6 +388,14 @@
                 telefone: document.getElementById('parceiro-telefone').value
             };
 
+            if (dados.cpf.replace(/\D/g, '').length !== 11) {
+        alert('❌ Por favor, digite um CPF válido e completo!');
+        return; // Impede o envio do formulário
+    }
+
+    try {
+        const { data: auth, error: ae } = await supabase.auth.signUp({
+
             try {
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
                 if(ae) throw ae;
@@ -440,6 +456,14 @@ async function submitCadastroEmpresa(e) {
         pix_chave: document.getElementById('empresa-pix-chave').value,
         telefone: document.getElementById('empresa-telefone').value
     };
+
+    if (dados.cnpj.replace(/\D/g, '').length !== 14) {
+        alert('❌ Por favor, digite um CNPJ válido e completo para a Empresa!');
+        return; // Impede o envio do formulário
+    }
+
+    try {
+        const { data: auth, error: ae } = await supabase.auth.signUp({
 
     try {
         const { data: auth, error: ae } = await supabase.auth.signUp({ 
