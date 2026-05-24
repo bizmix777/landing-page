@@ -91,7 +91,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1>👥 Gerenciar Parceiros</h1>
+        <h1>👥 Gerenciar Empresas</h1>
         <div class="header-actions">
             <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
         </div>
@@ -204,7 +204,7 @@
                 const { data, error } = await supabase
                     .from('parceiros')
                     .select('*')
-                    .eq('tipo_parceiro', 'parceiro')
+                    .eq('tipo_parceiro', 'empresa')
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
