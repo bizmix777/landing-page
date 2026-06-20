@@ -82,6 +82,9 @@ document.getElementById('btn_enviar').addEventListener('click', async function()
             vcard_email: vcardEmail,
             vcard_cargo: vcardCargo,
             vcard_site_redes: vcardSite,
+            vcard_instagram: vcardInstagram, // NOVO
+            vcard_facebook: vcardFacebook,   // NOVO
+            vcard_telegram: vcardTelegram,   // NOVO
             tipo_material: materialSelecionado,
             add_nfc: querNFC,
             criar_gemeo_digital: querGemeoDigital,
