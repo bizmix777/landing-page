@@ -53,12 +53,23 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('btn_site').style.display = 'none';
         }
 
-        // Lógica do botão "Salvar na Agenda"
+// Lógica do botão "Salvar na Agenda"
         document.getElementById('btn_save_contact').addEventListener('click', () => {
+            
+            // 1. Limpa tudo que não for número do que veio do banco
+            let numeroLimpo = perfil.vcard_telefone.replace(/\D/g, '');
+            
+            // 2. Aplica a formatação do Brasil: +55 XX XXXXX-XXXX
+            let telefoneFormatado = perfil.vcard_telefone; // Padrão de segurança
+            if (numeroLimpo.length === 11) {
+                telefoneFormatado = `+55 ${numeroLimpo.substring(0,2)} ${numeroLimpo.substring(2,7)}-${numeroLimpo.substring(7,11)}`;
+            }
+
+            // 3. Monta o vCard com o telefone formatado
             const vcard = `BEGIN:VCARD
 VERSION:3.0
 FN:${perfil.vcard_nome}
-TEL:${perfil.vcard_telefone}
+TEL:${telefoneFormatado}
 EMAIL:${perfil.vcard_email || ''}
 TITLE:${perfil.vcard_cargo || ''}
 URL:${perfil.vcard_site_redes || ''}
