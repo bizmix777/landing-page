@@ -20,11 +20,10 @@ body {
     text-align: center; 
 }
 
-/* O Cartão Escuro (Simulando o metal) */
-/* O Cartão Escuro (Simulando o metal na proporção correta) */
+/* O Cartão Escuro (Com trava de altura para celular!) */
 .virtual-card { 
     background: linear-gradient(135deg, #2c3e50, #000000); 
-    padding: 30px; 
+    padding: 20px; 
     border-radius: 12px; 
     margin-bottom: 30px; 
     text-align: left; 
@@ -34,31 +33,39 @@ body {
     flex-direction: column;
     justify-content: space-between;
     
-    /* A MÁGICA: Força a proporção exata de largura/altura de um cartão de crédito */
+    /* A TRAVA DE OURO: Força o formato deitado */
     width: 100%;
-    aspect-ratio: 1.586 / 1; 
-    min-height: auto; 
+    max-width: 400px;
+    height: 240px; /* Trava a altura exata de um cartão de crédito na tela */
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden; /* Impede que textos grandes quebrem o cartão */
 }
 
-/* Ajustes para a tela do celular não quebrar os textos */
+/* Ajustes agressivos para telas pequenas de celular */
 @media (max-width: 480px) {
     .virtual-card {
-        padding: 20px;
+        height: 200px; /* Reduz a altura mantendo ele deitado */
+        padding: 15px;
     }
-    .virtual-card h2 {
-        font-size: 18px;
+    .virtual-card h2 { 
+        font-size: 18px; 
+        margin-bottom: 2px; 
+    }
+    .virtual-card p { 
+        font-size: 12px; 
     }
     .card-logo-img { 
-        max-width: 90px; 
-        max-height: 60px;
+        max-width: 80px; 
+        max-height: 50px; 
     }
-    .card-qr-screen img {
-        width: 60px;
-        height: 60px;
+    .card-qr-screen img { 
+        width: 55px; 
+        height: 55px; 
     }
-    .card-bottom-row {
-        margin-top: 20px;
-    }
+    .card-bottom-row { 
+        margin-top: auto; 
+    } 
 }
 
 /* A logo sem a borda azul e redimensionada */
@@ -68,9 +75,11 @@ body {
     object-fit: contain;
     
 /* ADICIONADAS ESTAS 3 LINHAS: 20.06.2026 - 17:30 */
-/*    background-color: rgba(255, 255, 255, 0.9); /* Fundo quase branco */
-/*    padding: 8px; /* Espacinho interno */
-/*    border-radius: 8px; /* Bordas arredondadas */
+/* background-color: rgba(255, 255, 255, 0.9); */
+/* Fundo quase branco */
+/* padding: 8px; /* Espacinho interno */
+/* border-radius: 8px; */
+/* Bordas arredondadas */
     
 }
 
@@ -85,13 +94,13 @@ body {
 .virtual-card h2 { 
     font-family: 'Montserrat', sans-serif; 
     font-size: 24px; 
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
     color: #fff;
 }
 
 .virtual-card p { 
     color: #aaa; 
-    font-size: 14px; 
+    font-size: 14px;
 }
 
 /* Estilo do QR Code na tela */
@@ -106,7 +115,7 @@ body {
 /* Botões Principais e Secundários */
 .btn-primary { 
     display: block; 
-    width: 100%; 
+    width: 100%;
     padding: 18px; 
     background: #3b82f6; 
     color: white; 
@@ -115,7 +124,7 @@ body {
     font-size: 18px; 
     font-weight: bold; 
     cursor: pointer; 
-    margin-bottom: 20px; 
+    margin-bottom: 20px;
     transition: background 0.3s; 
 }
 
@@ -124,7 +133,7 @@ body {
 }
 
 .btn-secondary { 
-    display: block; 
+    display: block;
     width: 100%; 
     padding: 15px; 
     background: #27272a; 
@@ -133,20 +142,20 @@ body {
     border-radius: 12px; 
     font-size: 16px; 
     font-weight: 600; 
-    margin-bottom: 12px; 
+    margin-bottom: 12px;
     border: 1px solid #3f3f46; 
     transition: background 0.3s; 
 }
 
 .btn-secondary:hover { 
-    background: #3f3f46; 
+    background: #3f3f46;
 }
 
 /* Rodapé */
 .footer-brand { 
     margin-top: 40px; 
     font-size: 12px; 
-    color: #52525b; 
+    color: #52525b;
 }
 
 .footer-brand a { 
