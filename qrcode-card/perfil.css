@@ -21,6 +21,7 @@ body {
 }
 
 /* O Cartão Escuro (Simulando o metal) */
+/* O Cartão Escuro (Simulando o metal na proporção correta) */
 .virtual-card { 
     background: linear-gradient(135deg, #2c3e50, #000000); 
     padding: 30px; 
@@ -32,7 +33,32 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 250px; /* Mantém a proporção retangular do cartão */
+    
+    /* A MÁGICA: Força a proporção exata de largura/altura de um cartão de crédito */
+    width: 100%;
+    aspect-ratio: 1.586 / 1; 
+    min-height: auto; 
+}
+
+/* Ajustes para a tela do celular não quebrar os textos */
+@media (max-width: 480px) {
+    .virtual-card {
+        padding: 20px;
+    }
+    .virtual-card h2 {
+        font-size: 18px;
+    }
+    .card-logo-img { 
+        max-width: 90px; 
+        max-height: 60px;
+    }
+    .card-qr-screen img {
+        width: 60px;
+        height: 60px;
+    }
+    .card-bottom-row {
+        margin-top: 20px;
+    }
 }
 
 /* A logo sem a borda azul e redimensionada */
