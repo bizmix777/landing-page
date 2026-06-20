@@ -24,6 +24,11 @@ document.getElementById('btn_enviar').addEventListener('click', async function()
     const vcardTelefone = document.getElementById('vcard_telefone').value;
     const vcardEmail = document.getElementById('vcard_email').value;
     const vcardSite = document.getElementById('vcard_site').value;
+
+    // CAPTURANDO AS NOVAS REDES SOCIAIS
+    const vcardInstagram = document.getElementById('vcard_instagram').value;
+    const vcardFacebook = document.getElementById('vcard_facebook').value;
+    const vcardTelegram = document.getElementById('vcard_telegram').value;
     
     // Captura o campo de arquivo
     const logoInput = document.getElementById('logo_upload');
