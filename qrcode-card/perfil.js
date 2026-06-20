@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 3. Preenche a tela com os dados do banco
         document.getElementById('p_nome').innerText = perfil.vcard_nome;
         document.getElementById('p_cargo').innerText = perfil.vcard_cargo || 'Profissional';
+
+        // ---- ADICIONADAS ESTAS 3 LINHAS EM 20.06.2026 - 16:39 ----
+        if (perfil.logo_url) {
+        document.getElementById('p_logo').src = perfil.logo_url;
+        }
+        // --------------------------------------
         
         document.getElementById('v_nome').innerText = perfil.vcard_nome;
         document.getElementById('v_cargo').innerText = perfil.vcard_cargo || 'Profissional';
