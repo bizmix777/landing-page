@@ -27,3 +27,37 @@ input[type="text"], input[type="email"] {
 .card-qr { position: absolute; bottom: 20px; right: 20px; width: 50px; height: 50px; background: white; color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 4px; }
 .preview-hint { text-align: center; font-size: 12px; color: #888; margin-top: 15px; }
 button { width: 100%; padding: 15px; background: #000; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 20px; }
+
+/* --- Botão Flutuante do WhatsApp --- */
+.whatsapp-flutuante {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25D366; /* Verde oficial do WhatsApp */
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 2px 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 9999; /* Garante que fique por cima de tudo */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.whatsapp-flutuante:hover {
+    transform: scale(1.1); /* Dá um pequeno zoom ao passar o mouse */
+    background-color: #20b858;
+}
+
+/* Deixa um pouco menor e melhor posicionado em celulares */
+@media (max-width: 768px) {
+    .whatsapp-flutuante {
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+    }
+}
