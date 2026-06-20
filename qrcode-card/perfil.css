@@ -69,8 +69,8 @@ body {
 
 /* Estilo do QR Code na tela */
 .card-qr-screen img {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     background: white;
     padding: 4px;
     border-radius: 4px;
