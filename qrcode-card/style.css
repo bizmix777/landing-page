@@ -61,3 +61,45 @@ button { width: 100%; padding: 15px; background: #000; color: #fff; border: none
         height: 50px;
     }
 }
+
+/* --- FAQ (Perguntas Frequentes) --- */
+.faq-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.faq-section details {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.faq-section details:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.faq-section summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: #444;
+    font-size: 14px;
+    outline: none;
+    list-style-position: inside; /* Mantém a setinha alinhada */
+}
+
+.faq-section summary:hover {
+    color: #3b82f6; /* Fica azul ao passar o mouse */
+}
+
+.faq-section p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.5;
+    padding-left: 18px; /* Dá um recuo na resposta */
+}
