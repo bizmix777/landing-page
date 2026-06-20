@@ -21,17 +21,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         const perfil = data[0]; // Pega o primeiro (e único) resultado
 
         // 3. Preenche a tela com os dados do banco
-        document.getElementById('p_nome').innerText = perfil.vcard_nome;
-        document.getElementById('p_cargo').innerText = perfil.vcard_cargo || 'Profissional';
-
-        // ---- ADICIONADAS ESTAS 3 LINHAS EM 20.06.2026 - 16:39 ----
-        if (perfil.logo_url) {
-        document.getElementById('p_logo').src = perfil.logo_url;
-        }
-        // --------------------------------------
-        
         document.getElementById('v_nome').innerText = perfil.vcard_nome;
         document.getElementById('v_cargo').innerText = perfil.vcard_cargo || 'Profissional';
+        
+        // Exibe a logo se existir
+        if (perfil.logo_url) {
+            const imgElement = document.getElementById('p_logo');
+            imgElement.src = perfil.logo_url;
+            imgElement.style.display = 'block'; // Mostra a imagem
+        }
+
+        // Gera o QR Code na tela apontando para a própria URL atual!
+        const urlAtual = window.location.href;
+        document.getElementById('qr_tela').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(urlAtual)}`;
 
         // Configura os links dos botões
         const numeroLimpo = perfil.vcard_telefone.replace(/\D/g, ''); // Tira traços e espaços
