@@ -13,33 +13,46 @@
             <h2>Monte seu Cartão Inteligente</h2>
             
             <div class="step">
+                <!-- Restauração da Escolha do Material (Necessário para o banco de dados) -->
+                <h3>1. Escolha a Tecnologia</h3>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px; cursor: pointer;">
+                        <input type="radio" name="material" value="Metal Premium" checked> 
+                        Metal Premium (Gravação a Laser)
+                    </label>
+                    <label style="display: block; cursor: pointer;">
+                        <input type="radio" name="material" value="PVC Colorido"> 
+                        PVC Colorido
+                    </label>
+                </div>
+
                <!-- Seção de Adicionais Tecnológicos -->
-<div class="adicionais-section" style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-top: 15px;">
-    
-    <!-- Opção NFC -->
-    <div style="margin-bottom: 15px;">
-        <label for="add_nfc" style="font-weight: 600; cursor: pointer; display: flex; align-items: center; font-size: 15px;">
-            <input type="checkbox" id="add_nfc" style="margin-right: 10px; width: 16px; height: 16px;"> 
-            💳 Adicionar Chip NFC (Aproximação) +R$ 20,00
-        </label>
-        <p style="font-size: 12px; color: #555; margin-left: 28px; margin-top: 4px; line-height: 1.4;">
-            Mágica pura: permite que você transfira seu contato, redes sociais e portfólio apenas <b>encostando</b> o seu cartão na parte de trás do celular do cliente, sem precisar abrir a câmera.
-        </p>
-    </div>
+                <div class="adicionais-section" style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; margin-top: 15px;">
+                    
+                    <!-- Opção NFC -->
+                    <div style="margin-bottom: 15px;">
+                        <label for="add_nfc" style="font-weight: 600; cursor: pointer; display: flex; align-items: center; font-size: 15px;">
+                            <input type="checkbox" id="add_nfc" style="margin-right: 10px; width: 16px; height: 16px;"> 
+                            💳 Adicionar Chip NFC (Aproximação) +R$ 20,00
+                        </label>
+                        <p style="font-size: 12px; color: #555; margin-left: 28px; margin-top: 4px; line-height: 1.4;">
+                            Mágica pura: permite que você transfira seu contato, redes sociais e portfólio apenas <b>encostando</b> o seu cartão na parte de trás do celular do cliente, sem precisar abrir a câmera.
+                        </p>
+                    </div>
 
-    <!-- Opção Perfil Dinâmico -->
-    <div>
-        <label for="gemeo_digital" style="font-weight: 600; cursor: pointer; display: flex; align-items: center; font-size: 15px;">
-            <!-- Já deixamos marcado (checked) por padrão para incentivar a assinatura -->
-            <input type="checkbox" id="gemeo_digital" checked style="margin-right: 10px; width: 16px; height: 16px;"> 
-            🌐 Criar Perfil Digital Dinâmico na Nuvem (Grátis 1º mês)
-        </label>
-        <p style="font-size: 12px; color: #555; margin-left: 28px; margin-top: 4px; line-height: 1.4;">
-            Cria sua página web interativa (seu Gêmeo Digital). <b>A grande vantagem:</b> se você mudar de telefone, e-mail ou cargo no futuro, atualizamos seus dados na nuvem e o seu cartão físico continua funcionando perfeitamente, sem precisar fazer outro! <i>(A partir do 2º mês: apenas R$ 9,90/mês).</i>
-        </p>
-    </div>
+                    <!-- Opção Perfil Dinâmico -->
+                    <div>
+                        <label for="gemeo_digital" style="font-weight: 600; cursor: pointer; display: flex; align-items: center; font-size: 15px;">
+                            <!-- Já deixamos marcado (checked) por padrão para incentivar a assinatura -->
+                            <input type="checkbox" id="gemeo_digital" checked style="margin-right: 10px; width: 16px; height: 16px;"> 
+                            🌐 Criar Perfil Digital Dinâmico na Nuvem (Grátis 1º mês)
+                        </label>
+                        <p style="font-size: 12px; color: #555; margin-left: 28px; margin-top: 4px; line-height: 1.4;">
+                            Cria sua página web interativa (seu Gêmeo Digital). <b>A grande vantagem:</b> se você mudar de telefone, e-mail ou cargo no futuro, atualizamos seus dados na nuvem e o seu cartão físico continua funcionando perfeitamente, sem precisar fazer outro! <i>(A partir do 2º mês: apenas R$ 9,90/mês).</i>
+                        </p>
+                    </div>
 
-</div>
+                </div>
             </div>
 
             <div class="step">
@@ -50,6 +63,7 @@
                 <input type="email" id="vcard_email" placeholder="E-mail">
                 <input type="text" id="vcard_site" placeholder="Site ou Linktree">
             </div>
+            
             <div class="upload-section" style="margin-bottom: 20px; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px dashed #ccc;">
                 <label for="logo_upload" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">Logomarca do Cartão:</label>
     
@@ -66,8 +80,9 @@
                     * <b>Dica para PVC:</b> Pode enviar o arquivo com as cores originais da sua marca.
                 </p>
     
-    <input type="file" id="logo_upload" accept="image/png, image/jpeg" style="width: 100%;">
-</div>
+                <input type="file" id="logo_upload" accept="image/png, image/jpeg" style="width: 100%;">
+            </div>
+            
             <button id="btn_enviar">Finalizar Pedido</button>
         </div>
 
@@ -87,10 +102,11 @@
             <p class="preview-hint">Gire o celular para ver o brilho do metal ✨</p>
         </div>
     </div>
+    
     <!-- Importa a sua configuração centralizada -->
-<script src="../js/supabase-config.js"></script>
+    <script src="../js/supabase-config.js"></script>
 
-<!-- Importa o script desta página -->
-<script src="script.js"></script>
+    <!-- Importa o script desta página -->
+    <script src="script.js"></script>
 </body>
 </html>
