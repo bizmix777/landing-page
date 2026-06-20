@@ -13,34 +13,27 @@
     </div>
 
     <div class="digital-twin-container" id="profile-content" style="display: none;">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <img id="p_logo" src="https://via.placeholder.com/150?text=Logo" alt="Logo">
-            </div>
-            <h1 id="p_nome">Nome do Cliente</h1>
-            <p id="p_cargo">Cargo / Profissão</p>
-        </div>
-
+        
         <div class="virtual-card">
-            <p class="virtual-hint">Cartão Inteligente Ativo</p>
-            <h2 id="v_nome">Nome</h2>
-            <p id="v_cargo">Cargo</p>
+            <img id="p_logo" src="" alt="Logo do Cliente" class="card-logo-img" style="display: none;">
+            
+            <div class="card-bottom-row">
+                <div class="card-info">
+                    <h2 id="v_nome">Nome</h2>
+                    <p id="v_cargo">Cargo</p>
+                </div>
+                <div class="card-qr-screen">
+                    <img id="qr_tela" src="" alt="QR Code">
+                </div>
+            </div>
         </div>
 
-        <button id="btn_save_contact" class="btn-primary">
-            💾 Salvar na Agenda
-        </button>
+        <button id="btn_save_contact" class="btn-primary">💾 Salvar na Agenda</button>
 
         <div class="action-links">
-            <a id="btn_whatsapp" href="#" target="_blank" class="btn-secondary">
-                💬 Chamar no WhatsApp
-            </a>
-            <a id="btn_email" href="#" class="btn-secondary">
-                ✉️ Enviar E-mail
-            </a>
-            <a id="btn_site" href="#" target="_blank" class="btn-secondary">
-                🌐 Visitar Site
-            </a>
+            <a id="btn_whatsapp" href="#" target="_blank" class="btn-secondary">💬 Chamar no WhatsApp</a>
+            <a id="btn_email" href="#" class="btn-secondary">✉️ Enviar E-mail</a>
+            <a id="btn_site" href="#" target="_blank" class="btn-secondary">🌐 Visitar Site</a>
         </div>
         
         <div class="footer-brand">
