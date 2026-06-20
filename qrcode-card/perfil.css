@@ -42,9 +42,10 @@ body {
     object-fit: contain;
     
 /* ADICIONADAS ESTAS 3 LINHAS: 20.06.2026 - 17:30 */
-    background-color: rgba(255, 255, 255, 0.9); /* Fundo quase branco */
-    padding: 8px; /* Espacinho interno */
-    border-radius: 8px; /* Bordas arredondadas */
+/*    background-color: rgba(255, 255, 255, 0.9); /* Fundo quase branco */
+/*    padding: 8px; /* Espacinho interno */
+/*    border-radius: 8px; /* Bordas arredondadas */
+    
 }
 
 /* Alinhamento do nome e do QR code na parte de baixo do cartão */
