@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMix - Cartão de Visitas Inteligente</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- LADO ESQUERDO: Formulário -->
+        <div class="form-section">
+            <h2>Monte seu Cartão Inteligente</h2>
+            
+            <div class="step">
+                <h3>1. Escolha a Tecnologia</h3>
+                <label><input type="radio" name="material" value="Metal Premium" checked> Metal Premium (Gravação a Laser)</label><br>
+                <label><input type="radio" name="material" value="PVC Colorido"> PVC Colorido</label>
+                
+                <div class="upsells">
+                    <label><input type="checkbox" id="add_nfc"> 💳 Adicionar Chip NFC (Aproximação) +R$ 20,00</label><br>
+                    <label><input type="checkbox" id="gemeo_digital"> 🌐 Criar Perfil Digital Dinâmico na Nuvem (Grátis 1º mês)</label>
+                </div>
+            </div>
+
+            <div class="step">
+                <h3>2. Dados do Cartão</h3>
+                <input type="text" id="vcard_nome" placeholder="Nome que vai no cartão" oninput="updatePreview()">
+                <input type="text" id="vcard_cargo" placeholder="Seu Cargo/Profissão" oninput="updatePreview()">
+                <input type="text" id="vcard_telefone" placeholder="WhatsApp / Telefone">
+                <input type="email" id="vcard_email" placeholder="E-mail">
+                <input type="text" id="vcard_site" placeholder="Site ou Linktree">
+            </div>
+
+            <button id="btn_enviar">Finalizar Pedido</button>
+        </div>
+
+        <!-- LADO DIREITO: Preview Interativo -->
+        <div class="preview-section">
+            <h3>Preview em Tempo Real</h3>
+            <div class="card-3d-wrapper">
+                <div class="card-preview" id="card_preview">
+                    <div class="card-logo">Sua Logo Aqui</div>
+                    <div class="card-info">
+                        <h4 id="preview_nome">Seu Nome</h4>
+                        <p id="preview_cargo">Profissão</p>
+                    </div>
+                    <div class="card-qr">QR</div>
+                </div>
+            </div>
+            <p class="preview-hint">Gire o celular para ver o brilho do metal ✨</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
