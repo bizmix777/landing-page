@@ -83,17 +83,19 @@ document.getElementById('btn_enviar').addEventListener('click', async function()
             logo_url: logoUrlParaBanco // Inserindo o link que acabamos de gerar!
         };
 
-        // Salva os dados na tabela
-        await supabaseFetch('pedidos_qrcode', {
+        // Salva os dados na tabela e pega a resposta de volta!
+        const respostaBanco = await supabaseFetch('pedidos_qrcode', {
             method: 'POST',
             body: JSON.stringify(payload)
         });
 
-        alert("Pedido realizado com sucesso! O seu Perfil Digital provisório já está no ar.");
+        // Pega o ID que o banco acabou de criar
+        const idGerado = respostaBanco[0].id;
+
+        alert("Pedido realizado com sucesso! Veja como ficou seu Perfil Digital.");
         
-        // Limpa o formulário
-        document.querySelectorAll('input[type="text"], input[type="email"], input[type="file"]').forEach(input => input.value = '');
-        updatePreview();
+        // Redireciona a pessoa para a página do cartão inteiro!
+        window.location.href = `perfil.html?id=${idGerado}`;
 
     } catch (error) {
         console.error("Erro completo:", error);
