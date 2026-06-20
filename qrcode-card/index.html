@@ -31,11 +31,24 @@
                 <input type="email" id="vcard_email" placeholder="E-mail">
                 <input type="text" id="vcard_site" placeholder="Site ou Linktree">
             </div>
-            <div class="upload-section" style="margin-bottom: 15px;">
-                <label for="logo_upload" style="font-weight: bold; font-size: 14px;">Logomarca do Cartão:</label>
-                <p style="font-size: 12px; color: #666; margin-bottom: 5px;">* Formatos: PNG transparente ou JPG. Tamanho máximo: 2MB.</p>
-                <input type="file" id="logo_upload" accept="image/png, image/jpeg">
-           </div>
+            <div class="upload-section" style="margin-bottom: 20px; background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px dashed #ccc;">
+                <label for="logo_upload" style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 8px;">Logomarca do Cartão:</label>
+    
+                <p style="font-size: 12px; color: #444; margin-bottom: 4px;">
+                    * <b>Formatos aceitos:</b> PNG (fundo transparente) ou JPG.
+                </p>
+                <p style="font-size: 12px; color: #444; margin-bottom: 4px;">
+                    * <b>Resolução ideal:</b> Mínimo de 500x500 pixels (Tamanho máx: 2MB).
+                </p>
+                <p style="font-size: 12px; color: #444; margin-bottom: 4px;">
+                    * <b>Dica para METAL:</b> Envie a logo preferencialmente em cores claras/branca para um contraste perfeito no cartão escuro.
+                </p>
+                <p style="font-size: 12px; color: #444; margin-bottom: 10px;">
+                    * <b>Dica para PVC:</b> Pode enviar o arquivo com as cores originais da sua marca.
+                </p>
+    
+    <input type="file" id="logo_upload" accept="image/png, image/jpeg" style="width: 100%;">
+</div>
             <button id="btn_enviar">Finalizar Pedido</button>
         </div>
 
