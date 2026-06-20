@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil Digital - BizMix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="perfil.css">
+</head>
+<body>
+    <div class="digital-twin-container" id="loading">
+        <p>Carregando perfil...</p>
+    </div>
+
+    <div class="digital-twin-container" id="profile-content" style="display: none;">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <img id="p_logo" src="https://via.placeholder.com/150?text=Logo" alt="Logo">
+            </div>
+            <h1 id="p_nome">Nome do Cliente</h1>
+            <p id="p_cargo">Cargo / Profissão</p>
+        </div>
+
+        <div class="virtual-card">
+            <p class="virtual-hint">Cartão Inteligente Ativo</p>
+            <h2 id="v_nome">Nome</h2>
+            <p id="v_cargo">Cargo</p>
+        </div>
+
+        <button id="btn_save_contact" class="btn-primary">
+            💾 Salvar na Agenda
+        </button>
+
+        <div class="action-links">
+            <a id="btn_whatsapp" href="#" target="_blank" class="btn-secondary">
+                💬 Chamar no WhatsApp
+            </a>
+            <a id="btn_email" href="#" class="btn-secondary">
+                ✉️ Enviar E-mail
+            </a>
+            <a id="btn_site" href="#" target="_blank" class="btn-secondary">
+                🌐 Visitar Site
+            </a>
+        </div>
+        
+        <div class="footer-brand">
+            <p>Tecnologia por <a href="http://www.bizmix.com.br" target="_blank">BizMix</a></p>
+        </div>
+    </div>
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="perfil.js"></script>
+</body>
+</html>
