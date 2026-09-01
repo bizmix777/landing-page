@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos e Suporte - Canal WhatsApp</title>
+    
+    <!-- Corrigido: Busca o CSS de dentro da pasta local 'css/' conforme sua imagem -->
+    <link rel="stylesheet" href="css/jesus-style.css">
+    
+    <!-- SDK do Supabase -->
+    <script src="https://jsdelivr.net"></script>
+    
+    <!-- Corrigido: '../js/' sai da pasta 'jesus' e busca o arquivo config na raiz do repositório -->
+    <script src="../js/supabase-config.js"></script>
+</head>
+<body>
+
+<div class="formulario-container">
+  <h2>Fale Conosco</h2>
+  <p>Deixe seu pedido de oração, testemunho ou dúvida abaixo. Receberemos sua mensagem de forma totalmente privada.</p>
+
+  <form id="formSuporte">
+    <label for="nome">Seu Nome:</label>
+    <input type="text" id="nome" required placeholder="Como prefere ser chamado?">
+
+    <label for="whatsapp">Seu WhatsApp (com DDD):</label>
+    <input type="tel" id="whatsapp" required placeholder="(00) 99999-9999">
+
+    <label for="tipo">Como podemos te ajudar hoje?</label>
+    <select id="tipo" required>
+      <option value="Pedido de Oração">🙏 Preciso de Oração</option>
+      <option value="Testemunho">❤️ Quero contar um Testemunho / Agradecer</option>
+      <option value="Suporte Técnico">🛠️ Problema ou Dúvida sobre o Canal</option>
+    </select>
+
+    <label for="mensagem">Sua Mensagem / Motivo da Oração:</label>
+    <textarea id="mensagem" rows="5" required placeholder="Abra o seu coração aqui..."></textarea>
+
+    <button type="submit">Enviar Mensagem</button>
+  </form>
+  
+  <p id="mensagemSucesso" style="display:none;">
+    🙏 Mensagem enviada com sucesso! Deus abençoe a sua vida.
+  </p>
+</div>
+
+<script>
+  document.getElementById('formSuporte').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nome = document.getElementById('nome').value;
+    const whatsapp = document.getElementById('whatsapp').value;
+    const tipo_mensagem = document.getElementById('tipo').value;
+    const mensagem = document.getElementById('mensagem').value;
+
+    // Utiliza as constantes SUPABASE_URL e SUPABASE_ANON_KEY que vêm prontas do seu arquivo externo
+    const { data, error } = await supabase
+      .from('pedidos_canal')
+      .insert([{ nome, whatsapp, tipo_mensagem, mensagem }]); 
+
+    if (error) {
+      alert('Ops! Ocorreu um erro ao enviar. Tente novamente.');
+      console.error(error);
+    } else {
+      document.getElementById('formSuporte').reset();
+      document.getElementById('mensagemSucesso').style.display = 'block';
+    }
+  });
+</script>
+
+</body>
+</html>
 
