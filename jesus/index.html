@@ -5,13 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos e Suporte - Canal WhatsApp</title>
     
-    <!-- Link corrigido para a sua pasta local 'css/' dentro de 'jesus/' -->
+    <!-- CSS Local -->
     <link rel="stylesheet" href="css/jesus-style.css">
     
-    <!-- SDK oficial do Supabase -->
-    <script src="https://jsdelivr.net"></script>
-    
-    <!-- Link para buscar as chaves que estão na sua pasta js/ raiz -->
+    <!-- Configuração Centralizada da Raiz do seu Site -->
     <script src="../js/supabase-config.js"></script>
 </head>
 <body>
@@ -49,47 +46,39 @@
   document.getElementById('formSuporte').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Captura os valores digitados pelo usuário
     const nomeInput = document.getElementById('nome').value;
     const whatsappInput = document.getElementById('whatsapp').value;
     const tipoInput = document.getElementById('tipo').value;
     const textoMensagem = document.getElementById('mensagem').value;
 
-    // Efeito visual no botão de enviando
     const botao = document.getElementById('btnEnviar');
     botao.innerText = "Enviando... ⏳";
     botao.disabled = true;
 
+    // Usando a sua função leve baseada em REST API (supabaseFetch) que já está pronta no seu JS!
     try {
-      // Enviamos tanto 'mensagem' quanto 'message' para o banco aceitar de qualquer jeito
-      const { data, error } = await supabase
-        .from('pedidos_canal')
-        .insert([{ 
-            nome: nomeInput, 
-            whatsapp: whatsappInput, 
-            tipo_mensagem: tipoInput, 
-            mensagem: textoMensagem,
-            message: textoMensagem
-        }]);
+      const resultado = await supabaseFetch('pedidos_canal', {
+        method: 'POST',
+        body: JSON.stringify({
+          nome: nomeInput,
+          whatsapp: whatsappInput,
+          tipo_mensagem: tipoInput,
+          mensagem: textoMensagem
+        })
+      });
 
-      if (error) {
-        alert('Erro retornado pelo Supabase:\n' + error.message);
-        botao.innerText = "Enviar Mensagem";
-        botao.disabled = false;
-      } else {
-        // Sucesso total
-        document.getElementById('formSuporte').reset();
-        document.getElementById('mensagemSucesso').style.display = 'block';
-        botao.innerText = "Enviar Mensagem";
-        botao.disabled = false;
-        
-        // Esconde a mensagem de sucesso após 5 segundos
-        setTimeout(() => {
-            document.getElementById('mensagemSucesso').style.display = 'none';
-        }, 5000);
-      }
+      // Sucesso
+      document.getElementById('formSuporte').reset();
+      document.getElementById('mensagemSucesso').style.display = 'block';
+      botao.innerText = "Enviar Mensagem";
+      botao.disabled = false;
+      
+      setTimeout(() => {
+          document.getElementById('mensagemSucesso').style.display = 'none';
+      }, 5000);
+
     } catch (err) {
-      alert('Erro de Conexão:\nVerifique se o seu arquivo "js/supabase-config.js" possui as chaves corretas e se as variáveis estão com os nomes SUPABASE_URL e SUPABASE_ANON_KEY.');
+      alert('Erro ao enviar para o banco de dados. Certifique-se de que a tabela "pedidos_canal" foi criada no painel SQL do Supabase.');
       botao.innerText = "Enviar Mensagem";
       botao.disabled = false;
     }
