@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos e Suporte - Canal WhatsApp</title>
     
-    <!-- Corrigido: Busca o CSS de dentro da pasta local 'css/' conforme sua imagem -->
+    <!-- Link corrigido para a sua pasta local 'css/' dentro de 'jesus/' -->
     <link rel="stylesheet" href="css/jesus-style.css">
     
-    <!-- SDK do Supabase -->
+    <!-- SDK oficial do Supabase -->
     <script src="https://jsdelivr.net"></script>
     
-    <!-- Corrigido: '../js/' sai da pasta 'jesus' e busca o arquivo config na raiz do repositório -->
+    <!-- Link para buscar as chaves que estão na sua pasta js/ raiz -->
     <script src="../js/supabase-config.js"></script>
 </head>
 <body>
@@ -37,38 +37,64 @@
     <label for="mensagem">Sua Mensagem / Motivo da Oração:</label>
     <textarea id="mensagem" rows="5" required placeholder="Abra o seu coração aqui..."></textarea>
 
-    <button type="submit">Enviar Mensagem</button>
+    <button type="submit" id="btnEnviar">Enviar Mensagem</button>
   </form>
   
-  <p id="mensagemSucesso" style="display:none;">
+  <div id="mensagemSucesso" style="display:none; background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; margin-top: 20px; border: 1px solid #c3e6cb;">
     🙏 Mensagem enviada com sucesso! Deus abençoe a sua vida.
-  </p>
+  </div>
 </div>
 
 <script>
   document.getElementById('formSuporte').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const nome = document.getElementById('nome').value;
-    const whatsapp = document.getElementById('whatsapp').value;
-    const tipo_mensagem = document.getElementById('tipo').value;
-    const mensagem = document.getElementById('mensagem').value;
+    // Captura os valores digitados pelo usuário
+    const nomeInput = document.getElementById('nome').value;
+    const whatsappInput = document.getElementById('whatsapp').value;
+    const tipoInput = document.getElementById('tipo').value;
+    const textoMensagem = document.getElementById('mensagem').value;
 
-    // Utiliza as constantes SUPABASE_URL e SUPABASE_ANON_KEY que vêm prontas do seu arquivo externo
-    const { data, error } = await supabase
-      .from('pedidos_canal')
-      .insert([{ nome, whatsapp, tipo_mensagem, mensagem }]); 
+    // Efeito visual no botão de enviando
+    const botao = document.getElementById('btnEnviar');
+    botao.innerText = "Enviando... ⏳";
+    botao.disabled = true;
 
-    if (error) {
-      alert('Ops! Ocorreu um erro ao enviar. Tente novamente.');
-      console.error(error);
-    } else {
-      document.getElementById('formSuporte').reset();
-      document.getElementById('mensagemSucesso').style.display = 'block';
+    try {
+      // Enviamos tanto 'mensagem' quanto 'message' para o banco aceitar de qualquer jeito
+      const { data, error } = await supabase
+        .from('pedidos_canal')
+        .insert([{ 
+            nome: nomeInput, 
+            whatsapp: whatsappInput, 
+            tipo_mensagem: tipoInput, 
+            mensagem: textoMensagem,
+            message: textoMensagem
+        }]);
+
+      if (error) {
+        alert('Erro retornado pelo Supabase:\n' + error.message);
+        botao.innerText = "Enviar Mensagem";
+        botao.disabled = false;
+      } else {
+        // Sucesso total
+        document.getElementById('formSuporte').reset();
+        document.getElementById('mensagemSucesso').style.display = 'block';
+        botao.innerText = "Enviar Mensagem";
+        botao.disabled = false;
+        
+        // Esconde a mensagem de sucesso após 5 segundos
+        setTimeout(() => {
+            document.getElementById('mensagemSucesso').style.display = 'none';
+        }, 5000);
+      }
+    } catch (err) {
+      alert('Erro de Conexão:\nVerifique se o seu arquivo "js/supabase-config.js" possui as chaves corretas e se as variáveis estão com os nomes SUPABASE_URL e SUPABASE_ANON_KEY.');
+      botao.innerText = "Enviar Mensagem";
+      botao.disabled = false;
     }
   });
 </script>
 
 </body>
 </html>
-
