@@ -237,8 +237,8 @@
             <div class="link-group"><a href="/painel-acesso/">Já tem cadastro? Faça login</a></div>
         </div>
     </div>
-        <script>
-        console.log('📝 Cadastro carregado');
+    <script>    
+    console.log('📝 Cadastro carregado');
         if (typeof supabase === 'undefined') alert('Erro config');
 
         function selecionarTipo(tipo) {
@@ -259,6 +259,11 @@
         function mask(o, f) { setTimeout(function() { var v = mphone(o.value); if (v != o.value) { o.value = v; } }, 1); }
         function mphone(v) { v=v.replace(/\D/g,""); v=v.replace(/^(\d\d)(\d)/g,"($1) $2"); v=v.replace(/(\d{5})(\d)/,"$1-$2"); return v; }
         
+        // Aplicar máscara aos campos de telefone
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('input', function() { mask(this, mphone); });
+        });
+
         async function buscarCEP(tipo) {
             const cep = document.getElementById(`${tipo}-cep`).value.replace(/\D/g, '');
             if(cep.length !== 8) return;
@@ -287,7 +292,8 @@
             const bar = document.getElementById(`${tipo}-strength-bar`);
             bar.className = 'password-strength-bar ' + (val.length > 8 ? 'strength-strong' : (val.length > 5 ? 'strength-medium' : 'strength-weak'));
         }
-                   // CADASTRO DA IGREJA (COM PRESENTE)
+
+        // CADASTRO DA IGREJA (COM PRESENTE)
         async function submitCadastroIgreja(e) {
             e.preventDefault();
             const btn = document.getElementById('igreja-btn-submit');
@@ -300,7 +306,7 @@
                 email: document.getElementById('igreja-email').value,
                 senha: document.getElementById('igreja-senha').value,
                 cep: document.getElementById('igreja-cep').value,
-                telefone: document.getElementById('igreja-telefone').value, // Telefone OK
+                telefone: document.getElementById('igreja-telefone').value,
                 endereco: document.getElementById('igreja-logradouro').value,
                 bairro: document.getElementById('igreja-bairro').value,
                 numero: document.getElementById('igreja-numero').value,
@@ -312,18 +318,16 @@
             };
             
             if (dados.cnpj.replace(/\D/g, '').length !== 14) {
-        alert('❌ Por favor, digite um CNPJ válido e completo para a Igreja!');
-        return; // Impede o envio do formulário
-    }
+                alert('❌ Por favor, digite um CNPJ válido e completo para a Igreja!');
+                btn.disabled = false; btn.textContent = '🙏 Cadastrar Igreja';
+                return;
+            }
 
-    try {
-        const { data: auth, error: ae } = await supabase.auth.signUp({
-             
             try {
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
                 if(ae) throw ae;
 
-                const codigoIgreja = 'IGR' + Math.random().toString(36).substring(2, 8).toUpperCase(); // Codigo OK
+                const codigoIgreja = 'IGR' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
                 const { error: ie } = await supabase.from('parceiros').insert([{
                     auth_user_id: auth.user.id,
@@ -342,19 +346,17 @@
                     pix_tipo: dados.pix_tipo,
                     chave_pix: dados.pix_chave,
                     tipo_parceiro: 'igreja',
-                    codigo_parceiro: codigoIgreja, // Campo OK
+                    codigo_parceiro: codigoIgreja,
                     status: 'ativo'
                 }]);
                 if(ie) throw ie;
 
-                // --- PRESENTE AUTOMÁTICO (NOVO) ---
                 console.log("🎁 Enviando presente...");
                 fetch('https://gerador-pdf-bizmix.onrender.com/cortesia_automatica', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ nome: dados.resp, email: dados.email })
                 }).catch(e => console.error(e));
-                // ----------------------------------
 
                 alert('✅ Sucesso! Redirecionando...');
                 window.location.href = '/painel-acesso/';
@@ -389,12 +391,10 @@
             };
 
             if (dados.cpf.replace(/\D/g, '').length !== 11) {
-        alert('❌ Por favor, digite um CPF válido e completo!');
-        return; // Impede o envio do formulário
-    }
-
-    try {
-        const { data: auth, error: ae } = await supabase.auth.signUp({
+                alert('❌ Por favor, digite um CPF válido e completo!');
+                btn.disabled = false; btn.textContent = '🤝 Cadastrar Parceiro';
+                return;
+            }
 
             try {
                 const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
@@ -432,81 +432,76 @@
             }
         }
 
-// CADASTRO DA EMPRESA
+        // CADASTRO DA EMPRESA
+        async function submitCadastroEmpresa(e) {
+            e.preventDefault();
+            const btn = document.getElementById('empresa-btn-submit');
+            btn.disabled = true; btn.textContent = '⏳ ...';
+            
+            const dados = {
+                razao: document.getElementById('empresa-razao').value,
+                responsavel: document.getElementById('empresa-responsavel').value,
+                cnpj: document.getElementById('empresa-cnpj').value,
+                email: document.getElementById('empresa-email').value,
+                senha: document.getElementById('empresa-senha').value,
+                cep: document.getElementById('empresa-cep').value,
+                endereco: document.getElementById('empresa-logradouro').value,
+                bairro: document.getElementById('empresa-bairro').value,
+                numero: document.getElementById('empresa-numero').value,
+                complemento: document.getElementById('empresa-complemento').value,
+                cidade: document.getElementById('empresa-cidade').value,
+                estado: document.getElementById('empresa-estado').value,
+                pix_tipo: document.getElementById('empresa-pix-tipo').value,
+                pix_chave: document.getElementById('empresa-pix-chave').value,
+                telefone: document.getElementById('empresa-telefone').value
+            };
 
-async function submitCadastroEmpresa(e) {
-    e.preventDefault();
-    const btn = document.getElementById('empresa-btn-submit');
-    btn.disabled = true; btn.textContent = '⏳ ...';
-    
-    const dados = {
-        razao: document.getElementById('empresa-razao').value,
-        responsavel: document.getElementById('empresa-responsavel').value, // ✅ ADICIONADO
-        cnpj: document.getElementById('empresa-cnpj').value,
-        email: document.getElementById('empresa-email').value,
-        senha: document.getElementById('empresa-senha').value,
-        cep: document.getElementById('empresa-cep').value,
-        endereco: document.getElementById('empresa-logradouro').value,
-        bairro: document.getElementById('empresa-bairro').value,
-        numero: document.getElementById('empresa-numero').value,
-        complemento: document.getElementById('empresa-complemento').value,
-        cidade: document.getElementById('empresa-cidade').value,
-        estado: document.getElementById('empresa-estado').value,
-        pix_tipo: document.getElementById('empresa-pix-tipo').value,
-        pix_chave: document.getElementById('empresa-pix-chave').value,
-        telefone: document.getElementById('empresa-telefone').value
-    };
+            if (dados.cnpj.replace(/\D/g, '').length !== 14) {
+                alert('❌ Por favor, digite um CNPJ válido e completo para a Empresa!');
+                btn.disabled = false; btn.textContent = '💼 Cadastrar Empresa';
+                return;
+            }
 
-    if (dados.cnpj.replace(/\D/g, '').length !== 14) {
-        alert('❌ Por favor, digite um CNPJ válido e completo para a Empresa!');
-        return; // Impede o envio do formulário
-    }
+            try {
+                const { data: auth, error: ae } = await supabase.auth.signUp({ 
+                    email: dados.email, 
+                    password: dados.senha 
+                });
+                if(ae) throw ae;
 
-    try {
-        const { data: auth, error: ae } = await supabase.auth.signUp({
+                const codigoEmpresa = 'EMP' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-    try {
-        const { data: auth, error: ae } = await supabase.auth.signUp({ 
-            email: dados.email, 
-            password: dados.senha 
-        });
-        if(ae) throw ae;
+                const { error: ie } = await supabase.from('parceiros').insert([{
+                    auth_user_id: auth.user.id,
+                    nome_completo: dados.responsavel,
+                    nome_empresa: dados.razao,
+                    email: dados.email,
+                    cpf_cnpj: dados.cnpj,
+                    telefone: dados.telefone,
+                    cep: dados.cep,
+                    endereco: dados.endereco,
+                    bairro: dados.bairro,
+                    numero: dados.numero,
+                    complemento: dados.complemento,
+                    cidade: dados.cidade,
+                    estado: dados.estado,
+                    pix_tipo: dados.pix_tipo,
+                    chave_pix: dados.pix_chave,
+                    tipo_parceiro: 'empresa',
+                    codigo_parceiro: codigoEmpresa,
+                    status: 'ativo'
+                }]);
+                if(ie) throw ie;
 
-        const codigoEmpresa = 'EMP' + Math.random().toString(36).substring(2, 8).toUpperCase();
-
-        const { error: ie } = await supabase.from('parceiros').insert([{
-            auth_user_id: auth.user.id,
-            nome_completo: dados.responsavel,  // ✅ responsável
-            nome_empresa: dados.razao,          // ✅ razão social
-            email: dados.email,
-            cpf_cnpj: dados.cnpj,
-            telefone: dados.telefone,
-            cep: dados.cep,
-            endereco: dados.endereco,
-            bairro: dados.bairro,
-            numero: dados.numero,
-            complemento: dados.complemento,
-            cidade: dados.cidade,
-            estado: dados.estado,
-            pix_tipo: dados.pix_tipo,
-            chave_pix: dados.pix_chave,
-            tipo_parceiro: 'empresa',           // ✅ correto
-            codigo_parceiro: codigoEmpresa,
-            status: 'ativo'
-        }]);
-        if(ie) throw ie;
-
-        alert('✅ Sucesso! Redirecionando...');
-        window.location.href = '/painel-acesso/';
-    } catch(err) {
-        console.error(err);
-        alert('Erro: ' + err.message);
-        btn.disabled = false; 
-        btn.textContent = '💼 Cadastrar Empresa';
-    }
-}
-
-
+                alert('✅ Sucesso! Redirecionando...');
+                window.location.href = '/painel-acesso/';
+            } catch(err) {
+                console.error(err);
+                alert('Erro: ' + err.message);
+                btn.disabled = false; 
+                btn.textContent = '💼 Cadastrar Empresa';
+            }
+        }
     </script>
 </body>
 </html> 
