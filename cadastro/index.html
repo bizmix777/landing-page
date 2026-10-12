@@ -329,7 +329,7 @@
 
                 const codigoIgreja = 'IGR' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-                const { error: ie } = await supabase.from('parceiros').insert([{
+                const { error: ie } = await supabase.from('igrejas').insert([{
                     auth_user_id: auth.user.id,
                     nome_completo: dados.resp,
                     nome_igreja: dados.nome,
@@ -471,7 +471,7 @@
 
                 const codigoEmpresa = 'EMP' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-                const { error: ie } = await supabase.from('parceiros').insert([{
+                const { error: ie } = await supabase.from('empresas').insert([{
                     auth_user_id: auth.user.id,
                     nome_completo: dados.responsavel,
                     nome_empresa: dados.razao,
@@ -504,4 +504,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
