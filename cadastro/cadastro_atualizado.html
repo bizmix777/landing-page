@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Biz Mix</title>
+    
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0"></script>
+    <script src="/js/supabase-config.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px 20px; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 50px; }
+        .header .logo { width: 100px; height: 100px; object-fit: contain; margin-bottom: 20px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2)); }
+        .header h1 { font-size: 42px; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header p { font-size: 18px; opacity: 0.9; }
+
+        /* Seleção de Tipo */
+        .type-selection { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px; max-width: 1200px; margin-left: auto; margin-right: auto; }
+        .type-card { background: white; border-radius: 20px; padding: 40px 30px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .type-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .type-card.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .type-card .icon { font-size: 64px; margin-bottom: 20px; }
+        .type-card h2 { font-size: 24px; margin-bottom: 15px; }
+        .type-card p { font-size: 14px; line-height: 1.6; opacity: 0.8; margin-bottom: 20px; }
+        .type-card .btn { margin-top: 15px; padding: 12px 30px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .type-card.active .btn { background: white; color: #667eea; }
+        .type-card .btn:hover { transform: scale(1.05); }
+
+        /* Formulário */
+        .form-container { display: none; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 900px; margin: 0 auto; }
+        .form-container.active { display: block; animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .form-header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0; }
+        .form-header .icon { font-size: 56px; margin-bottom: 15px; }
+        .form-header h2 { color: #333; font-size: 32px; margin-bottom: 10px; }
+        .form-header p { color: #666; font-size: 15px; }
+        
+        .btn-back { display: inline-block; margin-bottom: 25px; color: #667eea; text-decoration: none; font-weight: 600; font-size: 15px; transition: all 0.3s ease; }
+        .btn-back:hover { transform: translateX(-5px); }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 14px; }
+        .form-group label .required { color: #e74c3c; }
+        .form-group input, .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; font-family: 'Poppins', sans-serif; transition: all 0.3s ease; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .form-group input.error { border-color: #e74c3c; }
+        .form-group input.success { border-color: #10b981; }
+        .form-group small { display: block; margin-top: 5px; font-size: 12px; color: #999; }
+        .form-group small.error { color: #e74c3c; }
+        .form-group small.success { color: #10b981; }
+        
+        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        
+        .link-group { text-align: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid #f0f0f0; }
+        .link-group a { color: #667eea; text-decoration: none; font-size: 14px; font-weight: 600; }
+        .link-group a:hover { text-decoration: underline; }
+                .message { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; display: none; }
+        .message.show { display: block; }
+        .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        .password-strength { height: 5px; background: #e0e0e0; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .password-strength-bar { height: 100%; width: 0%; transition: all 0.3s ease; }
+        .strength-weak { width: 33%; background: #EF4444; }
+        .strength-medium { width: 66%; background: #F59E0B; }
+        .strength-strong { width: 100%; background: #10B981; }
+        
+        .info-box { background: #e7f3ff; border-left: 4px solid #2196F3; padding: 15px; border-radius: 5px; margin-bottom: 25px; font-size: 13px; color: #1565C0; line-height: 1.6; }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-container { padding: 30px 20px; }
+            .type-selection { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="/images/logo-bizmix-branco.png" alt="Biz Mix" class="logo">
+            <h1>Biz Mix</h1>
+            <p>Crie sua conta gratuitamente</p>
+        </div>
+
+        <div class="type-selection" id="type-selection">
+            <div class="type-card" onclick="selecionarTipo('igreja')">
+                <div class="icon">🙏</div><h2>Cadastro da sua Igreja</h2><p>Gerencie vendas e comissões.</p><button class="btn">Cadastrar Igreja</button>
+            </div>
+            <div class="type-card" onclick="selecionarTipo('parceiro')">
+                <div class="icon">🤝</div><h2>Cadastro do Parceiro/Corretor</h2><p>Venda produtos com comissões.</p><button class="btn">Cadastrar Parceiro</button>
+            </div>
+            <div class="type-card" onclick="selecionarTipo('empresa')">
+                <div class="icon">💼</div><h2>Cadastro da sua Empresa</h2><p>Amplie oportunidades de negócio.</p><button class="btn">Cadastrar Empresa</button>
+            </div>
+        </div>
+
+        <!-- Formulário Igreja -->
+        <div class="form-container" id="form-igreja">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            <div class="form-header"><div class="icon">🙏</div><h2>Cadastro da sua Igreja</h2><p>Preencha os dados da sua igreja</p></div>
+            <div class="message" id="message-igreja"></div>
+            <form id="formIgreja" onsubmit="submitCadastroIgreja(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label>Nome da Igreja *</label><input type="text" id="igreja-nome" required placeholder="Ex: Igreja Batista"></div>
+                    <div class="form-group"><label>CNPJ *</label><input type="text" id="igreja-cnpj" required placeholder="00.000.000/0000-00"><small id="igreja-cnpj-status"></small></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Responsável *</label><input type="text" id="igreja-responsavel" required placeholder="Nome do pastor"></div>
+                    <div class="form-group"><label>Telefone *</label><input type="tel" id="igreja-telefone" required placeholder="(00) 00000-0000"></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Email *</label><input type="email" id="igreja-email" required placeholder="email@igreja.com"><small id="igreja-email-status"></small></div>
+                    <div class="form-group"><label>Senha *</label><input type="password" id="igreja-senha" required minlength="6" oninput="checkPasswordStrength('igreja')"><div class="password-strength"><div class="password-strength-bar" id="igreja-strength-bar"></div></div></div>
+                </div>
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">📍 Endereço</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label>CEP *</label><input type="text" id="igreja-cep" required maxlength="9"><small id="igreja-cep-status"></small></div>
+                    <div class="form-group"><label>Cidade</label><input type="text" id="igreja-cidade" required readonly></div>
+                    <div class="form-group"><label>Estado</label><input type="text" id="igreja-estado" required readonly></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Rua / Logradouro</label><input type="text" id="igreja-logradouro" required readonly></div>
+                    <div class="form-group"><label>Bairro</label><input type="text" id="igreja-bairro" required readonly></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Número *</label><input type="text" id="igreja-numero" required></div>
+                    <div class="form-group"><label>Complemento</label><input type="text" id="igreja-complemento"></div>
+                </div>
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">💰 Recebimento</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label>Tipo Pix *</label><select id="igreja-pix-tipo" required><option value="cnpj">CNPJ</option><option value="email">Email</option><option value="telefone">Telefone</option><option value="aleatoria">Aleatória</option></select></div>
+                    <div class="form-group"><label>Chave Pix *</label><input type="text" id="igreja-pix-chave" required></div>
+                </div>
+                <button type="submit" class="btn-submit" id="igreja-btn-submit">🙏 Cadastrar Igreja</button>
+            </form>
+            <div class="link-group"><a href="/painel-acesso/">Já tem cadastro? Faça login aqui</a></div>
+        </div>
+                <!-- Formulário Parceiro -->
+        <div class="form-container" id="form-parceiro">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            <div class="form-header"><div class="icon">🤝</div><h2>Cadastro do Parceiro</h2><p>Seus dados pessoais</p></div>
+            <div class="message" id="message-parceiro"></div>
+            <form id="formParceiro" onsubmit="submitCadastroParceiro(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label>Nome Completo *</label><input type="text" id="parceiro-nome" required></div>
+                    <div class="form-group"><label>CPF *</label><input type="text" id="parceiro-cpf" required><small id="parceiro-cpf-status"></small></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Telefone *</label><input type="tel" id="parceiro-telefone" required></div>
+                    <div class="form-group"><label>Email *</label><input type="email" id="parceiro-email" required></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Senha *</label><input type="password" id="parceiro-senha" required minlength="6" oninput="checkPasswordStrength('parceiro')"><div class="password-strength"><div class="password-strength-bar" id="parceiro-strength-bar"></div></div></div>
+                    <div class="form-group"><label>Código Indicação</label><input type="text" id="parceiro-codigo-indicacao"></div>
+                </div>
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">📍 Endereço</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label>CEP *</label><input type="text" id="parceiro-cep" required maxlength="9"><small id="parceiro-cep-status"></small></div>
+                    <div class="form-group"><label>Cidade</label><input type="text" id="parceiro-cidade" readonly></div>
+                    <div class="form-group"><label>Estado</label><input type="text" id="parceiro-estado" readonly></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Rua/Logradouro</label><input type="text" id="parceiro-logradouro" readonly></div>
+                    <div class="form-group"><label>Bairro</label><input type="text" id="parceiro-bairro" readonly></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Número *</label><input type="text" id="parceiro-numero" required></div>
+                    <div class="form-group"><label>Complemento</label><input type="text" id="parceiro-complemento"></div>
+                </div>
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">💰 Recebimento</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label>Tipo Pix *</label><select id="parceiro-pix-tipo" required><option value="cpf">CPF</option><option value="email">Email</option><option value="telefone">Telefone</option><option value="aleatoria">Aleatória</option></select></div>
+                    <div class="form-group"><label>Chave Pix *</label><input type="text" id="parceiro-pix-chave" required></div>
+                </div>
+                <button type="submit" class="btn-submit" id="parceiro-btn-submit">🤝 Cadastrar Parceiro</button>
+            </form>
+            <div class="link-group"><a href="/painel-acesso/">Já tem cadastro? Faça login</a></div>
+        </div>
+
+        <!-- Formulário Empresa -->
+        <div class="form-container" id="form-empresa">
+            <a href="#" class="btn-back" onclick="voltarSelecao(); return false;">← Voltar</a>
+            <div class="form-header"><div class="icon">💼</div><h2>Cadastro da sua empresa</h2><p>Dados da empresa</p></div>
+            <div class="message" id="message-empresa"></div>
+            <form id="formEmpresa" onsubmit="submitCadastroEmpresa(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label>Razão Social *</label><input type="text" id="empresa-razao" required></div>
+                    <div class="form-group"><label>CNPJ *</label><input type="text" id="empresa-cnpj" required><small id="empresa-cnpj-status"></small></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Responsável *</label><input type="text" id="empresa-responsavel" required></div>
+                    <div class="form-group"><label>Telefone *</label><input type="tel" id="empresa-telefone" required></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Email *</label><input type="email" id="empresa-email" required></div>
+                    <div class="form-group"><label>Senha *</label><input type="password" id="empresa-senha" required minlength="6" oninput="checkPasswordStrength('empresa')"><div class="password-strength"><div class="password-strength-bar" id="empresa-strength-bar"></div></div></div>
+                </div>
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">📍 Endereço</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label>CEP *</label><input type="text" id="empresa-cep" required><small id="empresa-cep-status"></small></div>
+                    <div class="form-group"><label>Cidade</label><input type="text" id="empresa-cidade" readonly></div>
+                    <div class="form-group"><label>Estado</label><input type="text" id="empresa-estado" readonly></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Rua/Logradouro</label><input type="text" id="empresa-logradouro" readonly></div>
+                    <div class="form-group"><label>Bairro</label><input type="text" id="empresa-bairro" readonly></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Número *</label><input type="text" id="empresa-numero" required></div>
+                    <div class="form-group"><label>Complemento</label><input type="text" id="empresa-complemento"></div>
+                </div>
+                <hr style="margin: 30px 0; border-top: 2px solid #f0f0f0;">
+                <h3 style="margin-bottom: 20px;">💰 Recebimento</h3>
+                <div class="form-grid">
+                    <div class="form-group"><label>Tipo Pix *</label><select id="empresa-pix-tipo" required><option value="cnpj">CNPJ</option><option value="email">Email</option><option value="telefone">Telefone</option><option value="aleatoria">Aleatória</option></select></div>
+                    <div class="form-group"><label>Chave Pix *</label><input type="text" id="empresa-pix-chave" required></div>
+                </div>
+                <button type="submit" class="btn-submit" id="empresa-btn-submit">💼 Cadastrar Empresa</button>
+            </form>
+            <div class="link-group"><a href="/painel-acesso/">Já tem cadastro? Faça login</a></div>
+        </div>
+    </div>
+    <script>    
+    console.log('📝 Cadastro carregado');
+        if (typeof supabase === 'undefined') alert('Erro config');
+
+        function selecionarTipo(tipo) {
+            document.getElementById('type-selection').style.display = 'none';
+            document.getElementById(`form-${tipo}`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function voltarSelecao() {
+            document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active'));
+            document.getElementById('type-selection').style.display = 'grid';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showMessage(tipo, text, cls) { const m = document.getElementById(`message-${tipo}`); m.textContent = text; m.className = `message show ${cls}`; }
+        function hideMessage(tipo) { document.getElementById(`message-${tipo}`).classList.remove('show'); }
+
+        function mask(o, f) { setTimeout(function() { var v = mphone(o.value); if (v != o.value) { o.value = v; } }, 1); }
+        function mphone(v) { v=v.replace(/\D/g,""); v=v.replace(/^(\d\d)(\d)/g,"($1) $2"); v=v.replace(/(\d{5})(\d)/,"$1-$2"); return v; }
+        
+        // Aplicar máscara aos campos de telefone
+        document.querySelectorAll('input[type="tel"]').forEach(input => {
+            input.addEventListener('input', function() { mask(this, mphone); });
+        });
+
+        async function buscarCEP(tipo) {
+            const cep = document.getElementById(`${tipo}-cep`).value.replace(/\D/g, '');
+            if(cep.length !== 8) return;
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await res.json();
+                if(!data.erro) {
+                    document.getElementById(`${tipo}-logradouro`).value = data.logradouro;
+                    document.getElementById(`${tipo}-bairro`).value = data.bairro;
+                    document.getElementById(`${tipo}-cidade`).value = data.localidade;
+                    document.getElementById(`${tipo}-estado`).value = data.uf;
+                    document.getElementById(`${tipo}-numero`).focus();
+                }
+            } catch(e) {}
+        }
+        
+        ['igreja','parceiro','empresa'].forEach(t => {
+            document.getElementById(`${t}-cep`).addEventListener('blur', () => buscarCEP(t));
+        });
+
+        function validarCPF(cpf) { return cpf.replace(/\D/g,'').length === 11; } 
+        function validarCNPJ(cnpj) { return cnpj.replace(/\D/g,'').length === 14; }
+        
+        function checkPasswordStrength(tipo) {
+            const val = document.getElementById(`${tipo}-senha`).value;
+            const bar = document.getElementById(`${tipo}-strength-bar`);
+            bar.className = 'password-strength-bar ' + (val.length > 8 ? 'strength-strong' : (val.length > 5 ? 'strength-medium' : 'strength-weak'));
+        }
+
+        // CADASTRO DA IGREJA (COM PRESENTE)
+        async function submitCadastroIgreja(e) {
+            e.preventDefault();
+            const btn = document.getElementById('igreja-btn-submit');
+            btn.disabled = true; btn.textContent = '⏳ ...';
+            
+            const dados = {
+                nome: document.getElementById('igreja-nome').value,
+                cnpj: document.getElementById('igreja-cnpj').value,
+                resp: document.getElementById('igreja-responsavel').value,
+                email: document.getElementById('igreja-email').value,
+                senha: document.getElementById('igreja-senha').value,
+                cep: document.getElementById('igreja-cep').value,
+                telefone: document.getElementById('igreja-telefone').value,
+                endereco: document.getElementById('igreja-logradouro').value,
+                bairro: document.getElementById('igreja-bairro').value,
+                numero: document.getElementById('igreja-numero').value,
+                complemento: document.getElementById('igreja-complemento').value,
+                cidade: document.getElementById('igreja-cidade').value,
+                estado: document.getElementById('igreja-estado').value,
+                pix_tipo: document.getElementById('igreja-pix-tipo').value,
+                pix_chave: document.getElementById('igreja-pix-chave').value
+            };
+            
+            if (dados.cnpj.replace(/\D/g, '').length !== 14) {
+                alert('❌ Por favor, digite um CNPJ válido e completo para a Igreja!');
+                btn.disabled = false; btn.textContent = '🙏 Cadastrar Igreja';
+                return;
+            }
+
+            try {
+                const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
+                if(ae) throw ae;
+
+                const codigoIgreja = 'IGR' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+                const { error: ie } = await supabase.from('igrejas').insert([{
+                    auth_user_id: auth.user.id,
+                    nome_completo: dados.resp,
+                    nome_igreja: dados.nome,
+                    email: dados.email,
+                    cpf_cnpj: dados.cnpj,
+                    telefone: dados.telefone,
+                    cep: dados.cep,
+                    endereco: dados.endereco,
+                    bairro: dados.bairro,
+                    numero: dados.numero,
+                    complemento: dados.complemento,
+                    cidade: dados.cidade,
+                    estado: dados.estado,
+                    pix_tipo: dados.pix_tipo,
+                    chave_pix: dados.pix_chave,
+                    tipo_parceiro: 'igreja',
+                    codigo_parceiro: codigoIgreja,
+                    status: 'ativo'
+                }]);
+                if(ie) throw ie;
+
+                console.log("🎁 Enviando presente...");
+                fetch('https://gerador-pdf-bizmix.onrender.com/cortesia_automatica', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: dados.resp, email: dados.email })
+                }).catch(e => console.error(e));
+
+                alert('✅ Sucesso! Redirecionando...');
+                window.location.href = '/painel-acesso/';
+            } catch(err) {
+                console.error(err);
+                alert('Erro: ' + err.message);
+                btn.disabled = false; btn.textContent = 'Tentar Novamente';
+            }
+        }
+
+        // CADASTRO DO PARCEIRO
+        async function submitCadastroParceiro(e) {
+            e.preventDefault();
+            const btn = document.getElementById('parceiro-btn-submit');
+            btn.disabled = true; btn.textContent = '⏳ ...';
+            
+            const dados = {
+                nome: document.getElementById('parceiro-nome').value,
+                cpf: document.getElementById('parceiro-cpf').value,
+                email: document.getElementById('parceiro-email').value,
+                senha: document.getElementById('parceiro-senha').value,
+                cep: document.getElementById('parceiro-cep').value,
+                endereco: document.getElementById('parceiro-logradouro').value,
+                bairro: document.getElementById('parceiro-bairro').value,
+                numero: document.getElementById('parceiro-numero').value,
+                complemento: document.getElementById('parceiro-complemento').value,
+                cidade: document.getElementById('parceiro-cidade').value,
+                estado: document.getElementById('parceiro-estado').value,
+                pix_tipo: document.getElementById('parceiro-pix-tipo').value,
+                pix_chave: document.getElementById('parceiro-pix-chave').value,
+                telefone: document.getElementById('parceiro-telefone').value
+            };
+
+            if (dados.cpf.replace(/\D/g, '').length !== 11) {
+                alert('❌ Por favor, digite um CPF válido e completo!');
+                btn.disabled = false; btn.textContent = '🤝 Cadastrar Parceiro';
+                return;
+            }
+
+            try {
+                const { data: auth, error: ae } = await supabase.auth.signUp({ email: dados.email, password: dados.senha });
+                if(ae) throw ae;
+
+                const codigoParceiro = 'PAR' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+                const { error: ie } = await supabase.from('parceiros').insert([{
+                    auth_user_id: auth.user.id,
+                    nome_completo: dados.nome,
+                    email: dados.email,
+                    cpf_cnpj: dados.cpf,
+                    telefone: dados.telefone,
+                    cep: dados.cep,
+                    endereco: dados.endereco,
+                    bairro: dados.bairro,
+                    numero: dados.numero,
+                    complemento: dados.complemento,
+                    cidade: dados.cidade,
+                    estado: dados.estado,
+                    pix_tipo: dados.pix_tipo,
+                    chave_pix: dados.pix_chave,
+                    tipo_parceiro: 'parceiro',
+                    codigo_parceiro: codigoParceiro,
+                    status: 'ativo'
+                }]);
+                if(ie) throw ie;
+
+                alert('✅ Sucesso! Redirecionando...');
+                window.location.href = '/painel-acesso/';
+            } catch(err) {
+                console.error(err);
+                alert('Erro: ' + err.message);
+                btn.disabled = false; btn.textContent = 'Tentar Novamente';
+            }
+        }
+
+        // CADASTRO DA EMPRESA
+        async function submitCadastroEmpresa(e) {
+            e.preventDefault();
+            const btn = document.getElementById('empresa-btn-submit');
+            btn.disabled = true; btn.textContent = '⏳ ...';
+            
+            const dados = {
+                razao: document.getElementById('empresa-razao').value,
+                responsavel: document.getElementById('empresa-responsavel').value,
+                cnpj: document.getElementById('empresa-cnpj').value,
+                email: document.getElementById('empresa-email').value,
+                senha: document.getElementById('empresa-senha').value,
+                cep: document.getElementById('empresa-cep').value,
+                endereco: document.getElementById('empresa-logradouro').value,
+                bairro: document.getElementById('empresa-bairro').value,
+                numero: document.getElementById('empresa-numero').value,
+                complemento: document.getElementById('empresa-complemento').value,
+                cidade: document.getElementById('empresa-cidade').value,
+                estado: document.getElementById('empresa-estado').value,
+                pix_tipo: document.getElementById('empresa-pix-tipo').value,
+                pix_chave: document.getElementById('empresa-pix-chave').value,
+                telefone: document.getElementById('empresa-telefone').value
+            };
+
+            if (dados.cnpj.replace(/\D/g, '').length !== 14) {
+                alert('❌ Por favor, digite um CNPJ válido e completo para a Empresa!');
+                btn.disabled = false; btn.textContent = '💼 Cadastrar Empresa';
+                return;
+            }
+
+            try {
+                const { data: auth, error: ae } = await supabase.auth.signUp({ 
+                    email: dados.email, 
+                    password: dados.senha 
+                });
+                if(ae) throw ae;
+
+                const codigoEmpresa = 'EMP' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+                const { error: ie } = await supabase.from('empresas').insert([{
+                    auth_user_id: auth.user.id,
+                    nome_completo: dados.responsavel,
+                    nome_empresa: dados.razao,
+                    email: dados.email,
+                    cpf_cnpj: dados.cnpj,
+                    telefone: dados.telefone,
+                    cep: dados.cep,
+                    endereco: dados.endereco,
+                    bairro: dados.bairro,
+                    numero: dados.numero,
+                    complemento: dados.complemento,
+                    cidade: dados.cidade,
+                    estado: dados.estado,
+                    pix_tipo: dados.pix_tipo,
+                    chave_pix: dados.pix_chave,
+                    tipo_parceiro: 'empresa',
+                    codigo_parceiro: codigoEmpresa,
+                    status: 'ativo'
+                }]);
+                if(ie) throw ie;
+
+                alert('✅ Sucesso! Redirecionando...');
+                window.location.href = '/painel-acesso/';
+            } catch(err) {
+                console.error(err);
+                alert('Erro: ' + err.message);
+                btn.disabled = false; 
+                btn.textContent = '💼 Cadastrar Empresa';
+            }
+        }
+    </script>
+</body>
+</html>
